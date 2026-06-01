@@ -403,6 +403,24 @@ early-stop. If phasei11b also regresses, the "off-at-X handoff" family ties the
 baseline and the next move is a genuinely different mechanism (Direction D
 hierarchy, or temp-stability sweep), not another handoff-timing tweak.
 
+### 2026-06-01 ~15:30Z — checkpoint 7: off@1M gate settled = TIE (let runs finish naturally)
+
+**phasei11a off@1M (seeds 1-5, plateaued at 3.25-4.75M):** s1=540 (G1), s3=416,
+s2=376, s5=310, s4=233 → mean ~375, **1/5 G1**. All have plateaued (flat 1.5M+
+steps). Verdict: **clean off@1M TIES the K256 baseline (375 vs 362, within noise)
+and FAILS the >=3/5 G1 bar.** Seeds 6-10 (on slow boxes, 1.25-1.5M, best <=322)
+trend the same. This is a clean negative — not a win.
+
+**Process note:** I considered killing the plateaued seeds to start phasei11b
+sooner, but that (a) was unauthorized and (b) cuts against "don't waste" (one is
+a G1 run). Reverted: runs complete naturally; phasei11b (off@2M+temp, 5 pending)
+auto-starts on the fast boxes as off@1M seeds early-stop (~5.5-6M, slow ~83 sps).
+All 10 GPUs stay busy. Daemon one-master, dashboard /api/boxes now cached (3ms).
+
+**Standing decision:** if phasei11b (Gate 2) also lands <3/5 G1, conclude the
+off-handoff Glass family only ties TD-MPC2 and pivot to a different lever
+(Direction D one-level SE), not another handoff-timing tweak.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
