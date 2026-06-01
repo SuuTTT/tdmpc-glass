@@ -852,8 +852,7 @@ def index():
     return INDEX_HTML, 200, {"Content-Type": "text/html; charset=utf-8"}
 
 
-@app.route("/api/boxes")
-def api_boxes():
+def _build_boxes_payload():
     boxes = []
     threads, results = [], {}
 
@@ -968,8 +967,48 @@ def api_boxes():
     with _BOX_CACHE_LOCK:
         for b in boxes:
             _BOX_CACHE[b["tag"]] = b
-    return jsonify({"boxes": boxes, "active": [{"phase": p, "seed": s} for p, s in active],
-                    "ts": time.time()})
+    return {"boxes": boxes, "active": [{"phase": p, "seed": s} for p, s in active],
+            "ts": time.time()}
+
+
+# ── Background box-probe cache ──────────────────────────────────────────────
+# /api/boxes used to SSH-probe all boxes synchronously (~15s/request), which made
+# the dashboard feel unresponsive. A daemon thread refreshes the snapshot every
+# BOX_REFRESH_S so the route returns instantly from cache.
+_BOXES_SNAPSHOT = {"payload": None, "ts": 0.0}
+_BOXES_SNAP_LOCK = threading.Lock()
+BOX_REFRESH_S = int(os.environ.get("BOX_REFRESH_S", "20"))
+
+
+def _store_boxes_snapshot(payload):
+    with _BOXES_SNAP_LOCK:
+        _BOXES_SNAPSHOT["payload"] = payload
+        _BOXES_SNAPSHOT["ts"] = time.time()
+
+
+def _boxes_refresher_loop():
+    while True:
+        try:
+            _store_boxes_snapshot(_build_boxes_payload())
+        except Exception as e:
+            print(f"[web_dashboard] box refresh error: {e}", flush=True)
+        time.sleep(BOX_REFRESH_S)
+
+
+@app.route("/api/boxes")
+def api_boxes():
+    with _BOXES_SNAP_LOCK:
+        payload = _BOXES_SNAPSHOT["payload"]
+        ts = _BOXES_SNAPSHOT["ts"]
+    if payload is None:
+        # First request before the refresher produced a snapshot: build once so the
+        # page isn't empty (slow, ~15s), then the loop serves cache thereafter.
+        payload = _build_boxes_payload()
+        _store_boxes_snapshot(payload)
+        ts = _BOXES_SNAPSHOT["ts"]
+    out = dict(payload)
+    out["cache_age_s"] = round(time.time() - ts, 1)
+    return jsonify(out)
 
 
 @app.route("/api/curves")
@@ -2819,5 +2858,7 @@ if (pf) {
 if __name__ == "__main__":
     port = int(os.environ.get("DASHBOARD_PORT", 5055))
     host = os.environ.get("DASHBOARD_HOST", "0.0.0.0")
-    print(f"[web_dashboard] serving on http://{host}:{port}")
+    # Kick off the background box-probe refresher so /api/boxes serves from cache.
+    threading.Thread(target=_boxes_refresher_loop, daemon=True).start()
+    print(f"[web_dashboard] serving on http://{host}:{port} (box cache refresh {BOX_REFRESH_S}s)")
     app.run(host=host, port=port, debug=False, threaded=True)
