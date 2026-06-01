@@ -311,10 +311,71 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=5 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-01T07:25:37Z",
+    "started_at": "2026-06-01T08:18:01Z",
+    "ended_at": null,
+    "note": "iteration-11 C: pre-queued so gpu1 auto-refills when i10p_s3 leader finishes",
+    "box": "ssh9_2060_gpu1"
+  },
+  {
+    "id": "te895f6d",
+    "label": "phasei11a clean off-at-1M seed 6 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=6 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "pending",
+    "created_at": "2026-06-01T10:48:14Z",
     "started_at": null,
     "ended_at": null,
-    "note": "iteration-11 C: pre-queued so gpu1 auto-refills when i10p_s3 leader finishes"
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family"
+  },
+  {
+    "id": "ta1b7979",
+    "label": "phasei11a clean off-at-1M seed 7 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=7 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "pending",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family"
+  },
+  {
+    "id": "t3529d0a",
+    "label": "phasei11a clean off-at-1M seed 8 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=8 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "pending",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family"
+  },
+  {
+    "id": "t66eb0e9",
+    "label": "phasei11a clean off-at-1M seed 9 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=9 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "pending",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family"
+  },
+  {
+    "id": "tc0d6b7e",
+    "label": "phasei11a clean off-at-1M seed 10 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=10 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "pending",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family"
   }
 ]
