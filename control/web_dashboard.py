@@ -2250,9 +2250,9 @@ function loadCurves(){
       traces.push({
         x: pts.map(p=>p.step), y: pts.map(p=>p.reward),
         type:'scattergl', mode:'lines',
-        name: `${c.phase} s${c.seed} (${best.toFixed(0)})${isRunning ? ' ●' : ''}`,
+        name: `${c.phase} s${c.seed} (${best.toFixed(0)})${c.box ? ' @'+c.box : ''}${isRunning ? ' ●' : ''}`,
         line:{width: isRunning ? 2.2 : 1.2, color},
-        hovertemplate: `<b>${c.phase}</b> s${c.seed}${isRunning?' (running)':''}<br>step %{x:,d} → %{y:.1f}<extra></extra>`,
+        hovertemplate: `<b>${c.phase}</b> s${c.seed}${c.box?' @'+c.box:''}${isRunning?' (running)':''}<br>step %{x:,d} → %{y:.1f}<extra></extra>`,
       });
     });
     Plotly.react('curves', traces, {
@@ -2475,7 +2475,7 @@ function fmtEta(isoStr, short) {
 function renderFleetSummary(j){
   const freeEl = document.getElementById('next-free-list');
   if (freeEl) {
-    const rows = (j.box_next_free || []).slice(0, 6);
+    const rows = (j.box_next_free || []);  // show ALL boxes (no cap), so every running GPU appears
     freeEl.innerHTML = rows.length ? rows.map((r, idx)=>{
       const state = r.idle_now
         ? '<span class="box-good">idle now</span>'
