@@ -304,5 +304,17 @@
     "ended_at": null,
     "note": "iteration-11 C: clean K2+temp0.01 off-at-1M scaffold screen (2M fast), parallel hedge to phasei11a",
     "box": "ssh9_2060_gpu3"
+  },
+  {
+    "id": "t28bc7d6",
+    "label": "phasei11c K2 scaffold screen seed 5 (complete 5-seed, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=5 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "pending",
+    "created_at": "2026-06-01T07:25:37Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iteration-11 C: pre-queued so gpu1 auto-refills when i10p_s3 leader finishes"
   }
 ]
