@@ -305,6 +305,22 @@ on spike-*rate*, not single seeds. Gate: a family is "real" only at ≥3/5.
   scaffold) over the planner-calibration track (B2). B2 demoted; only build it if
   a strong-run still shows a persistent late MPPI deficit.
 
+### 2026-06-01 — full-fleet utilization (two parallel paths)
+
+Filled the 4 idle GPUs (ssh9_a4000 + 2060 gpu0/2/3) so all 10 slots are busy,
+running **two independent clean paths to beat the baseline in parallel**:
+
+- **`phasei11a`** off-at-1M (N32/K8, temp0, 10M) ×5 on the fast boxes — primary.
+- **`phasei11c`** K2 scaffold (N8/K2, temp0.01, off@1M, 2M fast screen) ×4 on
+  ssh9_a4000 + 3×2060 — Direction C hedge; if ≥3/5 reach >500-by-1.0M, promote
+  to a 10M fair-CI family.
+- i10p_s3 leader keeps gpu1.
+
+Verified via `nvidia-smi --query-compute-apps`: exactly one process per GPU, no
+double-booking (the hardened `is_box_idle` held under a 4-launch burst on the
+4×2060 box). All runs JIT-compiled and stepping; ~150 sps (a4000), ~120 sps
+(2060). All probes stamped `CODE_SHA=4d3b935`.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
