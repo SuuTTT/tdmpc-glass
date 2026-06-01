@@ -172,8 +172,13 @@ def repo_git_sha() -> str:
         if sha.returncode != 0:
             return "unknown"
         out = sha.stdout.strip()
-        dirty = subprocess.run(["git", "-C", str(REPO), "status", "--porcelain", "scripts", "src"],
-                              capture_output=True, text=True, timeout=10)
+        # Dirty = uncommitted CODE (src/ + launcher scripts). Exclude scripts/queues/
+        # because that's live queue state the daemon itself rewrites every poll —
+        # it must not count as a code change.
+        dirty = subprocess.run(
+            ["git", "-C", str(REPO), "status", "--porcelain", "--",
+             "src", "scripts", ":(exclude)scripts/queues"],
+            capture_output=True, text=True, timeout=10)
         if dirty.stdout.strip():
             out += "-dirty"
         return out
