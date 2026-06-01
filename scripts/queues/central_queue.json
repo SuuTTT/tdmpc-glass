@@ -107,7 +107,7 @@
     "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=1 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "priority": 5,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-05-31T09:21:12Z",
     "note": "combine temp0.02 spike with K4 scaffold signal",
     "recovery_history": [
@@ -119,7 +119,8 @@
       }
     ],
     "box": "ssh6_titanv",
-    "started_at": "2026-06-01T04:14:55Z"
+    "started_at": "2026-06-01T04:14:55Z",
+    "ended_at": "2026-06-01T06:05:10Z"
   },
   {
     "id": "tee6fad7",
