@@ -21,17 +21,17 @@ export DASHBOARD_PORT="$PORT"
 cd "$REPO"
 
 echo "== web dashboard (Flask, port $PORT) =="
-pkill -f 'tdmpc-glass/control/web_dashboard.py' 2>/dev/null || true; sleep 1
+pkill -f 'control/web_dashboard.py' 2>/dev/null || true; sleep 1
 nohup setsid "$PY" -u control/web_dashboard.py >> "$LOGD/dashboard.log" 2>&1 < /dev/null & disown
 sleep 2
 
 echo "== task queue daemon =="
-pkill -f 'tdmpc-glass/control/task_queue_daemon.py' 2>/dev/null || true; sleep 1
+pkill -f 'control/task_queue_daemon.py' 2>/dev/null || true; sleep 1
 nohup setsid "$PY" -u control/task_queue_daemon.py >> "$LOGD/tqd.log" 2>&1 < /dev/null & disown
 sleep 1
 
 echo "== remote CSV streamer =="
-pkill -f 'tdmpc-glass/control/iter5_stream_remotes.sh' 2>/dev/null || true; sleep 1
+pkill -f 'control/iter5_stream_remotes.sh' 2>/dev/null || true; sleep 1
 nohup setsid bash control/iter5_stream_remotes.sh >> "$LOGD/stream.log" 2>&1 < /dev/null & disown
 sleep 1
 
