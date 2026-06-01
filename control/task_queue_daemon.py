@@ -114,37 +114,47 @@ def with_queue_lock(fn):
 # ── Box idle check ────────────────────────────────────────────────────────────
 
 def is_box_idle(tag: str, port: int, host: str, gpu_idx: int) -> bool:
-    """Return True if no run_benchmark process is running on this slot."""
+    """Return True if this GPU slot can accept a new task WITHOUT stacking onto an
+    existing run.
+
+    Hardened 2026-06-01 after a duplicate-launch incident: the original per-GPU
+    memory check on multi-GPU boxes let the daemon launch a run on a free GPU
+    while an identical phase+seed was already training on a SIBLING GPU, both
+    writing the same CSV. The fix: never launch if (n_run_benchmark_procs >=
+    n_gpus) on the box, AND for the targeted GPU index require it to be free.
+    """
     if tag == "local":
-        try:
-            res = subprocess.run(
-                ["pgrep", "-f", "run_benchmark"],
-                capture_output=True, timeout=5,
-            )
-            return res.returncode != 0  # returncode 1 = no match = idle
-        except Exception:
-            return True
-    elif tag in CUDA_MASK:
-        # Multi-GPU box: check GPU memory on the specific CUDA index.
-        cmd = ["ssh", "-p", str(port), "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
-               "-o", "ConnectTimeout=8", "-o", "BatchMode=yes",
-               f"root@{host}",
-               f"nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i {gpu_idx} 2>/dev/null"]
-        try:
-            out = subprocess.check_output(cmd, timeout=12, stderr=subprocess.DEVNULL).decode().strip()
-            return int(out) <= 100
-        except Exception:
-            return False  # SSH unreachable → treat as busy
-    else:
-        cmd = ["ssh", "-p", str(port), "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
-               "-o", "ConnectTimeout=8", "-o", "BatchMode=yes",
-               f"root@{host}",
-               "ps -eo cmd | grep '[r]un_benchmark' | wc -l"]
-        try:
-            res = subprocess.run(cmd, timeout=12, capture_output=True)
-            return int(res.stdout.decode().strip()) == 0
-        except Exception:
-            return False
+        # EC2 control plane has no local training slot; never idle for training.
+        return False
+
+    # One SSH round-trip: total run procs, total GPUs, and memory on THIS gpu_idx.
+    probe = (
+        "NP=$(ps -eo cmd | grep '[r]un_benchmark' | wc -l); "
+        "NG=$(nvidia-smi --query-gpu=index --format=csv,noheader 2>/dev/null | wc -l); "
+        f"MU=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i {gpu_idx} 2>/dev/null | head -1); "
+        'echo "NP=$NP NG=$NG MU=$MU"'
+    )
+    cmd = ["ssh", "-p", str(port), "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
+           "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", f"root@{host}", probe]
+    try:
+        out = subprocess.check_output(cmd, timeout=14, stderr=subprocess.DEVNULL).decode()
+        d = {}
+        for tok in out.split():
+            if "=" in tok:
+                k, v = tok.split("=", 1)
+                d[k] = v
+        nproc = int(d.get("NP", "0") or 0)
+        ngpu = max(1, int(d.get("NG", "1") or 1))
+        mem_used = int(d.get("MU", "999999") or 999999)
+    except Exception:
+        return False  # SSH/probe failed → treat as busy (never launch blind)
+
+    # Fleet-wide saturation guard: if as many run_benchmark procs as GPUs are
+    # already alive on this box, every GPU is taken — do not stack.
+    if nproc >= ngpu:
+        return False
+    # Targeted-GPU guard: the specific GPU we'd use must be genuinely free.
+    return mem_used <= 100
 
 
 # ── Task launch ───────────────────────────────────────────────────────────────
