@@ -1,0 +1,301 @@
+# TD-MPC-Glass Iteration 11 — Review & Plan
+
+Created: 2026-06-01
+
+## Environment for this iteration (what changed)
+
+This iteration starts on a **new control plane and a new agent**:
+
+- **Agent:** Claude Opus 4.8 (1M context). Earlier iterations (2–10) were driven
+  by older models / Codex; treat their prose as historical record, not gospel.
+- **Control plane:** migrated off the destroyed local 4070 Ti box onto a
+  **new AWS EC2 instance** (this box). EC2 is **control-plane only — it has no
+  GPU and never trains**. There is no `"local"` entry in `BOXES`.
+- **Standalone repo:** TD-MPC-Glass was extracted out of the nested `helios-rl`
+  benchmark tree into a standalone, git-tracked repo at `/home/ubuntu/tdmpc-glass`
+  following the research-os paradigm. Control daemons live in `control/`, worker
+  code in `scripts/` + `src/`, queues in `scripts/queues/`.
+- **Data integrity:** the duplicate-launch CSV corruption (curves "going back")
+  was detected across history and repaired — see
+  `docs/operations/data_corruption_fix.md`. The launch race that caused it is
+  fixed in `task_queue_daemon.py :: is_box_idle()` (a box with
+  `n_run_benchmark_procs >= n_gpu` is busy; a GPU is free only at
+  `mem_used <= 100 MiB`).
+
+> The operations runbook `docs/operations/launch_dashboard.md` still has stale
+> `coder`-era paths (`/home/coder/.ssh/...`, `scripts/web_dashboard.py`, old box
+> list). The **authoritative** current procedure is in `CLAUDE.md`,
+> `docs/operations/ec2_dashboard_queue_migration.md`, and the "Dev loop" section
+> below.
+
+---
+
+## The dev loop (how a probe actually runs, and how not to mess up code)
+
+```
+   you ──enqueue──▶ scripts/queues/central_queue.json (pending)
+                          │
+        task_queue_daemon.py (polls every 60s, on EC2)
+                          │  finds an idle GPU box (is_box_idle)
+                          ▼
+        rsync -az --delete  scripts/ + src/  ──▶  root@worker:/root/helios-rl/
+                          │  (pushes the LOCAL WORKING TREE, every launch)
+                          ▼
+        ssh: cd /root/helios-rl ; <ENV> nohup bash <launcher> ...
+                          │
+        worker trains, appends exp/tdmpc_glass/HopperHop_<PROBE_ID>/seed_<S>/seed_<S>.csv
+                          │
+        iter5_stream_remotes.sh (every 5 min) rsyncs CSVs ──▶ exp/.../remote_mirror/
+                          │
+        web_dashboard.py reads mirror + queue ──▶ http://localhost:5055
+                          │
+        auto-promote: on done/failed, daemon reads best_any from the log and
+        appends follow-up seed tasks (see thresholds below).
+```
+
+### How to push a probe to the queue
+
+One seed per task. Lower `priority` number runs first (default 10).
+
+**Preferred — REST API (atomic, fcntl-locked, no hand-editing):**
+
+```bash
+curl -s -X POST http://localhost:5055/api/queue \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "label": "phasei11x_<short-desc> seed 1",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11x_<tag> SEEDS=1 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=<git-short-sha> XLA_PYTHON_CLIENT_MEM_FRACTION=0.35",
+    "priority": 6
+  }'
+```
+
+`label` + `launcher` are required; `env` is the full space-separated env string;
+the daemon injects `CUDA_VISIBLE_DEVICES`, mem fraction, and `MUJOCO_GL=egl` per
+box. Copy the env template from a known-good task in `central_queue.json` and
+change only `PROBE_ID`, `SEEDS`, and the knobs you are testing.
+
+**Fallback — edit `scripts/queues/central_queue.json` directly.** Back it up
+first (`*.bak_<reason>_<ts>`); the daemon's `fcntl` lock makes in-place edits
+safe. New task needs at least `id`, `label`, `launcher`, `env`, `priority`,
+`status:"pending"`.
+
+### Auto-promotion thresholds (daemon, `run_phasei9_glass_probe.sh` tasks only)
+
+Read from the launcher log when a task ends; `best_any = max(pi, mppi)` over evals:
+
+| best_any | seeds added | notes |
+|---:|---:|---|
+| ≥ 600 | 5 | full fill |
+| ≥ 500 | 2 | |
+| ≥ 380 | 1 | |
+| < 380 | 0 | |
+
+Failed runs get a 100-pt lower bar **only if** they reached ≥ 4M steps
+(`MIN_FAILED_PROMOTION_STEPS`); header-only crashes never promote. Promoted tasks
+get `PROBE_ID=<base>_auto_s<seed>`.
+
+### The "don't mess up code" rules (read before editing anything)
+
+1. **`rsync_code` pushes the live working tree with `--delete` at every launch.**
+   It is NOT a git checkout. Whatever is in local `scripts/` + `src/` the instant
+   a pending task is claimed is what that worker runs. Deleting a file locally
+   deletes it on the worker.
+2. **`CODE_SHA=...` in the env is only a provenance LABEL** baked into the output
+   tag. It does not pin code. If you edit an algorithm while probes are pending,
+   new launches silently run the new code but still stamp the old SHA →
+   corrupted provenance (exactly the `dbf5cea`/`87a4337`/`df9bfb1` confusion that
+   made `phasei9r` "mixed-provenance").
+3. **Freeze code while a batch is in flight.** Before changing
+   `src/helios/algorithms/*.py` or a launcher: either (a) drain/let the dependent
+   pending tasks finish, or (b) commit first and stamp the new `CODE_SHA` with the
+   real `git rev-parse --short HEAD`. The repo is git-tracked now — use real SHAs,
+   retire `df9bfb1-dirty`.
+4. **Already-running tasks are not affected** by later edits (rsync only fires at
+   launch) — but the next claimed pending task is. Don't assume the queue is
+   homogeneous.
+5. **One-master rule:** exactly one `task_queue_daemon.py` against this fleet.
+   Verify with `pgrep -fa task_queue_daemon.py` after any restart.
+6. **One seed per task.** Cap fair-CI fills at seeds 1–5. Keep failed/partial
+   logs but separate them from final claims.
+
+---
+
+## Review of Iteration 10
+
+### Fresh standings (recomputed from CSVs, 2026-06-01)
+
+`best_any` = max eval reward (pi or mppi) over the run; G1 = best_any ≥ 500.
+Families canonicalized by stripping `_auto_sN` and code-hash suffixes (rough —
+some sibling tags merge/split imperfectly; treat single-seed `[0,0]` rows as n=1).
+
+| Family | n | mean best_any | 95% CI | G1 | max |
+|---|---:|---:|---:|---:|---:|
+| `phasei9r_p1b_off1m_fairci` | 5 | 511.0 | [405, 617] | 4/5 | 595.3 |
+| `phasei9t_p1b_off1p5m_fairci` | 3 | 477.2 | [378, 577] | 1/3 | 553.9 |
+| `phasei9q_p1b_temp001_off2m` (s4 group) | 6 | 458.2 | [344, 572] | 3/6 | 609.0 |
+| `phaseaa_codex_tdmpc2_k256` (baseline) | 5 | 362.1 | [260, 464] | 1/5 | 561.1 |
+| `phaseaa_codex_tdmpc2_k128` (baseline) | 5 | 350.0 | [256, 444] | 1/5 | 538.6 |
+| `phasei10t_k2_temp002_fast2m` | 10 | 346.9 | [272, 421] | 2/10 | 557.2 |
+| `phasei10u_k4_temp001_fast2m` | 7 | 337.5 | [193, 482] | 3/7 | 536.0 |
+| `phasei10s_k2_temp0005_fast2m` | 7 | 386.2 | [288, 484] | 2/7 | 576.3 |
+| `phasei10c_off1m_clean5` (clean rerun) | 4 | 321.8 | [241, 402] | 0/4 | 436.9 |
+| `phasei10r_k2_temp001_fast2m` | 6 | 271.7 | [201, 343] | 0/6 | 438.0 |
+| `phasei10v_k2_notemp_fast2m` (no-temp ctrl) | 4 | 318.1 | [220, 417] | 0/4 | 428.2 |
+
+### What Iteration 10 established
+
+1. **`phasei9r` off-at-1M is still the leader** (4/5 G1, mean ~511) but its
+   strength was found under fast iteration with mixed code SHAs. The **clean,
+   single-tag rerun `phasei10c` did not reproduce it** (0/4). So off-at-1M is a
+   *useful lead, not a settled method*.
+2. **The K2 + mild temp-stability "coarse basin scaffold" early-spike is real but
+   not robust.** Individual seeds spike >500 by 1.0M (`phasei10a1` s1 → 620.5;
+   `phasei10k` s3 → 556.7; `phasei10p` s1 → 537.1), but spike-*rate* across the
+   fast-2M batches is low and inconsistent (i10t 2/10, i10u 3/7, i10s 2/7,
+   i10r **0/6**, no-temp control i10v 0/4). temp-stability ∈ {0.005, 0.01, 0.02}
+   does not yet give a clean ranking.
+3. **The MPPI-policy gap is still open and undiagnosed.** The `i10-c` planner
+   calibration diagnostic (predicted MPPI objective vs realized MPPI vs realized
+   pi) was specified but never built. `i10-a1` eval-only arbitration was
+   implemented; behavior arbitration (`i10-a2/a3`) correctly deferred.
+4. **Glass hierarchy redesign** got static-shape flags
+   (`NUM_PROTOTYPES/NUM_CLUSTERS/NUM_SUPER_CLUSTERS/LAMBDA_SUPER_*`) and first
+   probes (i10g/i10h/i10k), but no clean one-level-vs-two-level verdict.
+5. **JEPA world-model** remained correctly deferred (no code).
+
+### Carried-over open items (not done in i10)
+
+- pi-vs-MPPI gap analysis script/table (was a TODO).
+- `i10-c` planner-calibration diagnostic.
+- Recompute countable 95% CI after fast-2M fills mature.
+- One-level vs coarse-K2 Glass verdict.
+- JEPA `i10-h0` design note.
+
+---
+
+## Iteration 11 Plan
+
+Theme: **stop widening the probe fan-out; convert the strongest leads into clean,
+provenance-controlled evidence, and finally diagnose the MPPI gap.** With a
+git-tracked repo and a single EC2 master, we can now run *reproducible* probes —
+that is the main new capability to exploit.
+
+### Direction A — Consolidate evidence (highest priority)
+
+- **A1. Pin provenance.** Commit current code; from now stamp every probe with
+  `CODE_SHA=$(git rev-parse --short HEAD)`. No more `-dirty` tags for runs we
+  intend to count.
+- **A2. Clean off-at-1M, single SHA, 5 seeds (`phasei11a`).** One launcher, one
+  SHA, seeds 1–5, off at 1M, no temp-stability. This is the decisive test of
+  whether `phasei9r`'s 4/5 is method or provenance luck. Gate: ≥3/5 G1 ⇒ promote
+  off-at-1M to "method"; <3/5 ⇒ demote `phasei9r` to "lead only".
+- **A3. Finish the TD-MPC2 K256 baseline as a clean 5-seed reference** (already
+  ~5 seeds at mean 362; verify provenance, re-stamp, fill any non-clean seed).
+  This is the comparison denominator — keep it honest.
+
+### Direction B — Diagnose the MPPI-policy gap (build the missing tool)
+
+- **B1. pi-vs-MPPI gap table** (offline analysis, no GPU): per phase/seed, compute
+  `mppi_reward - pi_reward` distribution over evals. Add as
+  `control/analyze_mppi_gap.py` reading the mirror CSVs. Pure reporting.
+- **B2. `i10-c` planner-calibration diagnostic** (worker code): log predicted MPPI
+  objective vs realized MPPI return vs realized pi per eval. Smoke locally-equiv
+  on one idle GPU before queueing. This tells us whether MPPI failure is model
+  rollout error, Q terminal error, or action-sequence optimization — the
+  prerequisite gate for any behavior-arbitration or distillation work.
+- Do **not** queue `i10-a2` behavior arbitration or MPPI-gated distillation until
+  B1+B2 show a *consistent* gap.
+
+### Direction C — Settle the K2 scaffold question (small, decisive batch)
+
+The fast-2M fan-out is too noisy to conclude. Run **one** controlled 5-seed
+comparison at fixed SHA instead of many 1–3 seed tags:
+
+| Probe | Knobs | Tests |
+|---|---|---|
+| `phasei11c_k2_temp001` | K=2, N=8, temp 0.01, off 1M | scaffold + mild temp |
+| `phasei11c_k2_notemp` | K=2, N=8, temp 0.0, off 1M | scaffold alone |
+| `phasei11c_k4_temp001` | K=4, N=8, temp 0.01, off 1M | coarse control |
+
+5 seeds each, `TOTAL_STEPS=2000000`, primary metric **>500-by-1.0M rate**. Decide
+on spike-*rate*, not single seeds. Gate: a family is "real" only at ≥3/5.
+
+### Direction D — Glass hierarchy verdict (use existing static flags)
+
+- **D1. One-level prototype SE vs two-level (`z→μ→S`)** at fixed SHA, 3 seeds each,
+  using the existing `NUM_CLUSTERS`/`NUM_SUPER_CLUSTERS` flags (no dynamic-shape
+  JAX changes). Answer the i10 question: is `S` necessary for HopperHop?
+
+### Direction E — JEPA design note (no code, no GPU)
+
+- **E1. Write `docs/design/jepa_vs_tdmpc2_worldmodel.md`** (the i10-h0 note):
+  proprio-JEPA next-embedding predictor vs TD-MPC2 latent dynamics, where Glass/SE
+  attaches, MVP smoke spec, estimated cost. Keep it out of the queue. Revisit only
+  if B2 says the bottleneck is world-model calibration.
+
+### Decision gates (carried + new)
+
+1. If `phasei11a` clean off-at-1M ≥3/5 G1 → off-at-1M becomes the headline method;
+   focus remaining budget on the MPPI gap (B) for G2.
+2. If clean off-at-1M stays weak but `phasei9t` 1.5M handoff matures → shift handoff
+   to 1.5M and re-fill.
+3. If B2 shows MPPI failure is **model rollout error** → that motivates the JEPA
+   track (E). If it is **action-sequence optimization** → tune MPPI (NS, horizon,
+   elites) instead, cheaper.
+4. If the K2 scaffold (C) is <3/5 at fixed SHA → stop chasing the early spike;
+   record it as seed-luck and reallocate to A/B.
+
+---
+
+## Iteration 11 task list
+
+### Evidence (Direction A)
+- [ ] A1: commit code, switch all new probes to real `git rev-parse --short HEAD` `CODE_SHA`.
+- [ ] A2: queue `phasei11a` clean off-at-1M, single SHA, seeds 1–5.
+- [ ] A3: verify/clean the K256 5-seed baseline provenance; re-stamp.
+- [ ] Recompute countable 95% CI after A2/A3 + active fast-2M fills mature.
+
+### MPPI gap (Direction B)
+- [ ] B1: `control/analyze_mppi_gap.py` — pi-vs-MPPI gap table by phase/seed.
+- [ ] B2: implement + smoke the `i10-c` planner-calibration diagnostic; then queue 1 seed.
+- [ ] Hold `i10-a2` / MPPI-gated distillation until B1+B2 confirm a consistent gap.
+
+### K2 scaffold (Direction C)
+- [ ] Queue the 3-family × 5-seed controlled comparison at fixed SHA.
+- [ ] Decide on spike-rate; update standings.
+
+### Glass hierarchy (Direction D)
+- [ ] One-level vs two-level SE, 3 seeds each, static shapes.
+
+### JEPA (Direction E)
+- [ ] Write `docs/design/jepa_vs_tdmpc2_worldmodel.md` (i10-h0). No code.
+
+### Hygiene (every probe)
+- [ ] One seed per task; cap fills at 1–5.
+- [ ] Freeze code while a batch is in flight, or commit + bump `CODE_SHA` first.
+- [ ] Verify single daemon (`pgrep -fa task_queue_daemon.py`) after any restart.
+- [ ] After a run completes, re-run `control/separate_collisions.py` on any seed
+      dir flagged with a backward jump (see data_corruption_fix.md).
+
+---
+
+## Live state at iteration start (2026-06-01)
+
+Queue (authoritative `central_queue.json`): 8 tasks, 7 running, 1 done.
+
+| status | box | probe |
+|---|---|---|
+| running | ssh9_2060_gpu3 | `phasei10p_k2_temp0005_auto_s4` |
+| running | ssh1_2080ti | `phasei10t_k2_temp002_fast2m` (s9) |
+| running | ssh1_a4000 | `phasei10t_k2_temp002_fast2m` (s10) |
+| running | ssh2_a4000 | `phasei10u_k4_temp001_fast2m` (s6) |
+| running | ssh3_a4000 | `phasei10u_k4_temp001_fast2m` (s7) |
+| done | ssh6_titanv | `phasei10y_k4_temp002_fast2m` (s1) |
+| running | ssh9_a4000 | `phasei10y_k4_temp002_fast2m` (s2) |
+| running | ssh9_2060_gpu0 | `phasei10y_k4_temp002_fast2m` (s3) |
+
+Two live i10p runs (`s3` pid 459088 ~9.25M; `s4` pid 705959 restarted) have
+non-destructive collision snapshots pending a canonical swap on completion — see
+`data_corruption_fix.md` follow-up. Let the in-flight fast-2M tasks finish before
+starting Iteration 11 batches (Direction C replaces, not augments, that fan-out).
