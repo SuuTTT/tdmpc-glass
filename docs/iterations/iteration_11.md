@@ -370,6 +370,19 @@ clean off-at-1M reproduction concern — same lesson).
 Refill worked: s6/s7/s8/s9 auto-launched on GPUs freed by phasei11c; s10 pending
 for gpu1 (phasei11c s5 finishing). 10/10 busy, one proc/GPU, no idle.
 
+### 2026-06-01 ~12:52Z — checkpoint 5: streamer path bug fixed; primary climbing
+
+- **Infra fix:** `iter5_stream_remotes.sh` rsync SOURCE was wrong since the EC2
+  migration — it pulled from `root@host:/home/ubuntu/tdmpc-glass/exp/...` but
+  workers store at `/root/helios-rl/exp/...`, so the local mirror (and dashboard
+  curves + local analyze_mppi_gap) had been STALE for all post-migration phases.
+  Fixed source path → `/root/helios-rl/exp/tdmpc_glass/`, restarted streamer;
+  phasei11a/c now mirror correctly. (Control-plane only; not rsync'd to workers.)
+- **phasei11a primary** (off@1M, climbing): s1=538@3.5M (G1), s3=402@2.25M,
+  s2=370@2.5M, s5=306@3M, s4=227@2.5M → running mean(1-5) ~369 (≈baseline 362,
+  still climbing), 1/5 G1. Seeds 6-10 filling (s10 pending gpu1 until phasei11c
+  s5 done). Gate verdict at 4-6M. 10/10 busy, one proc/GPU, no idle.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.

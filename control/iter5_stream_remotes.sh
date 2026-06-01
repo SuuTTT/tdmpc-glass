@@ -24,7 +24,7 @@ sync_box() {
         --include='HopperHop_*/seed_*.csv' \
         --include='HopperHop_*/seed_*_diag.csv' \
         --exclude='*' \
-        root@$host:/home/ubuntu/tdmpc-glass/exp/tdmpc_glass/ \
+        root@$host:/root/helios-rl/exp/tdmpc_glass/ \
         "$dest/" >/dev/null 2>&1
 }
 
