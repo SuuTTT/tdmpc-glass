@@ -321,6 +321,20 @@ double-booking (the hardened `is_box_idle` held under a 4-launch burst on the
 4×2060 box). All runs JIT-compiled and stepping; ~150 sps (a4000), ~120 sps
 (2060). All probes stamped `CODE_SHA=4d3b935`.
 
+### 2026-06-01 ~08:27Z — checkpoint 1 (runs early, all healthy)
+
+- i10p_s3 **leader finished**: clean canonical promoted (run reaching 10M,
+  best_any **523.8 / G1**; 2 dup rows split to run2, 0 backward jumps). gpu1
+  auto-refilled with the pre-queued `phasei11c` s5 — no idle gap. 10/10 slots
+  busy, one proc/GPU (no collision).
+- Throughput is low (~85–145 sps; off-at-1M N32/K8 is heavier than K2), so the
+  2–4M basin signal for `phasei11a` is ~6–11h out; the 2M `phasei11c` screen
+  finishes first (~5h) and gives the first decision. EARLY_STOP patience cuts
+  dead seeds. No tuning lever to speed individual runs; fleet fully utilized.
+- Progress (too early to judge): phasei11a best so far s1=344@750k, s5=292@750k,
+  s2=188, s3=42, s4=3 (all <1M). phasei11c s1-4 at 500k, best 12–214.
+  No gate decision yet — wait for 2–4M (phasei11a) / 1M (phasei11c spike-rate).
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
