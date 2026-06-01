@@ -335,6 +335,17 @@ double-booking (the hardened `is_box_idle` held under a 4-launch burst on the
   s2=188, s3=42, s4=3 (all <1M). phasei11c s1-4 at 500k, best 12–214.
   No gate decision yet — wait for 2–4M (phasei11a) / 1M (phasei11c spike-rate).
 
+### 2026-06-01 ~09:30Z — checkpoint 2 (still climbing; preliminary scaffold signal)
+
+- 10/10 busy, one proc/GPU, none died. phasei11a: s1=498@1.5M (near G1, climbing
+  through the off@1M handoff), s2=336, s3=351, s5=296 (@1-1.25M), s4=23 (weak).
+  Off-at-1M payoff is post-handoff → real signal at 2-4M (~hours out).
+- **Preliminary (not a verdict):** clean phasei11c K2 scaffold shows **0/4 ≥500
+  by 1.0M** (best 294). The scaffold's headline claim was the early >500-by-1M
+  spike; it is NOT reproducing under clean/pinned code so far. If this holds at
+  the 2M finish, it supports the read that earlier i10 "early spikes" were
+  seed-luck / mixed-provenance, not a robust K2 effect. Wait for 2M completion.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
