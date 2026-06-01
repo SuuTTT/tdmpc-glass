@@ -161,6 +161,26 @@ def is_box_idle(tag: str, port: int, host: str, gpu_idx: int) -> bool:
 
 # ── Task launch ───────────────────────────────────────────────────────────────
 
+def repo_git_sha() -> str:
+    """TRUE provenance of the code rsync_code is about to ship: the control-plane
+    repo's short git SHA, with a '-dirty' suffix if scripts/ or src/ have
+    uncommitted changes. Recorded per launch so a stale/typo'd CODE_SHA label in
+    the task env can never silently misrepresent what actually ran."""
+    try:
+        sha = subprocess.run(["git", "-C", str(REPO), "rev-parse", "--short", "HEAD"],
+                             capture_output=True, text=True, timeout=10)
+        if sha.returncode != 0:
+            return "unknown"
+        out = sha.stdout.strip()
+        dirty = subprocess.run(["git", "-C", str(REPO), "status", "--porcelain", "scripts", "src"],
+                              capture_output=True, text=True, timeout=10)
+        if dirty.stdout.strip():
+            out += "-dirty"
+        return out
+    except Exception:
+        return "unknown"
+
+
 def rsync_code(port: int, host: str):
     """Rsync launcher and source code needed by queued experiment tasks."""
     mkdir_cmd = [
@@ -499,16 +519,21 @@ def poll_once():
             break
         tag, port, host, gpu_idx = box_entry
         task = pending.pop(0)
+        sha = repo_git_sha()  # actual code rsync_code will ship to the worker
 
-        def claim(tasks, _task=task, _tag=tag):
+        def claim(tasks, _task=task, _tag=tag, _sha=sha):
             for t in tasks:
                 if t["id"] == _task["id"] and t["status"] == "pending":
                     t["status"] = "running"
                     t["box"] = _tag
                     t["started_at"] = now_iso()
+                    t["launched_git_sha"] = _sha  # TRUE provenance, not the env label
             return tasks
 
         with_queue_lock(claim)
+        if sha.endswith("-dirty"):
+            log(f"WARNING: launching task {task['id']} with DIRTY working tree "
+                f"(git={sha}); shipped code may not match the CODE_SHA env label")
         # Re-read to get the claimed task's env/launcher.
         tasks = load_queue()
         claimed = next((t for t in tasks if t["id"] == task["id"]), None)
