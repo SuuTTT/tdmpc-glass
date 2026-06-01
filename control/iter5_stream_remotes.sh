@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Pull ALL HopperHop_phase* CSVs from every remote box → local mirror.
+# Designed to be run as a Monitor — emits one summary line per pass per box.
+# Cadence: every 10 min (sleep 600). Excludes checkpoints/ to keep transfers small.
+
+set -u
+LOCAL=/home/ubuntu/tdmpc-glass/exp/tdmpc_glass
+MIRROR=$LOCAL/remote_mirror
+LOGS=$LOCAL/logs_mirror
+
+# Per-box rsync helper. Hard 60s timeout + SSH keepalives so a single dead box
+# can't stall the whole stream loop (we hit that bug once already).
+sync_box() {
+  local port=$1 host=$2 dest=$3
+  mkdir -p "$dest"
+  # Mirror only the HopperHop_*/ directories' CSVs (eval + diag).
+  # Earlier --include rules broke when phase tags grew long; use --filter rules
+  # in classic rsync syntax: P (protect) and explicit dir include.
+  timeout 60 rsync -av --prune-empty-dirs \
+        -e "ssh -i /home/ubuntu/.ssh/vastai_id_ed25519 -p $port -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=8 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 \
+            -o BatchMode=yes" \
+        --include='HopperHop_*/' \
+        --include='HopperHop_*/seed_*.csv' \
+        --include='HopperHop_*/seed_*_diag.csv' \
+        --exclude='*' \
+        root@$host:/home/ubuntu/tdmpc-glass/exp/tdmpc_glass/ \
+        "$dest/" >/dev/null 2>&1
+}
+
+# Emit one summary line listing best MPPI for every LIVE seed_*.csv (modified in last 30 min).
+# This filters out historical/done phase data and only shows actively-updated runs.
+summarize_box() {
+  local label=$1 dest=$2
+  local out=""
+  shopt -s nullglob
+  # Two-tier filter:
+  # 1. CSV mtime newer than the last fully-completed phase (older than 7 days = "old archived")
+  # 2. CSV has at least one eval row (size > 100 bytes; bare header is ~27)
+  # 3. Phase prefix is in "active" allowlist (current iter 5-6 phases)
+  for csv in $(find "$dest" -path "*/HopperHop_*/seed_*.csv" -mtime -2 -size +30c 2>/dev/null | sort); do
+    [[ -f $csv ]] || continue
+    local fname=$(basename "$csv" .csv)
+    # Skip backup snapshots and diagnostic sidecars
+    [[ "$fname" == *_v1_* || "$fname" == *_v[0-9]_* || "$fname" == *_partial_* || "$fname" == *_died_* || "$fname" == *_final_* || "$fname" == *_done_* || "$fname" == *_diag ]] && continue
+    local pdir=$(basename "$(dirname "$csv")")
+    # active-phase allowlist for current and recent phases. Keep this broad:
+    # the dashboard is the main filter, while this stream is just a liveness
+    # console for whatever probes the queue is currently running.
+    case "$pdir" in
+      HopperHop_phase*) ;;
+      *) continue;;
+    esac
+    local phase=$(echo "$pdir" | sed 's/HopperHop_//; s/_remote_3m//; s/_3060ti//; s/_4060//; s/_2x3060//; s/_local//; s/_ns1024/_NS1024/; s/_baseline//; s/_knee//')
+    local seed=$(echo "$fname" | sed 's/seed_//')
+    local best=$(awk -F, 'NR>1 && $3=="mppi" {if($2+0>m)m=$2+0} END{printf "%.0f", m}' "$csv" 2>/dev/null)
+    [[ -z "$best" ]] && best="—"
+    out+=" ${phase}s${seed}=${best}"
+  done
+  shopt -u nullglob
+  [[ -z "$out" ]] && out=" (no active csvs)"
+  echo "[$(date -u +%H:%M:%S)][stream] ${label}${out}"
+}
+
+while true; do
+  # Mirror all remote boxes in parallel for speed. Fleet as of 2026-06-01.
+  sync_box 34217 ssh1.vast.ai          $MIRROR/ssh1_2080ti       &
+  sync_box 24456 ssh1.vast.ai          $MIRROR/ssh1_a4000        &
+  sync_box 18950 ssh2.vast.ai          $MIRROR/ssh2_a4000        &
+  sync_box 17426 ssh3.vast.ai          $MIRROR/ssh3_a4000        &
+  sync_box 31740 ssh6.vast.ai          $MIRROR/ssh6_titanv       &
+  sync_box 16690 ssh9.vast.ai          $MIRROR/ssh9_a4000        &
+  sync_box 17647 ssh9.vast.ai          $MIRROR/ssh9_4x2060       &
+  wait
+
+  summarize_box "ssh1_2080ti " $MIRROR/ssh1_2080ti
+  summarize_box "ssh1_a4000  " $MIRROR/ssh1_a4000
+  summarize_box "ssh2_a4000  " $MIRROR/ssh2_a4000
+  summarize_box "ssh3_a4000  " $MIRROR/ssh3_a4000
+  summarize_box "ssh6_titanv " $MIRROR/ssh6_titanv
+  summarize_box "ssh9_a4000  " $MIRROR/ssh9_a4000
+  summarize_box "ssh9_4x2060 " $MIRROR/ssh9_4x2060
+
+  sleep 300
+done
