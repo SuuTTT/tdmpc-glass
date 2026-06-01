@@ -374,7 +374,13 @@ def existing_family_seeds(tasks: list[dict], family_key: tuple[tuple[str, str], 
 
 
 def auto_promote_task(tasks: list[dict], task: dict, status: str) -> None:
-    """Append follow-up seed tasks according to Iteration 9 promotion thresholds."""
+    """Append follow-up seed tasks according to Iteration 9 promotion thresholds.
+
+    Kill-switch: DISABLED by default (iteration-11 uses manually-queued seed sets,
+    so auto-promotion would only add noise/cost). Set AUTO_PROMOTE=1 in the daemon
+    env to re-enable the original threshold-based seed fan-out."""
+    if os.environ.get("AUTO_PROMOTE", "0") != "1":
+        return
     if task.get("type") == "render" or task.get("auto_promoted"):
         return
     launcher = task.get("launcher", "")
