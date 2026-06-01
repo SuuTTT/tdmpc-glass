@@ -421,6 +421,22 @@ All 10 GPUs stay busy. Daemon one-master, dashboard /api/boxes now cached (3ms).
 off-handoff Glass family only ties TD-MPC2 and pivot to a different lever
 (Direction D one-level SE), not another handoff-timing tweak.
 
+### 2026-06-01 ~22:00Z — off@1M first finisher + fleet churn
+
+- **phasei11a s1 finished** (14.8h): best_any **548.7 @ 8.5M (G1)**, then crashed with
+  `CUDA_ERROR_STREAM_CAPTURE_INVALIDATED` near the end (2080ti driver hiccup, not a
+  real failure — daemon mislabeled it "failed"; result valid & plateaued). Counts
+  as a completed G1 seed. (Lesson: long runs on consumer GPUs occasionally hit
+  CUDA graph/stream errors near the end; the curve up to the crash is valid.)
+- **off@1M standing** (s1 done; s2-s5 at 6-8M, plateaued): s1=548.7(G1), s3=458,
+  s2=392, s4=326, s5=315 → mean(1-5) ~408. Edges baseline 362 on MEAN (+46) but
+  only **1/5 G1** with high variance (315-548) — still NOT a clean >=3/5 win. Final
+  pending s2-s5 completion.
+- **Fleet:** 4x2060 stopped (out); 7 working GPUs all busy (ssh1_2080ti backfilled
+  phasei11b s3 after s1). daemon one-master. phasei11b (Gate 2) now getting fast-box
+  compute. phasei11d (Direction D) config still unverified (only failed on dead box;
+  pending behind phasei11b). vastai-watcher waiting (<$0.10 market has no >180 DLP/$).
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
