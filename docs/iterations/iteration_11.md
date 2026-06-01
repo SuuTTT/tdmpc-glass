@@ -346,6 +346,30 @@ double-booking (the hardened `is_box_idle` held under a 4-launch burst on the
   the 2M finish, it supports the read that earlier i10 "early spikes" were
   seed-luck / mixed-provenance, not a robust K2 effect. Wait for 2M completion.
 
+### 2026-06-01 ~11:49Z — checkpoint 4: Direction C CLOSED (K2 scaffold falsified)
+
+**phasei11c K2 scaffold verdict** (clean, pinned SHA 4d3b935, off@1M, 2M screen):
+
+| seed | best_any | ≥500 by 1.0M | note |
+|---:|---:|:--:|---|
+| 1 | 275.2 | no | complete 2M |
+| 2 | 219.8 | no | complete 2M |
+| 3 | 246.4 | no | complete 2M |
+| 4 | 310.9 | no | complete 2M |
+| 5 | 496.9 | no | still at 1.25M (lone climber) |
+
+**0/5 reached ≥500-by-1.0M; 4 complete seeds top out at 311 (mean ~263), below the
+362 baseline.** The clean test FALSIFIES the K2+temp0.01 "early basin scaffold"
+claim — the i10 early spikes (i10p s1, i10k s3) were seed-luck / mixed-provenance,
+not a reproducible effect. **Direction C is closed; do not pursue K2 scaffold.**
+This is exactly the value of pinned-SHA clean reruns (cf. i10c falsifying i9r's
+clean off-at-1M reproduction concern — same lesson).
+
+**phasei11a primary (climbing, off@1M payoff is post-handoff):** at 2-3M, s1=532
+(G1), s3=402, s2=367, s5=303, s4=208 → 1/5 G1 so far, real verdict at 4-6M.
+Refill worked: s6/s7/s8/s9 auto-launched on GPUs freed by phasei11c; s10 pending
+for gpu1 (phasei11c s5 finishing). 10/10 busy, one proc/GPU, no idle.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
