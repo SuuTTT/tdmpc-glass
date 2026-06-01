@@ -280,6 +280,37 @@ on spike-*rate*, not single seeds. Gate: a family is "real" only at ≥3/5.
 
 ---
 
+## Progress log
+
+### 2026-06-01 — pivot to clean evidence + B1 finding
+
+- **Stopped the fast-2M fan-out** (i10t/i10u/i10y seeds, + the redundant i10p_s4
+  10M restart) to free the fast a4000/2080ti boxes. Kept i10p_s3 (the 25.5h
+  near-complete leader). Promotion disabled on the stopped tasks so they do not
+  re-spawn the fan-out. Rationale: those runs were past their >500-by-1.0M
+  decision point, so killing lost only the low-value secondary metric.
+- **A1 provenance pinned:** repo clean at HEAD `4d3b935`; all new probes stamp
+  `CODE_SHA=4d3b935` (real git SHA, retiring `df9bfb1-dirty`).
+- **A2 launched:** `phasei11a_off1m_clean`, 5 seeds, faithful `phasei9r_fairci`
+  config (K128, NS2048, expl25k, temp0.0, glass off@1M, N=32/K=8, 10M steps,
+  patience 3M), priority 3. This is the decisive clean Glass-vs-K256 test.
+- **B1 built** (`control/analyze_mppi_gap.py`) and run on all history. Result:
+  MPPI is *not* systematically worse — mean(mppi−pi) is **positive** for nearly
+  every family (+10…+35); the leader `phasei9r_fairci` has MPPI winning best_any
+  5/5 at only 11% evals-worse. High MPPI-worse rate (>35%) appears only on **weak**
+  families (phaser2_gait 49%, phasei10k 58%, phaser1_soft 35%, phasei10s 30%).
+  **Interpretation:** MPPI miscalibration is a *symptom* of runs that never found
+  the hopping basin, not the cause. Repairing the planner won't rescue a run that
+  didn't enter the basin → prioritize **basin-entry robustness** (A2 off-at-1M, C
+  scaffold) over the planner-calibration track (B2). B2 demoted; only build it if
+  a strong-run still shows a persistent late MPPI deficit.
+
+### Baseline to beat (clean reference, recomputed 2026-06-01)
+
+`phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
+Win condition for Iteration 11: a clean, single-SHA Glass family with mean
+clearly above 362 (CI separation) and ≥3/5 G1. `phasei11a` is that test.
+
 ## Live state at iteration start (2026-06-01)
 
 Queue (authoritative `central_queue.json`): 8 tasks, 7 running, 1 done.
