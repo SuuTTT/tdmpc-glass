@@ -383,6 +383,26 @@ for gpu1 (phasei11c s5 finishing). 10/10 busy, one proc/GPU, no idle.
   still climbing), 1/5 G1. Seeds 6-10 filling (s10 pending gpu1 until phasei11c
   s5 done). Gate verdict at 4-6M. 10/10 busy, one proc/GPU, no idle.
 
+### 2026-06-01 ~13:57Z — checkpoint 6: off@1M GATE trending NEGATIVE; pivot to Gate 2
+
+**phasei11a off@1M preliminary gate (seeds 1-5 at 2.75-4.25M):** s1=540 (G1, plateaued),
+s3~405, s2~370, s5~300, s4~233 → mean(1-5) ~373, **1/5 G1**. Per-step trajectories
+show s2/s3/s5 **plateaued** (flat 1-2M steps, not climbing to 500); they will
+early-stop (patience 3M) around 5.5-6M without reaching G1.
+
+**Verdict (preliminary, pending early-stop):** clean off@1M does NOT cleanly beat
+the baseline — mean ~373 vs 362 is within noise (baseline CI [260,464]) and G1
+1/5 fails the >=3/5 criterion. **The i9r 4/5 lead does NOT reproduce under pinned
+code** — it was provenance/seed-luck (same lesson as i10c). All 10 off@1M seeds
+keep running to nail the honest 10-seed number.
+
+**Action (Gate 2):** pre-queued **phasei11b = clean i9q-style (temp-stability
+0.01 + Glass off@2M)** ×5, the best-evidenced off-family variant (i9q had the
+highest off-family G1 rate, 3/6). Auto-fills the fast GPUs as phasei11a seeds
+early-stop. If phasei11b also regresses, the "off-at-X handoff" family ties the
+baseline and the next move is a genuinely different mechanism (Direction D
+hierarchy, or temp-stability sweep), not another handoff-timing tweak.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
