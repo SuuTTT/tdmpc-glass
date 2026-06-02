@@ -71,6 +71,8 @@ while true; do
   sync_box 31740 ssh6.vast.ai          $MIRROR/ssh6_titanv       &
   sync_box 16690 ssh9.vast.ai          $MIRROR/ssh9_a4000        &
   sync_box 24701 ssh5.vast.ai          $MIRROR/ssh5_3060         &
+  sync_box 16822 ssh1.vast.ai          $MIRROR/ssh1_a4000b       &
+  sync_box 39560 ssh8.vast.ai          $MIRROR/ssh8_a4000        &
   sync_box 17647 ssh9.vast.ai          $MIRROR/ssh9_4x2060       &
   wait
 
@@ -81,6 +83,8 @@ while true; do
   summarize_box "ssh6_titanv " $MIRROR/ssh6_titanv
   summarize_box "ssh9_a4000  " $MIRROR/ssh9_a4000
   summarize_box "ssh5_3060   " $MIRROR/ssh5_3060
+  summarize_box "ssh1_a4000b " $MIRROR/ssh1_a4000b
+  summarize_box "ssh8_a4000  " $MIRROR/ssh8_a4000
   summarize_box "ssh9_4x2060 " $MIRROR/ssh9_4x2060
 
   sleep 300

@@ -54,6 +54,8 @@ BOXES = [
     ("ssh6_titanv",   31740,   "ssh6.vast.ai",   0, "ssh6:31740 Titan V (12GB)"),
     ("ssh9_a4000",    16690,   "ssh9.vast.ai",   0, "ssh9:16690 A4000 (16GB)"),
     ("ssh5_3060",     24701,   "ssh5.vast.ai",   0, "ssh5:24701 RTX 3060 (12GB)"),
+    ("ssh1_a4000b",   16822,   "ssh1.vast.ai",   0, "ssh1:16822 A4000 (16GB, rented)"),
+    ("ssh8_a4000",    39560,   "ssh8.vast.ai",   0, "ssh8:39560 A4000 (16GB, rented)"),
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01 (GPU fell off bus). Reboot to recover.
     # ("ssh9_2060_gpu0", 17647,  "ssh9.vast.ai",   0, "ssh9:17647 2060 GPU0 (6GB)"),
     # ("ssh9_2060_gpu1", 17647,  "ssh9.vast.ai",   1, "ssh9:17647 2060 GPU1 (6GB)"),
