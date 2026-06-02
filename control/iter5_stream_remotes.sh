@@ -74,6 +74,7 @@ while true; do
   sync_box 16822 ssh1.vast.ai          $MIRROR/ssh1_a4000b       &
   sync_box 39560 ssh8.vast.ai          $MIRROR/ssh8_a4000        &
   sync_box 29168 ssh4.vast.ai          $MIRROR/ssh4_a4000        &
+  sync_box 10022 ssh4.vast.ai          $MIRROR/ssh4_a4000b       &
   sync_box 17647 ssh9.vast.ai          $MIRROR/ssh9_4x2060       &
   wait
 
@@ -87,6 +88,7 @@ while true; do
   summarize_box "ssh1_a4000b " $MIRROR/ssh1_a4000b
   summarize_box "ssh8_a4000  " $MIRROR/ssh8_a4000
   summarize_box "ssh4_a4000  " $MIRROR/ssh4_a4000
+  summarize_box "ssh4_a4000b " $MIRROR/ssh4_a4000b
   summarize_box "ssh9_4x2060 " $MIRROR/ssh9_4x2060
 
   sleep 300

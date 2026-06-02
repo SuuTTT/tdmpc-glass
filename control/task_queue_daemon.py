@@ -44,6 +44,7 @@ BOXES = [
     ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),  # rented 2026-06-02 (inst 39016822)
     ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),  # rented 2026-06-02 (inst 39039561)
     ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),  # rented 2026-06-02 (inst 39109169)
+    ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),  # rented 2026-06-02 (inst 39120022)
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01: GPU2/GPU3 device-handle
     # "Unknown Error" (fell off the bus), JAX -> "Unknown backend cuda". Removed
     # from the fleet so the daemon stops churning fast-fails. Reboot the vast.ai
@@ -65,6 +66,7 @@ DEFAULT_MEM = {
     "ssh1_a4000b":    "0.75",
     "ssh8_a4000":     "0.75",
     "ssh4_a4000":     "0.75",
+    "ssh4_a4000b":    "0.75",
     "ssh9_2060_gpu0": "0.35",
     "ssh9_2060_gpu1": "0.35",
     "ssh9_2060_gpu2": "0.35",
