@@ -40,8 +40,15 @@ else
   /root/venv/bin/pip install \
       "jax[cuda12]==0.10.1" jaxlib==0.10.1 \
       mujoco==3.8.0 mujoco-mjx==3.8.0 warp-lang==1.12.1 \
-      brax==0.14.2 flax==0.12.7 optax==0.2.8 jaxopt==0.8.5 || { echo "pip core FAILED"; exit 1; }
+      brax==0.14.2 flax==0.12.7 optax==0.2.8 jaxopt==0.8.5 \
+      lxml etils ml_collections tqdm mediapy || { echo "pip core FAILED"; exit 1; }
+  # NOTE: do NOT add dm_control — it forces mujoco>=3.8.1 and drifts off the pinned 3.8.0.
 fi
+
+# EGL/GL system libs — MUJOCO_GL=egl needs these or run_benchmark dies at eglQueryString.
+# (vastai/pytorch base lacks them.) Harmless if already present.
+export DEBIAN_FRONTEND=noninteractive
+apt-get install -y -qq libegl1 libgl1 libgles2 libglvnd0 libglew2.2 libosmesa6 libgl1-mesa-glx >/dev/null 2>&1 || true
 
 if [ ! -d /root/mujoco_playground_repo ]; then
   git clone https://github.com/google-deepmind/mujoco_playground.git /root/mujoco_playground_repo || { echo "clone FAILED"; exit 1; }
