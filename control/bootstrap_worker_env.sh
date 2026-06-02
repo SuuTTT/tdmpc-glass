@@ -20,7 +20,21 @@ MJX_COMMIT=33f1b2843a7ec5537c4882177aa2a9f236e9b692
 if /root/venv/bin/python -c "import jax,mujoco_playground" 2>/dev/null; then
   echo "env already present; skipping install"
 else
-  python3 -m venv /root/venv || { echo "venv create FAILED"; exit 1; }
+  # jax 0.10.1 needs python>=3.11. vastai/pytorch ships 3.10 -> install 3.11 via deadsnakes.
+  PY=""
+  for c in python3.12 python3.11; do command -v "$c" >/dev/null 2>&1 && { PY=$c; break; }; done
+  if [ -z "$PY" ]; then
+    echo "no python>=3.11 found; installing python3.11 (deadsnakes)..."
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq && apt-get install -y -qq software-properties-common >/dev/null 2>&1
+    add-apt-repository -y ppa:deadsnakes/ppa >/dev/null 2>&1
+    apt-get update -qq && apt-get install -y -qq python3.11 python3.11-venv python3.11-dev >/dev/null 2>&1
+    command -v python3.11 >/dev/null 2>&1 && PY=python3.11
+  fi
+  [ -z "$PY" ] && { echo "FAILED to obtain python>=3.11"; exit 1; }
+  echo "using $PY ($($PY --version 2>&1)) for venv"
+  rm -rf /root/venv   # drop any wrong-python venv from a prior attempt
+  "$PY" -m venv /root/venv || { echo "venv create FAILED"; exit 1; }
   /root/venv/bin/pip install -U pip wheel setuptools || exit 1
   # Pinned to match the known-good worker (ssh2_a4000) freeze.
   /root/venv/bin/pip install \
