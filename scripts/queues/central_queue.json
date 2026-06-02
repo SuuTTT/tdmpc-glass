@@ -629,10 +629,10 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11d_onelevel_se SEEDS=4 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-01T18:25:32Z",
     "started_at": "2026-06-02T10:34:45Z",
-    "ended_at": null,
+    "ended_at": "2026-06-02T14:26:18Z",
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": "ssh6_titanv",
     "launched_git_sha": "e618688",
@@ -697,11 +697,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=13 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-02T12:05:25Z",
-    "started_at": null,
+    "started_at": "2026-06-02T14:26:18Z",
     "ended_at": null,
-    "note": "keep fleet busy + robust Gate-2 CI"
+    "note": "keep fleet busy + robust Gate-2 CI",
+    "box": "ssh6_titanv",
+    "launched_git_sha": "6315d3f"
   },
   {
     "id": "tcecc8c7",
@@ -709,11 +711,16 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=14 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "done",
     "created_at": "2026-06-02T12:05:25Z",
     "started_at": null,
-    "ended_at": null,
-    "note": "keep fleet busy + robust Gate-2 CI"
+    "ended_at": "2026-06-02T14:33:58Z",
+    "note": "cancelled: iter-11 converged, pivot to phasei12a restart",
+    "auto_promoted": {
+      "skip_reason": "pivot",
+      "added": 0,
+      "at": "2026-06-02T14:33:58Z"
+    }
   },
   {
     "id": "tb0ca276",
@@ -721,11 +728,16 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=15 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "done",
     "created_at": "2026-06-02T14:24:49Z",
     "started_at": null,
-    "ended_at": null,
-    "note": "no-idle backlog"
+    "ended_at": "2026-06-02T14:33:58Z",
+    "note": "cancelled: iter-11 converged, pivot to phasei12a restart",
+    "auto_promoted": {
+      "skip_reason": "pivot",
+      "added": 0,
+      "at": "2026-06-02T14:33:58Z"
+    }
   },
   {
     "id": "t041d432",
@@ -733,10 +745,75 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=16 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "done",
     "created_at": "2026-06-02T14:24:49Z",
     "started_at": null,
+    "ended_at": "2026-06-02T14:33:58Z",
+    "note": "cancelled: iter-11 converged, pivot to phasei12a restart",
+    "auto_promoted": {
+      "skip_reason": "pivot",
+      "added": 0,
+      "at": "2026-06-02T14:33:58Z"
+    }
+  },
+  {
+    "id": "t64e94ff",
+    "label": "phasei12a calibrated restart-on-plateau seed 1 (basin-entry pivot, vanilla tdmpc2)",
+    "launcher": "scripts/run_phasei12a_restart.sh",
+    "env": "PROBE_ID=phasei12a_restart SEEDS=1 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=500000 TOTAL_STEPS=10000000 RESTART_CHECK_AT=2000000 RESTART_THRESHOLD=430 RESTART_MAX_ATTEMPTS=4 LATENT_SMOOTH=0.001 LATENT_SMOOTH_WARMUP=250000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-02T14:33:58Z",
+    "started_at": null,
     "ended_at": null,
-    "note": "no-idle backlog"
+    "note": "iter-11 PIVOT (b): basin-entry robustness via calibrated restart (threshold 430 @2M, 4 attempts), keeps world model"
+  },
+  {
+    "id": "t1536605",
+    "label": "phasei12a calibrated restart-on-plateau seed 2 (basin-entry pivot, vanilla tdmpc2)",
+    "launcher": "scripts/run_phasei12a_restart.sh",
+    "env": "PROBE_ID=phasei12a_restart SEEDS=2 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=500000 TOTAL_STEPS=10000000 RESTART_CHECK_AT=2000000 RESTART_THRESHOLD=430 RESTART_MAX_ATTEMPTS=4 LATENT_SMOOTH=0.001 LATENT_SMOOTH_WARMUP=250000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-02T14:33:58Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iter-11 PIVOT (b): basin-entry robustness via calibrated restart (threshold 430 @2M, 4 attempts), keeps world model"
+  },
+  {
+    "id": "t4297d65",
+    "label": "phasei12a calibrated restart-on-plateau seed 3 (basin-entry pivot, vanilla tdmpc2)",
+    "launcher": "scripts/run_phasei12a_restart.sh",
+    "env": "PROBE_ID=phasei12a_restart SEEDS=3 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=500000 TOTAL_STEPS=10000000 RESTART_CHECK_AT=2000000 RESTART_THRESHOLD=430 RESTART_MAX_ATTEMPTS=4 LATENT_SMOOTH=0.001 LATENT_SMOOTH_WARMUP=250000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-02T14:33:58Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iter-11 PIVOT (b): basin-entry robustness via calibrated restart (threshold 430 @2M, 4 attempts), keeps world model"
+  },
+  {
+    "id": "tb9b135b",
+    "label": "phasei12a calibrated restart-on-plateau seed 4 (basin-entry pivot, vanilla tdmpc2)",
+    "launcher": "scripts/run_phasei12a_restart.sh",
+    "env": "PROBE_ID=phasei12a_restart SEEDS=4 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=500000 TOTAL_STEPS=10000000 RESTART_CHECK_AT=2000000 RESTART_THRESHOLD=430 RESTART_MAX_ATTEMPTS=4 LATENT_SMOOTH=0.001 LATENT_SMOOTH_WARMUP=250000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-02T14:33:58Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iter-11 PIVOT (b): basin-entry robustness via calibrated restart (threshold 430 @2M, 4 attempts), keeps world model"
+  },
+  {
+    "id": "t186929a",
+    "label": "phasei12a calibrated restart-on-plateau seed 5 (basin-entry pivot, vanilla tdmpc2)",
+    "launcher": "scripts/run_phasei12a_restart.sh",
+    "env": "PROBE_ID=phasei12a_restart SEEDS=5 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=500000 TOTAL_STEPS=10000000 RESTART_CHECK_AT=2000000 RESTART_THRESHOLD=430 RESTART_MAX_ATTEMPTS=4 LATENT_SMOOTH=0.001 LATENT_SMOOTH_WARMUP=250000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-02T14:33:58Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "iter-11 PIVOT (b): basin-entry robustness via calibrated restart (threshold 430 @2M, 4 attempts), keeps world model"
   }
 ]
