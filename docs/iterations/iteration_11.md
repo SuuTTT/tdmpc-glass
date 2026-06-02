@@ -437,6 +437,34 @@ off-handoff Glass family only ties TD-MPC2 and pivot to a different lever
   compute. phasei11d (Direction D) config still unverified (only failed on dead box;
   pending behind phasei11b). vastai-watcher waiting (<$0.10 market has no >180 DLP/$).
 
+### 2026-06-02 ~07:40Z — off@1M FINAL (mature); Gate-2 + Direction D maturing
+
+**phasei11a off@1M — MATURE, 10 clean seeds (pinned SHA 4d3b935):**
+
+| metric | value |
+|---|---|
+| mean best_any | **408.0** |
+| G1 (>=500) | **2/10** (s1=549, s6=514) |
+| near-misses | s2=494, s3=469 |
+| vs K256 baseline (362.1, 1/5) | +46 on mean, **FAILS >=3/5 G1** |
+
+**Verdict: clean off@1M edges the baseline on MEAN (~+46) but is NOT robust
+(2/10 G1).** This is the decisive clean test of the i9r off-at-1M lead — it does
+NOT reproduce the old "4/5 G1" (which was provenance/seed-luck, as i10c first hinted).
+
+**phasei11b (Gate 2, off@2M+temp0.01) — still maturing:** 4 mature seeds s2-5
+mean ~430, 1/4 G1 (s5=500; s3=490, s2=461 climbing); s6/s9/s10 early. Trending the
+SAME shape as off@1M — modest mean edge, sparse G1.
+**phasei11d (Direction D, one-level SE N8/K8) — VALIDATED, maturing:** s1 342@0.8M,
+s2-5 queued. Verdict pending.
+
+**Emerging iteration-11 conclusion (pending phasei11b/d maturity):** every clean
+Glass off-handoff variant clusters at mean ~400-430 — a modest ~+45-65 edge over
+TD-MPC2 K256 (362) — but NONE reaches the >=3/5 G1 robustness bar. K2 scaffold
+falsified. If phasei11b/d confirm, the honest result is "Glass ~= TD-MPC2 + small
+mean edge, not robustly better"; next move = a genuinely new mechanism, not
+another handoff/temp tweak.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.
