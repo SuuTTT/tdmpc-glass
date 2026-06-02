@@ -465,6 +465,37 @@ falsified. If phasei11b/d confirm, the honest result is "Glass ~= TD-MPC2 + smal
 mean edge, not robustly better"; next move = a genuinely new mechanism, not
 another handoff/temp tweak.
 
+### 2026-06-02 ~14:23Z — CONVERGED standings (near-final), all clean families at pinned SHA 4d3b935
+
+| family | config | mature mean best_any | G1 | vs K256 (362.1, 1/5) |
+|---|---|---:|---:|---|
+| off@1M | N32/K8, temp0, off@1M | **410** | **2/10** | +48, not >=3/5 |
+| off@2M+temp | N32/K8, temp0.01, off@2M | **~430** (s2-5) | **2/4** mature | +68, not >=3/5 |
+| one-level SE | N8/K8, temp0.01, off@1M | **390** | **1/5** (s4=503) | +28, not >=3/5 |
+| K2 scaffold | N8/K2, temp0.01, off@1M | 315 | 0/5 | falsified (below baseline) |
+
+(off@2M+temp s6/s9 stuck ~270 @3.5M, NOT climbing to 500 — phasei11b will not reach
+>=3/5. one-level SE CORRECTED from earlier "falsified": s4=503 G1, mean 390 — it is
+ON PAR with two-level, not worse.)
+
+**CONVERGED CONCLUSION:** every clean Glass variant lands at mean ~390-430 — a real
+but **modest +28 to +68 edge over TD-MPC2 K256 (362)** — yet **NONE achieves the
+>=3/5 G1 robustness bar**. The bar is missed the same way each time: 1-2 seeds enter
+the hopping basin (>=500), the rest plateau ~270-470. Both genuinely-new levers this
+iteration (K2 scaffold; one-level vs two-level hierarchy) did NOT change this shape.
+This decisively confirms (vs the mixed-provenance i9r "4/5") that **clean Glass off-
+handoff ~= TD-MPC2 + a small mean edge, NOT robustly better** — and that the
+bottleneck is basin-ENTRY robustness (B1 finding), which none of the
+structural-entropy/handoff/temperature knobs move.
+
+**DECISION (open, for user):**
+(a) ACCEPT the modest mean-edge as the iteration-11 result and write it up honestly
+    (Glass gives ~+10-15% mean on HopperHop but not a robustness win), OR
+(b) PIVOT to a NEW mechanism targeting basin-entry robustness — NOT another
+    SE/handoff/temp/hierarchy tweak. Best-evidenced options: exploration/reset
+    schemes (restart-on-bad-basin), a no-shaping curriculum, or the JEPA world-model
+    track (iteration_10 h0/h1) to fix the latent/planner calibration directly.
+
 ### Baseline to beat (clean reference, recomputed 2026-06-01)
 
 `phaseaa_codex_tdmpc2_k256`: n=5, mean best_any **362.1**, 1/5 G1.

@@ -589,10 +589,10 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11d_onelevel_se SEEDS=2 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-01T18:25:32Z",
     "started_at": "2026-06-02T08:19:42Z",
-    "ended_at": null,
+    "ended_at": "2026-06-02T13:55:45Z",
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": "ssh2_a4000",
     "launched_git_sha": "e618688",
@@ -669,11 +669,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=11 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-02T12:05:25Z",
-    "started_at": null,
+    "started_at": "2026-06-02T13:27:15Z",
     "ended_at": null,
-    "note": "keep fleet busy + robust Gate-2 CI"
+    "note": "keep fleet busy + robust Gate-2 CI",
+    "box": "ssh4_a4000b",
+    "launched_git_sha": "576aeba"
   },
   {
     "id": "t6b48f95",
@@ -681,11 +683,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=12 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-02T12:05:25Z",
-    "started_at": null,
+    "started_at": "2026-06-02T13:55:45Z",
     "ended_at": null,
-    "note": "keep fleet busy + robust Gate-2 CI"
+    "note": "keep fleet busy + robust Gate-2 CI",
+    "box": "ssh2_a4000",
+    "launched_git_sha": "576aeba"
   },
   {
     "id": "tde027a4",
@@ -710,5 +714,29 @@
     "started_at": null,
     "ended_at": null,
     "note": "keep fleet busy + robust Gate-2 CI"
+  },
+  {
+    "id": "tb0ca276",
+    "label": "phasei11b off@2M+temp seed 15 (no-idle fill)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=15 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "pending",
+    "created_at": "2026-06-02T14:24:49Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "no-idle backlog"
+  },
+  {
+    "id": "t041d432",
+    "label": "phasei11b off@2M+temp seed 16 (no-idle fill)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=16 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "pending",
+    "created_at": "2026-06-02T14:24:49Z",
+    "started_at": null,
+    "ended_at": null,
+    "note": "no-idle backlog"
   }
 ]
