@@ -207,10 +207,10 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=2 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-01T06:46:12Z",
     "started_at": "2026-06-01T06:47:27Z",
-    "ended_at": null,
+    "ended_at": "2026-06-02T05:35:09Z",
     "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
     "box": "ssh1_a4000"
   },
@@ -481,13 +481,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=6 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-01T18:25:32Z",
-    "started_at": null,
+    "started_at": "2026-06-02T05:41:01Z",
     "ended_at": null,
     "note": "8h backlog: Gate-2 fuller CI",
-    "box": null,
-    "launched_git_sha": "b6dc081",
+    "box": "ssh1_a4000b",
+    "launched_git_sha": "4e7603c",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -529,13 +529,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11b_off2m_temp001 SEEDS=9 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=2000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-01T18:25:32Z",
-    "started_at": null,
+    "started_at": "2026-06-02T05:41:16Z",
     "ended_at": null,
     "note": "8h backlog: Gate-2 fuller CI",
-    "box": null,
-    "launched_git_sha": "b6dc081",
+    "box": "ssh8_a4000",
+    "launched_git_sha": "4e7603c",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -569,13 +569,13 @@
     "launcher": "scripts/run_phasei9_glass_probe.sh",
     "env": "PROBE_ID=phasei11d_onelevel_se SEEDS=1 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-01T18:25:32Z",
-    "started_at": null,
+    "started_at": "2026-06-02T05:35:09Z",
     "ended_at": null,
     "note": "8h backlog: Direction D one-level-vs-two-level",
-    "box": null,
-    "launched_git_sha": "b6dc081",
+    "box": "ssh1_a4000",
+    "launched_git_sha": "280059d",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -595,7 +595,7 @@
     "ended_at": null,
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": null,
-    "launched_git_sha": "b6dc081",
+    "launched_git_sha": "280059d",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -615,7 +615,7 @@
     "ended_at": null,
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": null,
-    "launched_git_sha": "b6dc081",
+    "launched_git_sha": "280059d",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -635,7 +635,7 @@
     "ended_at": null,
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": null,
-    "launched_git_sha": "b6dc081",
+    "launched_git_sha": "4e7603c",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
@@ -655,7 +655,7 @@
     "ended_at": null,
     "note": "8h backlog: Direction D one-level-vs-two-level",
     "box": null,
-    "launched_git_sha": "b6dc081",
+    "launched_git_sha": "4e7603c",
     "recovery_history": [
       {
         "at": "2026-06-01T19:23:02Z",
