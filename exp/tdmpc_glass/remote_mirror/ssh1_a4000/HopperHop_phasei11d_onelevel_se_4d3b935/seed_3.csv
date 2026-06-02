@@ -1,0 +1,5 @@
+step,reward,eval_type,seed
+250112,10.3,pi,3
+250112,56.7,mppi,3
+500224,168.6,pi,3
+500224,97.6,mppi,3

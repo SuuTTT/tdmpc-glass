@@ -1,0 +1,392 @@
+[
+  {
+    "id": "t69723f9",
+    "label": "auto-promote phasei10p_k2_temp0005 seed 4 from t358669e best_any=537.1",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei10p_k2_temp0005_auto_s4 SEEDS=4 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 TEMP_STABILITY=0.005 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35",
+    "priority": 6,
+    "status": "done",
+    "created_at": "2026-05-29T20:12:45Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_parent": "t358669e",
+    "auto_reason": "best_any=537.1 status=done add_count=2",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu3",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh9_2060_gpu3",
+    "started_at": "2026-06-01T04:15:57Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "ta3a9713",
+    "label": "phasei10t promote K2 temp002 seed9 (post s4/s5 G1)",
+    "env": "PROBE_ID=phasei10t_k2_temp002_fast2m SEEDS=9 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh1_2080ti",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-01T04:13:41Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "t353fd6b",
+    "label": "phasei10t promote K2 temp002 seed10 (post s4/s5 G1)",
+    "env": "PROBE_ID=phasei10t_k2_temp002_fast2m SEEDS=10 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu0",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh1_a4000",
+    "started_at": "2026-06-01T04:14:04Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "t93d8d9a",
+    "label": "phasei10u promote K4 temp001 seed6 (2of5 G1)",
+    "env": "PROBE_ID=phasei10u_k4_temp001_fast2m SEEDS=6 K_UPDATE=128 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 MPPI_NS=2048 TEMP_STABILITY=0.01 NUM_PROTOTYPES=8 NUM_CLUSTERS=4",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu2",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh2_a4000",
+    "started_at": "2026-06-01T04:14:18Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "td7e0a6d",
+    "label": "phasei10u promote K4 temp001 seed7 (2of5 G1)",
+    "env": "PROBE_ID=phasei10u_k4_temp001_fast2m SEEDS=7 K_UPDATE=128 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 MPPI_NS=2048 TEMP_STABILITY=0.01 NUM_PROTOTYPES=8 NUM_CLUSTERS=4",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh1_a4000",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh3_a4000",
+    "started_at": "2026-06-01T04:14:36Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "t4099233",
+    "label": "phasei10y K4 temp002 seed1 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=1 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "combine temp0.02 spike with K4 scaffold signal",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "local",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh6_titanv",
+    "started_at": "2026-06-01T04:14:55Z",
+    "ended_at": "2026-06-01T06:05:10Z"
+  },
+  {
+    "id": "tee6fad7",
+    "label": "phasei10y K4 temp002 seed2 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=2 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-01T04:15:15Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "t2e2ad4b",
+    "label": "phasei10y K4 temp002 seed3 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=3 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "stopped for iteration-11 pivot (fan-out halted); promotion disabled",
+    "box": "ssh9_2060_gpu0",
+    "started_at": "2026-06-01T04:15:30Z",
+    "ended_at": "2026-06-01T06:46:12Z",
+    "auto_promoted": {
+      "skip_reason": "iteration11_pivot_manual_stop",
+      "added": 0,
+      "at": "2026-06-01T06:46:12Z"
+    }
+  },
+  {
+    "id": "tce9148d",
+    "label": "phasei11a clean off-at-1M seed 1 (Glass vs K256 baseline, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=1 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 3,
+    "status": "running",
+    "created_at": "2026-06-01T06:46:12Z",
+    "started_at": "2026-06-01T06:47:02Z",
+    "ended_at": null,
+    "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
+    "box": "ssh1_2080ti"
+  },
+  {
+    "id": "t0d478fc",
+    "label": "phasei11a clean off-at-1M seed 2 (Glass vs K256 baseline, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=2 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 3,
+    "status": "running",
+    "created_at": "2026-06-01T06:46:12Z",
+    "started_at": "2026-06-01T06:47:27Z",
+    "ended_at": null,
+    "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
+    "box": "ssh1_a4000"
+  },
+  {
+    "id": "tf1576b0",
+    "label": "phasei11a clean off-at-1M seed 3 (Glass vs K256 baseline, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=3 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 3,
+    "status": "running",
+    "created_at": "2026-06-01T06:46:12Z",
+    "started_at": "2026-06-01T06:47:40Z",
+    "ended_at": null,
+    "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
+    "box": "ssh2_a4000"
+  },
+  {
+    "id": "ta4836fc",
+    "label": "phasei11a clean off-at-1M seed 4 (Glass vs K256 baseline, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=4 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 3,
+    "status": "running",
+    "created_at": "2026-06-01T06:46:12Z",
+    "started_at": "2026-06-01T06:47:58Z",
+    "ended_at": null,
+    "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
+    "box": "ssh3_a4000"
+  },
+  {
+    "id": "tb5749ee",
+    "label": "phasei11a clean off-at-1M seed 5 (Glass vs K256 baseline, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=5 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 3,
+    "status": "running",
+    "created_at": "2026-06-01T06:46:12Z",
+    "started_at": "2026-06-01T06:48:17Z",
+    "ended_at": null,
+    "note": "iteration-11 A2: decisive clean off-at-1M, pinned SHA, faithful phasei9r_fairci config",
+    "box": "ssh6_titanv"
+  },
+  {
+    "id": "ta927314",
+    "label": "phasei11c K2 scaffold screen seed 1 (Direction C, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=1 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-06-01T06:52:35Z",
+    "started_at": "2026-06-01T06:53:33Z",
+    "ended_at": "2026-06-01T11:38:08Z",
+    "note": "iteration-11 C: clean K2+temp0.01 off-at-1M scaffold screen (2M fast), parallel hedge to phasei11a",
+    "box": "ssh9_a4000"
+  },
+  {
+    "id": "tdb21a2f",
+    "label": "phasei11c K2 scaffold screen seed 2 (Direction C, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=2 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-06-01T06:52:35Z",
+    "started_at": "2026-06-01T06:53:48Z",
+    "ended_at": "2026-06-01T11:40:06Z",
+    "note": "iteration-11 C: clean K2+temp0.01 off-at-1M scaffold screen (2M fast), parallel hedge to phasei11a",
+    "box": "ssh9_2060_gpu0"
+  },
+  {
+    "id": "t712f138",
+    "label": "phasei11c K2 scaffold screen seed 3 (Direction C, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=3 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-06-01T06:52:35Z",
+    "started_at": "2026-06-01T06:54:02Z",
+    "ended_at": "2026-06-01T11:32:37Z",
+    "note": "iteration-11 C: clean K2+temp0.01 off-at-1M scaffold screen (2M fast), parallel hedge to phasei11a",
+    "box": "ssh9_2060_gpu2"
+  },
+  {
+    "id": "tbe7fc00",
+    "label": "phasei11c K2 scaffold screen seed 4 (Direction C, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=4 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-06-01T06:52:35Z",
+    "started_at": "2026-06-01T06:54:15Z",
+    "ended_at": "2026-06-01T11:36:12Z",
+    "note": "iteration-11 C: clean K2+temp0.01 off-at-1M scaffold screen (2M fast), parallel hedge to phasei11a",
+    "box": "ssh9_2060_gpu3"
+  },
+  {
+    "id": "t28bc7d6",
+    "label": "phasei11c K2 scaffold screen seed 5 (complete 5-seed, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11c_k2_temp001 SEEDS=5 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.01 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 4,
+    "status": "done",
+    "created_at": "2026-06-01T07:25:37Z",
+    "started_at": "2026-06-01T08:18:01Z",
+    "ended_at": "2026-06-01T13:50:27Z",
+    "note": "iteration-11 C: pre-queued so gpu1 auto-refills when i10p_s3 leader finishes",
+    "box": "ssh9_2060_gpu1",
+    "auto_promoted": {
+      "best_any": 524.0,
+      "status": "done",
+      "added": 0,
+      "at": "2026-06-01T13:50:31Z"
+    }
+  },
+  {
+    "id": "te895f6d",
+    "label": "phasei11a clean off-at-1M seed 6 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=6 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": "2026-06-01T11:32:40Z",
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family",
+    "box": "ssh9_2060_gpu2"
+  },
+  {
+    "id": "ta1b7979",
+    "label": "phasei11a clean off-at-1M seed 7 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=7 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": "2026-06-01T11:36:15Z",
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family",
+    "box": "ssh9_2060_gpu3"
+  },
+  {
+    "id": "t3529d0a",
+    "label": "phasei11a clean off-at-1M seed 8 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=8 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": "2026-06-01T11:38:12Z",
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family",
+    "box": "ssh9_a4000"
+  },
+  {
+    "id": "t66eb0e9",
+    "label": "phasei11a clean off-at-1M seed 9 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=9 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": "2026-06-01T11:40:09Z",
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family",
+    "box": "ssh9_2060_gpu0"
+  },
+  {
+    "id": "tc0d6b7e",
+    "label": "phasei11a clean off-at-1M seed 10 (strengthen primary CI, SHA 4d3b935)",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei11a_off1m_clean SEEDS=10 K_UPDATE=128 MPPI_NS=2048 EXPL_UNTIL=25000 TEMP_STABILITY=0.0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 NUM_PROTOTYPES=32 NUM_CLUSTERS=8 NUM_SUPER_CLUSTERS=0 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 CODE_SHA=4d3b935 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-06-01T10:48:14Z",
+    "started_at": "2026-06-01T13:50:31Z",
+    "ended_at": null,
+    "note": "iteration-11 A2 fill: pre-queued to auto-refill GPUs freed by phasei11c 2M finish; extends primary to 10-seed clean family",
+    "box": "ssh9_2060_gpu1"
+  }
+]

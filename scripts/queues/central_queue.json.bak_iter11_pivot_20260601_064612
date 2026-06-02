@@ -1,0 +1,149 @@
+[
+  {
+    "id": "t69723f9",
+    "label": "auto-promote phasei10p_k2_temp0005 seed 4 from t358669e best_any=537.1",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "env": "PROBE_ID=phasei10p_k2_temp0005_auto_s4 SEEDS=4 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=10000000 EARLY_STOP_PATIENCE=3000000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 TEMP_STABILITY=0.005 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35",
+    "priority": 6,
+    "status": "running",
+    "created_at": "2026-05-29T20:12:45Z",
+    "ended_at": null,
+    "auto_parent": "t358669e",
+    "auto_reason": "best_any=537.1 status=done add_count=2",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu3",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh9_2060_gpu3",
+    "started_at": "2026-06-01T04:15:57Z"
+  },
+  {
+    "id": "ta3a9713",
+    "label": "phasei10t promote K2 temp002 seed9 (post s4/s5 G1)",
+    "env": "PROBE_ID=phasei10t_k2_temp002_fast2m SEEDS=9 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 4,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "phasei10t reached 2/6 G1; extend seed estimate",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh1_2080ti",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-01T04:13:41Z"
+  },
+  {
+    "id": "t353fd6b",
+    "label": "phasei10t promote K2 temp002 seed10 (post s4/s5 G1)",
+    "env": "PROBE_ID=phasei10t_k2_temp002_fast2m SEEDS=10 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=2 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 4,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "phasei10t reached 2/6 G1; extend seed estimate",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu0",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh1_a4000",
+    "started_at": "2026-06-01T04:14:04Z"
+  },
+  {
+    "id": "t93d8d9a",
+    "label": "phasei10u promote K4 temp001 seed6 (2of5 G1)",
+    "env": "PROBE_ID=phasei10u_k4_temp001_fast2m SEEDS=6 K_UPDATE=128 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 MPPI_NS=2048 TEMP_STABILITY=0.01 NUM_PROTOTYPES=8 NUM_CLUSTERS=4",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "phasei10u K4/temp0.01 reached 2/5 G1; extend seed estimate",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh9_2060_gpu2",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh2_a4000",
+    "started_at": "2026-06-01T04:14:18Z"
+  },
+  {
+    "id": "td7e0a6d",
+    "label": "phasei10u promote K4 temp001 seed7 (2of5 G1)",
+    "env": "PROBE_ID=phasei10u_k4_temp001_fast2m SEEDS=7 K_UPDATE=128 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 MPPI_NS=2048 TEMP_STABILITY=0.01 NUM_PROTOTYPES=8 NUM_CLUSTERS=4",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "phasei10u K4/temp0.01 reached 2/5 G1; extend seed estimate",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "ssh1_a4000",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh3_a4000",
+    "started_at": "2026-06-01T04:14:36Z"
+  },
+  {
+    "id": "t4099233",
+    "label": "phasei10y K4 temp002 seed1 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=1 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "done",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "combine temp0.02 spike with K4 scaffold signal",
+    "recovery_history": [
+      {
+        "at": "2026-06-01T04:10:56Z",
+        "from_status": "running",
+        "from_box": "local",
+        "reason": "EC2 control-plane migration: stale running reset (original 4070 center destroyed)"
+      }
+    ],
+    "box": "ssh6_titanv",
+    "started_at": "2026-06-01T04:14:55Z",
+    "ended_at": "2026-06-01T06:05:10Z"
+  },
+  {
+    "id": "tee6fad7",
+    "label": "phasei10y K4 temp002 seed2 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=2 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "combine temp0.02 spike with K4 scaffold signal",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-01T04:15:15Z"
+  },
+  {
+    "id": "t2e2ad4b",
+    "label": "phasei10y K4 temp002 seed3 (combine i10t+i10u)",
+    "env": "PROBE_ID=phasei10y_k4_temp002_fast2m SEEDS=3 K_UPDATE=128 MPPI_NS=2048 TOTAL_STEPS=2000000 EARLY_STOP_PATIENCE=1500000 EXPL_UNTIL=25000 PROTO_TEMP=0.7 ASSIGN_SCALE=0.5 STOPGRAD=true LATENT_SMOOTH=0.0 LATENT_SMOOTH_WARMUP=0 GLASS_WARMUP=100000 GLASS_DECAY=1000000 NUM_PROTOTYPES=8 NUM_CLUSTERS=4 NUM_SUPER_CLUSTERS=0 CODE_SHA=df9bfb1-dirty XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 TEMP_STABILITY=0.02",
+    "launcher": "scripts/run_phasei9_glass_probe.sh",
+    "priority": 5,
+    "status": "running",
+    "created_at": "2026-05-31T09:21:12Z",
+    "note": "combine temp0.02 spike with K4 scaffold signal",
+    "box": "ssh9_2060_gpu0",
+    "started_at": "2026-06-01T04:15:30Z"
+  }
+]
