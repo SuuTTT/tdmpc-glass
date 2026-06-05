@@ -35,16 +35,33 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 # Fleet as of 2026-06-01 (glass-tdmpc boxes; ports are the real sshd ports).
 BOXES = [
     ("ssh1_2080ti",   34217,  "ssh1.vast.ai",   0),
+    ("ssh6_titanv",   31740,  "ssh6.vast.ai",   0),
+    # ssh5_3060 (inst 34824701) REMOVED 2026-06-05: DISK FULL — was a failure sink
+    # (fast-failed every task incl. all geoglass/behavglass arms). User reclaiming it
+    # for another project; tdmpc files/env cleared. Do NOT re-add.
+    # ("ssh5_3060",     24701,  "ssh5.vast.ai",   0),
+    ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),  # rented 2026-06-02; seed3=501 G1 (finishing)
+    ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),  # rented 2026-06-02; seed4=550 G1 (finishing)
+    # ── 1660 Super x2 (inst 38342607, ssh4.vast.ai:22607) — UNSTABLE/flaky, 6GB each.
+    # Daemon (not PBT) absorbs its reboots via the offline→idle reconcile + host-key
+    # tolerance in ~/.ssh/config. OOM test 2026-06-04: standard cfg uses only ~0.6/6GB,
+    # JIT 13s, 100% util — fits with headroom on both GPUs. ENABLED.
+    ("ssh4_1660s_g0", 22607, "ssh4.vast.ai",   0),
+    ("ssh4_1660s_g1", 22607, "ssh4.vast.ai",   1),
+    # ── Former PBT pool, FOLDED BACK into the daemon 2026-06-04 (orchestrator stopped;
+    # research pivoted off PBT). Daemon is now the single manager. In-flight PBT members
+    # finish naturally (daemon sees the box busy, won't touch); when they finish the
+    # daemon launches the next pending baseline task. ssh3 omitted (recycled/lost).
     ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
     ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),
-    ("ssh3_a4000",    17426,  "ssh3.vast.ai",   0),
-    ("ssh6_titanv",   31740,  "ssh6.vast.ai",   0),
-    ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),
-    ("ssh5_3060",     24701,  "ssh5.vast.ai",   0),
-    ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),  # rented 2026-06-02 (inst 39016822)
-    ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),  # rented 2026-06-02 (inst 39039561)
-    ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),  # rented 2026-06-02 (inst 39109169)
-    ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),  # rented 2026-06-02 (inst 39120022)
+    ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
+    ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
+    ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
+    # Added 2026-06-04 (user): 2 more A4000s. 38766691 == ssh9_a4000 above (same proxy
+    # ssh9.vast.ai:16690), already covered. 38767427 below (proxy ssh3.vast.ai:17426 —
+    # port churned earlier but maps to our instance now; *.vast.ai host-key tolerance +
+    # is_box_idle fail-safe handle any re-churn). Env verified: jax 0.10.1 + repo present.
+    ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01: GPU2/GPU3 device-handle
     # "Unknown Error" (fell off the bus), JAX -> "Unknown backend cuda". Removed
     # from the fleet so the daemon stops churning fast-fails. Reboot the vast.ai
@@ -71,12 +88,16 @@ DEFAULT_MEM = {
     "ssh9_2060_gpu1": "0.35",
     "ssh9_2060_gpu2": "0.35",
     "ssh9_2060_gpu3": "0.35",
+    "ssh4_1660s_g0":  "0.5",   # 6GB; standard cfg uses only ~0.6GB, 0.5 cap is ample
+    "ssh4_1660s_g1":  "0.5",
 }
 CUDA_MASK = {
     "ssh9_2060_gpu0": "CUDA_VISIBLE_DEVICES=0",
     "ssh9_2060_gpu1": "CUDA_VISIBLE_DEVICES=1",
     "ssh9_2060_gpu2": "CUDA_VISIBLE_DEVICES=2",
     "ssh9_2060_gpu3": "CUDA_VISIBLE_DEVICES=3",
+    "ssh4_1660s_g0":  "CUDA_VISIBLE_DEVICES=0",  # two runs, one per GPU on inst 38342607
+    "ssh4_1660s_g1":  "CUDA_VISIBLE_DEVICES=1",
 }
 
 

@@ -486,6 +486,7 @@ def train_tdmpc2(
     q_reset_steps: list[int] | None = None,
     latent_action_smooth_coef: float = 0.0,
     consistency_coef: float | None = None,
+    bisim_coef: float = 0.0,
     early_stop_patience: int = 0,
     latent_smooth_warmup_env_steps: int = 0,
     glass_decay_steps: int = 0,
@@ -589,7 +590,7 @@ def train_tdmpc2(
         glass_cfg.update({k: v for k, v in glass_overrides.items() if v is not None})
     seq_len    = H + 1             # 4 — trajectory length in buffer
     buf_cap    = max(total_steps // N_ENVS + 1000, 50_000)
-    eval_interval = 250_000 if env_id == "HopperHop" else max(total_steps // 12, 1)
+    eval_interval = 250_000 if env_id == "HopperHop" else 50_000  # iter-14: frequent evals on DMC for fast dashboard feedback
     episode_length = 1000
 
     # ── Environment
@@ -637,6 +638,7 @@ def train_tdmpc2(
             num_clusters=glass_cfg.get("num_clusters", 8),
             assign_logits_init_scale=glass_cfg.get("assign_logits_init_scale", 1.0),
             num_super_clusters=glass_cfg.get("num_super_clusters", 0),
+            behavioral=bool(glass_cfg.get("lambda_behav") or 0.0),
         )
     tp    = params.copy()
     scale = jnp.array(1.0)
@@ -723,6 +725,7 @@ def train_tdmpc2(
                 smoothing_enabled=smoothing_enabled,
                 glass_lambda_super_se=float(glass_cfg.get("lambda_super_se") or 0.0),
                 glass_lambda_super_balance=float(glass_cfg.get("lambda_super_balance") or 0.0),
+                glass_lambda_behav=float(glass_cfg.get("lambda_behav") or 0.0),
                 use_cluster_obs=bool(glass_cfg.get("use_cluster_obs", False)),
                 cluster_obs_proto_temperature=float(glass_cfg.get("proto_temperature", 1.0)),
             )
@@ -734,6 +737,7 @@ def train_tdmpc2(
                 consistency_coef=_consistency_coef,
                 smoothing_enabled=smoothing_enabled,
                 mpc_distill_enabled=_mpc_distill_enabled,
+                bisim_coef=bisim_coef,
             )
         return ms
 
@@ -1053,10 +1057,11 @@ def train_tdmpc2(
         if not eval_type_csv.exists():
             with open(eval_type_csv, "w") as cf:
                 cf.write("step,reward,eval_type,seed\n")
-    elif env_id == "HopperHop":
-        # iter 6 fix — vanilla tdmpc2 now uses the same per-seed, tag-aware
-        # layout as Glass. Old shared-CSV path `tdmpc_dmc/hopper-hop-tdmpc2-rerun.csv`
-        # got overwritten on each seed launch (bug discovered with Phase-z).
+    else:
+        # iter 6 fix — vanilla tdmpc2 uses the same per-seed, tag-aware layout as Glass.
+        # iter-14 fix (2026-06-05): was `elif env_id == "HopperHop"`, which meant vanilla
+        # runs on ANY non-HopperHop DMC task (HumanoidWalk/WalkerRun/CheetahRun…) never
+        # created an eval CSV → no learning curves on the dashboard. Now applies to all tasks.
         eval_type_csv = (
             EXP_DIR.parent
             / "tdmpc_glass"
@@ -1589,6 +1594,9 @@ def parse_args():
     ap.add_argument("--consistency_coef", type=float, default=None,
                     help="Override TD-MPC consistency-loss weight (Phase-g). Default: 2.0 (v13 stable). Try 1.0 to "
                          "let the model focus on TD instead of dynamics regularisation.")
+    ap.add_argument("--bisim_coef", type=float, default=0.0,
+                    help="iter-14 BS-MPC-style pairwise bisimulation auxiliary on the encoder "
+                         "(0=off=vanilla TD-MPC2; reference arm. Try 0.1-1.0). Non-glass path only.")
     ap.add_argument("--early_stop_patience", type=int, default=0,
                     help="If > 0, halt training when no new best MPPI has been recorded in the last N env-steps. "
                          "Combine with a generous --total_steps cap (e.g. 10_000_000) to auto-stop on convergence.")
@@ -1617,6 +1625,9 @@ def parse_args():
                          "is on. Has no effect if --glass_num_super_clusters is 0.")
     ap.add_argument("--glass_lambda_super_balance", type=float, default=None,
                     help="Weight on the super-cluster balance hinge loss. Try 1e-2 (same as λ_balance).")
+    ap.add_argument("--glass_lambda_behav", type=float, default=None,
+                    help="iter-14 behavior-aware Glass: weight on the per-prototype reward-prediction "
+                         "loss (groups reward-equivalent states; 0/None=off=geometric Glass). Try 0.1-1.0.")
     # Path 5 / Phase-t — reward shaping: penalise knee/torso/thigh contact with floor.
     ap.add_argument("--knee_penalty_coef", type=float, default=0.0,
                     help="Per-step training-only reward penalty when non-foot geoms (torso, nose, pelvis, "
@@ -1720,6 +1731,7 @@ def main():
         "num_super_clusters": args.glass_num_super_clusters,
         "lambda_super_se": args.glass_lambda_super_se,
         "lambda_super_balance": args.glass_lambda_super_balance,
+        "lambda_behav": args.glass_lambda_behav,
         "assign_logits_init_scale": args.glass_assign_logits_init_scale,
         "use_cluster_obs": args.use_cluster_obs,
     }
@@ -1756,6 +1768,7 @@ def main():
                         k_update=args.k_update,
                         latent_action_smooth_coef=args.latent_action_smooth_coef,
                         consistency_coef=args.consistency_coef,
+                        bisim_coef=args.bisim_coef,
                         early_stop_patience=args.early_stop_patience,
                         latent_smooth_warmup_env_steps=args.latent_smooth_warmup_env_steps,
                         expl_until=args.expl_until,
@@ -1801,6 +1814,7 @@ def main():
                         q_reset_steps=q_reset,
                         latent_action_smooth_coef=args.latent_action_smooth_coef,
                         consistency_coef=args.consistency_coef,
+                        bisim_coef=args.bisim_coef,
                         early_stop_patience=args.early_stop_patience,
                         latent_smooth_warmup_env_steps=args.latent_smooth_warmup_env_steps,
                         glass_decay_steps=args.glass_decay_steps,

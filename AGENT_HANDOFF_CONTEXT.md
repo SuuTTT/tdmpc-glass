@@ -1,3 +1,28 @@
+# ⏱️ CURRENT STATUS (2026-06-03, Claude Opus 4.8 on EC2 control plane)
+
+**Everything below this banner is STALE (May 13, Phase 1c). Live state is here:**
+
+- **Active iteration: 13 — Population-Based Training (PBT).** Design + launch record:
+  `docs/iterations/iteration_13.md`. Goal unchanged: a clean CODE_SHA-4d3b935 config with
+  **≥3/5 G1** (best_any ≥500) beating the TD-MPC2 K256 baseline (362.1, 1/5).
+- **PBT orchestrator**: `control/pbt_orchestrator.py` (EC2 daemon). Owns 5 A4000s
+  (ssh1/ssh2/ssh3/ssh4/ssh4b_a4000), 5-member from-scratch Glass off@1M population, hourly
+  exploit-explore via `--resume_checkpoint`. State: `control/pbt_state.json`; log:
+  `exp/tdmpc_glass/logs/daemons/pbt.log`.
+- **Control arm**: queue daemon (`control/task_queue_daemon.py`, 5 boxes) runs phasei12b
+  Glass+restart CONTROL seeds (independent restart, the baseline PBT must beat) + 2 iter-12
+  G1 finishers (504, 557) + seed10 (442, climbing). 12 pending backlog.
+- **Iteration-12 result** (`docs/iterations/iteration_12.md`): restart-on-plateau, mean 422 /
+  ~40% G1 — best yet but short of ≥3/5; PBT is the pivot to close the gap.
+- **Preserved artifacts**: `exp/tdmpc_glass/basin_checkpoints/seed{3_501,4_550}_best_any.pkl`.
+- **One-master daemons**: pbt_orchestrator, task_queue_daemon, web_dashboard (:5055),
+  iter5_stream_remotes. The PBT orchestrator is NOT managed by `control/start_center.sh` —
+  relaunch it separately: `nohup setsid .venv/bin/python3 -u control/pbt_orchestrator.py
+  >> exp/tdmpc_glass/logs/daemons/pbt.log 2>&1 &`
+- **Rule**: EC2 has no GPU, never trains. Killing in-flight runs needs explicit user OK.
+
+---
+
 # Agent Handoff Context — TD-MPC-Glass / Phase 1c
 
 Date: 2026-05-13. Author: previous Copilot agent on the workstation. Target: Copilot agent running on the remote 4070 Ti (vast.ai).

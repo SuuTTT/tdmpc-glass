@@ -1,0 +1,50 @@
+{
+  "members": {
+    "pbt_ssh1_a4000": {
+      "host": "ssh1.vast.ai",
+      "port": 24456,
+      "gen": 1,
+      "seed": 1100,
+      "best": 599.9,
+      "step": 3750144,
+      "launched_ok": false,
+      "dead_checks": 0,
+      "running": true
+    },
+    "pbt_ssh2_a4000": {
+      "host": "ssh2.vast.ai",
+      "port": 18950,
+      "gen": 0,
+      "seed": 101,
+      "best": 540.8,
+      "step": 7750144,
+      "launched_ok": true,
+      "dead_checks": 0,
+      "running": true
+    },
+    "pbt_ssh4_a4000": {
+      "host": "ssh4.vast.ai",
+      "port": 29168,
+      "gen": 0,
+      "seed": 103,
+      "best": 577.7,
+      "step": 4250112,
+      "launched_ok": true,
+      "dead_checks": 0,
+      "running": true
+    },
+    "pbt_ssh4_a4000b": {
+      "host": "ssh4.vast.ai",
+      "port": 10022,
+      "gen": 0,
+      "seed": 104,
+      "best": 547.3,
+      "step": 8750080,
+      "launched_ok": true,
+      "dead_checks": 0,
+      "running": true
+    }
+  },
+  "pbt_steps": 19,
+  "started": 1780508739.769004
+}

@@ -125,6 +125,7 @@ def init_glass_params(
     num_clusters: int = 8,
     assign_logits_init_scale: float = 1.0,
     num_super_clusters: int = 0,
+    behavioral: bool = False,
 ) -> dict:
     """Initialize prototype and assignment parameters for TD-MPC-Glass.
 
@@ -152,6 +153,12 @@ def init_glass_params(
         out["super_assign_logits"] = assign_logits_init_scale * jax.random.normal(
             sk2, (num_clusters, num_super_clusters)
         )
+    # iter-14 behavior-aware Glass: a learned per-prototype reward so the assignment
+    # can be trained to group reward-equivalent states (bisimulation-flavoured). Only
+    # added when behavioral=True, so the params pytree of existing (non-behavioral)
+    # Glass runs is unchanged.
+    if behavioral:
+        out["proto_reward"] = jnp.zeros((num_prototypes,))
     return out
 
 
@@ -207,6 +214,7 @@ def glass_transition_graph(
     stopgrad_graph: bool = False,
     use_cosine_assign: bool = True,
     eps: float = 1e-8,
+    rewards: jax.Array | None = None,
 ) -> dict:
     """Build a prototype transition graph and cluster diagnostics.
 
@@ -242,6 +250,20 @@ def glass_transition_graph(
 
     c_src = soft_assign(z_src)
     c_next = soft_assign(z_next)
+
+    # iter-14 behavior-aware Glass: ground the prototype assignment in REWARD so
+    # prototypes group behaviorally-equivalent (not merely latent-similar) states —
+    # the signal SimNorm/consistency already cover latent geometry but lack. Predict
+    # each state's reward from its soft prototype assignment; grad flows to the
+    # encoder (via c_src) AND the learned proto_reward, pulling reward-equivalent
+    # states together. Combined with the next-latent transition graph below, this is
+    # a hierarchical soft-bisimulation. Only active when rewards + proto_reward exist.
+    if rewards is not None and "proto_reward" in glass_params:
+        r_hat = c_src @ glass_params["proto_reward"]              # (N,)
+        behav = jnp.mean((r_hat - jax.lax.stop_gradient(rewards)) ** 2)
+    else:
+        behav = jnp.array(0.0)
+
     P_counts = jnp.einsum("nk,nl->kl", c_src, c_next)
     # Smooth rows so unused prototypes do not create zero-volume graph nodes.
     P = P_counts + 1e-4
@@ -288,6 +310,7 @@ def glass_transition_graph(
         "proto_balance": proto_balance,
         "temporal": temporal,
         "temp_stability": temp_stability,
+        "behav": behav,
         "entropy": entropy,
         "active_clusters": active.astype(jnp.float32),
         "max_cluster_mass": jnp.max(cluster_mass),
@@ -335,6 +358,8 @@ def glass_loss_and_aux(
     use_cosine_assign: bool = True,
     lambda_super_se: float = 0.0,
     lambda_super_balance: float = 0.0,
+    rewards: jax.Array | None = None,
+    lambda_behav: float = 0.0,
 ) -> tuple[jax.Array, dict]:
     """Return weighted Glass loss and scalar diagnostics.
 
@@ -351,12 +376,14 @@ def glass_loss_and_aux(
         assignment_temperature=assignment_temperature,
         stopgrad_graph=stopgrad_graph,
         use_cosine_assign=use_cosine_assign,
+        rewards=rewards,
     )
     total = (
         lambda_se * diag["se"]
         + lambda_balance * (diag["balance"] + diag["proto_balance"])
         + lambda_temporal * diag["temporal"]
         + lambda_temp_stability * diag["temp_stability"]
+        + lambda_behav * diag["behav"]
     )
     aux = {
         "glass_se": diag["se"],
@@ -364,6 +391,7 @@ def glass_loss_and_aux(
         "glass_proto_balance": diag["proto_balance"],
         "glass_temp": diag["temporal"],
         "glass_temp_stability": diag["temp_stability"],
+        "glass_behav": diag["behav"],
         "glass_total": total,
         "glass_entropy": diag["entropy"],
         "glass_active_clusters": diag["active_clusters"],
@@ -658,6 +686,7 @@ def make_update_fn(
     smoothing_enabled: bool = True,
     glass_lambda_super_se: float = 0.0,
     glass_lambda_super_balance: float = 0.0,
+    glass_lambda_behav: float = 0.0,
     use_cluster_obs: bool = False,
     cluster_obs_proto_temperature: float = 1.0,
 ) -> tuple:
@@ -802,6 +831,7 @@ def make_update_fn(
             "glass_proto_balance": jnp.array(0.0),
             "glass_temp": jnp.array(0.0),
             "glass_temp_stability": jnp.array(0.0),
+            "glass_behav": jnp.array(0.0),
             "glass_total": jnp.array(0.0),
             "glass_entropy": jnp.array(0.0),
             "glass_active_clusters": jnp.array(0.0),
@@ -821,6 +851,10 @@ def make_update_fn(
         def enabled_glass(_):
             z_src = zs[:, :-1].reshape(B * n, -1)
             z_next = zs[:, 1:].reshape(B * n, -1)
+            # iter-14: per-state rewards aligned to z_src (zs[:, :-1] reshaped B-major),
+            # so rew_b[:, :-1].reshape(B*n) matches index-for-index. Drives behavioral
+            # (reward-equivalence) grouping when glass_lambda_behav > 0.
+            rewards_src = rew_b[:, :-1].reshape(B * n)
             return glass_loss_and_aux(
                 z_src,
                 z_next,
@@ -835,6 +869,8 @@ def make_update_fn(
                 use_cosine_assign=glass_use_cosine_assign,
                 lambda_super_se=glass_lambda_super_se,
                 lambda_super_balance=glass_lambda_super_balance,
+                rewards=rewards_src,
+                lambda_behav=glass_lambda_behav,
             )
 
         def disabled_glass(_):

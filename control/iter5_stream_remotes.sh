@@ -20,9 +20,9 @@ sync_box() {
         -e "ssh -i /home/ubuntu/.ssh/vastai_id_ed25519 -p $port -o StrictHostKeyChecking=no \
             -o ConnectTimeout=8 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 \
             -o BatchMode=yes" \
-        --include='HopperHop_*/' \
-        --include='HopperHop_*/seed_*.csv' \
-        --include='HopperHop_*/seed_*_diag.csv' \
+        --include='*_phasei*/' \
+        --include='*_phasei*/seed_*.csv' \
+        --include='*_phasei*/seed_*_diag.csv' \
         --exclude='*' \
         root@$host:/root/helios-rl/exp/tdmpc_glass/ \
         "$dest/" >/dev/null 2>&1
@@ -70,12 +70,11 @@ while true; do
   sync_box 17426 ssh3.vast.ai          $MIRROR/ssh3_a4000        &
   sync_box 31740 ssh6.vast.ai          $MIRROR/ssh6_titanv       &
   sync_box 16690 ssh9.vast.ai          $MIRROR/ssh9_a4000        &
-  sync_box 24701 ssh5.vast.ai          $MIRROR/ssh5_3060         &
+  sync_box 22607 ssh4.vast.ai          $MIRROR/ssh4_1660s        &
   sync_box 16822 ssh1.vast.ai          $MIRROR/ssh1_a4000b       &
   sync_box 39560 ssh8.vast.ai          $MIRROR/ssh8_a4000        &
   sync_box 29168 ssh4.vast.ai          $MIRROR/ssh4_a4000        &
   sync_box 10022 ssh4.vast.ai          $MIRROR/ssh4_a4000b       &
-  sync_box 17647 ssh9.vast.ai          $MIRROR/ssh9_4x2060       &
   wait
 
   summarize_box "ssh1_2080ti " $MIRROR/ssh1_2080ti

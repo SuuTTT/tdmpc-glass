@@ -349,6 +349,7 @@ def make_update_fn(
     consistency_coef: float = 2.0,
     smoothing_enabled: bool = True,
     mpc_distill_enabled: bool = False,
+    bisim_coef: float = 0.0,
 ) -> tuple:
     """Build (single_step, multi_step) JIT-compiled update functions.
 
@@ -447,6 +448,25 @@ def make_update_fn(
         )
         n = T - 1
         total = (consistency_coef * jnp.sum(cls) + 2 * jnp.sum(rls) + jnp.sum(vls) + 0.1 * jnp.sum(pls)) / n
+
+        # ── BS-MPC-style pairwise bisimulation auxiliary (iter-14 reference arm).
+        # Python-guarded on the closed-over float `bisim_coef`: when 0.0 (default) this
+        # block is not traced, so the graph is byte-identical to vanilla TD-MPC2 (fleet-safe).
+        # Permuted-pair O(B) form of the π*-bisimulation metric (Zhang 2021 / BS-MPC 2410.04553):
+        #   ( ||h(s_i)-h(s_j)||_1  -  |r_i-r_j|  -  gamma*||sg(z'_i)-sg(z'_j)||_2 )^2
+        # Grad flows to the ENCODER via z_all (z_tgt is stop-grad); trains latent *distance*
+        # to reflect reward+next-latent (behavioral) distance — the signal vanilla lacks.
+        if bisim_coef > 0.0:
+            L = z_all.shape[-1]
+            ze = z_all[:, :-1].reshape(-1, L)                       # encoder latents (grad)
+            zn = z_tgt[:, 1:].reshape(-1, L)                        # next latents (stop-grad)
+            rr = rew_b[:, :-1].reshape(-1)
+            M = ze.shape[0]
+            perm = jax.random.permutation(jax.random.fold_in(rng, 7), M)
+            pred = jnp.sum(jnp.abs(ze - ze[perm]), -1)
+            tgt = jnp.abs(rr - rr[perm]) + gamma * jnp.sqrt(
+                jnp.sum((zn - zn[perm]) ** 2, -1) + 1e-8)
+            total = total + bisim_coef * jnp.mean((pred - tgt) ** 2)
 
         # Latent action smoothing — Python-conditional so the graph
         # matches the pre-smoothing version exactly when disabled (Phase-m fix).

@@ -47,17 +47,20 @@ SSH_OPTS = ["-i", SSH_KEY, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=ye
 # NOTE: EC2 control plane has NO GPU — no "local" training slot. All GPUs remote.
 BOXES = [
     # (tag, port, host, gpu_idx, label)
+    # Synced to daemon BOXES 2026-06-05 (12 boxes). ssh5_3060 removed (disk full, cleared);
+    # ssh3_a4000 -> ssh3b_a4000 (same proxy port, inst 38767427); added ssh4 1660S x2.
     ("ssh1_2080ti",   34217,   "ssh1.vast.ai",   0, "ssh1:34217 2080 Ti (22GB)"),
-    ("ssh1_a4000",    24456,   "ssh1.vast.ai",   0, "ssh1:24456 A4000 (16GB)"),
-    ("ssh2_a4000",    18950,   "ssh2.vast.ai",   0, "ssh2:18950 A4000 (16GB)"),
-    ("ssh3_a4000",    17426,   "ssh3.vast.ai",   0, "ssh3:17426 A4000 (16GB)"),
     ("ssh6_titanv",   31740,   "ssh6.vast.ai",   0, "ssh6:31740 Titan V (12GB)"),
-    ("ssh9_a4000",    16690,   "ssh9.vast.ai",   0, "ssh9:16690 A4000 (16GB)"),
-    ("ssh5_3060",     24701,   "ssh5.vast.ai",   0, "ssh5:24701 RTX 3060 (12GB)"),
     ("ssh1_a4000b",   16822,   "ssh1.vast.ai",   0, "ssh1:16822 A4000 (16GB, rented)"),
     ("ssh8_a4000",    39560,   "ssh8.vast.ai",   0, "ssh8:39560 A4000 (16GB, rented)"),
+    ("ssh4_1660s_g0", 22607,   "ssh4.vast.ai",   0, "ssh4:22607 1660S G0 (6GB)"),
+    ("ssh4_1660s_g1", 22607,   "ssh4.vast.ai",   1, "ssh4:22607 1660S G1 (6GB)"),
+    ("ssh1_a4000",    24456,   "ssh1.vast.ai",   0, "ssh1:24456 A4000 (16GB)"),
+    ("ssh2_a4000",    18950,   "ssh2.vast.ai",   0, "ssh2:18950 A4000 (16GB)"),
+    ("ssh9_a4000",    16690,   "ssh9.vast.ai",   0, "ssh9:16690 A4000 (16GB)"),
     ("ssh4_a4000",    29168,   "ssh4.vast.ai",   0, "ssh4:29168 A4000 (16GB, rented)"),
     ("ssh4_a4000b",   10022,   "ssh4.vast.ai",   0, "ssh4:10022 A4000 (16GB, rented)"),
+    ("ssh3b_a4000",   17426,   "ssh3.vast.ai",   0, "ssh3:17426 A4000 (16GB, inst 38767427)"),
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01 (GPU fell off bus). Reboot to recover.
     # ("ssh9_2060_gpu0", 17647,  "ssh9.vast.ai",   0, "ssh9:17647 2060 GPU0 (6GB)"),
     # ("ssh9_2060_gpu1", 17647,  "ssh9.vast.ai",   1, "ssh9:17647 2060 GPU1 (6GB)"),
@@ -444,7 +447,7 @@ def discover_csvs():
     AND the largest file size wins (size is a proxy for "more eval rows logged").
     """
     by_key: dict[tuple, dict] = {}
-    for csv_path in LOCAL_EXP.rglob("HopperHop_phase*/seed_*.csv"):
+    for csv_path in LOCAL_EXP.rglob("*_phase*/seed_*.csv"):  # any task: HopperHop/Humanoid/Walker/Cheetah…
         name = csv_path.name
         if re.search(r"_v\d+_|_partial_|_died_|_final_|_done_|_diag\.csv$", name):
             continue
@@ -456,7 +459,11 @@ def discover_csvs():
             continue  # < 30 bytes = header only or smaller
         if time.time() - st.st_mtime > 7 * 86400:
             continue
-        phase_dir = csv_path.parent.name.replace("HopperHop_", "")
+        # Strip the leading task prefix (CamelCase task name + "_") so a curve's `phase`
+        # equals its output TAG for ALL tasks — not just HopperHop. This keeps it in sync
+        # with the active-runs list (which keys on the tag), so "running only" matches DMC
+        # curves too (iter-14 fix: was .replace("HopperHop_","") which only worked for Hopper).
+        phase_dir = re.sub(r'^[A-Z][A-Za-z0-9]*_', '', csv_path.parent.name)
         seed = csv_path.stem.replace("seed_", "")
         rel = csv_path.relative_to(LOCAL_EXP)
         box = "local"
@@ -2002,6 +2009,16 @@ INDEX_HTML = r"""<!DOCTYPE html>
       <datalist id="phase-list"></datalist>
       <button onclick="loadCurves()">apply</button>
       <button class="refresh-btn" id="phases-btn" onclick="togglePhaseBrowser()">📊 phases</button>
+    </div>
+    <div class="small filter-row" style="margin-top:2px">
+      <span>Task:</span>
+      <button onclick="document.getElementById('phase-filter').value='';loadCurves()">All</button>
+      <button onclick="document.getElementById('phase-filter').value='HopperHop';loadCurves()">HopperHop</button>
+      <button onclick="document.getElementById('phase-filter').value='HumanoidWalk';loadCurves()">HumanoidWalk</button>
+      <button onclick="document.getElementById('phase-filter').value='HumanoidRun';loadCurves()">HumanoidRun</button>
+      <button onclick="document.getElementById('phase-filter').value='WalkerRun';loadCurves()">WalkerRun</button>
+      <button onclick="document.getElementById('phase-filter').value='CheetahRun';loadCurves()">CheetahRun</button>
+      <button onclick="document.getElementById('phase-filter').value='phasei14';loadCurves()">iter14 (all)</button>
     </div>
     <div id="phase-info" style="display:none;margin-bottom:6px"></div>
     <div id="phase-browser" style="display:none;margin-bottom:8px"></div>
