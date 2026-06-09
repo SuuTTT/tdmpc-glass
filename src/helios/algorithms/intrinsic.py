@@ -133,70 +133,81 @@ def _se_communities(emb, n_comm, resolution=0.5, knn=8, seed=0):
     return _np_kmeans(emb, n_comm, seed=seed)
 
 
-def make_si2e(obs_dim, D=16, hidden=(256, 256), lr=1e-4, ortho_coef=1.0,
-              buf_cap=4000, rebuild_every=4000, n_comm=24, seed=0):
-    """Dynamics-relevant embedding (Laplacian-style: smooth-over-transitions + decorrelated), an
-    SE-community partition rebuilt every `rebuild_every` env steps, and a count-coverage bonus."""
-    net = _MLP(hidden, D)
-    pparams = net.init(jax.random.PRNGKey(seed), jnp.zeros((1, obs_dim)))
-    tx = optax.adam(lr)
-    opt = tx.init(pparams)
+def make_random_encoder(obs_dim, D=32, seed=0):
+    """Fixed random projection obs -> feature (the SI2E/VCSE 'random_encoder'; no training).
+    numpy, encoder-independent. Returns a callable (N,obs_dim)->(N,D)."""
+    rng = np.random.default_rng(seed)
+    W = rng.standard_normal((obs_dim, D)).astype(np.float32) / np.sqrt(obs_dim)
+    b = rng.standard_normal((D,)).astype(np.float32) * 0.1
+    def enc(obs):
+        return np.tanh(np.asarray(obs, np.float32) @ W + b)
+    return enc
 
-    @jax.jit
-    def phi(pp, obs):
-        return net.apply(pp, obs)
 
-    @jax.jit
-    def update(pp, opt, obs, obs_next):
-        def loss(pp):
-            f = net.apply(pp, obs); fn = net.apply(pp, obs_next)
-            smooth = jnp.mean(jnp.sum((f - fn) ** 2, axis=-1))
-            B = f.shape[0]
-            G = (f.T @ f) / B
-            ortho = jnp.mean((G - jnp.eye(D)) ** 2)
-            return smooth + ortho_coef * ortho
-        g = jax.grad(loss)(pp)
-        u, opt = tx.update(g, opt, pp)
-        return optax.apply_updates(pp, u), opt
+def make_se_explore(feat_dim, use_cluster=True, k_nn=12, value_beta=0.5,
+                    buf_cap=2048, n_comm=24, rebuild_every=2000, seed=0):
+    """FAITHFUL VCSE / SI2E (Seo VCSE + Zeng SI2E, NeurIPS'24, fast kmeans variant), FEATURE-AGNOSTIC:
+    the caller supplies features phi(s) (random-encoder for vcse/si2e, or the WORLD-MODEL latent for the
+    novel wmsi2e) and the critic value V(s).
 
+      joint x = [ normalize(phi(s)) ; value_beta * normalize(V(s)) ]      (value-conditioning = concat V)
+      r0 = 0.5 * log( ||x - x_kNN||^2 + eps )           # value-conditional kNN state entropy (VCSE)
+      r1 = leaf r0 evaluated at the state's CLUSTER CENTROID (kmeans, fast variant)   # SI2E group term
+      bonus = r0                  (vcse)
+            = r0 - r1             (si2e / wmsi2e)        # H(V0) - H(V1), the encoding-tree differential
+
+    All host-side numpy (kNN over a small ring buffer); rewards normalized downstream by RunningNorm.
+    Ablation ladder: rnd < vcse (value) < si2e (value+cluster, random feat) < wmsi2e (value+cluster, WM latent)."""
+    Dj = feat_dim + 1
     st = {
-        "pp": pparams, "opt": opt, "phi": phi, "update": update,
-        "onorm": RunningNorm((obs_dim,)), "rnorm": RunningNorm(()),
-        "buf": np.zeros((buf_cap, D), np.float32), "buf_n": 0, "buf_i": 0,
-        "centroids": None, "counts": None, "since": 0,
-        "buf_cap": buf_cap, "rebuild_every": rebuild_every, "n_comm": n_comm, "seed": seed,
+        "rnorm": RunningNorm(()), "fnorm": RunningNorm((feat_dim,)), "vnorm": RunningNorm(()),
+        "bufF": np.zeros((buf_cap, feat_dim), np.float32), "bufV": np.zeros((buf_cap,), np.float32),
+        "n": 0, "i": 0, "since": 0, "centroids": None,
+        "use_cluster": use_cluster, "k": k_nn, "vb": value_beta,
+        "cap": buf_cap, "n_comm": n_comm, "rebuild_every": rebuild_every, "seed": seed,
     }
 
-    def buf_push(emb):                       # emb (N, D) numpy
-        for row in emb:
-            st["buf"][st["buf_i"]] = row
-            st["buf_i"] = (st["buf_i"] + 1) % st["buf_cap"]
-            st["buf_n"] = min(st["buf_n"] + 1, st["buf_cap"])
-        st["since"] += emb.shape[0]
+    def _joint(F, V):
+        return np.concatenate([st["fnorm"].norm(F), st["vb"] * st["vnorm"].norm(V)[:, None]], 1)
+
+    def reward(F, V):                       # F (N,feat_dim), V (N,) -> bonus (N,)
+        F = np.asarray(F, np.float32); V = np.asarray(V, np.float32)
+        if st["n"] < max(64, st["k"] + 1):
+            return np.zeros(F.shape[0], np.float32)
+        Bj = _joint(st["bufF"][: st["n"]], st["bufV"][: st["n"]])
+        x = _joint(F, V)
+        d2 = (x * x).sum(1)[:, None] + (Bj * Bj).sum(1)[None, :] - 2.0 * (x @ Bj.T)
+        d2 = np.maximum(d2, 0.0)
+        kth = np.partition(d2, st["k"], axis=1)[:, st["k"]]      # k-th NN squared dist
+        r0 = 0.5 * np.log(kth + 1e-6)
+        if st["use_cluster"] and st["centroids"] is not None:
+            C = st["centroids"]                                  # (K, Dj) joint-space centroids
+            cc = (C * C).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (C @ C.T)
+            np.fill_diagonal(cc, np.inf)
+            kc = min(st["k"], C.shape[0] - 1)
+            ckth = np.partition(cc, kc, axis=1)[:, kc]
+            r1c = 0.5 * np.log(ckth + 1e-6)                      # centroid-level entropy
+            cid = (((x * x).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (x @ C.T))).argmin(1)
+            return (r0 - r1c[cid]).astype(np.float32)
+        return r0.astype(np.float32)
+
+    def push(F, V):
+        F = np.asarray(F, np.float32); V = np.asarray(V, np.float32)
+        st["fnorm"].update(F); st["vnorm"].update(V)
+        for j in range(F.shape[0]):
+            st["bufF"][st["i"]] = F[j]; st["bufV"][st["i"]] = V[j]
+            st["i"] = (st["i"] + 1) % st["cap"]; st["n"] = min(st["n"] + 1, st["cap"])
+        st["since"] += F.shape[0]
 
     def maybe_rebuild():
-        if st["since"] >= st["rebuild_every"] and st["buf_n"] >= max(256, st["n_comm"] * 4):
-            X = st["buf"][: st["buf_n"]]
-            st["centroids"] = _se_communities(X, st["n_comm"], seed=st["seed"])
-            st["counts"] = np.ones(len(st["centroids"]), np.float64)
+        if st["use_cluster"] and st["since"] >= st["rebuild_every"] and st["n"] >= max(256, st["n_comm"] * 4):
+            Bj = _joint(st["bufF"][: st["n"]], st["bufV"][: st["n"]])
+            st["centroids"] = _np_kmeans(Bj, st["n_comm"], seed=st["seed"])
             st["since"] = 0
             return True
         return False
 
-    def coverage_bonus(emb):                 # emb (N, D) -> (N,) count-coverage bonus over communities
-        C = st["centroids"]
-        if C is None:
-            return np.ones(emb.shape[0], np.float32)   # uniform until first partition
-        d2 = (emb * emb).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (emb @ C.T)
-        cid = d2.argmin(1)
-        b = 1.0 / np.sqrt(st["counts"][cid])
-        for c in cid:
-            st["counts"][c] += 1.0
-        return b.astype(np.float32)
-
-    st["buf_push"] = buf_push
-    st["maybe_rebuild"] = maybe_rebuild
-    st["coverage_bonus"] = coverage_bonus
+    st["reward"] = reward; st["push"] = push; st["maybe_rebuild"] = maybe_rebuild
     return st
 
 

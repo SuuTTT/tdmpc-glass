@@ -1051,13 +1051,21 @@ def train_tdmpc2(
     _intr_coef = float(intrinsic_coef)
     _intr_state = None
     if _intr != "none" and _intr_coef > 0:
-        from helios.algorithms.intrinsic import make_rnd, make_laplacian, make_si2e
+        from helios.algorithms.intrinsic import (
+            make_rnd, make_laplacian, make_se_explore, make_random_encoder)
         if _intr == "rnd":
             _intr_state = make_rnd(obs_dim, seed=seed)
         elif _intr == "laplacian":
             _intr_state = make_laplacian(obs_dim, seed=seed)
-        elif _intr == "si2e":
-            _intr_state = make_si2e(obs_dim, seed=seed)
+        elif _intr in ("vcse", "si2e"):
+            # random-encoder feature; vcse = value-conditional kNN entropy only; si2e adds cluster term
+            _re_D = 32
+            _intr_state = make_se_explore(_re_D, use_cluster=(_intr == "si2e"), seed=seed)
+            _intr_state["rand_enc"] = make_random_encoder(obs_dim, D=_re_D, seed=seed)
+        elif _intr == "wmsi2e":
+            # NOVEL: SI2E over the WORLD-MODEL latent (enc) + critic value (cluster term over WM latent)
+            _intr_state = make_se_explore(latent_dim, use_cluster=True, seed=seed)
+            _intr_state["rand_enc"] = None
         else:
             raise ValueError(f"unknown --intrinsic {intrinsic}")
         print(f"  iter-21 intrinsic exploration: {_intr} coef={_intr_coef} (training-reward only, "
@@ -1084,6 +1092,18 @@ def train_tdmpc2(
         z_in = _aug(z, p["glass"], _proto_T) if _use_cluster_obs else z
         mu, _ = pi_net.apply(p["pi"], z_in)
         return jnp.tanh(mu[0])
+
+    @jax.jit
+    def lat_apply(p, obs):                 # iter-24: batched encoder (N,obs)->(N,latent) for wmsi2e feature
+        return enc_net.apply(p["enc"], obs)
+
+    @jax.jit
+    def val_apply(p, obs):                 # iter-24: batched value V(s)=min-head two_hot_inv(Q(z,pi(z)))
+        from helios.algorithms.tdmpc2 import two_hot_inv as _thi
+        z = enc_net.apply(p["enc"], obs)
+        mu, _ = pi_net.apply(p["pi"], z)
+        q = q_net.apply(p["q"], z, jnp.tanh(mu))       # (N, 2, num_bins)
+        return jnp.min(_thi(q, num_bins=num_bins), axis=-1)
 
     @jax.jit
     def single_env_step(state, act):
@@ -1519,12 +1539,15 @@ def train_tdmpc2(
                 if _intr == "rnd":
                     bonus = np.asarray(st["reward"](st["pp"], on_n))
                     st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], on_n)
-                elif _intr == "si2e":
-                    emb_cur = np.asarray(st["phi"](st["pp"], o_n))
-                    emb_nxt = np.asarray(st["phi"](st["pp"], on_n))
-                    st["buf_push"](emb_cur)
-                    bonus = st["coverage_bonus"](emb_nxt)        # count-coverage over SE communities
-                    st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], o_n, on_n)
+                elif _intr in ("vcse", "si2e", "wmsi2e"):
+                    # feature phi(s'): WORLD-MODEL latent (wmsi2e, novel) or random encoder (vcse/si2e)
+                    if _intr == "wmsi2e":
+                        feat = np.asarray(lat_apply(params, jnp.asarray(new_obs)))   # (N, latent_dim)
+                    else:
+                        feat = st["rand_enc"](new_obs)                               # (N, 32)
+                    val = np.asarray(val_apply(params, jnp.asarray(new_obs)))        # (N,) critic value
+                    bonus = st["reward"](feat, val)              # VCSE r0 (vcse) or r0-r1 (si2e/wmsi2e)
+                    st["push"](feat, val)
                     st["maybe_rebuild"]()
                 else:  # laplacian
                     bonus = np.asarray(st["reward"](st["pp"], o_n, on_n))
@@ -1999,7 +2022,7 @@ def parse_args():
                     help="iter-20: consistency-loss horizon-decay rho (default 0.5). Higher (0.75-0.9) "
                          "weights long-horizon prediction more -> dynamics accurate at depth -> stable "
                          "deep planning (the H9-without-collapse lever).")
-    ap.add_argument("--intrinsic", choices=["none", "rnd", "laplacian", "si2e"], default="none",
+    ap.add_argument("--intrinsic", choices=["none", "rnd", "laplacian", "vcse", "si2e", "wmsi2e"], default="none",
                     help="iter-21: abstraction-grounded exploration intrinsic reward (training only). "
                          "rnd=Random Network Distillation (baseline); laplacian=DCEO-style eigenpurpose "
                          "(||phi(s')-phi(s)||, graph-Laplacian rep — the abstraction bet). Sparse-task rescue.")
