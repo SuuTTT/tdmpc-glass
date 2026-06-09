@@ -161,8 +161,57 @@ def analyze_real(npz_path, n_nodes=128, sub=8000, seed=0):
     return verdict
 
 
+def _boundary_scores(A, lab):
+    """Per-node fraction of edge mass crossing to a DIFFERENT community (= bottleneck/phase-boundary
+    score). High b = the node sits on a community boundary (contact / phase transition)."""
+    tot = A.sum(1) + 1e-12
+    b = np.array([A[i, lab != lab[i]].sum() for i in range(A.shape[0])]) / tot
+    return b
+
+
+def mechcheck(npz_path, n_nodes=128, sub=8000, seed=0):
+    """SE-k KILL-TEST: does the SE community-boundary score b(z_t) correlate with the jumpy model's
+    TRUE k-step prediction error e_t? If yes, boundary-gated jump-length has a real signal to exploit
+    (long k in-community where error is low, short k at boundaries where error is high). If corr~=0,
+    SE-k is dead -> fall back to F. Needs an npz with a non-empty `err` array (SE_DUMP mech mode)."""
+    assert _HAVE_NX
+    d = np.load(npz_path, allow_pickle=True)
+    if "err" not in d or len(d["err"]) == 0:
+        print("no err array (run SE_DUMP with --jumpy_k matching the ckpt for mech mode)"); return None
+    Zt = d["Zt"].astype(np.float32); err = d["err"].astype(np.float32)
+    n = min(len(Zt), len(err)); Zt, err = Zt[:n], err[:n]
+    print(f"=== SE-k mechcheck: {npz_path}  N={n} k={int(d['k'])} env={d.get('env')} ===")
+    rng = np.random.default_rng(seed)
+    idx = rng.choice(n, min(n, sub), replace=False)
+    Zs, es = Zt[idx], err[idx]
+    _, C = _kmeans(Zs, n_nodes, seed=seed)
+    node = _dist2(Zs, C).argmin(1)
+    # transition graph for partition (use the sampled z_t -> need successors; approximate the partition
+    # from kNN geometry of centroids, which the pre-check showed carries the structure).
+    A = knn_graph(C, k=5)
+    lab = best_gap(A)[1]
+    bnode = _boundary_scores(A, lab)
+    b = bnode[node]                      # boundary score per sampled transition
+    # correlations
+    bs, es2 = b - b.mean(), es - es.mean()
+    pear = float((bs * es2).sum() / (np.sqrt((bs**2).sum() * (es2**2).sum()) + 1e-9))
+    rb = np.argsort(np.argsort(b)); re = np.argsort(np.argsort(es))
+    rb, re = rb - rb.mean(), re - re.mean()
+    spear = float((rb * re).sum() / (np.sqrt((rb**2).sum() * (re**2).sum()) + 1e-9))
+    hi = es[b >= np.quantile(b, 0.66)]; lo = es[b <= np.quantile(b, 0.33)]
+    print(f"  Pearson(b,err)={pear:+.3f}  Spearman={spear:+.3f}")
+    print(f"  k-step err: high-boundary tertile={hi.mean():.3f}  low-boundary tertile={lo.mean():.3f}  "
+          f"ratio={hi.mean()/(lo.mean()+1e-9):.2f}x")
+    ok = spear > 0.15 and hi.mean() > 1.10 * lo.mean()
+    print(f"  VERDICT: {'PASS — boundary score tracks k-step error -> build SE-k gate' if ok else 'WEAK/FAIL — boundary score does NOT track error -> fall back to F (uncertainty gate)'}")
+    return dict(pearson=pear, spearman=spear, hi=float(hi.mean()), lo=float(lo.mean()), ok=ok)
+
+
 if __name__ == "__main__":
     import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "mech" and sys.argv[2].endswith(".npz"):
+        mechcheck(sys.argv[2], n_nodes=int(sys.argv[3]) if len(sys.argv) > 3 else 128)
+        sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1].endswith(".npz"):
         analyze_real(sys.argv[1], n_nodes=int(sys.argv[2]) if len(sys.argv) > 2 else 128)
         sys.exit(0)

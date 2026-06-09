@@ -67,8 +67,11 @@ macro-grid of K_MAX micro-steps and use a **soft continuation mask** to realize 
 - [ ] code skeleton: `make_se_gate(centroids, labels, boundary)` host-side; thread a `--se_gate` flag +
       a cached `se_graph.npz` into make_jumpy_mppi_fn's return computation (cumulative-gate discount).
       Share the soft-mask with lever F (`--unc_gate`).
-- [ ] mechanism-check script (b vs k-step error on a jumpy ckpt) — reuse SE_DUMP latents + a fresh
-      dump that also stores per-step true-vs-predicted k-step error.
+- [x] mechanism-check BUILT: SE_DUMP mech mode (run_benchmark, env-gated) dumps per-step k-step model
+      error e_t; se_precheck.py mechcheck() correlates SE boundary-score b(z_t) vs e_t (Spearman + hi/lo
+      tertile ratio; PASS if spearman>0.15 AND hi>1.1x lo). Plumbing self-tested on synthetic data.
+      TO RUN: needs a jrew-containing fast jumpy ckpt (phasei22fast k4) on a FREE box (k2 ckpt lacks
+      jrew -> warmup crashes). Deferred to next freed box; do NOT co-run heavy jax on busy boxes.
 - [ ] HOLD multi-seed fanout for explicit user go.
 
 ## Parallel: F (uncertainty-gated horizon) — the safe fallback, shares machinery

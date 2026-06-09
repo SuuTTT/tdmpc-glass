@@ -1349,33 +1349,47 @@ def train_tdmpc2(
     if os.environ.get("SE_DUMP", "") == "1":
         import sys as _sys
         n_ep = int(os.environ.get("SE_DUMP_EPS", "12"))
-        kk = int(os.environ.get("SE_DUMP_K", str(max(_jumpy_k, 4))))
-        Zall, Zt, Ztk = [], [], []
+        # mechcheck mode: if the jumpy model is built (--jumpy_k k matching the ckpt), also record
+        # the per-step TRUE k-step prediction error e_t = ||jdyn(z_t, a_{t:t+k}) - z_{t+k}||, so we
+        # can test offline whether SE community-boundary score b(z_t) correlates with e_t (the SE-k
+        # kill-test). kk is then forced to the model's k. Else fall back to latent-only dump.
+        _mech = (jumpy_net is not None and _jumpy_k > 0)
+        kk = int(_jumpy_k) if _mech else int(os.environ.get("SE_DUMP_K", "4"))
+        Zall, Zt, Ztk, Err = [], [], [], []
         for _ep in range(n_ep):
             key, rk2 = jax.random.split(key)
             state = single_env_reset(rk2)
             obs = jnp.asarray(state.obs[0])
-            zseq = []
+            zseq, aseq = [], []
             for _t in range(episode_length):
                 z = enc_apply(params, obs)
                 zseq.append(np.asarray(z).reshape(-1))
                 act = pi_apply(params, z)
+                aseq.append(np.asarray(act).reshape(-1))
                 state = single_env_step(state, act)
                 if bool(state.done[0] > 0.5):
                     break
                 obs = jnp.asarray(state.obs[0])
-            zseq = np.stack(zseq)            # (T, latent)
+            zseq = np.stack(zseq); aseq = np.stack(aseq)   # (T,latent),(T,adim)
             Zall.append(zseq)
             if len(zseq) > kk:
                 Zt.append(zseq[:-kk]); Ztk.append(zseq[kk:])
+                if _mech:
+                    for t in range(len(zseq) - kk):
+                        ac = jnp.asarray(aseq[t:t + kk].reshape(1, -1))
+                        zt = jnp.asarray(zseq[t].reshape(1, -1))
+                        pred = np.asarray(jumpy_net.apply(params["jdyn"], zt, ac)).reshape(-1)
+                        Err.append(float(np.sqrt(((pred - zseq[t + kk]) ** 2).sum())))
         Zall = np.concatenate(Zall, 0); Zt = np.concatenate(Zt, 0); Ztk = np.concatenate(Ztk, 0)
+        Err = np.array(Err, np.float32) if Err else np.zeros(0, np.float32)
         _tag = os.environ.get("TDMPC_GLASS_OUTPUT_TAG", "se_dump")
         outdir = Path(__file__).resolve().parents[1] / "exp" / "tdmpc_glass" / "se_dump"
         outdir.mkdir(parents=True, exist_ok=True)
-        outp = outdir / f"{_tag}_seed{seed}_k{kk}.npz"
+        outp = outdir / f"{_tag}_seed{seed}_k{kk}{'_mech' if _mech else ''}.npz"
         np.savez_compressed(outp, Z=Zall.astype(np.float16), Zt=Zt.astype(np.float16),
-                            Ztk=Ztk.astype(np.float16), k=kk, env=str(env_id))
-        print(f"  [SE_DUMP] saved {Zall.shape[0]} latents ({n_ep} eps, k={kk}) -> {outp}", flush=True)
+                            Ztk=Ztk.astype(np.float16), err=Err, k=kk, env=str(env_id))
+        print(f"  [SE_DUMP] saved {Zall.shape[0]} latents ({n_ep} eps, k={kk}, mech={_mech}, "
+              f"errs={len(Err)}) -> {outp}", flush=True)
         _sys.exit(0)
 
     # Q-reset (REDQ-style): re-init online Q params + optimizer state when env_steps
