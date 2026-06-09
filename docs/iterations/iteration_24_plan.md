@@ -58,3 +58,10 @@ van CartpoleSparse + BallInCup near-complete (n5 @500k); rnd/vcse/si2e/wmsi2e no
 order). KEY: vanilla is NOT floored on these (best Cart 768, Ball 975) — bimodal/seed-dependent. So the
 gate metric must be SOLVE-RATE across seeds (how many of 5 find reward), not just mean/best — the
 intrinsic must rescue MORE seeds than vanilla/rnd. No comparison yet (only van has data). Health OK, 8 boxes busy.
+
+### tick ~22:20Z: FULL vanilla baseline (n=5/task) — discriminating tasks identified
+van solve-rate: Cart 1/5 (m195), Ball 4/5 (m754), Acro 0/5 (m21).
+=> AcrobotSparse (0/5) = CLEANEST discriminator (vanilla fully fails); CartpoleSparse (1/5) second;
+BallInCup (4/5) nearly saturated, least useful. The gate hinges on Acro+Cart: can rnd/vcse/si2e/wmsi2e
+solve MORE seeds than van (0/5 Acro, 1/5 Cart)? New arms still immature (seed-0 just launched seed-major).
+rnd Cart seed0 final=2 (no reward, like a typical van seed). No comparison yet. 8 boxes busy, 0 failures.
