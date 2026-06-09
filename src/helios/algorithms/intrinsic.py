@@ -86,6 +86,120 @@ def make_rnd(obs_dim, D=64, hidden=(256, 256), lr=1e-4, seed=0):
             "onorm": RunningNorm((obs_dim,)), "rnorm": RunningNorm(())}
 
 
+# ── iter-24 — SI2E-style SE-driven exploration ────────────────────────────────
+# Pointing the VALIDATED structural-entropy structure (pre-check 1: 53% SE gap in TD-MPC2 latents)
+# at the task it actually fits: COVERAGE/exploration, not adaptive-k (which died: jumpy error uniform).
+# After SI2E (Zeng et al., NeurIPS 2024, arXiv:2410.06621): a dynamics-relevant embedding, an
+# SE-OPTIMAL community partition of its transition graph, and a value-conditional coverage bonus that
+# rewards visiting under-covered communities (anti-redundancy). v1 = SE-community count-coverage *
+# value-difference weight. Pre-registered gate: must BEAT RND on sparse tasks (the iter-21 G2 bar the
+# geometric Laplacian failed). networkx-optional: SE-optimal Louvain if present, else numpy kmeans.
+
+def _np_kmeans(X, n, iters=15, seed=0):
+    rng = np.random.default_rng(seed)
+    C = X[rng.choice(len(X), min(n, len(X)), replace=False)].copy()
+    for _ in range(iters):
+        d2 = (X * X).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (X @ C.T)
+        lab = d2.argmin(1)
+        for c in range(len(C)):
+            m = lab == c
+            if m.any():
+                C[c] = X[m].mean(0)
+    return C
+
+
+def _se_communities(emb, n_comm, resolution=0.5, knn=8, seed=0):
+    """SE-aligned community centroids over a kNN graph of embeddings. Louvain (modularity, which a
+    kNN graph makes SE-aligned) when networkx is available AND it yields a sensible granularity
+    (3..64 communities); otherwise kmeans(n_comm). NOTE: do NOT extra-sparsify a kNN graph — it is
+    already sparse, and keep_frac fragmentation produced ~all-singletons (useless coverage codebook)."""
+    try:
+        import networkx as nx
+        from networkx.algorithms.community import louvain_communities
+        Xn = emb / (np.linalg.norm(emb, axis=1, keepdims=True) + 1e-9)
+        S = Xn @ Xn.T
+        np.fill_diagonal(S, 0.0)
+        A = np.zeros_like(S)
+        for i in range(S.shape[0]):
+            nn_i = np.argsort(-S[i])[:knn]
+            A[i, nn_i] = np.clip(S[i, nn_i], 0.0, None)
+        A = np.maximum(A, A.T)                         # symmetric kNN (union), stays sparse
+        G = nx.from_numpy_array(A)
+        comms = [c for c in louvain_communities(G, weight="weight", resolution=resolution, seed=seed) if c]
+        if 3 <= len(comms) <= 64:
+            return np.stack([emb[list(c)].mean(0) for c in comms])
+    except Exception:
+        pass
+    return _np_kmeans(emb, n_comm, seed=seed)
+
+
+def make_si2e(obs_dim, D=16, hidden=(256, 256), lr=1e-4, ortho_coef=1.0,
+              buf_cap=4000, rebuild_every=4000, n_comm=24, seed=0):
+    """Dynamics-relevant embedding (Laplacian-style: smooth-over-transitions + decorrelated), an
+    SE-community partition rebuilt every `rebuild_every` env steps, and a count-coverage bonus."""
+    net = _MLP(hidden, D)
+    pparams = net.init(jax.random.PRNGKey(seed), jnp.zeros((1, obs_dim)))
+    tx = optax.adam(lr)
+    opt = tx.init(pparams)
+
+    @jax.jit
+    def phi(pp, obs):
+        return net.apply(pp, obs)
+
+    @jax.jit
+    def update(pp, opt, obs, obs_next):
+        def loss(pp):
+            f = net.apply(pp, obs); fn = net.apply(pp, obs_next)
+            smooth = jnp.mean(jnp.sum((f - fn) ** 2, axis=-1))
+            B = f.shape[0]
+            G = (f.T @ f) / B
+            ortho = jnp.mean((G - jnp.eye(D)) ** 2)
+            return smooth + ortho_coef * ortho
+        g = jax.grad(loss)(pp)
+        u, opt = tx.update(g, opt, pp)
+        return optax.apply_updates(pp, u), opt
+
+    st = {
+        "pp": pparams, "opt": opt, "phi": phi, "update": update,
+        "onorm": RunningNorm((obs_dim,)), "rnorm": RunningNorm(()),
+        "buf": np.zeros((buf_cap, D), np.float32), "buf_n": 0, "buf_i": 0,
+        "centroids": None, "counts": None, "since": 0,
+        "buf_cap": buf_cap, "rebuild_every": rebuild_every, "n_comm": n_comm, "seed": seed,
+    }
+
+    def buf_push(emb):                       # emb (N, D) numpy
+        for row in emb:
+            st["buf"][st["buf_i"]] = row
+            st["buf_i"] = (st["buf_i"] + 1) % st["buf_cap"]
+            st["buf_n"] = min(st["buf_n"] + 1, st["buf_cap"])
+        st["since"] += emb.shape[0]
+
+    def maybe_rebuild():
+        if st["since"] >= st["rebuild_every"] and st["buf_n"] >= max(256, st["n_comm"] * 4):
+            X = st["buf"][: st["buf_n"]]
+            st["centroids"] = _se_communities(X, st["n_comm"], seed=st["seed"])
+            st["counts"] = np.ones(len(st["centroids"]), np.float64)
+            st["since"] = 0
+            return True
+        return False
+
+    def coverage_bonus(emb):                 # emb (N, D) -> (N,) count-coverage bonus over communities
+        C = st["centroids"]
+        if C is None:
+            return np.ones(emb.shape[0], np.float32)   # uniform until first partition
+        d2 = (emb * emb).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (emb @ C.T)
+        cid = d2.argmin(1)
+        b = 1.0 / np.sqrt(st["counts"][cid])
+        for c in cid:
+            st["counts"][c] += 1.0
+        return b.astype(np.float32)
+
+    st["buf_push"] = buf_push
+    st["maybe_rebuild"] = maybe_rebuild
+    st["coverage_bonus"] = coverage_bonus
+    return st
+
+
 def make_laplacian(obs_dim, D=10, hidden=(256, 256), lr=1e-4, ortho_coef=1.0, seed=0):
     net = _MLP(hidden, D)
     pparams = net.init(jax.random.PRNGKey(seed), jnp.zeros((1, obs_dim)))

@@ -1051,11 +1051,13 @@ def train_tdmpc2(
     _intr_coef = float(intrinsic_coef)
     _intr_state = None
     if _intr != "none" and _intr_coef > 0:
-        from helios.algorithms.intrinsic import make_rnd, make_laplacian
+        from helios.algorithms.intrinsic import make_rnd, make_laplacian, make_si2e
         if _intr == "rnd":
             _intr_state = make_rnd(obs_dim, seed=seed)
         elif _intr == "laplacian":
             _intr_state = make_laplacian(obs_dim, seed=seed)
+        elif _intr == "si2e":
+            _intr_state = make_si2e(obs_dim, seed=seed)
         else:
             raise ValueError(f"unknown --intrinsic {intrinsic}")
         print(f"  iter-21 intrinsic exploration: {_intr} coef={_intr_coef} (training-reward only, "
@@ -1517,6 +1519,13 @@ def train_tdmpc2(
                 if _intr == "rnd":
                     bonus = np.asarray(st["reward"](st["pp"], on_n))
                     st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], on_n)
+                elif _intr == "si2e":
+                    emb_cur = np.asarray(st["phi"](st["pp"], o_n))
+                    emb_nxt = np.asarray(st["phi"](st["pp"], on_n))
+                    st["buf_push"](emb_cur)
+                    bonus = st["coverage_bonus"](emb_nxt)        # count-coverage over SE communities
+                    st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], o_n, on_n)
+                    st["maybe_rebuild"]()
                 else:  # laplacian
                     bonus = np.asarray(st["reward"](st["pp"], o_n, on_n))
                     st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], o_n, on_n)
@@ -1990,7 +1999,7 @@ def parse_args():
                     help="iter-20: consistency-loss horizon-decay rho (default 0.5). Higher (0.75-0.9) "
                          "weights long-horizon prediction more -> dynamics accurate at depth -> stable "
                          "deep planning (the H9-without-collapse lever).")
-    ap.add_argument("--intrinsic", choices=["none", "rnd", "laplacian"], default="none",
+    ap.add_argument("--intrinsic", choices=["none", "rnd", "laplacian", "si2e"], default="none",
                     help="iter-21: abstraction-grounded exploration intrinsic reward (training only). "
                          "rnd=Random Network Distillation (baseline); laplacian=DCEO-style eigenpurpose "
                          "(||phi(s')-phi(s)||, graph-Laplacian rep — the abstraction bet). Sparse-task rescue.")
