@@ -6,3 +6,7 @@ exp/tdmpc_glass/logs/
 *.tmp
 central_queue.lock
 *.json.lock
+# oversized skill-substrate caches (GitHub 50MB warn)
+
+# never upload pickled caches/checkpoints
+*.pkl
