@@ -79,3 +79,27 @@ Same soft-mask continuation gate, signal = jumpy-dynamics ensemble disagreement 
 score. Build both behind flags; if SE-k mechanism-check fails, F is the modest-but-likely lever (3/3 DR
 consensus). F's own pre-check: does ensemble U_dyn track true k-step error on SimNorm latents (guard
 against epistemic saturation)?
+
+## MECHANISM-CHECK VERDICT (2026-06-09): SE-k FAILS the kill-test -> SE-k KILLED
+Ran SE_DUMP mech mode on 2 real fast-jumpy k4 ckpts (in-distribution pi rollouts, 12 eps each):
+- PandaPickCube:        Pearson(b,err)=-0.016  Spearman=+0.087  hi/lo err ratio=0.94x
+- CartpoleSwingupSparse:Pearson(b,err)=-0.155  Spearman=-0.179  hi/lo err ratio=0.97x
+KILL CONDITION (b-error corr ~= 0) MET on BOTH -> SE community-boundary score does NOT predict where the
+jumpy model is inaccurate. SE-k's premise (long-k in-community / short-k at boundary) has no signal. KILLED.
+
+DEEPER FINDING (the real reason, and it dents the whole adaptive-k family incl. F):
+The k-step prediction error is SMALL and NEARLY UNIFORM across states (Panda hi 0.190 vs lo 0.201;
+Cartpole 0.010 vs 0.010). The trained jumpy model is roughly equally accurate everywhere in-distribution
+-> there is little "hard region" for ANY adaptive jump-length scheme to exploit. This is WHY fixed-k jumpy
+already works (uniform accuracy) and why SE-k/adaptive-k add nothing. It is the iter-19 lesson at a new
+level: structure exists (53% SE gap) but does not help PLANNING, now with a measured mechanism (uniform error).
+
+CAVEAT (one honest limitation before fully abandoning adaptive-k): errors were measured on IN-DISTRIBUTION
+pi-policy rollouts. The adaptive-k payoff, if any, lives at PLANNING-TIME on MPPI-PERTURBED (OOD) actions,
+where the jumpy model may be less uniformly accurate. A stronger test = dump k-step error on MPPI-sampled
+action perturbations, not pi actions. Until that shows error VARIANCE, F (uncertainty-gated horizon) is
+also low-expected-value (it gates on the same error signal that is ~uniform here).
+
+STATUS: SE-k null (cheap mechanism-check killed it BEFORE any multi-seed fanout — the discipline working).
+Decision for the user: (a) run the OOD-perturbed error test to salvage F/adaptive-k, OR (b) pick a
+different iter-23 lever (not adaptive-k), OR (c) accept the jumpy-Panda n=5 win as the campaign result.
