@@ -180,3 +180,10 @@ PandaPickCube, mature @>=400k, paired jumpy-vs-mppi protocol, bootstrap CI (20k 
   publishes jumpy+consistency) -> this is a fair-protocol reproduction+evaluation win, not an
   architectural innovation. The novel-abstraction attempts (iter-19 skills, iter-21 Laplacian) were nulls.
   -> capstone writeup drafted (docs/writeup/); iter-23 (Lever I) is the genuine-novelty follow-up.
+
+### FINAL n=5 (2026-06-09 autonomous): jumpy-Panda win FIRMED + strengthened
+jumpy n=5 mature: fin 2708 / peak 3183 | vanilla-H3 n=7: fin 1442 / peak 2217.
+- PEAK  diff +966  CI [714, 1248] SEP  (+44%)
+- FINAL diff +1266 CI [877, 1642] SEP  (+88%)
+Result held and grew as seeds matured (peak gap +810→+966); no regression. This is the locked n=5
+verdict for the capstone: jumpy BEATS vanilla TD-MPC2 on PandaPickCube manipulation, both metrics CI-sep.

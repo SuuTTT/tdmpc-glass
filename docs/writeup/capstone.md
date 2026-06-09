@@ -20,8 +20,8 @@ bisimulation auxiliaries, Laplacian/eigenpurpose exploration, community-detectio
 consistency-horizon (rho) schedule, and several apparent wins that dissolved under n-scaling all
 returned to null — "eight mirages," each separately publishable at some interim snapshot. The lone
 durable positive is a **jumpy (k-step) world model**, which on manipulation (PandaPickCube) beats
-vanilla TD-MPC2 on BOTH peak (+810, 95% CI [583, 1060]) and final return (+1184, [860, 1510]),
-CI-separated, n=3→5 vs n=7. We are explicit that **the jumpy model is not our invention** — it is
+vanilla TD-MPC2 on BOTH peak (+966, 95% CI [714, 1248]) and final return (+1266, [877, 1642]),
+CI-separated, n=5 vs n=7. We are explicit that **the jumpy model is not our invention** — it is
 published prior art (Farebrother et al., 2026) — so this is a fair-protocol *reproduction-and-
 evaluation* win, not an architectural innovation. The campaign's genuinely novel abstraction bets
 were among the nulls.
@@ -83,10 +83,10 @@ long effective horizon WITHOUT the compounding 1-step-model error that sinks nai
 
 **Result (PandaPickCube, fair protocol, mature ≥400k, paired jumpy-vs-mppi, 20k-resample bootstrap):**
 
-| metric | jumpy (n=3 mature → 5) | vanilla-H3 (n=7) | diff | 95% CI | verdict |
+| metric | jumpy (n=5 mature) | vanilla-H3 (n=7) | diff | 95% CI | verdict |
 |---|---|---|---|---|---|
-| **peak** (best ckpt) | 3027 | 2217 | **+810 (+37%)** | [583, 1060] | **SEPARATED** |
-| **final** (last-2) | 2626 | 1442 | **+1184 (+82%)** | [860, 1510] | **SEPARATED** |
+| **peak** (best ckpt) | 3183 | 2217 | **+966 (+44%)** | [714, 1248] | **SEPARATED** |
+| **final** (last-2) | 2708 | 1442 | **+1266 (+88%)** | [877, 1642] | **SEPARATED** |
 
 Both metrics separate. The peak gap is the clean "jumpy plans better" claim; the larger final gap is a
 **stability** finding — vanilla TD-MPC2 itself collapses peak→final on Panda (−35%, 2217→1442), and the
