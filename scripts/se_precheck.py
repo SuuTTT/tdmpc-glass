@@ -207,8 +207,42 @@ def mechcheck(npz_path, n_nodes=128, sub=8000, seed=0):
     return dict(pearson=pear, spearman=spear, hi=float(hi.mean()), lo=float(lo.mean()), ok=ok)
 
 
+def _spearman(a, b):
+    ra = np.argsort(np.argsort(a)).astype(float); rb = np.argsort(np.argsort(b)).astype(float)
+    ra -= ra.mean(); rb -= rb.mean()
+    return float((ra * rb).sum() / (np.sqrt((ra**2).sum() * (rb**2).sum()) + 1e-9))
+
+
+def fcheck(npz_path):
+    """F (uncertainty-gated horizon) SALVAGE-TEST. Uses ensemble-free disagreement =
+    ||jumpy_pred - iterated_1step_pred||. (1) Does disagreement track TRUE k-step error on pi actions?
+    (2) Under MPPI-perturbed actions, is disagreement high-variance (=> hard regions a horizon-gate can
+    exploit)? PASS if disc tracks err (spearman>0.3) AND perturbed disagreement has real spread
+    (CV>0.5 and max>>pi-action disc)."""
+    d = np.load(npz_path, allow_pickle=True)
+    err = d["err"].astype(np.float64); disc = d["disc"].astype(np.float64)
+    dpm = d.get("discp_max"); dpme = d.get("discp_mean")
+    dpm = dpm.astype(np.float64) if dpm is not None else np.zeros(0)
+    dpme = dpme.astype(np.float64) if dpme is not None else np.zeros(0)
+    n = min(len(err), len(disc)); err, disc = err[:n], disc[:n]
+    print(f"=== F salvage-test: {npz_path}  N={n} k={int(d['k'])} env={d.get('env')} ===")
+    sp = _spearman(disc, err)
+    print(f"  (1) disagreement vs TRUE err: spearman={sp:+.3f}  (signal valid if >0.3)")
+    print(f"      err  mean={err.mean():.4f} std={err.std():.4f} CV={err.std()/(err.mean()+1e-9):.2f}")
+    print(f"      disc(pi) mean={disc.mean():.4f} std={disc.std():.4f} CV={disc.std()/(disc.mean()+1e-9):.2f}")
+    cv_p = float(dpm.std() / (dpm.mean() + 1e-9)) if len(dpm) else 0.0
+    infl = float(dpm.mean() / (disc.mean() + 1e-9)) if len(dpm) else 0.0
+    print(f"  (2) perturbed disagreement: mean_max={dpm.mean() if len(dpm) else 0:.4f} "
+          f"CV={cv_p:.2f}  inflation(max/pi)={infl:.2f}x")
+    ok = sp > 0.3 and cv_p > 0.5 and infl > 1.3
+    print(f"  VERDICT: {'PASS — disagreement tracks error AND perturbation creates hard regions -> build F (disagreement-gated horizon, ensemble-free)' if ok else 'WEAK/FAIL — adaptive-k has no exploitable signal even OOD -> abandon adaptive-k family'}")
+    return dict(spearman=sp, err_cv=float(err.std()/(err.mean()+1e-9)), perturb_cv=cv_p, inflation=infl, ok=ok)
+
+
 if __name__ == "__main__":
     import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "fcheck" and sys.argv[2].endswith(".npz"):
+        fcheck(sys.argv[2]); sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "mech" and sys.argv[2].endswith(".npz"):
         mechcheck(sys.argv[2], n_nodes=int(sys.argv[3]) if len(sys.argv) > 3 else 128)
         sys.exit(0)

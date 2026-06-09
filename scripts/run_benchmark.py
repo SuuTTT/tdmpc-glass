@@ -1355,7 +1355,18 @@ def train_tdmpc2(
         # kill-test). kk is then forced to the model's k. Else fall back to latent-only dump.
         _mech = (jumpy_net is not None and _jumpy_k > 0)
         kk = int(_jumpy_k) if _mech else int(os.environ.get("SE_DUMP_K", "4"))
-        Zall, Zt, Ztk, Err = [], [], [], []
+        # F salvage-test: also measure (1) TRUE k-step error on pi action, (2) ensemble-free
+        # disagreement = ||jumpy_pred - iterated_1step_pred|| at the pi action (validate vs true err),
+        # (3) the same disagreement under M MPPI-perturbed action seqs (mean/max per state) -> does
+        # OOD perturbation create high-variance "hard" regions an adaptive horizon could gate on?
+        _M = int(os.environ.get("SE_DUMP_PERTURB", "6")); _pstd = float(os.environ.get("SE_DUMP_PSTD", "0.5"))
+        _rng = np.random.default_rng(0)
+        Zall, Zt, Ztk, Err, Disc, DiscPmean, DiscPmax = [], [], [], [], [], [], []
+        def _iter1(zb, a_seq_b):           # zb (B,latent), a_seq_b (B,kk,adim) -> (B,latent)
+            z = zb
+            for _j in range(kk):
+                z = dyn_net.apply(params["dyn"], z, a_seq_b[:, _j, :])
+            return z
         for _ep in range(n_ep):
             key, rk2 = jax.random.split(key)
             state = single_env_reset(rk2)
@@ -1376,20 +1387,30 @@ def train_tdmpc2(
                 Zt.append(zseq[:-kk]); Ztk.append(zseq[kk:])
                 if _mech:
                     for t in range(len(zseq) - kk):
-                        ac = jnp.asarray(aseq[t:t + kk].reshape(1, -1))
                         zt = jnp.asarray(zseq[t].reshape(1, -1))
-                        pred = np.asarray(jumpy_net.apply(params["jdyn"], zt, ac)).reshape(-1)
-                        Err.append(float(np.sqrt(((pred - zseq[t + kk]) ** 2).sum())))
+                        a_pi = aseq[t:t + kk]                                  # (kk,adim)
+                        jp = jumpy_net.apply(params["jdyn"], zt, jnp.asarray(a_pi.reshape(1, -1)))
+                        Err.append(float(np.sqrt(((np.asarray(jp).reshape(-1) - zseq[t + kk]) ** 2).sum())))
+                        ip = _iter1(zt, jnp.asarray(a_pi[None]))
+                        Disc.append(float(np.sqrt(((np.asarray(jp - ip).reshape(-1)) ** 2).sum())))
+                        noise = (_rng.normal(size=(_M, kk, act_dim)).astype("float32") * _pstd)
+                        a_m = np.clip(a_pi[None] + noise, -1.0, 1.0)           # (M,kk,adim)
+                        zt_m = jnp.repeat(zt, _M, axis=0)
+                        jp_m = jumpy_net.apply(params["jdyn"], zt_m, jnp.asarray(a_m.reshape(_M, -1)))
+                        ip_m = _iter1(zt_m, jnp.asarray(a_m))
+                        dm = np.sqrt(((np.asarray(jp_m - ip_m)) ** 2).sum(-1))  # (M,)
+                        DiscPmean.append(float(dm.mean())); DiscPmax.append(float(dm.max()))
         Zall = np.concatenate(Zall, 0); Zt = np.concatenate(Zt, 0); Ztk = np.concatenate(Ztk, 0)
-        Err = np.array(Err, np.float32) if Err else np.zeros(0, np.float32)
+        arr = lambda L: np.array(L, np.float32) if L else np.zeros(0, np.float32)
         _tag = os.environ.get("TDMPC_GLASS_OUTPUT_TAG", "se_dump")
         outdir = Path(__file__).resolve().parents[1] / "exp" / "tdmpc_glass" / "se_dump"
         outdir.mkdir(parents=True, exist_ok=True)
         outp = outdir / f"{_tag}_seed{seed}_k{kk}{'_mech' if _mech else ''}.npz"
         np.savez_compressed(outp, Z=Zall.astype(np.float16), Zt=Zt.astype(np.float16),
-                            Ztk=Ztk.astype(np.float16), err=Err, k=kk, env=str(env_id))
+                            Ztk=Ztk.astype(np.float16), err=arr(Err), disc=arr(Disc),
+                            discp_mean=arr(DiscPmean), discp_max=arr(DiscPmax), k=kk, env=str(env_id))
         print(f"  [SE_DUMP] saved {Zall.shape[0]} latents ({n_ep} eps, k={kk}, mech={_mech}, "
-              f"errs={len(Err)}) -> {outp}", flush=True)
+              f"errs={len(Err)}, perturb M={_M} pstd={_pstd}) -> {outp}", flush=True)
         _sys.exit(0)
 
     # Q-reset (REDQ-style): re-init online Q params + optimizer state when env_steps

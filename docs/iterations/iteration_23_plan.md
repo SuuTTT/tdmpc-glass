@@ -103,3 +103,24 @@ also low-expected-value (it gates on the same error signal that is ~uniform here
 STATUS: SE-k null (cheap mechanism-check killed it BEFORE any multi-seed fanout — the discipline working).
 Decision for the user: (a) run the OOD-perturbed error test to salvage F/adaptive-k, OR (b) pick a
 different iter-23 lever (not adaptive-k), OR (c) accept the jumpy-Panda n=5 win as the campaign result.
+
+## F SALVAGE-TEST VERDICT (2026-06-09): adaptive-k family FULLY DEAD (decisive)
+F salvage dump on Panda fast-k4 ckpt (6 eps, M=6 MPPI-perturbed actions @pstd=0.5), ensemble-free
+disagreement = ||jumpy_pred - iterated_1step_pred||:
+- (1) SIGNAL VALID: disagreement vs TRUE k-step err spearman=+0.719 (>>0.3). The jumpy-vs-iter
+  disagreement IS a good ensemble-free uncertainty proxy (useful finding).
+- (2) NO HEADROOM: err mean 0.227 CV 0.34; perturbed disagreement inflation(max/pi)=1.06x, CV 0.25.
+  MPPI-scale action perturbation barely changes the error -> NO "hard regions" even OOD.
+=> The k-step model is uniformly accurate in-distribution AND under perturbation. Adaptive jump-length
+(SE-k AND F) has nothing to gate on. This is WHY fixed-k jumpy already wins, now confirmed OOD. The
+ENTIRE adaptive-k / iter-23-temporal-abstraction direction is killed by mechanism-checks BEFORE any
+multi-seed fanout (the discipline working — zero wasted campaign compute).
+
+SILVER LINING: jumpy-vs-iterated-1-step disagreement = a validated ensemble-free uncertainty signal
+(spearman 0.72) — could be reused elsewhere (e.g. exploration, safe planning), just not for horizon-gating.
+
+CAMPAIGN STATUS: the headline result stands = jumpy beats vanilla on PandaPickCube (n=5, peak +44% /
+final +88%, CI-sep) + the 8 mirages null + peak-vs-final methodology. iter-23's novel-lever bets
+(SE-k, F) are honest nulls killed cheaply. NEXT FORK (user): (a) non-adaptive-k novel lever
+(Hermite-spline action bottleneck / value-equivalent macro head — NOT killed by uniform-error finding),
+or (b) accept campaign result + polish capstone/blog.
