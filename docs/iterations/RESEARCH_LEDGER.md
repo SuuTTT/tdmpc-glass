@@ -40,8 +40,22 @@ already works, and why adaptive jump-length has nothing to adapt to.
   (its edge over TAP/PLAS). Independent of error-variance, so this campaign's verdict doesn't touch it.
 - **Value-equivalent macro head**: train \(d_k\) return-equivalent over k steps (predict same macro-Q)
   not state-faithful — abstraction keeps only control-relevant info. Single-variable loss change.
-- **Reusing the disagreement signal** (jumpy vs iterated-1-step) for exploration bonus / safe-abstain
-  planning — cheap, orthogonal, the one positive by-product of the F null.
+- **SI2E-style SE-driven EXPLORATION** (the real home for our validated SE structure). SI2E (NeurIPS
+  2024, 2410.06621) minimizes SE over a VALUE-difference state-action graph -> encoding tree -> a
+  *value-conditional structural-entropy* intrinsic reward for coverage; beats SOTA exploration baselines
+  on MiniGrid/MetaWorld/DMControl. KEY: this points SE at coverage (where motion-phase/community
+  structure IS the relevant axis), NOT at adaptive-k (where it died). Sparse-task regime = where
+  abstraction has evidence and SimNorm's "sufficient representation" does not help (bottleneck is
+  exploration, not encoding). We already have the harness (iter-21 intrinsic.py RND+Laplacian, --intrinsic
+  flag, sparse tasks) + the RND baseline. CAVEAT: iter-21 Laplacian (geometric SE-flavored exploration)
+  LOST to RND; SI2E is value-conditional (richer) so a fair re-attempt, but prior is cautious.
+- **Reusing the disagreement signal** (jumpy vs iterated-1-step) for safe/abstain planning — cheap,
+  orthogonal, the one positive by-product of the F null.
+
+WHY "SE to enhance return" splits: DIRECT SE-clustering-for-return on DENSE tasks = ALREADY NULL
+(geoglass/behavglass mirages #1-2; redundant with SimNorm — a better clusterer can't fix redundancy).
+INDIRECT (SE->exploration->finds reward->return) on SPARSE tasks = the live path (= SI2E). Pre-check-1
+passing means the SE structure is REAL, NOT that clustering will raise dense-task return.
 - **High-DoF done right**: our Humanoid probe FLOORED at 500k (needs millions of steps); the literature
   locates abstraction headroom on Dog/Humanoid, but only a real-budget run can test it honestly.
 
@@ -52,8 +66,12 @@ already works, and why adaptive jump-length has nothing to adapt to.
    *Highest novelty-per-risk; doesn't need error-variance.*
 2. **Value-equivalent macro head.** Add a macro-Q-equivalence loss to \(d_k\); single-variable vs
    state-faithful jumpy; test under distractors (where state-faithful wastes capacity).
-3. **Disagreement-driven exploration probe.** Use the validated jumpy/iter-1-step disagreement as an
-   intrinsic bonus on a sparse task where vanilla=0; cheap, orthogonal.
+3. **SI2E-style SE-driven exploration** (the SE lever's correct home). Wire a value-conditional-SE
+   intrinsic reward into the existing iter-21 intrinsic harness; sparse tasks (CartpoleSparse, BallInCup,
+   AcrobotSparse). PRE-CHECK: value-difference SE encoding tree is non-trivial on our latents. KILL-TEST
+   / GATE: **SI2E must BEAT RND** (not just rescue) — the iter-21 G2 bar Laplacian failed — IQM over 5
+   seeds, peak+final, CI. If SI2E <= RND -> abstraction-flavored exploration adds nothing (consistent
+   with Laplacian), record and stop. (Sub-option: jumpy/iter-1-step disagreement as an alternate bonus.)
 4. **Humanoid/Dog at real budget** (millions of steps) — only with the compute to do it honestly;
    settles whether jumpy's manipulation win extends to high-DoF.
 
