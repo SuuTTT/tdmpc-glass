@@ -110,8 +110,58 @@ def precheck_latents(X, name="latents"):
     return overall
 
 
+def _kmeans(X, n, iters=25, seed=0):
+    rng = np.random.default_rng(seed)
+    C = X[rng.choice(len(X), n, replace=False)].copy()
+    for _ in range(iters):
+        d = ((X[:, None, :] - C[None, :, :]) ** 2).sum(-1)
+        lab = d.argmin(1)
+        for c in range(n):
+            m = lab == c
+            if m.any():
+                C[c] = X[m].mean(0)
+    return lab, C
+
+
+def analyze_real(npz_path, n_nodes=128, sub=8000, seed=0):
+    """Tier-2: real rollout latents -> cluster to n_nodes -> k-step transition graph + kNN
+    geometry graph -> SE gap. The actual go/no-go for the SE-k lever on the jumpy substrate."""
+    assert _HAVE_NX
+    d = np.load(npz_path, allow_pickle=True)
+    Z = d["Z"].astype(np.float32); Zt = d["Zt"].astype(np.float32); Ztk = d["Ztk"].astype(np.float32)
+    print(f"=== tier-2 real latents: {npz_path}  Z={Z.shape} k={int(d['k'])} env={d.get('env')} ===")
+    rng = np.random.default_rng(seed)
+    if len(Z) > sub:
+        Z = Z[rng.choice(len(Z), sub, replace=False)]
+    # node assignment via kmeans on the full latent cloud
+    allz = np.concatenate([Z, Zt, Ztk], 0)
+    if len(allz) > sub:
+        allz = allz[rng.choice(len(allz), sub, replace=False)]
+    _, C = _kmeans(allz, n_nodes, seed=seed)
+
+    def nearest(x):
+        return (((x[:, None, :] - C[None, :, :]) ** 2).sum(-1)).argmin(1)
+    # k-step transition graph over nodes
+    a, b = nearest(Zt), nearest(Ztk)
+    P = np.zeros((n_nodes, n_nodes))
+    for i, j in zip(a, b):
+        P[i, j] += 1.0
+    print("  -- k-step transition graph --")
+    g_t = precheck_transition(P, f"jumpy {d.get('env')} k-step ({n_nodes} nodes)")
+    # kNN geometry graph over node centroids
+    print("  -- kNN on node centroids --")
+    g_k = precheck_latents(C, f"jumpy {d.get('env')} centroids")
+    verdict = max(g_t, g_k)
+    print(f"\n  TIER-2 VERDICT: best SE gap = {100*verdict:.1f}%  -> "
+          f"{'PASS (build SE-k)' if verdict>=0.15 else 'FAIL (fall back to F)'}")
+    return verdict
+
+
 if __name__ == "__main__":
     import sys
+    if len(sys.argv) > 1 and sys.argv[1].endswith(".npz"):
+        analyze_real(sys.argv[1], n_nodes=int(sys.argv[2]) if len(sys.argv) > 2 else 128)
+        sys.exit(0)
     base = "exp/tdmpc_glass/skill_substrate"
     P = np.load(f"{base}/cartsparse_geoglass_s0_P.npz")["P"]
     protos = np.load(f"{base}/skill_substrate_cartsparse_communities.npz")["prototypes"]
