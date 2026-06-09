@@ -52,3 +52,9 @@ ssh1_a4000b, ssh4_a4000, ssh4_a4000b, ssh6_3060, ssh6_titanv, ssh8_a4000, ssh9_a
 PROTECTED (user's forecasting, NOT tdmpc — do NOT clobber/re-add): ssh2_a4000(18950)=MultiRel,
 ssh3b_a4000(17426)=Crossformer. 1660s disabled. Baselines (prio3) run first, new arms (prio5) after.
 ~9h for all 75 on 8 boxes -> by +8h expect van/rnd complete + partial vcse/si2e/wmsi2e -> first verdict.
+
+### tick ~21:00Z: baseline only (campaign early, ~45min in)
+van CartpoleSparse + BallInCup near-complete (n5 @500k); rnd/vcse/si2e/wmsi2e not yet started (priority
+order). KEY: vanilla is NOT floored on these (best Cart 768, Ball 975) — bimodal/seed-dependent. So the
+gate metric must be SOLVE-RATE across seeds (how many of 5 find reward), not just mean/best — the
+intrinsic must rescue MORE seeds than vanilla/rnd. No comparison yet (only van has data). Health OK, 8 boxes busy.
