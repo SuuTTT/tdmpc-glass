@@ -1342,6 +1342,42 @@ def train_tdmpc2(
     t0 = time.time()
     loss_val = 0.0
 
+    # iter-23 SE pre-check tier-2: dump real rollout latents for offline structural-entropy
+    # analysis, then EXIT (no training). Gated by SE_DUMP=1; needs --resume_checkpoint. Uses the
+    # pi policy (exists in every ckpt) — the SE structure question is about the ENCODER latent
+    # geometry + transition graph, NOT the jumpy planner. Saves z_t / z_{t+k} pairs (k=SE_DUMP_K).
+    if os.environ.get("SE_DUMP", "") == "1":
+        import sys as _sys
+        n_ep = int(os.environ.get("SE_DUMP_EPS", "12"))
+        kk = int(os.environ.get("SE_DUMP_K", str(max(_jumpy_k, 4))))
+        Zall, Zt, Ztk = [], [], []
+        for _ep in range(n_ep):
+            key, rk2 = jax.random.split(key)
+            state = single_env_reset(rk2)
+            obs = jnp.asarray(state.obs[0])
+            zseq = []
+            for _t in range(episode_length):
+                z = enc_apply(params, obs)
+                zseq.append(np.asarray(z).reshape(-1))
+                act = pi_apply(params, z)
+                state = single_env_step(state, act)
+                if bool(state.done[0] > 0.5):
+                    break
+                obs = jnp.asarray(state.obs[0])
+            zseq = np.stack(zseq)            # (T, latent)
+            Zall.append(zseq)
+            if len(zseq) > kk:
+                Zt.append(zseq[:-kk]); Ztk.append(zseq[kk:])
+        Zall = np.concatenate(Zall, 0); Zt = np.concatenate(Zt, 0); Ztk = np.concatenate(Ztk, 0)
+        _tag = os.environ.get("TDMPC_GLASS_OUTPUT_TAG", "se_dump")
+        outdir = Path(__file__).resolve().parents[1] / "exp" / "tdmpc_glass" / "se_dump"
+        outdir.mkdir(parents=True, exist_ok=True)
+        outp = outdir / f"{_tag}_seed{seed}_k{kk}.npz"
+        np.savez_compressed(outp, Z=Zall.astype(np.float16), Zt=Zt.astype(np.float16),
+                            Ztk=Ztk.astype(np.float16), k=kk, env=str(env_id))
+        print(f"  [SE_DUMP] saved {Zall.shape[0]} latents ({n_ep} eps, k={kk}) -> {outp}", flush=True)
+        _sys.exit(0)
+
     # Q-reset (REDQ-style): re-init online Q params + optimizer state when env_steps
     # crosses any threshold in q_reset_steps. Target Q (tp["q"]) is preserved so the
     # critic restarts from the EMA of past good critics rather than from scratch.

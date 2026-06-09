@@ -68,7 +68,7 @@ BOXES = [
     # is_box_idle fail-safe handle any re-churn). Env verified: jax 0.10.1 + repo present.
     # REMOVED 2026-06-08 (user): ssh3:17426 (inst 38767427) is the USER's mahjong box.
     # Same clobber risk (mahjong GPU job is run_benchmark-free). Do NOT schedule tdmpc here.
-    # ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427
+    ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427 — RELEASED from ltsf 2026-06-09, env ready
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01: GPU2/GPU3 device-handle
     # "Unknown Error" (fell off the bus), JAX -> "Unknown backend cuda". Removed
     # from the fleet so the daemon stops churning fast-fails. Reboot the vast.ai

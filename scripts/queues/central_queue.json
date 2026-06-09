@@ -4177,10 +4177,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=BallInCup SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T05:15:34Z",
     "ended_at": null,
-    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)"
+    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-09T12:05:06Z",
+    "launched_git_sha": "91b1cfc"
   },
   {
     "id": "ti22fBall1",
@@ -4188,10 +4191,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=BallInCup SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T05:15:34Z",
     "ended_at": null,
-    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)"
+    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)",
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-09T12:11:49Z",
+    "launched_git_sha": "91b1cfc"
   },
   {
     "id": "ti22fBall2",
@@ -4199,10 +4205,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=BallInCup SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T05:15:34Z",
     "ended_at": null,
-    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)"
+    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)",
+    "box": "ssh3b_a4000",
+    "started_at": "2026-06-09T12:21:12Z",
+    "launched_git_sha": "91b1cfc-dirty"
   },
   {
     "id": "ti22fBall3",
@@ -4279,9 +4288,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=PandaPickCube SEEDS=4 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T07:20:06Z",
-    "ended_at": null,
+    "ended_at": "2026-06-09T12:05:06Z",
     "note": "iter-22 PANDA is the live beat candidate (jumpy 2301>mppi1078>... >vanillaH3 1490). firm n>=5.",
     "box": "ssh4_a4000b",
     "started_at": "2026-06-09T09:06:23Z",
@@ -4293,9 +4302,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=PandaPickCube SEEDS=5 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T07:20:06Z",
-    "ended_at": null,
+    "ended_at": "2026-06-09T12:11:49Z",
     "note": "iter-22 PANDA is the live beat candidate (jumpy 2301>mppi1078>... >vanillaH3 1490). firm n>=5.",
     "box": "ssh1_2080ti",
     "started_at": "2026-06-09T09:30:22Z",
