@@ -1533,9 +1533,11 @@ def train_tdmpc2(
             # iter-21 — RND / Laplacian-eigenpurpose intrinsic exploration (training reward only).
             if _intr_state is not None:
                 st = _intr_state
-                st["onorm"].update(np.asarray(obs_np)); st["onorm"].update(np.asarray(new_obs))
-                o_n = jnp.asarray(st["onorm"].norm(np.asarray(obs_np)), jnp.float32)
-                on_n = jnp.asarray(st["onorm"].norm(np.asarray(new_obs)), jnp.float32)
+                if _intr in ("rnd", "laplacian"):
+                    # raw-obs normalization (RND/Laplacian operate on normalized obs)
+                    st["onorm"].update(np.asarray(obs_np)); st["onorm"].update(np.asarray(new_obs))
+                    o_n = jnp.asarray(st["onorm"].norm(np.asarray(obs_np)), jnp.float32)
+                    on_n = jnp.asarray(st["onorm"].norm(np.asarray(new_obs)), jnp.float32)
                 if _intr == "rnd":
                     bonus = np.asarray(st["reward"](st["pp"], on_n))
                     st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], on_n)
