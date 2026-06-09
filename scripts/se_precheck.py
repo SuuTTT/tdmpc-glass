@@ -110,12 +110,16 @@ def precheck_latents(X, name="latents"):
     return overall
 
 
+def _dist2(X, C):
+    """Squared euclidean (N,K) via matmul identity — O(N*K) memory, not O(N*K*D)."""
+    return (X * X).sum(1)[:, None] + (C * C).sum(1)[None, :] - 2.0 * (X @ C.T)
+
+
 def _kmeans(X, n, iters=25, seed=0):
     rng = np.random.default_rng(seed)
     C = X[rng.choice(len(X), n, replace=False)].copy()
     for _ in range(iters):
-        d = ((X[:, None, :] - C[None, :, :]) ** 2).sum(-1)
-        lab = d.argmin(1)
+        lab = _dist2(X, C).argmin(1)
         for c in range(n):
             m = lab == c
             if m.any():
@@ -140,7 +144,7 @@ def analyze_real(npz_path, n_nodes=128, sub=8000, seed=0):
     _, C = _kmeans(allz, n_nodes, seed=seed)
 
     def nearest(x):
-        return (((x[:, None, :] - C[None, :, :]) ** 2).sum(-1)).argmin(1)
+        return _dist2(x, C).argmin(1)
     # k-step transition graph over nodes
     a, b = nearest(Zt), nearest(Ztk)
     P = np.zeros((n_nodes, n_nodes))

@@ -115,3 +115,16 @@ This keeps a clean variable at each step and avoids re-running the geoglass mira
   k-step graph). CheetahRun chosen first *because* its cyclic gait is the clearest motion-phase case.
 - If tier-2 ≳15% gap → build community-aware k-selection (SE-k) as the iter-23 primary.
 - SimNorm-SE objective (§4) = explicitly deferred follow-on, gated on SE-k winning first.
+
+## 6. TIER-2 RESULT (2026-06-09) — PASS on the real jumpy substrate
+Dumped 12000 real latents from a trained **jumpy CheetahRun** checkpoint (pi-policy rollout, k=4),
+clustered to 128 nodes, built the k-step transition graph + kNN-centroid graph, SE-optimal partition:
+- **k-step transition graph: best SE gap 53.1%** (keep=0.1, 75 comm); 45.5% (0.2); 39.4% (0.3).
+- kNN-on-centroids: 47.2%.
+- **VERDICT: PASS (build SE-k).**
+Resolves BOTH tier-1 caveats: (1) this is a JUMPY encoder with NO SE training pressure (unlike the
+geoglass proxy) yet the gap is LARGER (53% vs 31%) → structure is real, not a geoglass artifact;
+(2) CheetahRun's cyclic gait = motion-phase communities, the exact structure SE-k uses for jump-length
+selection (long k within a phase, short k at phase boundaries / contacts). The SimNorm-density risk is
+confirmed real (raw graph ~0%) but fully mitigable via sparsify/kNN. → proceed to build SE-k as the
+iter-23 novelty primary; mechanism-check (community-aware k-selection vs fixed-k jumpy) before fanout.

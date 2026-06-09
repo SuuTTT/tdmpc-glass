@@ -247,7 +247,8 @@ exists per round-1); WIN = ≥10% IQM, non-overlapping CI, ≥3/4 tasks. Mechani
       exists" ≠ "useful for planning" (its community-SKILLS failed) — but SE-k/macro-action use is new.
       VERDICT: SE-lever viable enough to pursue as novelty primary; mechanism-check on real jumpy graph
       before fanout. (Ensemble-U_dyn check for F deferred — runs with the F arm.)
-- [ ] PRE-CHECK tier-2 (mechanism-check, = build step 1): dump jumpy rollout latents -> k-step transition
-      graph (>=128 nodes) -> SE-optimal partition -> confirm >=15% gap on the REAL substrate before fanout
+- [x] PRE-CHECK tier-2 PASS: real jumpy CheetahRun latents (128 nodes) -> k-step transition SE gap 53.1%,
+      kNN 47.2% (>> 15% bar). Both caveats cleared (jumpy encoder, no SE pressure, gap LARGER than proxy;
+      cyclic-gait motion-phase communities = the structure SE-k uses for k-selection). -> BUILD SE-k.
 - [ ] Pre-register SE-lever (or F if pre-check fails) gate; mechanism-check; build on validated substrate
 - [ ] (HOLD for explicit user go before building)
