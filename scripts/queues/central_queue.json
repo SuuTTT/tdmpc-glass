@@ -4040,10 +4040,10 @@
     "status": "running",
     "created_at": "2026-06-09T00:29:39Z",
     "ended_at": null,
-    "note": "iter-22 beat test: jumpy-MPPI vs 1-step-MPPI(paired) vs vanilla; sparse rescue + Panda guardrail",
-    "box": "ssh4_1660s_g1",
-    "started_at": "2026-06-09T04:07:55Z",
-    "launched_git_sha": "d01884e-dirty"
+    "note": "iter-22 beat test: jumpy-MPPI vs 1-step-MPPI(paired) vs vanilla; sparse rescue + Panda guardrail [requeued: 1660s disabled/stale]",
+    "box": "ssh6_3060",
+    "started_at": "2026-06-09T12:39:15Z",
+    "launched_git_sha": "ecea944"
   },
   {
     "id": "ti22jPand0",
@@ -4121,12 +4121,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei22fast ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i22c XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "running",
+    "status": "pending",
     "created_at": "2026-06-09T05:15:34Z",
     "ended_at": null,
-    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy)",
-    "box": "ssh4_1660s_g0",
-    "started_at": "2026-06-09T06:20:03Z",
+    "note": "iter-22 fast paired jumpy-vs-mppi; resolve task-dependent split (Cartpole jumpy>mppi, BallInCup mppi>jumpy) [requeued: 1660s disabled/stale]",
+    "box": null,
+    "started_at": null,
     "launched_git_sha": "d01884e-dirty"
   },
   {

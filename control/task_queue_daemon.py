@@ -64,7 +64,7 @@ BOXES = [
     ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
     # Released from ltsf 2026-06-09 (user); 3060 12GB, env bootstrapped + verified (jax 0.10.1+cuda,
     # mujoco 3.8.0, mjx_playground OK). Proxy ssh6.vast.ai:11696 (distinct port from ssh6_titanv).
-    ("ssh6_3060",     11696,  "ssh6.vast.ai",   0),  # inst 40121696
+    ("ssh6_3060",     17241,  "91.150.160.38",  0),  # inst 40121696 (proxy ssh6.vast.ai:11696 refuses; direct IP works)
     # Added 2026-06-04 (user): 2 more A4000s. 38766691 == ssh9_a4000 above (same proxy
     # ssh9.vast.ai:16690), already covered. 38767427 below (proxy ssh3.vast.ai:17426 —
     # port churned earlier but maps to our instance now; *.vast.ai host-key tolerance +
