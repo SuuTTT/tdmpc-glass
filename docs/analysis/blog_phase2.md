@@ -1,7 +1,7 @@
 ---
-title: "TD-MPC-Glass, Part 2: Eight Mirages, One Real Win, and the Road Back to Structural Entropy"
+title: "TD-MPC-Glass, Part 2: Eight Mirages, One Real (Borrowed) Win, and a Mechanism-Check That Saved a Campaign"
 date: 2026-06-09
-description: "What happened after Part 1: we put every abstraction idea we had — including our own structural-entropy Glass — through a strict fair protocol on TD-MPC2. Eight apparent wins dissolved to null. One method (a jumpy k-step world model) really did beat vanilla on manipulation, but it isn't ours. Along the way we learned an uncomfortable lesson about peak-vs-final reporting in deep RL. We close with the next bet: structural entropy, this time over a jumpy model's latent transition graph."
+description: "After Part 1 we put every abstraction idea we had — including our own structural-entropy Glass — through a strict fair protocol on TD-MPC2. Eight apparent wins dissolved to null; one method (a jumpy k-step world model) really did beat vanilla on manipulation, but it isn't ours. We learned a hard lesson on peak-vs-final reporting, and our next novel bet — structural entropy over the jumpy latent graph — was killed by a cheap mechanism-check before it cost a multi-week campaign. A field report on how hard a strong world model is to beat."
 layout: "post"
 showTableOfContents: true
 math: true
@@ -18,8 +18,8 @@ tags: ["tdmpc2", "glass-jax", "structural-entropy", "world-models", "jumpy-model
 > campaign across ~10–12 GPUs. The short version: **eight abstraction effects that each looked
 > publishable at some snapshot regressed to null, one genuinely-known method (a jumpy world model)
 > really did win on manipulation, and we found a methodology bug in how we — and much of the field —
-> read RL curves.** Then we use what we learned to design the next idea, which brings us right back
-> to structural entropy.
+> read RL curves.** Then we use what we learned to design the next idea — which brings us right back
+> to structural entropy, where a cheap mechanism-check killed it before it cost us a campaign.
 
 ---
 
@@ -95,10 +95,10 @@ The k-step head is measurably more accurate than iterating the 1-step model k ti
 
 Then the result, on PandaPickCube, fair protocol, mature ≥400k, paired, 20k-resample bootstrap:
 
-| metric | jumpy (n=3→5) | vanilla-H3 (n=7) | diff | 95% CI |
+| metric | jumpy (n=5) | vanilla-H3 (n=7) | diff | 95% CI |
 |---|---|---|---|---|
-| **peak** | 3027 | 2217 | **+810 (+37%)** | **[583, 1060]** |
-| **final** | 2626 | 1442 | **+1184 (+82%)** | **[860, 1510]** |
+| **peak** | 3183 | 2217 | **+966 (+44%)** | **[714, 1248]** |
+| **final** | 2708 | 1442 | **+1266 (+88%)** | **[877, 1642]** |
 
 Both metrics separate. The peak gap is the clean "plans better" claim; the larger final gap is a
 **stability** finding — vanilla TD-MPC2 itself collapses peak→final on Panda (−35%), and the jumpy
@@ -124,7 +124,7 @@ It does, and untangling it cleaned up our claims. There are two different failur
   0.818 → 0.736 → 0.829 → … → 0.767 as seeds accumulated, crossing "significant win" and "confirmed
   null" several times and landing in overlap. No reporting choice rescues these — the nulls stand.
 - **Within-run collapse mirages** (peak-*sensitive*). Vanilla-Panda's −45% late collapse inflated an
-  apparent jumpy "+104% on final"; the fair best-checkpoint comparison shrank it to +37% peak. A
+  apparent jumpy "+104% on final"; the fair best-checkpoint comparison shrank it to +44% peak. A
   jumpy-on-CartpoleSparse "growing lead" reversed entirely by 450k — visible only if you read at
   ≥400k, not 250k.
 
@@ -136,40 +136,91 @@ every arm, gate on CI separation. Under that rule the jumpy win survives on both
 abstraction effects survive on neither. We now recommend publishing **estimate trajectories**, not
 just final tables, for any marginal-effect claim in deep RL.
 
-## 5. What's next: structural entropy, over a jumpy latent graph
+## 5. The next novel bet — and how a cheap mechanism-check killed it in an afternoon
 
-Here's the part that closes the loop with Part 1. We treat the (validated, but not-novel) jumpy model
-as a **substrate** and ask for a mechanism that beats *it*. A round of internal + three external deep-
-research passes converged on two candidates:
+Here's the part that closes the loop with Part 1. We treated the (validated, but not-novel) jumpy model
+as a **substrate** and asked for a mechanism that beats *it*. Internal + three external deep-research
+passes converged on a structural-entropy lever, right back where Glass started: build a directed
+**structural-entropy encoding tree over the jumpy model's latent transition graph**, and use entropy
+minimization to pick the jump length \(k\) — long jumps inside a coherent "motion-phase" community,
+short jumps at community boundaries (contacts, turning points), where a long jump should be least
+accurate. The SE line (SIDM, SISA, SI2E, SIHD) is all model-free or diffusion-based; nobody had used
+structural entropy to set temporal abstraction for an MPPI planner over a learned world model. A real gap.
 
-- **The safe pick (3/3 consensus): an uncertainty-gated jumpy horizon.** Use a small dynamics-ensemble's
-  disagreement to soft-truncate how deep the planner trusts each macro-rollout — directly attacking the
-  jumpy model's own compounding-error weakness. ~80 lines, reuses TD-MPC2's ensembling. Feasible and
-  likely to help; everyone agrees its novelty is modest.
-- **The novelty pick — and our SE heritage, reborn:** build a **directed structural-entropy encoding
-  tree over the jumpy model's latent *transition graph***, and use entropy minimization to (a) choose
-  the jump length \(k\) the planner uses and (b) derive macro-actions/skills as high-frequency
-  transitions between latent communities. The structural-entropy line (SIDM, SISA, SI2E, SIHD) is
-  entirely model-free or diffusion-based; **nobody has built an encoding tree over a learned world-
-  model latent, and nobody has used structural entropy to set temporal abstraction for an MPPI
-  planner.** That gap is real — and it's exactly where Glass started.
+We did the thing the early iterations didn't: **two cheap pre-checks before a single multi-seed run.**
 
-There's a catch we already know to check first: TD-MPC2's SimNorm latents are *dense*, so the
-transition graph might have no real community structure (in which case 2-D structural entropy ≈ 1-D,
-and the SE lever is dead on arrival). So step zero is a cheap **pre-check** — does the jumpy latent
-graph cluster at all, and does ensemble disagreement actually track prediction error? — before we
-commit a line of planner code. Mechanism first, fan-out second. We learned that one the expensive way.
+**Pre-check 1 — does the latent even cluster?** Yes, strongly. On real jumpy CheetahRun latents the
+2-D vs 1-D structural-entropy gap is **53%** on the k-step transition graph (47% via kNN) — *provided*
+you sparsify the graph first (the raw SimNorm transition graph is a dense "blob" at ~0%). So the
+abstraction exists. Green light to the real test.
 
-The pre-registered gate is fixed in advance: compute-matched, single-variable vs the plain jumpy
-baseline, rliable IQM over 5 seeds reporting **peak and final**, on sparse DMC + PandaPickCube + a
-high-DoF task (Dog/Humanoid, where the literature says the headroom actually lives). Win = ≥10% IQM
-with non-overlapping CIs on ≥3 of 4 tasks. If structural entropy can't clear that, it goes in the
-mirage table next to its ancestors — and we'll say so.
+**Pre-check 2 (the kill-test) — does that structure track where the model is actually wrong?** This is
+the load-bearing question, and the answer was **no**. The community-boundary score does not correlate
+with the jumpy model's k-step prediction error (Spearman \(+0.09\) on Panda, \(-0.18\) on Cartpole).
+Digging in, the reason is decisive: **the k-step error is small and nearly uniform** — there are no
+"hard regions." We even tried to salvage it as an uncertainty-gated horizon: an ensemble-free
+disagreement signal (jumpy-prediction vs iterated-one-step) turned out to be a *great* error proxy
+(Spearman \(+0.72\)) — but under MPPI-scale action perturbations the error barely moves (inflation
+\(1.06\times\)). The jumpy model is **uniformly accurate**, in-distribution and out. Which is exactly
+*why* fixed-\(k\) jumpy already works — and why adaptive jump-length has nothing to adapt to.
+
+So the structural-entropy lever, and the whole adaptive-\(k\) family with it, goes in the mirage table
+next to its ancestors. The difference from Part 1: this time the negative cost an **afternoon of latent
+dumps**, not a multi-week seed campaign. Mechanism-check first, fan-out second — that's the discipline
+the whole project is really about. (Silver lining: that jumpy-vs-iterated-one-step disagreement is a
+validated, ensemble-free uncertainty signal — useful elsewhere, just not for gating an already-uniform
+horizon.)
+
+## 6. The ledger: what didn't work, what's promising, what to probe next
+
+Stepping back over the whole campaign, here is the honest accounting.
+
+**What did NOT work (nulls, in order of how thoroughly):**
+1. Geometric / behavioral latent clustering (structural-entropy Glass) — redundant with SimNorm.
+2. Bisimulation auxiliary — actively hurts; brittle (failed twice for us).
+3. Distractor-robustness from reward-grounded abstraction — falsified.
+4. Sparse-task rescue from latent grouping — it's an exploration problem, not geometry.
+5. Laplacian / eigenpurpose exploration — a generic RND bonus beats it.
+6. Community-detection *skills* — communities are motion phases, not reachable subgoals.
+7. `rho` consistency-horizon schedule — a task-dependent tuning knob, not architecture.
+8. **SE-k adaptive jump-length** and **uncertainty-gated horizon (F)** — the jumpy model is uniformly
+   accurate, so there's nothing to gate; killed by mechanism-check before any campaign.
+
+**What DID work:**
+- The **jumpy (k-step) world model** beats vanilla TD-MPC2 on PandaPickCube manipulation, n=5, peak
+  +44% / final +88%, CI-separated. (Honest caveat: a *known* method, fairly evaluated — not our invention.)
+- The **methodology**: peak-AND-final reporting + pre-registered, CI-separated gates + mechanism-checks
+  before fan-out caught every mirage, several of which looked publishable at an interim snapshot.
+
+**What's PROMISING (untested, not killed by the uniform-error finding):**
+- **Hermite-spline action bottleneck** — parametrize macro-actions as smooth cubic splines (target
+  joint pos/vel) + a PD tracker; shrinks the MPPI search space (\(k\cdot d \to 2d\)) with no learned
+  codec (so no online representation drift). Doesn't depend on error-variance, so this verdict doesn't
+  touch it.
+- **Value-equivalent macro head** — train \(d_k\) to be *return*-equivalent over k steps (predict the
+  same macro-\(Q\)) rather than state-faithful, so the abstraction keeps only what matters for control.
+- **The disagreement signal we found** (jumpy vs iterated-one-step, Spearman \(0.72\) vs true error)
+  — reusable for exploration bonuses or safe/abstained planning, just not horizon-gating.
+- **High-DoF, done right** — our Humanoid probe floored at 500k (it needs millions of steps); a proper
+  high-DoF run is the place the literature says abstraction headroom actually lives.
+
+**Next probes, in priority order:**
+1. **Hermite-spline action bottleneck** — mechanism-check first (does spline-restricting actions keep
+   the achievable-return envelope?), then the pre-registered beat-jumpy gate. Highest novelty-per-risk.
+2. **Value-equivalent macro head** — single-variable loss change on the existing jumpy head; clean test
+   of "abstract what matters for control, not the full state."
+3. **Reuse the disagreement signal** for an exploration/abstention probe (cheap, orthogonal).
+4. **Humanoid/Dog at a real budget** (millions of steps) to settle whether jumpy's win extends to
+   high-DoF — only worth it with the compute to do it honestly.
+
+The thread through all of it: a strong latent world model is a *high bar*, and most "abstraction"
+ideas are redundant with what it already learns. The wins, when they come, will be small, specific, and
+only believable behind a pre-registered, peak-and-final, mechanism-checked gate.
 
 ---
 
 *Reproducibility: code in `helios-rl` (jumpy heads + `make_jumpy_mppi_fn` in
-`src/helios/algorithms/tdmpc2.py`); per-run CSVs under `exp/tdmpc_glass/remote_mirror/`; iteration
-records in `docs/iterations/`; the abstraction-null write-up in `docs/writeup/draft.md` and the
-campaign capstone in `docs/writeup/capstone.md`. All numbers above are read from run CSVs, not
+`src/helios/algorithms/tdmpc2.py`; SE pre-check + mechanism-check in `scripts/se_precheck.py`); per-run
+CSVs under `exp/tdmpc_glass/`; iteration records in `docs/iterations/` (iter-22 = jumpy, iter-23 = the
+SE-k null); campaign capstone in `docs/writeup/capstone.md`. All numbers are read from run CSVs, not
 notebooks — verification discipline, the hard way.*
