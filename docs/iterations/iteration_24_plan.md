@@ -43,3 +43,12 @@ headline ("value-conditioning is the dominant win, +55pp over plain SE") and iso
 iter-21 Laplacian (geometric SE-exploration) LOST to RND. SI2E is value-conditional (richer) + the refs
 show it beats VCSE/SE/baseline on MiniGrid + DMC — so a fair re-attempt with a real chance, but the bar
 (beat RND on OUR sparse MJX tasks) is exactly where abstraction-flavored exploration failed before. Kept cautious.
+
+## CAMPAIGN LAUNCHED (2026-06-09 ~20:40Z)
+All 3 new arms SMOKE-VALIDATED on GPU (vcse/si2e/wmsi2e run clean past collection loop + kmeans rebuilds,
+no NaN; fixed a KeyError:onorm — onorm only for rnd/laplacian). 75-run campaign live: {van,rnd,vcse,si2e,
+wmsi2e} x {CartpoleSparse,BallInCup,AcrobotSparse} x 5 seeds. Fleet = 8 tdmpc boxes (ssh1_2080ti,
+ssh1_a4000b, ssh4_a4000, ssh4_a4000b, ssh6_3060, ssh6_titanv, ssh8_a4000, ssh9_a4000), all saturated.
+PROTECTED (user's forecasting, NOT tdmpc — do NOT clobber/re-add): ssh2_a4000(18950)=MultiRel,
+ssh3b_a4000(17426)=Crossformer. 1660s disabled. Baselines (prio3) run first, new arms (prio5) after.
+~9h for all 75 on 8 boxes -> by +8h expect van/rnd complete + partial vcse/si2e/wmsi2e -> first verdict.
