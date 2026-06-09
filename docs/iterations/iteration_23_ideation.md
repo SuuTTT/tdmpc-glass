@@ -237,6 +237,17 @@ exists per round-1); WIN = ≥10% IQM, non-overlapping CI, ≥3/4 tasks. Mechani
 - [x] A/B/C drafted; D-H brainstormed; round-1 internal agent (I/J/K) folded
 - [x] Round-2: 3 external DRs saved + synthesized → SE-lever = novelty primary, F = safe fallback,
       Hermite/Spectral added, C/E/D/H/G dropped; SimNorm pre-checks + batching constraint identified
-- [ ] PRE-CHECK (cheap, decides primary): jumpy latent graph 2D-SE vs 1D-SE; ensemble U_dyn vs true error
+- [x] PRE-CHECK tier-1 (proxy: geoglass/behavglass 32-node SimNorm prototype graph, CartpoleSparse):
+      **PASSES on the structure question.** With SE-OPTIMAL Louvain + sparsification: transition graph
+      SE gap up to 31.2% (keep=0.3, 3 comm), kNN-from-512d-latents up to 47.5% (k=3) — both ≫15% bar.
+      NUANCE: raw graph ≈0% (the "blob"); structure only appears after top-frac sparsification / kNN
+      (matches iter-19 docstring). Cached (suboptimal) partitions gave only 1-8% → must use SE-optimal
+      partition. CAVEAT: 32-node prototype proxy, not the real jumpy latent graph → tier-2 must confirm
+      on jumpy rollout latents (more nodes, jumpy k-step transitions). And iter-19 warns "structure
+      exists" ≠ "useful for planning" (its community-SKILLS failed) — but SE-k/macro-action use is new.
+      VERDICT: SE-lever viable enough to pursue as novelty primary; mechanism-check on real jumpy graph
+      before fanout. (Ensemble-U_dyn check for F deferred — runs with the F arm.)
+- [ ] PRE-CHECK tier-2 (mechanism-check, = build step 1): dump jumpy rollout latents -> k-step transition
+      graph (>=128 nodes) -> SE-optimal partition -> confirm >=15% gap on the REAL substrate before fanout
 - [ ] Pre-register SE-lever (or F if pre-check fails) gate; mechanism-check; build on validated substrate
 - [ ] (HOLD for explicit user go before building)
