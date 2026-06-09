@@ -68,12 +68,12 @@ def louvain(A, res=1.0, seed=0):
 
 def best_gap(A, resolutions=(0.5, 1.0, 2.0, 4.0)):
     """SE-optimal gap over a resolution sweep (best case for the lever)."""
-    h1 = H1(A); best = 0.0; best_lab = None
+    h1 = H1(A); best = -1.0; best_lab = louvain(A, res=resolutions[0])
     for r in resolutions:
         lab = louvain(A, res=r); g = (h1 - H2(A, lab)) / h1 if h1 > 0 else 0.0
         if g > best:
             best, best_lab = g, lab
-    return best, best_lab, h1
+    return max(best, 0.0), best_lab, h1
 
 
 def knn_graph(X, k=5):
