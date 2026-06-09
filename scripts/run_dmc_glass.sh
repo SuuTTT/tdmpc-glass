@@ -30,6 +30,12 @@ NUM_PROTOTYPES=${NUM_PROTOTYPES:-32}
 NUM_CLUSTERS=${NUM_CLUSTERS:-8}
 TEMP_STABILITY=${TEMP_STABILITY:-0.0}
 LAMBDA_BEHAV=${LAMBDA_BEHAV:-0.0}     # iter-14 behavior-aware coefficient (0=geometric Glass)
+DISTRACTOR_DIMS=${DISTRACTOR_DIMS:-0} # iter-14 Stage-2a: OU nuisance obs dims (0=off)
+PROTO_PLAN=${PROTO_PLAN:-0}           # iter-15: 1 = distilled proto-space planner heads + protomppi eval
+PROTO_PLAN_FLAG=""
+[[ "$PROTO_PLAN" == "1" ]] && PROTO_PLAN_FLAG="--proto_plan"
+PROTO_NOVELTY=${PROTO_NOVELTY:-0.0}            # iter-17: prototype-visit-count novelty bonus coef
+PROTO_NOVELTY_DECAY=${PROTO_NOVELTY_DECAY:-0}  # iter-17: decay-to-zero env-step (0=no decay)
 CODE_SHA=${CODE_SHA:-$(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || echo unknown)}
 TAG_SHA=${CODE_SHA//[^A-Za-z0-9_.-]/_}; TAG_PROBE=${PROBE_ID//[^A-Za-z0-9_.-]/_}; TAG_TASK=${TASK//[^A-Za-z0-9_.-]/_}
 export TDMPC_GLASS_OUTPUT_TAG=${TDMPC_GLASS_OUTPUT_TAG:-${TAG_PROBE}_${TAG_TASK}_${TAG_SHA}}
@@ -51,6 +57,9 @@ for seed in $SEEDS; do
     --glass_lambda_temp_stability "$TEMP_STABILITY" --glass_stopgrad_graph "$STOPGRAD" \
     --glass_num_prototypes "$NUM_PROTOTYPES" --glass_num_clusters "$NUM_CLUSTERS" \
     --glass_lambda_behav "$LAMBDA_BEHAV" \
+    --distractor_dims "$DISTRACTOR_DIMS" \
+    --proto_novelty_coef "$PROTO_NOVELTY" --proto_novelty_decay_steps "$PROTO_NOVELTY_DECAY" \
+    $PROTO_PLAN_FLAG \
     --no_plot 2>&1 | tee -a "$log"
   rc=${PIPESTATUS[0]}; [[ $rc -ne 0 ]] && status=$rc
   echo "[${PROBE_ID}] === ${TASK} seed=${seed} done rc=${rc} $(date -u +%FT%TZ) ===" | tee -a "$log" | tee -a "$LOG_DIR/queue.log"

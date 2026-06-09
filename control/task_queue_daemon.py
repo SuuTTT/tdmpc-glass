@@ -43,16 +43,21 @@ BOXES = [
     ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),  # rented 2026-06-02; seed3=501 G1 (finishing)
     ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),  # rented 2026-06-02; seed4=550 G1 (finishing)
     # ── 1660 Super x2 (inst 38342607, ssh4.vast.ai:22607) — UNSTABLE/flaky, 6GB each.
-    # Daemon (not PBT) absorbs its reboots via the offline→idle reconcile + host-key
-    # tolerance in ~/.ssh/config. OOM test 2026-06-04: standard cfg uses only ~0.6/6GB,
-    # JIT 13s, 100% util — fits with headroom on both GPUs. ENABLED.
-    ("ssh4_1660s_g0", 22607, "ssh4.vast.ai",   0),
-    ("ssh4_1660s_g1", 22607, "ssh4.vast.ai",   1),
+    # 2026-06-07: silently killed 3/3 long runs (iter-15 seed1 @496k, both iter-17
+    # BallInCup seeds @~200k — no traceback, GPUs empty). RE-ENABLED same day on user
+    # instruction; the kills coincided with a now-finished se-bench workload on this
+    # box (likely host-side competition), so risk may have passed. Prefer <=500k tasks;
+    # any new silent death -> disable again and requeue via failed_box_died.
+    # DISABLED 2026-06-09 (killed ti22jPand0/2): ("ssh4_1660s_g0", 22607, "ssh4.vast.ai",   0),
+    # DISABLED 2026-06-09 (killed ti22jPand0/2): ("ssh4_1660s_g1", 22607, "ssh4.vast.ai",   1),
     # ── Former PBT pool, FOLDED BACK into the daemon 2026-06-04 (orchestrator stopped;
     # research pivoted off PBT). Daemon is now the single manager. In-flight PBT members
     # finish naturally (daemon sees the box busy, won't touch); when they finish the
     # daemon launches the next pending baseline task. ssh3 omitted (recycled/lost).
-    ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
+    # REMOVED 2026-06-08 (user): ssh1:24456 (inst 38664456) is the USER's ltsf/forecasting
+    # box (a 'forecast' python job uses the GPU but not via run_benchmark, so is_box_idle
+    # would falsely see it idle and clobber it). Do NOT schedule tdmpc here.
+    # ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
     ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),
     ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
     ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
@@ -61,7 +66,9 @@ BOXES = [
     # ssh9.vast.ai:16690), already covered. 38767427 below (proxy ssh3.vast.ai:17426 —
     # port churned earlier but maps to our instance now; *.vast.ai host-key tolerance +
     # is_box_idle fail-safe handle any re-churn). Env verified: jax 0.10.1 + repo present.
-    ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427
+    # REMOVED 2026-06-08 (user): ssh3:17426 (inst 38767427) is the USER's mahjong box.
+    # Same clobber risk (mahjong GPU job is run_benchmark-free). Do NOT schedule tdmpc here.
+    # ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01: GPU2/GPU3 device-handle
     # "Unknown Error" (fell off the bus), JAX -> "Unknown backend cuda". Removed
     # from the fleet so the daemon stops churning fast-fails. Reboot the vast.ai
@@ -162,12 +169,13 @@ def is_box_idle(tag: str, port: int, host: str, gpu_idx: int) -> bool:
         # EC2 control plane has no local training slot; never idle for training.
         return False
 
-    # One SSH round-trip: total run procs, total GPUs, and memory on THIS gpu_idx.
+    # One SSH round-trip: total run procs, total GPUs, memory on THIS gpu_idx, disk%.
     probe = (
         "NP=$(ps -eo cmd | grep '[r]un_benchmark' | wc -l); "
         "NG=$(nvidia-smi --query-gpu=index --format=csv,noheader 2>/dev/null | wc -l); "
         f"MU=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i {gpu_idx} 2>/dev/null | head -1); "
-        'echo "NP=$NP NG=$NG MU=$MU"'
+        "DK=$(df / | tail -1 | awk '{print $5}' | tr -d '%'); "
+        'echo "NP=$NP NG=$NG MU=$MU DK=$DK"'
     )
     cmd = ["ssh", "-p", str(port), "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
            "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", f"root@{host}", probe]
@@ -181,9 +189,16 @@ def is_box_idle(tag: str, port: int, host: str, gpu_idx: int) -> bool:
         nproc = int(d.get("NP", "0") or 0)
         ngpu = max(1, int(d.get("NG", "1") or 1))
         mem_used = int(d.get("MU", "999999") or 999999)
+        disk_pct = int(d.get("DK", "0") or 0)
     except Exception:
         return False  # SSH/probe failed → treat as busy (never launch blind)
 
+    # DISK-FULL guard (2026-06-06, after ssh5_3060 silently fast-failed every task
+    # at 100% disk and became a failure sink that ate a whole experiment batch):
+    # never launch onto a box at >=93% — runs would crash at checkpoint/CSV writes.
+    if disk_pct >= 93:
+        log(f"{tag}: disk {disk_pct}% — refusing to launch (clean checkpoints!)")
+        return False
     # Fleet-wide saturation guard: if as many run_benchmark procs as GPUs are
     # already alive on this box, every GPU is taken — do not stack.
     if nproc >= ngpu:

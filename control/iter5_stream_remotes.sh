@@ -20,9 +20,9 @@ sync_box() {
         -e "ssh -i /home/ubuntu/.ssh/vastai_id_ed25519 -p $port -o StrictHostKeyChecking=no \
             -o ConnectTimeout=8 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 \
             -o BatchMode=yes" \
-        --include='*_phasei*/' \
-        --include='*_phasei*/seed_*.csv' \
-        --include='*_phasei*/seed_*_diag.csv' \
+        --include='*_phase*/' \
+        --include='*_phase*/seed_*.csv' \
+        --include='*_phase*/seed_*_diag.csv' \
         --exclude='*' \
         root@$host:/root/helios-rl/exp/tdmpc_glass/ \
         "$dest/" >/dev/null 2>&1

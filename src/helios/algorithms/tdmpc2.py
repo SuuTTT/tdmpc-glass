@@ -125,30 +125,82 @@ class NormMLP(nn.Module):
         return nn.Dense(self.out)(x)
 
 
+def fsq(x: jax.Array, levels: int = 5) -> jax.Array:
+    """iter-16: Finite Scalar Quantization latent bound (DC-MPC-style discrete
+    codes, table-free). tanh-bound each dim, round to `levels` uniform values in
+    [-1, 1], straight-through estimator for gradients. Replaces SimNorm when
+    latent_norm='fsq' — a representation SWAP (direction #3 of the Six-Mirages
+    post-mortem), not an auxiliary loss."""
+    z = jnp.tanh(x)
+    zq = jnp.round((z * 0.5 + 0.5) * (levels - 1)) / (levels - 1) * 2.0 - 1.0
+    return z + jax.lax.stop_gradient(zq - z)
+
+
 class Encoder(nn.Module):
-    """Encodes observations to SimNorm-bounded latent vectors."""
+    """Encodes observations to SimNorm- (or FSQ-) bounded latent vectors."""
 
     latent_dim: int
     hidden: tuple[int, ...] = (512, 512)
     V: int = 8
+    latent_norm: str = "simnorm"  # iter-16: "simnorm" | "fsq"
+    fsq_levels: int = 5
 
     @nn.compact
     def __call__(self, obs: jax.Array) -> jax.Array:
-        return simnorm(NormMLP(self.hidden, self.latent_dim)(obs), self.V)
+        h = NormMLP(self.hidden, self.latent_dim)(obs)
+        if self.latent_norm == "fsq":
+            return fsq(h, self.fsq_levels)
+        return simnorm(h, self.V)
 
 
 class Dynamics(nn.Module):
-    """Predicts next latent from (z, a) using SimNorm-bounded output."""
+    """Predicts next latent from (z, a) using SimNorm- (or FSQ-) bounded output."""
+
+    latent_dim: int
+    hidden: tuple[int, ...] = (512, 512)
+    V: int = 8
+    latent_norm: str = "simnorm"  # iter-16: "simnorm" | "fsq"
+    fsq_levels: int = 5
+
+    @nn.compact
+    def __call__(self, z: jax.Array, a: jax.Array) -> jax.Array:
+        h = NormMLP(self.hidden, self.latent_dim)(jnp.concatenate([z, a], -1))
+        if self.latent_norm == "fsq":
+            return fsq(h, self.fsq_levels)
+        return simnorm(h, self.V)
+
+
+class JumpyDynamics(nn.Module):
+    """iter-22: k-step JUMPY latent model. Predicts z_{t+k} directly from z_t and the
+    concatenated k-action sequence (k*act_dim) — one model call per k steps, so MPPI can
+    plan a long effective horizon WITHOUT compounding the 1-step model k times. SimNorm
+    output keeps the same latent geometry as the 1-step dynamics."""
 
     latent_dim: int
     hidden: tuple[int, ...] = (512, 512)
     V: int = 8
 
     @nn.compact
-    def __call__(self, z: jax.Array, a: jax.Array) -> jax.Array:
+    def __call__(self, z: jax.Array, a_concat: jax.Array) -> jax.Array:
         return simnorm(
-            NormMLP(self.hidden, self.latent_dim)(jnp.concatenate([z, a], -1)), self.V
+            NormMLP(self.hidden, self.latent_dim)(jnp.concatenate([z, a_concat], -1)), self.V
         )
+
+
+class JumpyReward(nn.Module):
+    """iter-22: k-step macro-reward predictor — sum of the k rewards over a jump, from z_t and
+    the concatenated k-action sequence. Distributional (two-hot, symlog handles the larger
+    summed range). Lets jumpy-MPPI accumulate reward over macro-steps without intermediate z."""
+
+    hidden: tuple[int, ...] = (512, 512)
+    num_bins: int = 101
+
+    @nn.compact
+    def __call__(self, z: jax.Array, a_concat: jax.Array) -> jax.Array:
+        x = jnp.concatenate([z, a_concat], -1)
+        for d in self.hidden:
+            x = nn.silu(nn.LayerNorm()(nn.Dense(d)(x)))
+        return nn.Dense(self.num_bins)(x)
 
 
 class RewardHead(nn.Module):
@@ -350,6 +402,10 @@ def make_update_fn(
     smoothing_enabled: bool = True,
     mpc_distill_enabled: bool = False,
     bisim_coef: float = 0.0,
+    jumpy_net: "JumpyDynamics | None" = None,
+    jumpy_rew_net: "JumpyReward | None" = None,
+    jumpy_k: int = 0,
+    jumpy_coef: float = 1.0,
 ) -> tuple:
     """Build (single_step, multi_step) JIT-compiled update functions.
 
@@ -485,6 +541,38 @@ def make_update_fn(
             total = total + mpc_distill_coef * mpc_loss
         else:
             mpc_loss = jnp.array(0.0)
+
+        # ── iter-22 JUMPY k-step latent model + horizon-consistency (Python-guarded on the
+        # static int jumpy_k, so graph is byte-identical to vanilla when jumpy_k==0). The
+        # MECHANISM CHECK (jumpy_err vs iter1_err) is the cheap kill-probe: a k-step head is
+        # only worth building MPPI on if it predicts z_{t+k} MORE accurately than iterating
+        # the 1-step model k times. Trains params["jdyn"]; encoder fed via z0 (grad), target
+        # z_{t+k} is stop-grad.
+        jumpy_cons = jnp.array(0.0); jumpy_hc = jnp.array(0.0); jumpy_rew = jnp.array(0.0)
+        jumpy_err = jnp.array(0.0); iter1_err = jnp.array(0.0)
+        if jumpy_k > 0:
+            kk = int(jumpy_k); adim = act_b.shape[-1]
+            a_k = act_b[:, :kk].reshape(B, kk * adim)
+            jpred = jumpy_net.apply(params["jdyn"], z0, a_k)            # predicted z_{t+k}
+            z_k_tgt = z_tgt[:, kk]                                       # sg actual z_{t+k}
+            jumpy_cons = jnp.mean(jnp.sum((jpred - z_k_tgt) ** 2, -1))
+            total = total + jumpy_coef * jumpy_cons
+            # jumpy macro-reward head: predict sum of the k rewards over the jump
+            if jumpy_rew_net is not None:
+                rJ = jumpy_rew_net.apply(params["jrew"], z0, a_k)
+                rJ_tgt = jnp.sum(rew_b[:, :kk], axis=1)
+                jumpy_rew = jnp.mean(soft_ce(rJ, two_hot(rJ_tgt)))
+                total = total + jumpy_coef * jumpy_rew
+            # mechanism diagnostic (no grad): RMS latent error, jumpy vs iterated-1-step at k
+            jumpy_err = jnp.sqrt(jnp.mean(jnp.sum((jax.lax.stop_gradient(jpred) - z_k_tgt) ** 2, -1)))
+            iter1_err = jnp.sqrt(jnp.mean(jnp.sum((zs[:, kk] - z_k_tgt) ** 2, -1)))
+            # horizon-consistency: composed 2k-jump must match actual z_{2k} (window permitting)
+            if 2 * kk <= (T - 1):
+                a_k2 = act_b[:, kk:2 * kk].reshape(B, kk * adim)
+                jpred2 = jumpy_net.apply(params["jdyn"], jpred, a_k2)
+                jumpy_hc = jnp.mean(jnp.sum((jpred2 - z_tgt[:, 2 * kk]) ** 2, -1))
+                total = total + jumpy_coef * jumpy_hc
+
         aux = {
             "c": jnp.sum(cls) / n,
             "r": jnp.sum(rls) / n,
@@ -492,6 +580,11 @@ def make_update_fn(
             "p": jnp.sum(pls) / n,
             "mpc": mpc_loss,
             "scale": final_scale,
+            "jumpy_cons": jumpy_cons,
+            "jumpy_hc": jumpy_hc,
+            "jumpy_rew": jumpy_rew,
+            "jumpy_err": jumpy_err,
+            "iter1_err": iter1_err,
         }
         return total, aux
 
@@ -670,6 +763,78 @@ def make_mppi_fn(
         action  = jnp.clip(muf[0], act_low, act_high)
         new_mu  = jnp.concatenate([muf[1:],  jnp.zeros((1, act_dim))],        axis=0)
         new_std = jnp.concatenate([stdf[1:], jnp.full((1, act_dim), max_std)], axis=0)
+        return action, new_mu, new_std
+
+    return plan
+
+
+# ---------------------------------------------------------------------------
+# iter-22 — JUMPY MPPI: plan N macro-steps over the k-step jumpy model
+# ---------------------------------------------------------------------------
+
+
+def make_jumpy_mppi_fn(
+    enc: Encoder,
+    jdyn: JumpyDynamics,
+    jrew: JumpyReward,
+    q_net: QEnsemble,
+    pi_net: Pi,
+    k: int,
+    n_macro: int = 3,
+    n_samples: int = 512,
+    num_elites: int = 64,
+    n_iter: int = 6,
+    min_std: float = 0.05,
+    max_std: float = 2.0,
+    act_low: float = -1.0,
+    act_high: float = 1.0,
+    act_dim: int = 4,
+    gamma: float = 0.99,
+):
+    """Jumpy MPPI: plan n_macro macro-steps (each = k primitive actions) over the JUMPY model,
+    so effective horizon = n_macro*k with only n_macro model applications (no compounding the
+    1-step model). Per-sample return = Σ_i γ^{ik} r_J(z_i, a_i) + γ^{n_macro*k} min-Q(z_N,π(z_N)).
+    Receding-horizon: apply the first PRIMITIVE action, replan. mu/std shape (n_macro, k, act_dim).
+    """
+    _gammas = jnp.array([gamma ** (i * k) for i in range(n_macro)])
+    _gamma_T = float(gamma ** (n_macro * k))
+    akd = k * act_dim
+
+    @jax.jit
+    def plan(params, obs, mu, std, key, t0):
+        mu = jnp.where(t0, jnp.zeros_like(mu), mu)
+        std = jnp.where(t0, jnp.full_like(std, max_std), std)
+        z0 = enc.apply(params["enc"], obs[None])[0]
+
+        def one_iter(carry, _):
+            mu_i, std_i, kkey = carry
+            kkey, sk = jax.random.split(kkey)
+            noise = jax.random.normal(sk, (n_samples, n_macro, k, act_dim)) * std_i[None]
+            acts = jnp.clip(mu_i[None] + noise, act_low, act_high)   # (S, n_macro, k, act_dim)
+
+            def rollout(a_seq):  # a_seq (n_macro, k, act_dim)
+                def macro(z, a_macro):
+                    a_c = a_macro.reshape(akd)
+                    r = two_hot_inv(jrew.apply(params["jrew"], z[None], a_c[None])).squeeze()
+                    z2 = jdyn.apply(params["jdyn"], z[None], a_c[None])[0]
+                    return z2, r
+                zf, rs = jax.lax.scan(macro, z0, a_seq)
+                pa, _ = pi_net.apply(params["pi"], zf[None])
+                vt = jnp.maximum(jnp.min(two_hot_inv(q_net.apply(params["q"], zf[None], jnp.tanh(pa)))), 0.0).squeeze()
+                return jnp.sum(_gammas * rs) + _gamma_T * vt
+
+            rets = jax.vmap(rollout)(acts)
+            _, ei = jax.lax.top_k(rets, num_elites)
+            ea = acts[ei]
+            return (jnp.mean(ea, 0), jnp.clip(jnp.std(ea, 0) + 1e-6, min_std, max_std), kkey), None
+
+        (muf, stdf, _), _ = jax.lax.scan(one_iter, (mu, std, key), None, length=n_iter)
+        action = jnp.clip(muf[0, 0], act_low, act_high)             # first primitive action
+        # warm-start: shift primitive actions by 1 over the flattened (n_macro*k) sequence
+        flat = muf.reshape(n_macro * k, act_dim)
+        flat = jnp.concatenate([flat[1:], jnp.zeros((1, act_dim))], 0)
+        new_mu = flat.reshape(n_macro, k, act_dim)
+        new_std = jnp.full((n_macro, k, act_dim), max_std)
         return action, new_mu, new_std
 
     return plan

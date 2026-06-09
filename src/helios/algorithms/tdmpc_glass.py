@@ -126,6 +126,9 @@ def init_glass_params(
     assign_logits_init_scale: float = 1.0,
     num_super_clusters: int = 0,
     behavioral: bool = False,
+    proto_plan: bool = False,
+    act_dim: int = 0,
+    pdyn_hidden: int = 128,
 ) -> dict:
     """Initialize prototype and assignment parameters for TD-MPC-Glass.
 
@@ -159,7 +162,46 @@ def init_glass_params(
     # Glass runs is unchanged.
     if behavioral:
         out["proto_reward"] = jnp.zeros((num_prototypes,))
+    # iter-15 proto-plan: distilled planner heads so MPPI can roll out in the
+    # P-dim prototype-assignment space instead of the 512-dim latent space.
+    # pdyn: tiny MLP (P+act -> hidden -> P logits); proto_value: per-prototype
+    # symlog-value vector. Both train with stop-gradient inputs (pure
+    # distillation — representation untouched). Only added when proto_plan=True
+    # so existing runs' params pytree is unchanged.
+    if proto_plan:
+        if act_dim <= 0:
+            raise ValueError("proto_plan=True requires act_dim > 0")
+        dk1 = jax.random.fold_in(sk, 2)
+        dk2 = jax.random.fold_in(sk, 3)
+        out["pdyn_W1"] = 0.02 * jax.random.normal(dk1, (num_prototypes + act_dim, pdyn_hidden))
+        out["pdyn_b1"] = jnp.zeros((pdyn_hidden,))
+        out["pdyn_W2"] = 0.02 * jax.random.normal(dk2, (pdyn_hidden, num_prototypes))
+        out["pdyn_b2"] = jnp.zeros((num_prototypes,))
+        out["proto_value"] = jnp.zeros((num_prototypes,))
+        # Dedicated planner reward, distilled EVERY update (proto_reward only
+        # trains when the glass loss is gated on — warmup/decay/every-k — which
+        # would leave the planner's reward head stale; that staleness would
+        # confound the planning-quality probe).
+        out["proto_reward_plan"] = jnp.zeros((num_prototypes,))
+        if "proto_reward" not in out:
+            out["proto_reward"] = jnp.zeros((num_prototypes,))
     return out
+
+
+def proto_soft_assign(z: jax.Array, prototypes: jax.Array, temperature: float = 1.0,
+                      eps: float = 1e-8) -> jax.Array:
+    """Cosine soft prototype assignment (matches glass_transition_graph's
+    use_cosine_assign=True path). z: (N, L) -> c: (N, P)."""
+    zn = z / (jnp.linalg.norm(z, axis=-1, keepdims=True) + eps)
+    pn = prototypes / (jnp.linalg.norm(prototypes, axis=-1, keepdims=True) + eps)
+    return jax.nn.softmax(zn @ pn.T / temperature, axis=-1)
+
+
+def proto_dyn_apply(glass_params: dict, c: jax.Array, a: jax.Array) -> jax.Array:
+    """iter-15 prototype-space dynamics: (c, a) -> next-assignment logits (N, P)."""
+    x = jnp.concatenate([c, a], axis=-1)
+    h = jnp.tanh(x @ glass_params["pdyn_W1"] + glass_params["pdyn_b1"])
+    return h @ glass_params["pdyn_W2"] + glass_params["pdyn_b2"]
 
 
 def one_dimensional_structural_entropy(
@@ -689,6 +731,7 @@ def make_update_fn(
     glass_lambda_behav: float = 0.0,
     use_cluster_obs: bool = False,
     cluster_obs_proto_temperature: float = 1.0,
+    glass_proto_plan: bool = False,
 ) -> tuple:
     """Build (single_step, multi_step) JIT-compiled update functions.
 
@@ -891,6 +934,42 @@ def make_update_fn(
             "scale": final_scale,
             **glass_aux,
         }
+
+        # iter-15 proto-plan distillation. Python-static flag (closure), so the
+        # lax.cond glass branches above are unaffected. ALL inputs stop-gradded:
+        # gradients reach only pdyn_*/proto_value — the representation, encoder,
+        # prototypes, and TD-MPC2 heads are untouched, making the proto-planner
+        # eval a pure planning-quality probe. Trained every update (no every-k
+        # gating — distillation wants fresh targets).
+        if glass_proto_plan:
+            sg = jax.lax.stop_gradient
+            gp = params["glass"]
+            z_src_p = sg(zs[:, :-1].reshape(B * n, -1))
+            z_next_p = sg(zs[:, 1:].reshape(B * n, -1))
+            a_src_p = sg(act_b[:, :-1].reshape(B * n, -1))
+            protos_sg = sg(gp["prototypes"])
+            c_src_p = proto_soft_assign(z_src_p, protos_sg, glass_proto_temperature)
+            c_next_p = proto_soft_assign(z_next_p, protos_sg, glass_proto_temperature)
+            pd_logits = proto_dyn_apply(gp, c_src_p, a_src_p)
+            pdyn_loss = -jnp.mean(
+                jnp.sum(c_next_p * jax.nn.log_softmax(pd_logits, axis=-1), axis=-1)
+            )
+            # Value distillation: V_tgt = min-Q(z, tanh(pi_mean(z))) from target
+            # params (raw units — rew_scale is vestigial throughout this codebase).
+            pi_m, _ = pi_net.apply(tp["pi"], z_src_p)
+            q_log = q_net.apply(tp["q"], z_src_p, jnp.tanh(pi_m))
+            v_tgt = jnp.maximum(jnp.min(two_hot_inv(q_log), axis=-1), 0.0)
+            v_hat = c_src_p @ gp["proto_value"]
+            pval_loss = jnp.mean((v_hat - sg(symlog(v_tgt))) ** 2)
+            # Planner reward: same target as the behav loss (raw env rewards,
+            # index-aligned with z_src) but ungated and encoder-detached.
+            r_src_p = sg(rew_b[:, :-1].reshape(B * n))
+            prew_loss = jnp.mean((c_src_p @ gp["proto_reward_plan"] - r_src_p) ** 2)
+            total = total + pdyn_loss + pval_loss + prew_loss
+            aux["glass_pdyn"] = pdyn_loss
+            aux["glass_pval"] = pval_loss
+            aux["glass_prew"] = prew_loss
+
         return total, aux
 
     @jax.jit
@@ -1085,6 +1164,200 @@ def make_mppi_fn(
         action  = jnp.clip(muf[0], act_low, act_high)
         new_mu  = jnp.concatenate([muf[1:],  jnp.zeros((1, act_dim))],        axis=0)
         new_std = jnp.concatenate([stdf[1:], jnp.full((1, act_dim), max_std)], axis=0)
+        return action, new_mu, new_std
+
+    return plan
+
+
+# ---------------------------------------------------------------------------
+# iter-15 — prototype-space MPPI planner
+# ---------------------------------------------------------------------------
+
+
+def make_proto_mppi_fn(
+    enc: Encoder,
+    dyn: Dynamics,
+    pi_net: Pi,
+    horizon: int = 3,
+    n_samples: int = 512,
+    num_elites: int = 64,
+    num_pi_trajs: int = 24,
+    n_iter: int = 6,
+    min_std: float = 0.05,
+    max_std: float = 2.0,
+    act_low: float = -1.0,
+    act_high: float = 1.0,
+    act_dim: int = 4,
+    gamma: float = 0.99,
+    proto_temperature: float = 1.0,
+):
+    """MPPI that rolls out in the P-dim prototype-assignment space.
+
+    Identical loop structure to make_mppi_fn (elite update, pi-traj seeding,
+    t0 reset), but sample evaluation uses the iter-15 distilled heads:
+        c0     = proto_soft_assign(enc(obs))
+        c_t+1  = softmax(pdyn(c_t, a_t))
+        return = sum_t gamma^t (c_t . proto_reward) + gamma^H max(symexp(c_H . proto_value), 0)
+    pi-trajectory ACTION seeds are still generated in latent space (cheap:
+    num_pi_trajs * H dyn applies once per plan call); all n_samples candidates
+    are evaluated in prototype space. Reward/value units are raw (rew_scale is
+    vestigial in this codebase), matching proto_reward's behav-loss training.
+    """
+    n_noise = n_samples - num_pi_trajs
+    _gammas = jnp.array([gamma ** t for t in range(horizon)])
+    _gamma_H = float(gamma ** horizon)
+
+    @jax.jit
+    def plan(
+        params: dict,
+        obs: jax.Array,
+        mu: jax.Array,
+        std: jax.Array,
+        key: jax.Array,
+        t0: jax.Array,
+    ) -> tuple[jax.Array, jax.Array, jax.Array]:
+        mu = jnp.where(t0, jnp.zeros_like(mu), mu)
+        std = jnp.where(t0, jnp.full_like(std, max_std), std)
+
+        gp = params["glass"]
+        z0_single = enc.apply(params["enc"], obs[None])[0]
+        c0 = proto_soft_assign(z0_single[None], gp["prototypes"], proto_temperature)[0]
+        r_p = gp["proto_reward_plan"]
+        v_p = gp["proto_value"]
+
+        def pi_rollout_stoch(key):
+            def pi_step(z, k):
+                mean_a, log_std_a = pi_net.apply(params["pi"], z[None])
+                mean_a = mean_a[0]
+                log_std_a = log_std_a[0]
+                eps = jax.random.normal(k, mean_a.shape)
+                a = jnp.tanh(mean_a + eps * jnp.exp(log_std_a))
+                z2 = dyn.apply(params["dyn"], z[None], a[None])[0]
+                return z2, a
+
+            keys_h = jax.random.split(key, horizon)
+            _, traj = jax.lax.scan(pi_step, z0_single, keys_h)
+            return traj  # (H, act_dim)
+
+        key, pk = jax.random.split(key)
+        pi_keys = jax.random.split(pk, num_pi_trajs)
+        pi_trajs = jax.vmap(pi_rollout_stoch)(pi_keys)
+
+        def one_iter(carry, _):
+            mu_i, std_i, k = carry
+            k, sk = jax.random.split(k)
+
+            noise = jax.random.normal(sk, (n_noise, horizon, act_dim)) * std_i[None]
+            noise_acts = jnp.clip(mu_i[None] + noise, act_low, act_high)
+            acts = jnp.concatenate([pi_trajs, noise_acts], axis=0)
+
+            def rollout_one(a_seq):
+                def c_step(c, a):
+                    r = jnp.dot(c, r_p)
+                    logits = proto_dyn_apply(gp, c[None], a[None])[0]
+                    c2 = jax.nn.softmax(logits, axis=-1)
+                    return c2, r
+
+                cf, rs = jax.lax.scan(c_step, c0, a_seq)
+                vt = jnp.maximum(symexp(jnp.dot(cf, v_p)), 0.0)
+                return jnp.sum(_gammas * rs) + _gamma_H * vt
+
+            rets = jax.vmap(rollout_one)(acts)
+
+            _, elite_idx = jax.lax.top_k(rets, num_elites)
+            elite_acts = acts[elite_idx]
+            new_mu = jnp.mean(elite_acts, axis=0)
+            new_std = jnp.clip(jnp.std(elite_acts, axis=0) + 1e-6, min_std, max_std)
+            return (new_mu, new_std, k), None
+
+        (muf, stdf, _), _ = jax.lax.scan(one_iter, (mu, std, key), None, length=n_iter)
+
+        action = jnp.clip(muf[0], act_low, act_high)
+        new_mu = jnp.concatenate([muf[1:], jnp.zeros((1, act_dim))], axis=0)
+        new_std = jnp.concatenate([stdf[1:], jnp.full((1, act_dim), max_std)], axis=0)
+        return action, new_mu, new_std
+
+    return plan
+
+
+# ---------------------------------------------------------------------------
+# iter-19 — goal-conditioned MPPI (reach a community centroid = a SKILL)
+# ---------------------------------------------------------------------------
+
+
+def make_goal_mppi_fn(
+    enc: Encoder,
+    dyn: Dynamics,
+    pi_net: Pi,
+    horizon: int = 3,
+    n_samples: int = 512,
+    num_elites: int = 64,
+    num_pi_trajs: int = 24,
+    n_iter: int = 6,
+    min_std: float = 0.05,
+    max_std: float = 2.0,
+    act_low: float = -1.0,
+    act_high: float = 1.0,
+    act_dim: int = 4,
+    gamma: float = 0.99,
+    reach_bonus: float = 10.0,
+):
+    """Goal-conditioned MPPI: plan actions to REACH a target latent `goal` (a
+    community centroid). This IS a skill executor — Stage-2 controllability probe
+    and the Stage-3 low-level. Mirrors make_mppi_fn but the rollout score is
+    proximity to the goal (no reward/Q heads): per-step gamma-weighted negative
+    L2 to goal + terminal cosine reach-bonus. Frozen model -> tests whether the
+    learned dynamics+planner can navigate to a community.
+
+        plan(params, obs, goal, mu, std, key, t0) -> (action, new_mu, new_std)
+    """
+    n_noise = n_samples - num_pi_trajs
+    _gammas = jnp.array([gamma ** t for t in range(horizon)])
+
+    @jax.jit
+    def plan(params, obs, goal, mu, std, key, t0):
+        mu = jnp.where(t0, jnp.zeros_like(mu), mu)
+        std = jnp.where(t0, jnp.full_like(std, max_std), std)
+        z0 = enc.apply(params["enc"], obs[None])[0]
+        gn = goal / (jnp.linalg.norm(goal) + 1e-8)
+
+        def pi_rollout(key):
+            def step(z, k):
+                m, ls = pi_net.apply(params["pi"], z[None])
+                a = jnp.tanh(m[0] + jax.random.normal(k, m[0].shape) * jnp.exp(ls[0]))
+                return dyn.apply(params["dyn"], z[None], a[None])[0], a
+            _, traj = jax.lax.scan(step, z0, jax.random.split(key, horizon))
+            return traj
+
+        key, pk = jax.random.split(key)
+        pis = jax.vmap(pi_rollout)(jax.random.split(pk, num_pi_trajs))
+
+        def one_iter(carry, _):
+            mu_i, std_i, k = carry
+            k, sk = jax.random.split(k)
+            noise = jax.random.normal(sk, (n_noise, horizon, act_dim)) * std_i[None]
+            acts = jnp.concatenate([pis, jnp.clip(mu_i[None] + noise, act_low, act_high)], 0)
+            z0b = jnp.tile(z0[None], (n_samples, 1))
+
+            def roll(z_i, a_seq):
+                def step(z, a):
+                    z2 = dyn.apply(params["dyn"], z[None], a[None]).squeeze(0)
+                    prox = -jnp.sqrt(jnp.sum((z2 - goal) ** 2) + 1e-8)
+                    return z2, prox
+                zf, proxs = jax.lax.scan(step, z_i, a_seq)
+                zfn = zf / (jnp.linalg.norm(zf) + 1e-8)
+                term = reach_bonus * jnp.dot(zfn, gn)
+                return jnp.sum(_gammas * proxs) + term
+
+            rets = jax.vmap(roll)(z0b, acts)
+            _, ei = jax.lax.top_k(rets, num_elites)
+            ea = acts[ei]
+            return (jnp.mean(ea, 0), jnp.clip(jnp.std(ea, 0) + 1e-6, min_std, max_std), k), None
+
+        (muf, stdf, _), _ = jax.lax.scan(one_iter, (mu, std, key), None, length=n_iter)
+        action = jnp.clip(muf[0], act_low, act_high)
+        new_mu = jnp.concatenate([muf[1:], jnp.zeros((1, act_dim))], 0)
+        new_std = jnp.concatenate([stdf[1:], jnp.full((1, act_dim), max_std)], 0)
         return action, new_mu, new_std
 
     return plan

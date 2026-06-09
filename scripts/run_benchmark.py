@@ -64,6 +64,53 @@ def save_pickle_atomic(path: Path, payload) -> None:
     os.replace(tmp, path)
 
 
+def maybe_add_distractors(env, n_dims: int, scale: float = 1.0, rho: float = 0.95):
+    """iter-14 Stage-2a: append `n_dims` temporally-correlated (OU-process) nuisance
+    dimensions to the observation. Tests whether an encoder learns to IGNORE
+    behaviorally-irrelevant but predictable input (the distractor-robustness
+    hypothesis behind behavioral abstraction) without any pixel infra.
+
+    JIT/vmap-safe: the noise state + its PRNG key live in `state.info` with identical
+    pytree structure in reset and step. Applied BEFORE wrap_for_brax_training so the
+    episode/autoreset/vmap wrappers see a consistent env. n_dims<=0 -> returns env
+    unchanged (graph identical; fleet-safe default)."""
+    if not n_dims or n_dims <= 0:
+        return env
+
+    class _Distracted:
+        def __init__(self, inner):
+            self.__dict__["_inner"] = inner
+
+        def __getattr__(self, k):
+            return getattr(self.__dict__["_inner"], k)
+
+        @property
+        def observation_size(self):
+            return self.__dict__["_inner"].observation_size + n_dims
+
+        def reset(self, rng):
+            k_env, k_noise = jax.random.split(rng)
+            s = self.__dict__["_inner"].reset(k_env)
+            z = scale * jax.random.normal(k_noise, (n_dims,))
+            s.info["_distract_z"] = z
+            s.info["_distract_k"] = k_noise
+            return s.replace(obs=jnp.concatenate([s.obs, z], axis=-1))
+
+        def step(self, s, a):
+            z = s.info["_distract_z"]
+            k = s.info["_distract_k"]
+            k, sub = jax.random.split(k)
+            # OU update: stationary std == scale, strong temporal correlation (rho).
+            z = rho * z + scale * jnp.sqrt(1.0 - rho * rho) * jax.random.normal(sub, z.shape)
+            s2 = self.__dict__["_inner"].step(s, a)
+            s2.info["_distract_z"] = z
+            s2.info["_distract_k"] = k
+            return s2.replace(obs=jnp.concatenate([s2.obs, z], axis=-1))
+
+    print(f"  DISTRACTORS: +{n_dims} OU nuisance obs dims (scale={scale}, rho={rho})", flush=True)
+    return _Distracted(env)
+
+
 def buffer_state(buf) -> dict:
     """Return a replay-buffer snapshot suitable for exact off-policy resume."""
     return {
@@ -487,6 +534,7 @@ def train_tdmpc2(
     latent_action_smooth_coef: float = 0.0,
     consistency_coef: float | None = None,
     bisim_coef: float = 0.0,
+    distractor_dims: int = 0,
     early_stop_patience: int = 0,
     latent_smooth_warmup_env_steps: int = 0,
     glass_decay_steps: int = 0,
@@ -497,6 +545,8 @@ def train_tdmpc2(
     cluster_intrinsic_coef: float = 0.0,
     cluster_intrinsic_window: int = 20,
     cluster_intrinsic_decay_steps: int = 0,
+    proto_novelty_coef: float = 0.0,
+    proto_novelty_decay_steps: int = 0,
     # iter-6 §7.C — Phase-r2 gait penalty bundle
     gait_fall_penalty: float = 0.0,
     gait_fall_height: float = 0.45,
@@ -516,6 +566,15 @@ def train_tdmpc2(
     mpc_distill_batch_size: int = 16,
     controller_arbitration: str = "none",
     arbitration_margin: float = 0.0,
+    latent_norm: str = "simnorm",
+    fsq_levels: int = 5,
+    rho_override: float | None = None,
+    intrinsic: str = "none",
+    intrinsic_coef: float = 0.0,
+    jumpy_k: int = 0,
+    jumpy_coef: float = 1.0,
+    jumpy_plan: bool = False,
+    jumpy_n_macro: int = 3,
 ) -> None:
     """Train TD-MPC2 or TD-MPC-Glass."""
     algo_name = "TD-MPC-Glass" if use_glass else "TD-MPC2"
@@ -527,12 +586,12 @@ def train_tdmpc2(
         from helios.algorithms.tdmpc_glass import (
             Encoder, Dynamics, RewardHead, QEnsemble, Pi,
             MultiEnvBuffer, make_update_fn, make_mppi_fn, make_glass_diag_fn,
-            init_glass_params, DEFAULTS,
+            make_proto_mppi_fn, init_glass_params, DEFAULTS,
         )
     else:
         from helios.algorithms.tdmpc2 import (
-            Encoder, Dynamics, RewardHead, QEnsemble, Pi,
-            MultiEnvBuffer, make_update_fn, make_mppi_fn, DEFAULTS,
+            Encoder, Dynamics, RewardHead, QEnsemble, Pi, JumpyDynamics, JumpyReward,
+            MultiEnvBuffer, make_update_fn, make_mppi_fn, make_jumpy_mppi_fn, DEFAULTS,
         )
 
     # ── Hyperparams (v24 milestone)
@@ -544,7 +603,10 @@ def train_tdmpc2(
     lr         = d["lr"]           # 3e-4
     gamma      = d["gamma"]        # 0.99
     tau        = d["tau"]          # 0.01
-    rho        = d["rho"]          # 0.5
+    rho        = float(rho_override) if rho_override is not None else d["rho"]   # 0.5 default
+    if rho_override is not None:
+        print(f"  iter-20 rho override: consistency-horizon decay rho={rho} (default {d['rho']}) "
+              f"— trains dynamics to be accurate at LONG horizons for deep planning", flush=True)
     rew_scale  = d["rew_scale"]    # 10.0
     K_UPDATE   = int(k_update) if k_update is not None else d["K_UPDATE"]     # 64
     if k_update is not None and K_UPDATE != d["K_UPDATE"]:
@@ -595,6 +657,7 @@ def train_tdmpc2(
 
     # ── Environment
     env      = registry.load(env_id)
+    env      = maybe_add_distractors(env, distractor_dims)  # iter-14 Stage-2a (no-op when 0)
     env      = wrapper.wrap_for_brax_training(env, episode_length=episode_length,
                                               action_repeat=1)
     obs_dim  = env.observation_size
@@ -603,8 +666,19 @@ def train_tdmpc2(
     print(f"  obs={obs_dim}  act={act_dim}", flush=True)
 
     # ── Networks
-    enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V)
-    dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V)
+    # iter-16: latent_norm swaps SimNorm for FSQ discrete codes (vanilla tdmpc2
+    # path only — the Glass module keeps its own SimNorm Encoder/Dynamics).
+    _latent_norm = str(latent_norm or "simnorm")
+    if _latent_norm != "simnorm":
+        if use_glass:
+            raise ValueError("--latent_norm fsq is only supported on the vanilla tdmpc2 path")
+        _fsq_levels = int(fsq_levels)
+        print(f"  iter-16 latent_norm={_latent_norm} (FSQ levels={_fsq_levels}, SimNorm replaced)", flush=True)
+        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels)
+        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels)
+    else:
+        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V)
+        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V)
     rew_net = RewardHead(hidden=hidden, num_bins=num_bins)
     q_net   = QEnsemble(hidden=hidden, num_bins=num_bins)
     pi_net  = Pi(action_dim=act_dim, hidden=hidden)
@@ -630,6 +704,14 @@ def train_tdmpc2(
         "q":   q_net.init(qk, dummy_z_aug, dummy_act),
         "pi":  pi_net.init(pk, dummy_z_aug),
     }
+    # iter-15 proto-plan: distilled prototype-space planner (eval-only probe).
+    _proto_plan = bool(use_glass and glass_cfg.get("proto_plan", False))
+    if _proto_plan:
+        if not float(glass_cfg.get("lambda_behav") or 0.0) > 0.0:
+            raise ValueError("--proto_plan requires --glass_lambda_behav > 0 (needs proto_reward)")
+        if _use_cluster_obs:
+            raise ValueError("--proto_plan is incompatible with use_cluster_obs")
+        print("  iter-15 proto-plan active: distilled pdyn/proto_value heads + protomppi eval", flush=True)
     if use_glass:
         params["glass"] = init_glass_params(
             gk,
@@ -639,7 +721,24 @@ def train_tdmpc2(
             assign_logits_init_scale=glass_cfg.get("assign_logits_init_scale", 1.0),
             num_super_clusters=glass_cfg.get("num_super_clusters", 0),
             behavioral=bool(glass_cfg.get("lambda_behav") or 0.0),
+            proto_plan=_proto_plan,
+            act_dim=act_dim if _proto_plan else 0,
         )
+    # iter-22 jumpy: k-step latent head (vanilla tdmpc2 path only). Added to params so the
+    # shared optimizer trains it; no-op when jumpy_k==0.
+    _jumpy_k = int(jumpy_k) if (not use_glass) else 0
+    _jumpy_plan = bool(jumpy_plan and _jumpy_k > 0)
+    _jumpy_n_macro = int(jumpy_n_macro)
+    jumpy_net = None; jumpy_rew_net = None
+    if _jumpy_k > 0:
+        jumpy_net = JumpyDynamics(latent_dim=latent_dim, hidden=hidden, V=V)
+        jumpy_rew_net = JumpyReward(hidden=hidden, num_bins=num_bins)
+        key, jk, jk2 = jax.random.split(key, 3)
+        _adummy = jnp.zeros((1, _jumpy_k * act_dim))
+        params["jdyn"] = jumpy_net.init(jk, dummy_z, _adummy)
+        params["jrew"] = jumpy_rew_net.init(jk2, dummy_z, _adummy)
+        print(f"  iter-22 JUMPY k={_jumpy_k} coef={jumpy_coef} plan={_jumpy_plan} n_macro={_jumpy_n_macro}: "
+              f"k-step dyn+reward heads + horizon-consistency (mechanism: jumpy_err vs iter1_err at eval)", flush=True)
     tp    = params.copy()
     scale = jnp.array(1.0)
     glass_step = jnp.array(0, dtype=jnp.int32)
@@ -728,6 +827,7 @@ def train_tdmpc2(
                 glass_lambda_behav=float(glass_cfg.get("lambda_behav") or 0.0),
                 use_cluster_obs=bool(glass_cfg.get("use_cluster_obs", False)),
                 cluster_obs_proto_temperature=float(glass_cfg.get("proto_temperature", 1.0)),
+                glass_proto_plan=_proto_plan,
             )
         else:
             _, ms = make_update_fn(
@@ -738,6 +838,10 @@ def train_tdmpc2(
                 smoothing_enabled=smoothing_enabled,
                 mpc_distill_enabled=_mpc_distill_enabled,
                 bisim_coef=bisim_coef,
+                jumpy_net=jumpy_net,
+                jumpy_rew_net=jumpy_rew_net,
+                jumpy_k=_jumpy_k,
+                jumpy_coef=float(jumpy_coef),
             )
         return ms
 
@@ -759,6 +863,25 @@ def train_tdmpc2(
         gamma=gamma, rew_scale=rew_scale,
         **_mppi_kw,
     )
+    plan_jumpy = None
+    if _jumpy_plan:
+        plan_jumpy = make_jumpy_mppi_fn(
+            enc_net, jumpy_net, jumpy_rew_net, q_net, pi_net,
+            k=_jumpy_k, n_macro=_jumpy_n_macro, n_samples=NS, num_elites=elites,
+            n_iter=NI, min_std=MIN_STD, max_std=MAX_STD,
+            act_low=al, act_high=ah, act_dim=act_dim, gamma=gamma,
+        )
+    plan_proto = None
+    if _proto_plan:
+        plan_proto = make_proto_mppi_fn(
+            enc_net, dyn_net, pi_net,
+            horizon=H, n_samples=NS, num_elites=elites,
+            num_pi_trajs=pi_trajs, n_iter=NI,
+            min_std=MIN_STD, max_std=MAX_STD,
+            act_low=al, act_high=ah, act_dim=act_dim,
+            gamma=gamma,
+            proto_temperature=float(glass_cfg.get("proto_temperature", 1.0)),
+        )
     if use_glass:
         glass_diag = make_glass_diag_fn(
             enc_net,
@@ -898,6 +1021,46 @@ def train_tdmpc2(
                 ent[env_i] = -np.sum(p * np.log(np.clip(p, 1e-8, 1.0)))
             return ent
 
+    # iter-17 — prototype-visit-count novelty bonus (exploration THROUGH the
+    # abstraction). Distinct from falsified Path P/Pa (within-window cluster
+    # entropy on HopperHop): count-based novelty, targeted at exploration-bound
+    # sparse tasks where iter-14 §4.4 located the 0-vs-solved bimodality.
+    # Training reward only; eval untouched. bonus_i = coef * N[proto_i]^-1/2.
+    _pnov_coef_init = float(proto_novelty_coef)
+    _pnov_decay_steps = int(proto_novelty_decay_steps)
+    _pnov_active = use_glass and _pnov_coef_init > 0
+    if _pnov_active:
+        _P_protos = int(glass_cfg.get("num_prototypes", 32))
+        _pnov_counts = np.ones(_P_protos, dtype=np.float64)  # start at 1: bounded bonus, no div0
+        print(
+            f"  iter-17 prototype-novelty bonus: coef={_pnov_coef_init} "
+            f"decay_steps={_pnov_decay_steps:,} P={_P_protos}",
+            flush=True,
+        )
+
+        @jax.jit
+        def proto_id_batch(p, obs_batch):
+            z = enc_net.apply(p["enc"], obs_batch)
+            mu = p["glass"]["prototypes"]
+            zn = z / (jnp.linalg.norm(z, axis=-1, keepdims=True) + 1e-8)
+            mn = mu / (jnp.linalg.norm(mu, axis=-1, keepdims=True) + 1e-8)
+            return jnp.argmax(zn @ mn.T, axis=-1)  # (N_ENVS,)
+
+    # iter-21 — abstraction-grounded exploration intrinsic reward (sparse-task rescue).
+    _intr = str(intrinsic or "none").lower()
+    _intr_coef = float(intrinsic_coef)
+    _intr_state = None
+    if _intr != "none" and _intr_coef > 0:
+        from helios.algorithms.intrinsic import make_rnd, make_laplacian
+        if _intr == "rnd":
+            _intr_state = make_rnd(obs_dim, seed=seed)
+        elif _intr == "laplacian":
+            _intr_state = make_laplacian(obs_dim, seed=seed)
+        else:
+            raise ValueError(f"unknown --intrinsic {intrinsic}")
+        print(f"  iter-21 intrinsic exploration: {_intr} coef={_intr_coef} (training-reward only, "
+              f"normalized; sparse-task rescue probe)", flush=True)
+
     key, ek2 = jax.random.split(key)
     if resume_payload and "env_state" in resume_payload and "obs_np" in resume_payload:
         env_state = resume_payload["env_state"]
@@ -989,6 +1152,61 @@ def train_tdmpc2(
             key, pk2 = jax.random.split(key)
             for _ in range(episode_length):
                 act, mu, std = plan(params, obs, mu, std, pk2, t0_mppi)
+                t0_mppi = jnp.bool_(False)
+                key, pk2 = jax.random.split(key)
+                state = single_env_step(state, act)
+                r = float(state.reward[0])
+                er += r
+                ep_rew.append(r)
+                if bool(state.done[0] > 0.5):
+                    break
+                obs = jnp.asarray(state.obs[0])
+            rets.append(er)
+            diags.append(_episode_diag(ep_rew))
+        agg = {k: float(np.mean([d[k] for d in diags])) for k in diags[0]}
+        return float(np.mean(rets)), agg
+
+    def eval_jumpy(n_eps: int = 3):
+        # iter-22: eval with jumpy-MPPI (plan n_macro macro-steps over the k-step jumpy model).
+        nonlocal key
+        rets, diags = [], []
+        for _ in range(n_eps):
+            key, rk2 = jax.random.split(key)
+            state = single_env_reset(rk2)
+            obs = jnp.asarray(state.obs[0])
+            mu = jnp.zeros((_jumpy_n_macro, _jumpy_k, act_dim))
+            std = jnp.full((_jumpy_n_macro, _jumpy_k, act_dim), MAX_STD)
+            er = 0.0; ep_rew = []; t0_j = jnp.bool_(True)
+            key, pk2 = jax.random.split(key)
+            for _ in range(episode_length):
+                act, mu, std = plan_jumpy(params, obs, mu, std, pk2, t0_j)
+                t0_j = jnp.bool_(False)
+                key, pk2 = jax.random.split(key)
+                state = single_env_step(state, act)
+                r = float(state.reward[0]); er += r; ep_rew.append(r)
+                if bool(state.done[0] > 0.5):
+                    break
+                obs = jnp.asarray(state.obs[0])
+            rets.append(er); diags.append(_episode_diag(ep_rew))
+        agg = {k: float(np.mean([d[k] for d in diags])) for k in diags[0]}
+        return float(np.mean(rets)), agg
+
+    def eval_protomppi(n_eps: int = 8):
+        # iter-15: identical loop to eval_mppi but planning in prototype space.
+        nonlocal key
+        rets, diags = [], []
+        for _ in range(n_eps):
+            key, rk2 = jax.random.split(key)
+            state = single_env_reset(rk2)
+            obs = jnp.asarray(state.obs[0])
+            mu = jnp.zeros((H, act_dim))
+            std = jnp.full((H, act_dim), MAX_STD)
+            er = 0.0
+            ep_rew = []
+            t0_mppi = jnp.bool_(True)
+            key, pk2 = jax.random.split(key)
+            for _ in range(episode_length):
+                act, mu, std = plan_proto(params, obs, mu, std, pk2, t0_mppi)
                 t0_mppi = jnp.bool_(False)
                 key, pk2 = jax.random.split(key)
                 state = single_env_step(state, act)
@@ -1209,6 +1427,30 @@ def train_tdmpc2(
                     _cluster_history_ptr = (_cluster_history_ptr + 1) % _cluster_window
                     ent_np = cluster_entropy_per_env(_cluster_history)
                     rews_np = rews_np + _cluster_coef * ent_np
+            # iter-17 — prototype-visit-count novelty bonus (training only).
+            if _pnov_active:
+                if _pnov_decay_steps > 0:
+                    _pnov_coef = _pnov_coef_init * max(0.0, 1.0 - env_steps / _pnov_decay_steps)
+                else:
+                    _pnov_coef = _pnov_coef_init
+                if _pnov_coef > 1e-6:
+                    pids = np.array(proto_id_batch(params, jnp.asarray(new_obs)))
+                    np.add.at(_pnov_counts, pids, 1.0)
+                    rews_np = rews_np + _pnov_coef / np.sqrt(_pnov_counts[pids])
+            # iter-21 — RND / Laplacian-eigenpurpose intrinsic exploration (training reward only).
+            if _intr_state is not None:
+                st = _intr_state
+                st["onorm"].update(np.asarray(obs_np)); st["onorm"].update(np.asarray(new_obs))
+                o_n = jnp.asarray(st["onorm"].norm(np.asarray(obs_np)), jnp.float32)
+                on_n = jnp.asarray(st["onorm"].norm(np.asarray(new_obs)), jnp.float32)
+                if _intr == "rnd":
+                    bonus = np.asarray(st["reward"](st["pp"], on_n))
+                    st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], on_n)
+                else:  # laplacian
+                    bonus = np.asarray(st["reward"](st["pp"], o_n, on_n))
+                    st["pp"], st["opt"] = st["update"](st["pp"], st["opt"], o_n, on_n)
+                st["rnorm"].update(bonus)
+                rews_np = rews_np + _intr_coef * (bonus / (np.sqrt(st["rnorm"].var) + 1e-8))
             buf.add_batch(obs_np, acts_np, rews_np, done_np)
             obs_np    = new_obs
             env_steps += N_ENVS
@@ -1274,12 +1516,38 @@ def train_tdmpc2(
             if env_steps % log_interval < N_ENVS:
                 elapsed = time.time() - t0
                 _mpc_log = "" if use_glass else f"  mpc={float(aux.get('mpc', 0.0)):.4f}"
+                _jmp_log = ""
+                if _jumpy_k > 0:
+                    _je = float(aux.get('jumpy_err', 0.0)); _ie = float(aux.get('iter1_err', 0.0))
+                    _ratio = _je / max(_ie, 1e-8)
+                    _jmp_log = (f"  JUMPY k{_jumpy_k}: jumpy_err={_je:.3f} iter1_err={_ie:.3f} "
+                                f"ratio={_ratio:.3f}{' <1=WIN' if _ratio<1 else ''}")
                 print(f"  es={env_steps:>9,}  sps={env_steps/max(elapsed,1):.0f}"
-                      f"  loss={float(loss_val):.4f}  scale={float(scale):.2f}{_mpc_log}", flush=True)
+                      f"  loss={float(loss_val):.4f}  scale={float(scale):.2f}{_mpc_log}{_jmp_log}", flush=True)
 
             if env_steps >= next_eval:
                 ret, pi_diag = eval_pi(n_eps=5)
+                _t_mppi = time.time()
                 mppi_ret, mppi_diag = eval_mppi(n_eps=8 if use_glass else 3)
+                _t_mppi = time.time() - _t_mppi
+                jumpy_ret = None
+                if _jumpy_plan:
+                    jumpy_ret, _ = eval_jumpy(n_eps=3)
+                    print(f"    JUMPY-MPPI={jumpy_ret:7.1f} (vs MPPI={mppi_ret:7.1f}, k={_jumpy_k} n_macro={_jumpy_n_macro} "
+                          f"eff_H={_jumpy_k*_jumpy_n_macro})", flush=True)
+                proto_ret = None
+                if _proto_plan:
+                    # iter-15 paired probe: same params, same step, proto-space planner.
+                    _t_proto = time.time()
+                    proto_ret, proto_diag = eval_protomppi(n_eps=8)
+                    _t_proto = time.time() - _t_proto
+                    _n_mppi_eps = 8 if use_glass else 3
+                    print(
+                        f"    protoMPPI={proto_ret:7.1f} (vs MPPI={mppi_ret:7.1f}, "
+                        f"ratio={proto_ret / max(mppi_ret, 1e-6):.2f})  "
+                        f"t/ep: proto={_t_proto / 8:.1f}s mppi={_t_mppi / _n_mppi_eps:.1f}s",
+                        flush=True,
+                    )
                 arb_ret = None
                 arb_selector = ""
                 arb_gap = float(mppi_ret) - float(ret)
@@ -1346,6 +1614,10 @@ def train_tdmpc2(
                     with open(eval_type_csv, "a") as cf:
                         cf.write(f"{env_steps},{ret:.1f},pi,{seed}\n")
                         cf.write(f"{env_steps},{mppi_ret:.1f},mppi,{seed}\n")
+                        if jumpy_ret is not None:
+                            cf.write(f"{env_steps},{jumpy_ret:.1f},jumpy,{seed}\n")
+                        if proto_ret is not None:
+                            cf.write(f"{env_steps},{proto_ret:.1f},protomppi,{seed}\n")
                         if arb_ret is not None:
                             cf.write(f"{env_steps},{arb_ret:.1f},arb,{seed}\n")
                     # §7.1 diagnostics CSV — sibling file, doesn't affect main eval CSV.
@@ -1597,6 +1869,9 @@ def parse_args():
     ap.add_argument("--bisim_coef", type=float, default=0.0,
                     help="iter-14 BS-MPC-style pairwise bisimulation auxiliary on the encoder "
                          "(0=off=vanilla TD-MPC2; reference arm. Try 0.1-1.0). Non-glass path only.")
+    ap.add_argument("--distractor_dims", type=int, default=0,
+                    help="iter-14 Stage-2a: append N temporally-correlated OU nuisance dims to obs "
+                         "(0=off). Tests distractor-robustness of the encoder. Try 64.")
     ap.add_argument("--early_stop_patience", type=int, default=0,
                     help="If > 0, halt training when no new best MPPI has been recorded in the last N env-steps. "
                          "Combine with a generous --total_steps cap (e.g. 10_000_000) to auto-stop on convergence.")
@@ -1628,6 +1903,46 @@ def parse_args():
     ap.add_argument("--glass_lambda_behav", type=float, default=None,
                     help="iter-14 behavior-aware Glass: weight on the per-prototype reward-prediction "
                          "loss (groups reward-equivalent states; 0/None=off=geometric Glass). Try 0.1-1.0.")
+    ap.add_argument("--proto_plan", action="store_true",
+                    help="iter-15: train distilled prototype-space planner heads (pdyn MLP + proto_value; "
+                         "stop-grad inputs, representation untouched) and evaluate prototype-space MPPI "
+                         "alongside latent MPPI each eval (CSV eval_type 'protomppi'). Paired planning-quality "
+                         "probe. Requires --glass_lambda_behav > 0.")
+    ap.add_argument("--latent_norm", choices=["simnorm", "fsq"], default="simnorm",
+                    help="iter-16: latent bound for vanilla tdmpc2. 'fsq' replaces SimNorm with Finite "
+                         "Scalar Quantization (5 levels/dim, straight-through; DC-MPC-style discrete codes). "
+                         "Representation swap — single-variable vs vanilla. tdmpc2 path only.")
+    ap.add_argument("--fsq_levels", type=int, default=5,
+                    help="iter-16: quantization levels per dim for --latent_norm fsq (default 5; "
+                         "retune band uses 8 = finer codes).")
+    ap.add_argument("--rho", type=float, default=None,
+                    help="iter-20: consistency-loss horizon-decay rho (default 0.5). Higher (0.75-0.9) "
+                         "weights long-horizon prediction more -> dynamics accurate at depth -> stable "
+                         "deep planning (the H9-without-collapse lever).")
+    ap.add_argument("--intrinsic", choices=["none", "rnd", "laplacian"], default="none",
+                    help="iter-21: abstraction-grounded exploration intrinsic reward (training only). "
+                         "rnd=Random Network Distillation (baseline); laplacian=DCEO-style eigenpurpose "
+                         "(||phi(s')-phi(s)||, graph-Laplacian rep — the abstraction bet). Sparse-task rescue.")
+    ap.add_argument("--intrinsic_coef", type=float, default=0.0,
+                    help="iter-21: weight on the (normalized) intrinsic exploration reward. Try 0.5-2.0.")
+    ap.add_argument("--jumpy_k", type=int, default=0,
+                    help="iter-22: k-step jumpy latent model (0=off). Trains JumpyDynamics + horizon-"
+                         "consistency; logs mechanism check (jumpy_err vs iter1_err). Needs mppi_horizon>=2k. "
+                         "vanilla tdmpc2 path only.")
+    ap.add_argument("--jumpy_coef", type=float, default=1.0,
+                    help="iter-22: weight on the jumpy consistency + horizon-consistency loss.")
+    ap.add_argument("--jumpy_plan", action="store_true",
+                    help="iter-22: eval with jumpy-MPPI (plan n_macro macro-steps over the k-step model; "
+                         "writes 'jumpy' CSV rows). Requires --jumpy_k>0.")
+    ap.add_argument("--jumpy_n_macro", type=int, default=3,
+                    help="iter-22: number of macro-steps for jumpy-MPPI (effective horizon = k*n_macro).")
+    ap.add_argument("--proto_novelty_coef", type=float, default=0.0,
+                    help="iter-17: prototype-visit-count novelty bonus, training reward only: "
+                         "coef * 1/sqrt(visits[argmax-prototype]). Exploration THROUGH the abstraction, "
+                         "for exploration-bound sparse tasks. Glass arm only. 0 = off.")
+    ap.add_argument("--proto_novelty_decay_steps", type=int, default=0,
+                    help="iter-17: linearly decay --proto_novelty_coef to 0 by this env-step "
+                         "(exploration curriculum, not permanent reward distortion). 0 = no decay.")
     # Path 5 / Phase-t — reward shaping: penalise knee/torso/thigh contact with floor.
     ap.add_argument("--knee_penalty_coef", type=float, default=0.0,
                     help="Per-step training-only reward penalty when non-foot geoms (torso, nose, pelvis, "
@@ -1734,6 +2049,8 @@ def main():
         "lambda_behav": args.glass_lambda_behav,
         "assign_logits_init_scale": args.glass_assign_logits_init_scale,
         "use_cluster_obs": args.use_cluster_obs,
+        # iter-15: store_true flag — None when off so glass_cfg.update() skips it.
+        "proto_plan": True if args.proto_plan else None,
     }
     if args.glass_stopgrad_graph is not None:
         glass_overrides["stopgrad_graph"] = args.glass_stopgrad_graph == "true"
@@ -1765,10 +2082,12 @@ def main():
                         resume_checkpoint=args.resume_checkpoint,
                         save_full_state=args.save_full_state,
                         mppi_n_samples=args.mppi_n_samples,
+                        mppi_horizon=args.mppi_horizon,
                         k_update=args.k_update,
                         latent_action_smooth_coef=args.latent_action_smooth_coef,
                         consistency_coef=args.consistency_coef,
                         bisim_coef=args.bisim_coef,
+                        distractor_dims=args.distractor_dims,
                         early_stop_patience=args.early_stop_patience,
                         latent_smooth_warmup_env_steps=args.latent_smooth_warmup_env_steps,
                         expl_until=args.expl_until,
@@ -1791,6 +2110,15 @@ def main():
                         mpc_distill_batch_size=args.mpc_distill_batch_size,
                         controller_arbitration=args.controller_arbitration,
                         arbitration_margin=args.arbitration_margin,
+                        latent_norm=args.latent_norm,
+                        fsq_levels=args.fsq_levels,
+                        rho_override=args.rho,
+                        intrinsic=args.intrinsic,
+                        intrinsic_coef=args.intrinsic_coef,
+                        jumpy_k=args.jumpy_k,
+                        jumpy_coef=args.jumpy_coef,
+                        jumpy_plan=args.jumpy_plan,
+                        jumpy_n_macro=args.jumpy_n_macro,
                     )
                 elif algo in ("tdmpc-glass", "tdmpc_glass"):
                     q_reset = None
@@ -1815,6 +2143,7 @@ def main():
                         latent_action_smooth_coef=args.latent_action_smooth_coef,
                         consistency_coef=args.consistency_coef,
                         bisim_coef=args.bisim_coef,
+                        distractor_dims=args.distractor_dims,
                         early_stop_patience=args.early_stop_patience,
                         latent_smooth_warmup_env_steps=args.latent_smooth_warmup_env_steps,
                         glass_decay_steps=args.glass_decay_steps,
@@ -1825,6 +2154,8 @@ def main():
                         cluster_intrinsic_coef=args.cluster_intrinsic_coef,
                         cluster_intrinsic_window=args.cluster_intrinsic_window,
                         cluster_intrinsic_decay_steps=args.cluster_intrinsic_decay_steps,
+                        proto_novelty_coef=args.proto_novelty_coef,
+                        proto_novelty_decay_steps=args.proto_novelty_decay_steps,
                         gait_fall_penalty=args.gait_fall_penalty,
                         gait_fall_height=args.gait_fall_height,
                         gait_action_smooth=args.gait_action_smooth,
