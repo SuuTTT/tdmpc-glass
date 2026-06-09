@@ -252,3 +252,12 @@ exists per round-1); WIN = ≥10% IQM, non-overlapping CI, ≥3/4 tasks. Mechani
       cyclic-gait motion-phase communities = the structure SE-k uses for k-selection). -> BUILD SE-k.
 - [ ] Pre-register SE-lever (or F if pre-check fails) gate; mechanism-check; build on validated substrate
 - [ ] (HOLD for explicit user go before building)
+
+### High-DoF probe — FLOORED at 500k (2026-06-09 autonomous)
+HumanoidWalk vanilla s0/s1 DONE @500k: returns 8 / 24 (peak 16/24). jumpy s0@300k=13. BOTH arms near
+ZERO — HumanoidWalk is badly under-trained at 500k/NS512 (TD-MPC2's Humanoid results need millions of
+steps + larger planner). => the high-DoF jumpy-vs-vanilla probe as configured is INCONCLUSIVE (no
+headroom to separate arms; not a clean test of "does jumpy beat vanilla on high-DoF"). HumanoidRun
+(harder) will floor too. Honest note: the DR's "high-DoF headroom" needs a much bigger budget than this
+4h window allows. NOT adding more floored seeds; the jumpy-Panda n=5 win stands as the headline.
+Decision: let the queue drain so a box frees for the SE-k mechcheck (higher value than more floored runs).
