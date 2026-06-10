@@ -202,6 +202,8 @@ class TransformerWM(nn.Module):
     mlp_ratio: int = 4
     activation: str = "gelu"
     pos_encoding: str = "learned"
+    max_seq_len: int = 512  # size of the learned PE table; must be >= any training/eval seq_len
+                            # (independent of context_len, which only bounds the imagination window)
 
     @property
     def feature_dim(self) -> int:
@@ -243,7 +245,7 @@ class TransformerWM(nn.Module):
             pos_table = self.param(
                 "pos_embed",
                 nn.initializers.normal(stddev=0.02),
-                (self.context_len, self.d_model),
+                (self.max_seq_len, self.d_model),
             )
             x = x + pos_table[:T][None, :, :]
         else:
