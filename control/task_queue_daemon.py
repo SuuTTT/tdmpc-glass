@@ -58,7 +58,7 @@ BOXES = [
     # box (a 'forecast' python job uses the GPU but not via run_benchmark, so is_box_idle
     # would falsely see it idle and clobber it). Do NOT schedule tdmpc here.
     # ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
-    # ASSIGNED TO LTSF 2026-06-10 (user, permanent): do NOT touch. ("ssh2_a4000", 18950, "ssh2.vast.ai", 0)
+    # ASSIGNED TO LTSF 2026-06-10 (user, permanent): do NOT touch. ("ssh2_a4000", 18950, "ssh2.vast.ai", 0)  [vast inst 38768950 — shows 0% GPU when LTSF idle; NOT a free box]
     ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
     ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
     ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
