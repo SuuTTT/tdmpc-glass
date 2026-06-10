@@ -55,7 +55,7 @@ class RSSMModule(nn.Module):
         stoch_size = self.stoch_dim * self.stoch_classes
         # GRU input projection and cell
         self.inp_proj = NormedLinear(self.hidden_dim)
-        self.gru_cell = nn.GRUCell(self.deter_dim)
+        self.gru_cell = nn.GRUCell(features=self.deter_dim)
         # Prior head: h -> prior logits
         self.prior_norm = NormedLinear(self.hidden_dim)
         self.prior_head = nn.Dense(stoch_size)
