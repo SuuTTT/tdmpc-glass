@@ -341,7 +341,6 @@ exp/tdmpc_glass/
 
 ## 9. Rendering a rollout
 
-In the dashboard → **Render Rollout** section:
 1. Select checkpoint from the dropdown (auto-discovered from checkpoints/).
 2. Choose camera (`cam0` for HopperHop — do not use the default free camera).
 3. Choose episode length (short=250, medium=500, long=1000, extra=2000 steps).
@@ -425,4 +424,3 @@ Logs:
 | `POST` | `/api/queue/render` | Queue a render task |
 | `GET` | `/api/boxes` | Live GPU/CPU stats for all boxes |
 | `GET` | `/api/curves` | All discovered CSV paths |
-| `GET` | `/api/checkpoints` | All discovered checkpoint `.pkl` files |

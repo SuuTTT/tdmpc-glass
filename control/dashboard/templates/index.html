@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>TD-MPC-Glass Live Dashboard</title>
+<style>
+  :root { --bg:#0e0f12; --panel:#161922; --fg:#dbe1eb; --muted:#7e8ba0; --accent:#4ec9b0; --warn:#e0a44c; --bad:#e15c5c; --good:#7dd87b; --line:#2a2f3b; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:var(--bg);color:var(--fg);font-size:13px}
+  header{padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:18px}
+  header h1{margin:0;font-size:16px;font-weight:600}
+  header .meta{color:var(--muted);font-size:12px}
+  .container{padding:14px 18px;max-width:1600px;margin:0 auto}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-bottom:14px;padding:12px 16px}
+  section h2{font-size:13px;font-weight:600;margin:0 0 10px 0;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+  .refresh-btn{font-size:11px;padding:2px 8px;letter-spacing:0;text-transform:none;font-weight:400;background:#2a3346;color:var(--fg);border:1px solid var(--line);border-radius:3px;cursor:pointer;margin-left:auto}
+  .refresh-btn:hover{background:#36405a}
+  select{background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:2px 6px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:500}
+  .box-good{color:var(--good)} .box-bad{color:var(--bad)} .box-warn{color:var(--warn)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .util-bar{display:inline-block;width:60px;height:9px;background:var(--line);border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:4px}
+  .util-bar>span{display:block;height:100%;background:var(--accent)}
+  .util-bar.hot>span{background:var(--warn)}
+  button{background:#2a3346;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px}
+  button:hover{background:#36405a}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .chip{display:inline-block;padding:1px 7px;border-radius:10px;background:#28313f;color:#bdc7d5;font-size:11px;margin-right:4px}
+  .chip.knee{background:#54391c;color:#e0a44c}
+  .chip.hier{background:#1c4254;color:#4ec9b0}
+  #curves{width:100%;height:520px}
+  .small{font-size:11px;color:var(--muted)}
+  .pill{padding:0 6px;border-radius:8px;font-size:10px;margin-left:4px}
+  .pill.green{background:#1f3d22;color:#7dd87b}
+  .pill.gray{background:#262a35;color:#9099a8}
+  .phase-browser{background:#1b1f2a;border:1px solid var(--line);border-radius:5px;padding:8px 10px;max-height:300px;overflow-y:auto}
+  .phase-info-bar{background:#1b1f2a;border:1px solid var(--line);border-radius:5px;padding:6px 12px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .sortable-th{cursor:pointer;user-select:none}
+  .sortable-th:hover{color:var(--accent)}
+  .filter-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  /* Run Inspector */
+  .ri-card{background:#1b1f2a;border:1px solid var(--line);border-radius:5px;margin-bottom:8px;overflow:hidden}
+  .ri-header{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;user-select:none}
+  .ri-header:hover{background:#222a3b}
+  .ri-title{font-weight:600;flex:1}
+  .ri-meta{font-size:11px;color:var(--muted)}
+  .ri-body{padding:10px 14px;border-top:1px solid var(--line);display:none}
+  .ri-body.open{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .ri-section-title{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .ri-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;border-bottom:1px solid #1e2535}
+  .ri-key{color:var(--muted)}
+  .ri-val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ri-log{background:#0e0f12;border:1px solid var(--line);border-radius:3px;padding:6px 8px;font-size:10px;font-family:ui-monospace,monospace;max-height:120px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin-top:6px;line-height:1.4}
+  .ri-span-full{grid-column:1/-1}
+  .ri-path{color:#64b5f6;font-size:11px;font-family:ui-monospace,monospace;word-break:break-all}
+  .ri-chevron{transition:transform .15s;font-size:14px;color:var(--muted)}
+  .ri-chevron.open{transform:rotate(90deg)}
+  .summary-grid{display:grid;grid-template-columns:minmax(320px,.9fr) 1.4fr;gap:12px}
+  .summary-card{background:#1b1f2a;border:1px solid var(--line);border-radius:5px;padding:9px 11px}
+  .summary-title{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px}
+  .free-row,.prom-row{display:grid;gap:8px;align-items:start;border-top:1px solid #1e2535;padding:6px 0}
+  .free-row:first-of-type,.prom-row:first-of-type{border-top:0}
+  .free-row{grid-template-columns:105px 95px 1fr}
+  .prom-row{grid-template-columns:120px 150px 1fr}
+  .phase-note{color:var(--muted);font-size:11px;line-height:1.35}
+</style></head><body>
+<header>
+  <h1>TD-MPC-Glass Live Dashboard</h1>
+  <span class="meta">refresh every 30s · <span id="ts">—</span></span>
+  <span class="meta" style="margin-left:auto">G1 = 5/5 &gt; 500 · G2 = break 600</span>
+</header>
+
+<div class="container">
+
+  <section><h2>Fleet Summary <button class="refresh-btn" onclick="loadQueue()">&#x21bb; refresh</button></h2>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-title">Next GPU Free</div>
+        <div id="next-free-list" class="small">loading...</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title">Promising Phases</div>
+        <div id="promising-list" class="small">loading...</div>
+      </div>
+    </div>
+  </section>
+
+  <section><h2>Box Fleet <button class="refresh-btn" onclick="loadBoxes()">&#x21bb; refresh</button></h2>
+    <table id="boxes"><thead>
+      <tr><th>Tag</th><th>Label</th><th>GPU</th><th>Mem</th><th>CPU</th><th>SPS</th><th>Running (phase · seed · best · last)</th></tr>
+    </thead><tbody></tbody></table>
+  </section>
+
+  <section id="queue-section"><h2>Task Queue
+    <button class="refresh-btn" onclick="loadQueue()">&#x21bb; refresh</button>
+    <button class="refresh-btn" id="add-task-btn" onclick="toggleAddTask()" style="margin-left:4px">+ add task</button>
+    <span id="queue-eta-hdr" class="small" style="opacity:.65;margin-left:10px;font-weight:normal"></span>
+  </h2>
+  <div id="add-task-form" style="display:none;background:#1b1f2a;border:1px solid var(--line);border-radius:5px;padding:10px 14px;margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 2fr 2fr 80px;gap:8px;align-items:end">
+      <div><label class="small">Priority (lower=first)<br>
+        <input id="at-priority" type="number" value="10" min="1" max="99"
+          style="width:100%;background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:3px 6px"></label></div>
+      <div><label class="small">Label<br>
+        <input id="at-label" type="text" placeholder="e.g. phaseab seed 1"
+          style="width:100%;background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:3px 6px"></label></div>
+      <div><label class="small">Launcher script<br>
+        <input id="at-launcher" type="text" placeholder="scripts/run_phase1b_10m.sh"
+          style="width:100%;background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:3px 6px"></label></div>
+      <div><button onclick="addTask()" style="width:100%;padding:6px 0">Add</button></div>
+    </div>
+    <div style="margin-top:6px"><label class="small">Env vars (optional)<br>
+      <input id="at-env" type="text" placeholder="SEEDS=1 XLA_PYTHON_CLIENT_MEM_FRACTION=0.75"
+        style="width:100%;background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:3px 6px"></label></div>
+    <div id="at-error" class="small box-bad" style="display:none;margin-top:6px"></div>
+  </div>
+  <table id="queue-table"><thead>
+    <tr><th style="width:50px">Pri</th><th>Label</th><th style="width:80px">Status</th><th style="width:90px">Box</th><th style="width:170px">ETA / Progress</th><th style="width:90px">Actions</th></tr>
+  </thead><tbody></tbody></table>
+  <div id="queue-empty" class="small" style="display:none;padding:6px;color:var(--muted)">Queue is empty.</div>
+  </section>
+
+  <section id="run-inspector-section"><h2>Run Inspector
+    <button class="refresh-btn" onclick="loadRunInspector()">&#x21bb; refresh</button>
+    <span class="small" id="ri-count" style="opacity:.65;font-weight:normal;margin-left:6px"></span>
+  </h2>
+  <div id="run-inspector-cards"></div>
+  </section>
+
+  <section><h2>Learning Curves <span class="small" id="curves-count"></span>
+    <button class="refresh-btn" onclick="loadCurves()">&#x21bb; refresh</button></h2>
+    <div class="small filter-row">
+      <label><input type="checkbox" id="only-mppi" checked> only MPPI</label>
+      <label><input type="checkbox" id="only-running"> running only</label>
+      <span>View:
+        <label style="margin-left:4px"><input type="radio" name="curve-mode" id="mode-seeds" value="seeds" checked> seeds</label>
+        <label style="margin-left:6px"><input type="radio" name="curve-mode" id="mode-ci" value="ci"> 95% CI</label>
+      </span>
+      <label>Phase: <input id="phase-filter" list="phase-list" type="text"
+        style="background:#222a3b;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:2px 6px;width:200px"
+        placeholder="type to filter…"></label>
+      <datalist id="phase-list"></datalist>
+      <button onclick="loadCurves()">apply</button>
+      <button class="refresh-btn" id="phases-btn" onclick="togglePhaseBrowser()">📊 phases</button>
+    </div>
+    <div class="small filter-row" style="margin-top:2px">
+      <span>Task:</span>
+      <button onclick="document.getElementById('phase-filter').value='';loadCurves()">All</button>
+      <button onclick="document.getElementById('phase-filter').value='HopperHop';loadCurves()">HopperHop</button>
+      <button onclick="document.getElementById('phase-filter').value='HumanoidWalk';loadCurves()">HumanoidWalk</button>
+      <button onclick="document.getElementById('phase-filter').value='HumanoidRun';loadCurves()">HumanoidRun</button>
+      <button onclick="document.getElementById('phase-filter').value='WalkerRun';loadCurves()">WalkerRun</button>
+      <button onclick="document.getElementById('phase-filter').value='CheetahRun';loadCurves()">CheetahRun</button>
+      <button onclick="document.getElementById('phase-filter').value='phasei14';loadCurves()">iter14 (all)</button>
+    </div>
+    <div id="phase-info" style="display:none;margin-bottom:6px"></div>
+    <div id="phase-browser" style="display:none;margin-bottom:8px"></div>
+    <div id="curves"></div>
+  </section>
+
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script>
+const $ = sel => document.querySelector(sel);
+// Active (phase, seed) set, refreshed by loadBoxes(); consumed by loadCurves().
+let ACTIVE_KEYS = new Set();
+
+function fmtMppi(v){
+  if (v==null) return '<span class="small">—</span>';
+  const cls = v>=500 ? 'box-good' : (v>=300 ? 'box-warn' : '');
+  return `<span class="mono ${cls}">${v.toFixed ? v.toFixed(1) : v}</span>`;
+}
+function fmtStep(s){ if (s==null) return ''; return `<span class="small">@${(s/1e6).toFixed(2)}M</span>`; }
+
+// ── Phase browser + CI mode ────────────────────────────────────────────
+let PHASE_DATA = [];
+// Stable color palette — indexed by canonical phase name so same phase always same color.
+const PHASE_COLORS = ['#4ec9b0','#e0a44c','#7dd87b','#e15c5c','#9b7de8','#64b5f6','#f48fb1','#a5d6a7','#ffcc80','#80deea'];
+const _phaseColorCache = {};
+function phaseColor(name) {
+  if (!_phaseColorCache[name]) {
+    const keys = Object.keys(_phaseColorCache);
+    _phaseColorCache[name] = PHASE_COLORS[keys.length % PHASE_COLORS.length];
+  }
+  return _phaseColorCache[name];
+}
+// seed colors for per-seed view — also use canonical phase color family but vary opacity
+function seedColor(phase, seed) {
+  const col = phaseColor(phase);
+  return col; // same hue; CI band uses 16% opacity fill already
+}
+
+// Multi-phase selection for CI comparison
+const SELECTED_CI_PHASES = new Set();
+
+function togglePhaseBrowser() {
+  const panel = document.getElementById('phase-browser');
+  const btn = document.getElementById('phases-btn');
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : '';
+  btn.textContent = open ? '📊 phases' : '📊 phases ▲';
+  if (!open) loadPhases();
+}
+
+function loadPhases() {
+  fetch('/api/phases').then(r=>r.json()).then(j=>{
+    PHASE_DATA = j.phases;
+    // Preload color cache so colors stay stable across sorts
+    PHASE_DATA.forEach(p => phaseColor(p.phase));
+    const dl = document.getElementById('phase-list');
+    if (dl) { dl.innerHTML = ''; PHASE_DATA.forEach(p=>{ const o=document.createElement('option'); o.value=p.phase; dl.appendChild(o); }); }
+    renderPhaseBrowser(PHASE_DATA, 'mean_best', false);
+    updatePhaseInfo(document.getElementById('phase-filter')?.value.trim() || '');
+  });
+}
+
+let _pbSortKey = 'mean_best', _pbSortAsc = false;
+function renderPhaseBrowser(phases, sortKey, sortAsc) {
+  _pbSortKey = sortKey; _pbSortAsc = sortAsc;
+  const panel = document.getElementById('phase-browser');
+  if (!panel || panel.style.display === 'none') return;
+  const ciMode = document.getElementById('mode-ci')?.checked;
+  const sorted = [...phases].sort((a,b)=>{
+    const av = (sortKey==='phase') ? a.phase : (a[sortKey]??-999);
+    const bv = (sortKey==='phase') ? b.phase : (b[sortKey]??-999);
+    if (typeof av==='string') return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortAsc ? av-bv : bv-av;
+  });
+  function th(col,label){ const arr=col===_pbSortKey?(_pbSortAsc?'↑':'↓'):''; return `<th class="sortable-th" onclick="renderPhaseBrowser(PHASE_DATA,'${col}',${col===_pbSortKey?!sortAsc:false})">${label}${arr?` ${arr}`:''}</th>`; }
+  const cbHeader = ciMode ? '<th title="Select for multi-phase CI">&#x2713;</th>' : '';
+  const rows = sorted.map(p=>{
+    const col = phaseColor(p.phase);
+    const dot = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${col};margin-right:5px;vertical-align:middle"></span>`;
+    const mean = p.mean_best!=null ? p.mean_best.toFixed(1) : '—';
+    const std  = p.std_best!=null  ? `±${p.std_best.toFixed(1)}` : '';
+    const max  = p.max_best!=null  ? p.max_best.toFixed(1) : '—';
+    const mCls = (p.mean_best??0)>=500?'box-good':((p.mean_best??0)>=300?'box-warn':'');
+    const g1Cls= p.n_g1>0?'box-good':'';
+    const varTip = p.variants&&p.variants.length ? ` title="Merged from: ${p.variants.join(', ')}"` : '';
+    const varBadge = p.variants&&p.variants.length ? `<span class="small" style="color:var(--muted)" title="${p.variants.join(', ')}"> +${p.variants.length}</span>` : '';
+    const cbCell = ciMode ? `<td><input type="checkbox" class="phase-cb" data-phase="${p.phase}" ${SELECTED_CI_PHASES.has(p.phase)?'checked':''}
+        onclick="toggleCiPhase('${p.phase}',this.checked)"></td>` : '';
+    const notes = p.notes||'';
+    return `<tr${varTip}>
+      ${cbCell}
+      <td class="mono" style="cursor:pointer" onclick="setPhaseFilter('${p.phase}')">${dot}${p.phase}${varBadge}</td>
+      <td>${p.n_with_data}/${p.n_seeds}</td>
+      <td class="mono ${mCls}">${mean} <span style="color:var(--muted)">${std}</span></td>
+      <td class="mono">${max}</td>
+      <td class="${g1Cls}">${p.n_g1}/${p.n_with_data}</td>
+      <td class="small" style="max-width:280px;white-space:normal">${notes}</td></tr>`;
+  }).join('');
+  const compareBtn = ciMode ? `<div style="padding:6px 0">
+    <button onclick="compareSelected()" id="compare-btn"
+      ${SELECTED_CI_PHASES.size===0?'disabled':''}>
+      Compare ${SELECTED_CI_PHASES.size} selected in CI</button>
+    <button class="refresh-btn" onclick="clearCiSelection()" style="margin-left:6px">clear</button>
+  </div>` : '';
+  panel.innerHTML = `<div class="phase-browser">
+    ${compareBtn}
+    <table style="width:100%;font-size:12px"><thead><tr>
+      ${cbHeader}${th('phase','Phase')}${th('n_with_data','Seeds')}
+      ${th('mean_best','Mean')}${th('max_best','Max')}${th('n_g1','G1')}
+      <th>Notes</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+  </div>`;
+}
+
+function toggleCiPhase(phase, checked) {
+  if (checked) SELECTED_CI_PHASES.add(phase);
+  else SELECTED_CI_PHASES.delete(phase);
+  const btn = document.getElementById('compare-btn');
+  if (btn) { btn.disabled = SELECTED_CI_PHASES.size === 0; btn.textContent = `Compare ${SELECTED_CI_PHASES.size} selected in CI`; }
+}
+
+function compareSelected() {
+  if (!SELECTED_CI_PHASES.size) return;
+  const pf = document.getElementById('phase-filter');
+  if (pf) pf.value = [...SELECTED_CI_PHASES].join(',');
+  document.getElementById('mode-ci').checked = true;
+  loadCurves();
+}
+
+function clearCiSelection() {
+  SELECTED_CI_PHASES.clear();
+  renderPhaseBrowser(PHASE_DATA, _pbSortKey, _pbSortAsc);
+}
+
+function setPhaseFilter(phase) {
+  const pf = document.getElementById('phase-filter'); if (pf) pf.value = phase;
+  loadCurves();
+}
+
+function updatePhaseInfo(filterText) {
+  const panel = document.getElementById('phase-info');
+  if (!panel) return;
+  if (!filterText || !PHASE_DATA.length) { panel.style.display='none'; return; }
+  // support comma-separated tokens — match any
+  const tokens = filterText.split(',').map(t=>t.trim()).filter(Boolean);
+  const matching = PHASE_DATA.filter(p=> tokens.some(t=>p.phase.includes(t)));
+  if (!matching.length) { panel.style.display='none'; return; }
+  panel.style.display = '';
+  panel.innerHTML = `<div class="phase-info-bar small">${matching.map(p=>{
+    const col = phaseColor(p.phase);
+    const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-right:4px;vertical-align:middle"></span>`;
+    const mean = p.mean_best!=null ? p.mean_best.toFixed(1) : '—';
+    const std  = p.std_best!=null  ? `±${p.std_best.toFixed(1)}` : '';
+    const max  = p.max_best!=null  ? p.max_best.toFixed(1) : '—';
+    const mCls = (p.mean_best??0)>=500?'box-good':((p.mean_best??0)>=300?'box-warn':'');
+    const varStr = p.variants&&p.variants.length ? ` <span style="color:var(--muted)" title="${p.variants.join(', ')}">(+${p.variants.length} device variants merged)</span>` : '';
+    return `<span>${dot}<b class="mono">${p.phase}</b>${varStr} · ${p.n_with_data} seeds · `+
+           `<span class="${mCls}">${mean}${std}</span> · max ${max} · G1 ${p.n_g1}/${p.n_with_data}`+
+           `${p.notes?` <span style="color:var(--muted)">· ${p.notes}</span>`:''}</span>`;
+  }).join('<span style="color:var(--line);margin:0 4px">│</span>')}</div>`;
+}
+
+function loadPhaseCI(phaseFilter) {
+  const url = '/api/phase_ci' + (phaseFilter ? '?phase='+encodeURIComponent(phaseFilter) : '');
+  fetch(url).then(r=>r.json()).then(j=>{
+    const traces = [];
+    j.ci_curves.forEach(ci=>{
+      // Same canonical phase always gets same color (stable across filter changes)
+      const col = phaseColor(ci.phase);
+      const steps = ci.rows.map(r=>r.step);
+      const upper = ci.rows.map(r=>r.upper);
+      const lower = ci.rows.map(r=>r.lower);
+      const mean  = ci.rows.map(r=>r.mean);
+      const label = `${ci.phase} (n=${ci.n_seeds})${ci.notes?' · '+ci.notes:''}`;
+      // CI shaded band: lower anchor → upper filled with same color at ~18% opacity
+      traces.push({x:steps, y:lower, type:'scatter', mode:'lines', showlegend:false,
+                   line:{color:'transparent'}, hoverinfo:'skip', legendgroup:ci.phase});
+      traces.push({x:steps, y:upper, type:'scatter', mode:'lines', fill:'tonexty',
+                   fillcolor:col+'2e', line:{color:'transparent'}, showlegend:false,
+                   hoverinfo:'skip', legendgroup:ci.phase});
+      // Mean line — same color, full opacity
+      traces.push({x:steps, y:mean, type:'scatter', mode:'lines', name:label,
+                   line:{color:col, width:2.5}, legendgroup:ci.phase,
+                   hovertemplate:`<b>${ci.phase}</b><br>step %{x:,d}<br>mean %{y:.1f}<extra></extra>`});
+    });
+    $('#curves-count').textContent = `(${j.ci_curves.length} phase${j.ci_curves.length===1?'':'s'}, 95% CI bands)`;
+    Plotly.react('curves', traces, {
+      paper_bgcolor:'#161922', plot_bgcolor:'#161922',
+      font:{color:'#dbe1eb', size:11},
+      xaxis:{title:'env step', gridcolor:'#2a2f3b'},
+      yaxis:{title:'mean MPPI ± 95% CI', gridcolor:'#2a2f3b'},
+      shapes:[
+        {type:'line',x0:0,x1:1,xref:'paper',y0:500,y1:500,line:{color:'#7dd87b',dash:'dot',width:1}},
+        {type:'line',x0:0,x1:1,xref:'paper',y0:600,y1:600,line:{color:'#4ec9b0',dash:'dot',width:1}},
+      ],
+      margin:{l:50,r:20,t:20,b:40}, legend:{font:{size:10},x:1.02,y:1}, showlegend:true,
+    }, {displaylogo:false, responsive:true});
+  });
+}
+
+// ── Per-seed curve view ────────────────────────────────────────────────
+function loadCurves(){
+  const phaseFilter = $('#phase-filter').value.trim();
+  const ciMode = document.getElementById('mode-ci')?.checked;
+
+  // Update phase info panel (lazy-load phase data if needed)
+  if (PHASE_DATA.length) updatePhaseInfo(phaseFilter);
+  else fetch('/api/phases').then(r=>r.json()).then(j=>{ PHASE_DATA=j.phases; updatePhaseInfo(phaseFilter);
+    const dl=document.getElementById('phase-list'); if(dl){ dl.innerHTML=''; PHASE_DATA.forEach(p=>{const o=document.createElement('option');o.value=p.phase;dl.appendChild(o);}); }
+  });
+
+  // Refresh browser table so checkboxes appear/disappear with mode switch
+  if (PHASE_DATA.length) renderPhaseBrowser(PHASE_DATA, _pbSortKey, _pbSortAsc);
+  if (ciMode) { loadPhaseCI(phaseFilter); return; }
+
+  const url = '/api/curves' + (phaseFilter ? '?phase='+encodeURIComponent(phaseFilter) : '');
+  fetch(url).then(r=>r.json()).then(j=>{
+    const onlyMppi = $('#only-mppi').checked;
+    const onlyRunning = $('#only-running') && $('#only-running').checked;
+    const filtered = onlyRunning
+      ? j.curves.filter(c => ACTIVE_KEYS.has(`${c.phase}|${c.seed}`))
+      : j.curves;
+    $('#curves-count').textContent =
+      `(${filtered.length}/${j.curves.length} traces${onlyRunning ? ', running only' : ''})`;
+    const traces = [];
+    filtered.forEach(c=>{
+      let pts = c.points;
+      if (onlyMppi) pts = pts.filter(p=>p.eval_type==='mppi');
+      if (!pts.length) return;
+      const best = Math.max(...pts.map(p=>p.reward));
+      const isRunning = ACTIVE_KEYS.has(`${c.phase}|${c.seed}`);
+      // Use stable phase color (same hue as CI view); dim if not winner
+      const baseCol = phaseColor(c.phase);
+      const color = best>=500 ? baseCol : (best>=300 ? baseCol+'bb' : baseCol+'66');
+      traces.push({
+        x: pts.map(p=>p.step), y: pts.map(p=>p.reward),
+        type:'scattergl', mode:'lines',
+        name: `${c.phase} s${c.seed} (${best.toFixed(0)})${c.box ? ' @'+c.box : ''}${isRunning ? ' ●' : ''}`,
+        line:{width: isRunning ? 2.2 : 1.2, color},
+        hovertemplate: `<b>${c.phase}</b> s${c.seed}${c.box?' @'+c.box:''}${isRunning?' (running)':''}<br>step %{x:,d} → %{y:.1f}<extra></extra>`,
+      });
+    });
+    Plotly.react('curves', traces, {
+      paper_bgcolor:'#161922', plot_bgcolor:'#161922',
+      font:{color:'#dbe1eb', size:11},
+      xaxis:{title:'env step', gridcolor:'#2a2f3b'},
+      yaxis:{title:'reward', gridcolor:'#2a2f3b'},
+      shapes:[
+        {type:'line', x0:0, x1:1, xref:'paper', y0:500, y1:500, line:{color:'#7dd87b', dash:'dot', width:1}},
+        {type:'line', x0:0, x1:1, xref:'paper', y0:600, y1:600, line:{color:'#4ec9b0', dash:'dot', width:1}},
+      ],
+      margin:{l:50, r:20, t:20, b:40}, legend:{font:{size:10}, x:1.02, y:1},
+      showlegend:true,
+    }, {displaylogo:false, responsive:true});
+  });
+}
+
+// ── Task queue UI ─────────────────────────────────────────────────────────
+const STATUS_STYLE = {
+  pending: 'color:#64b5f6',
+  running: 'color:#7dd87b;font-weight:600',
+  done:    'color:#7e8ba0',
+  failed:  'color:#e15c5c',
+};
+
+let LAST_QUEUE_TASKS = [];
+
+function fmtDur(s) {
+  if (s == null) return '—';
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+function fmtEta(isoStr, short) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr), now = new Date();
+  const diffMs = d - now;
+  const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const isToday = d.toDateString() === now.toDateString();
+  const label = isToday ? timeStr : 'tmrw ' + timeStr;
+  if (diffMs < 0) return `<span style="opacity:.5">overdue</span>`;
+  const h = Math.floor(diffMs / 3600000), m = Math.floor((diffMs % 3600000) / 60000);
+  const rel = h > 0 ? `${h}h ${m}m` : `${m}m`;
+  return short ? `~${rel}` : `~${rel} · ${label}`;
+}
+
+function renderFleetSummary(j){
+  const freeEl = document.getElementById('next-free-list');
+  if (freeEl) {
+    const rows = (j.box_next_free || []);  // show ALL boxes (no cap), so every running GPU appears
+    freeEl.innerHTML = rows.length ? rows.map((r, idx)=>{
+      const state = r.idle_now
+        ? '<span class="box-good">idle now</span>'
+        : `<span style="color:#64b5f6">${fmtEta(r.free_at_iso, false)}</span>`;
+      const label = r.label
+        ? `<span title="${r.label}">${r.phase ? `<b>${r.phase}</b>` : r.label}</span>`
+        : '<span style="opacity:.55">available</span>';
+      const next = idx === 0 ? '<span class="chip" style="background:#1f3d22;color:#7dd87b">next</span>' : '';
+      return `<div class="free-row">
+        <div class="mono">${r.box}</div>
+        <div>${state}</div>
+        <div>${next} ${label}</div>
+      </div>`;
+    }).join('') : '<span style="opacity:.6">No fleet data yet.</span>';
+  }
+  const promEl = document.getElementById('promising-list');
+  if (promEl) {
+    const rows = (j.promising_phases || []).slice(0, 8);
+    promEl.innerHTML = rows.length ? rows.map(p=>{
+      const max = p.max_best == null ? '—' : p.max_best.toFixed(1);
+      const mean = p.mean_best == null ? '—' : p.mean_best.toFixed(1);
+      const active = [p.running ? `${p.running} running` : '', p.pending ? `${p.pending} pending` : ''].filter(Boolean).join(' · ');
+      const activeStr = active ? `<span class="box-good">${active}</span>` : '<span style="opacity:.55">no active seeds</span>';
+      const statCls = (p.max_best ?? 0) >= 500 ? 'box-good' : ((p.max_best ?? 0) >= 380 ? 'box-warn' : '');
+      return `<div class="prom-row">
+        <div class="mono"><b>${p.phase}</b></div>
+        <div class="${statCls}">max ${max} · mean ${mean} · G1 ${p.n_g1}/${p.n_with_data}</div>
+        <div><div>${activeStr}</div><div class="phase-note">${p.notes || 'Queued probe; waiting for first eval rows.'}</div></div>
+      </div>`;
+    }).join('') : '<span style="opacity:.6">No promising phase data yet.</span>';
+  }
+}
+
+function loadQueue(){
+  fetch('/api/queue').then(r=>r.json()).then(j=>{
+    LAST_QUEUE_TASKS = j.tasks || [];
+    renderFleetSummary(j);
+    loadRunInspector();
+    // Update queue-level ETA in section header
+    const hdr = document.getElementById('queue-eta-hdr');
+    if (hdr) {
+      const running = LAST_QUEUE_TASKS.filter(t=>t.status==='running').length;
+      const pending = LAST_QUEUE_TASKS.filter(t=>t.status==='pending').length;
+      if (j.queue_eta && (running || pending)) {
+        const etaStr = fmtEta(j.queue_eta, false);
+        hdr.innerHTML = `all done in ${etaStr}`;
+      } else {
+        hdr.textContent = '';
+      }
+    }
+    const tbody = document.querySelector('#queue-table tbody');
+    const empty = document.getElementById('queue-empty');
+    tbody.innerHTML = '';
+    if (!j.tasks.length){ empty.style.display=''; return; }
+    empty.style.display='none';
+    j.tasks.forEach(t=>{
+      const style = STATUS_STYLE[t.status] || '';
+      const isPending = t.status === 'pending';
+      const canRetry = t.status === 'running' || t.status === 'failed' || t.status === 'done';
+      const deleteBtn = `<button title="force delete" onclick="deleteTask('${t.id}')" style="padding:2px 6px;color:var(--bad)">✕</button>`;
+      let actions = '';
+      if (isPending) {
+        actions = `
+          <button title="increase priority" onclick="movePriority('${t.id}',-1)" style="padding:2px 6px">↑</button>
+          <button title="decrease priority" onclick="movePriority('${t.id}',1)"  style="padding:2px 6px">↓</button>
+          ${deleteBtn}
+        `;
+      } else if (canRetry) {
+        actions = `<button title="re-queue this task" onclick="retryTask('${t.id}')" style="padding:2px 8px;color:var(--accent)">↺ retry</button> ${deleteBtn}`;
+      }
+      const envDisplay = t.env && !t.type ? `<div class="small mono" style="opacity:.6;margin-top:1px">${t.env}</div>` : '';
+      const boxStr = t.box ? `<span class="mono" style="font-size:11px">${t.box}</span>` : '<span class="small">—</span>';
+      // ETA column
+      let etaCell = '<span class="small" style="opacity:.4">—</span>';
+      if (t.status === 'running' && t.eta_iso) {
+        const bar = t.estimated_duration_s > 0
+          ? Math.min(100, Math.round(t.elapsed_s / t.estimated_duration_s * 100)) : 0;
+        etaCell = `<div style="font-size:11px;line-height:1.4">
+          <div style="color:#7dd87b">⏱ ${fmtDur(t.elapsed_s)} elapsed</div>
+          <div style="color:#64b5f6">→ ${fmtEta(t.eta_iso, false)}</div>
+          <div style="background:#1a2234;border-radius:2px;height:3px;margin-top:3px;width:100%">
+            <div style="background:#7dd87b;height:3px;border-radius:2px;width:${bar}%"></div></div>
+        </div>`;
+      } else if (t.status === 'pending' && t.eta_iso) {
+        etaCell = `<div style="font-size:11px;line-height:1.4;color:var(--muted)">
+          <div>starts ${fmtEta(t.estimated_start_iso, true)}</div>
+          <div>done ${fmtEta(t.eta_iso, false)}</div>
+        </div>`;
+      } else if (t.status === 'done' && t.started_at && t.ended_at) {
+        const s = new Date(t.started_at), e = new Date(t.ended_at);
+        etaCell = `<span class="small" style="opacity:.5">${fmtDur((e-s)/1000)}</span>`;
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="mono" style="text-align:center">${t.priority}</td>
+        <td><span title="${t.launcher}&#10;${t.env||''}">${t.label}</span>${envDisplay}</td>
+        <td><span style="${style}">${t.status}</span></td>
+        <td>${boxStr}</td>
+        <td>${etaCell}</td>
+        <td style="white-space:nowrap">${actions}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+function toggleAddTask(){
+  const f = document.getElementById('add-task-form');
+  f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+function addTask(){
+  const label = document.getElementById('at-label').value.trim();
+  const launcher = document.getElementById('at-launcher').value.trim();
+  const env = document.getElementById('at-env').value.trim();
+  const priority = parseInt(document.getElementById('at-priority').value) || 10;
+  const errEl = document.getElementById('at-error');
+  errEl.style.display = 'none';
+  if (!label || !launcher){ errEl.textContent='Label and launcher are required'; errEl.style.display=''; return; }
+  fetch('/api/queue', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({label, launcher, env, priority})
+  }).then(r=>r.json()).then(j=>{
+    if (j.error){ errEl.textContent=j.error; errEl.style.display=''; return; }
+    document.getElementById('at-label').value = '';
+    document.getElementById('at-env').value = '';
+    loadQueue();
+  });
+}
+function deleteTask(id){
+  fetch('/api/queue/'+id, {method:'DELETE'}).then(()=>loadQueue());
+}
+function movePriority(id, delta){
+  fetch('/api/queue/'+id+'/priority', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({delta})
+  }).then(()=>loadQueue());
+}
+function retryTask(id){
+  fetch('/api/queue/'+id+'/retry', {method:'POST'}).then(()=>loadQueue());
+}
+
+// ── Run Inspector ─────────────────────────────────────────────────────────
+const RI_OPEN = new Set();       // task ids with expanded card
+const RI_LOG_CACHE = {};         // task_id → {lines, loaded}
+const LAST_BOX_DATA = {};        // tag → box entry (updated by loadBoxes)
+
+function loadBoxes(){
+  fetch('/api/boxes').then(r=>r.json()).then(j=>{
+    $('#ts').textContent = new Date(j.ts*1000).toLocaleTimeString();
+    ACTIVE_KEYS = new Set((j.active||[]).map(a=>`${a.phase}|${a.seed}`));
+    j.boxes.forEach(b => { LAST_BOX_DATA[b.tag] = b; });
+    const tbody = $('#boxes tbody'); tbody.innerHTML = '';
+    j.boxes.forEach(b=>{
+      const tr = document.createElement('tr');
+      const ok = b.reachable;
+      const gpuUtil = b.gpu_util ?? null;
+      const memPct = b.mem_total ? (b.mem_used/b.mem_total*100) : null;
+      const hotG = gpuUtil!=null && gpuUtil>=90;
+      const hotM = memPct!=null && memPct>=80;
+      const queueTask = LAST_QUEUE_TASKS.find(t => t.status === 'running' && t.box === b.tag);
+      const queueEtaHtml = queueTask && queueTask.eta_iso
+        ? `<div class="small" style="color:#64b5f6;margin-top:2px">⏱ ${fmtDur(queueTask.elapsed_s)} · done ${fmtEta(queueTask.eta_iso, false)} <span style="opacity:.5">${queueTask.label}</span></div>`
+        : '';
+      const procHTML = (b.procs||[]).map(p=>{
+        const tag = (p.tag||'').split('+').filter(Boolean).map(t=>`<span class="chip ${t}">${t}</span>`).join('');
+        const phaseStr = p.phase ? `<b>${p.phase}</b>` : '<span class="small">(no csv yet)</span>';
+        const dupChip = (p.dup_count && p.dup_count > 1) ? `<span class="chip" style="background:#54391c;color:#e0a44c" title="more than one process found for this seed+phase — likely zombie">${p.dup_count}× DUP</span>` : '';
+        const gapChip = (p.pi_minus_mppi_last != null && p.pi_minus_mppi_last >= 100)
+          ? `<span class="chip" style="background:#54391c;color:#e0a44c" title="pi - mppi at last shared eval">pi>mppi +${p.pi_minus_mppi_last.toFixed(1)}</span>`
+          : '';
+        return `<div class="mono" style="line-height:1.5">
+          ${phaseStr} · s${p.seed} · any ${fmtMppi(p.best_any)}${fmtStep(p.best_any_step)} · pi ${fmtMppi(p.best_pi)}${fmtStep(p.best_pi_step)} · mppi ${fmtMppi(p.best_mppi)}${fmtStep(p.best_mppi_step)} ${dupChip} ${gapChip}
+          <div class="small" style="opacity:.7">PID ${p.pid} · ${p.etime} · ${p.algo} NS=${p.ns} ${tag}</div>
+        </div>`;
+      }).join('') || '<span class="small">(idle)</span>';
+      const spsVals = (b.procs||[]).map(p=>p.sps_avg).filter(v=>v!=null);
+      const sps = spsVals.length ? Math.max(...spsVals) : null;
+      tr.innerHTML = `
+        <td class="mono ${ok?'':'box-bad'}">${b.tag}</td>
+        <td>${b.label}${ok?'':'<span class="small box-bad"> · unreachable</span>'}</td>
+        <td>${gpuUtil==null?'—':`<span class="util-bar ${hotG?'hot':''}"><span style="width:${gpuUtil}%"></span></span>${gpuUtil}%`}</td>
+        <td>${memPct==null?'—':`<span class="util-bar ${hotM?'hot':''}"><span style="width:${memPct}%"></span></span>${b.mem_used}/${b.mem_total} MiB`}</td>
+        <td>${b.cpu_util==null?'—':b.cpu_util+'%'}</td>
+        <td class="mono">${sps==null?'<span class="small">—</span>':sps+'/s'}</td>
+        <td>${procHTML}${queueEtaHtml}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    if ($('#only-running') && $('#only-running').checked) loadCurves();
+    loadRunInspector();
+  });
+}
+
+function riCardHtml(task) {
+  const box = LAST_BOX_DATA[task.box] || {};
+  const procs = (box.procs || []);
+  // Try to match proc by seed.
+  const seedM = (task.env||'').match(/SEEDS?=(\S+)/);
+  const taskSeed = seedM ? seedM[1] : null;
+  const matchedProcs = taskSeed ? procs.filter(p=>String(p.seed)===taskSeed) : [];
+  const proc = matchedProcs[0] || procs[0] || null;
+
+  // System section
+  const gpuUtil = box.gpu_util != null ? `${box.gpu_util}%` : '—';
+  const memStr = box.mem_total ? `${box.mem_used}/${box.mem_total} MiB` : '—';
+  const cpuUtil = box.cpu_util != null ? `${box.cpu_util}%` : '—';
+  const reachable = box.reachable != null ? (box.reachable ? 'yes' : 'no') : '—';
+  const runtime = task.started_at ? fmtDur(task.elapsed_s) : '—';
+
+  // Training section
+  const sps = proc ? (proc.sps_avg != null ? proc.sps_avg + '/s' : '—') : '—';
+  const lastStep = proc && proc.last_step != null ? (proc.last_step/1e6).toFixed(2)+'M' : '—';
+  const bestAny = proc && proc.best_any != null ? proc.best_any.toFixed(1) : '—';
+  const bestAnyStep = proc && proc.best_any_step != null ? (proc.best_any_step/1e6).toFixed(2)+'M' : '—';
+  const bestAnySel = proc && proc.best_any_selector ? proc.best_any_selector : '—';
+  const bestPi = proc && proc.best_pi != null ? proc.best_pi.toFixed(1) : '—';
+  const bestPiStep = proc && proc.best_pi_step != null ? (proc.best_pi_step/1e6).toFixed(2)+'M' : '—';
+  const bestMppi = proc && proc.best_mppi != null ? proc.best_mppi.toFixed(1) : '—';
+  const bestMppiStep = proc && proc.best_mppi_step != null ? (proc.best_mppi_step/1e6).toFixed(2)+'M' : '—';
+  const lastPi = proc && proc.last_pi != null ? proc.last_pi.toFixed(1) : '—';
+  const lastMppi = proc && proc.last_mppi != null ? proc.last_mppi.toFixed(1) : '—';
+  const piMinusMppi = proc && proc.pi_minus_mppi_last != null ? proc.pi_minus_mppi_last.toFixed(1) : '—';
+
+  // Patience remaining (from live SPS data)
+  let patienceHtml = '—';
+  if (proc && proc.last_step != null && proc.best_any_step != null) {
+    const stepsSinceBest = Math.max(0, proc.last_step - proc.best_any_step);
+    const patienceLeft = Math.max(0, 3000000 - stepsSinceBest);
+    const patienceM = (patienceLeft/1e6).toFixed(1);
+    const col = patienceLeft < 500000 ? 'var(--bad)' : (patienceLeft < 1500000 ? 'var(--warn)' : 'var(--good)');
+    patienceHtml = `<span style="color:${col}">${patienceM}M left</span>`;
+  }
+
+  // Diag section (from _diag.csv last mppi row)
+  const diag = proc ? (proc.diag || null) : null;
+  const standPct = diag ? (diag.standing_rate * 100).toFixed(1) + '%' : '—';
+  const fallsPerEp = diag ? diag.fall_count.toFixed(1) + '/ep' : '—';
+  const ttfSteps = diag ? diag.ttf.toFixed(0) + ' steps' : '—';
+  const fullRateStr = diag ? (diag.full_reward_rate * 100).toFixed(1) + '%' : '—';
+  // Color-code standing rate: <20% bad, 20-50% warn, >50% good
+  const standCol = diag
+    ? (diag.standing_rate < 0.20 ? 'var(--bad)' : diag.standing_rate < 0.50 ? 'var(--warn)' : 'var(--good)')
+    : '';
+
+  // ETA
+  const etaStr = task.eta_iso ? fmtEta(task.eta_iso, false) : '—';
+
+  // Artifacts section
+  const envDisplay = (task.env||'').trim() || '(none)';
+  const cmd = `${envDisplay} bash ${task.launcher||''}`;
+  const logPath = `/tmp/tqd_${task.id}.log (on ${task.box||'?'})`;
+  // Guess output dir from seed + output_tag (from proc if available)
+  const outputTag = proc ? (proc.output_tag||'') : '';
+  const seedStr = taskSeed || (proc ? proc.seed : '?');
+  const outputDir = outputTag ? `exp/tdmpc_glass/HopperHop_${outputTag}/seed_${seedStr}/` : '—';
+  const ckptPath = outputTag ? `${outputDir}checkpoints/best_any.pkl` : '—';
+
+  const isOpen = RI_OPEN.has(task.id);
+  return `
+  <div class="ri-card" id="ri-${task.id}">
+    <div class="ri-header" onclick="toggleRI('${task.id}')">
+      <span class="ri-chevron ${isOpen?'open':''}">▶</span>
+      <span class="ri-title">${task.label}</span>
+      <span class="ri-meta">${task.box||'?'} · elapsed ${runtime} · ETA ${etaStr}</span>
+      <span class="pill ${task.status==='running'?'green':'gray'}">${task.status}</span>
+    </div>
+    <div class="ri-body ${isOpen?'open':''}" id="ri-body-${task.id}">
+      <div>
+        <div class="ri-section-title">System (${task.box||'?'})</div>
+        <div class="ri-row"><span class="ri-key">GPU util</span><span class="ri-val">${gpuUtil}</span></div>
+        <div class="ri-row"><span class="ri-key">GPU mem</span><span class="ri-val">${memStr}</span></div>
+        <div class="ri-row"><span class="ri-key">CPU util</span><span class="ri-val">${cpuUtil}</span></div>
+        <div class="ri-row"><span class="ri-key">Reachable</span><span class="ri-val">${reachable}</span></div>
+        <div class="ri-row"><span class="ri-key">Runtime</span><span class="ri-val">${runtime}</span></div>
+      </div>
+      <div>
+        <div class="ri-section-title">Training Progress</div>
+        <div class="ri-row"><span class="ri-key">SPS</span><span class="ri-val">${sps}</span></div>
+        <div class="ri-row"><span class="ri-key">Last step</span><span class="ri-val">${lastStep}</span></div>
+        <div class="ri-row"><span class="ri-key">Last pi</span><span class="ri-val">${lastPi}</span></div>
+        <div class="ri-row"><span class="ri-key">Last MPPI</span><span class="ri-val">${lastMppi}</span></div>
+        <div class="ri-row"><span class="ri-key">pi - MPPI</span><span class="ri-val">${piMinusMppi}</span></div>
+        <div class="ri-row"><span class="ri-key">Best any</span><span class="ri-val box-good">${bestAny} (${bestAnySel})</span></div>
+        <div class="ri-row"><span class="ri-key">Best any @step</span><span class="ri-val">${bestAnyStep}</span></div>
+        <div class="ri-row"><span class="ri-key">Best pi</span><span class="ri-val">${bestPi} @ ${bestPiStep}</span></div>
+        <div class="ri-row"><span class="ri-key">Best MPPI</span><span class="ri-val">${bestMppi} @ ${bestMppiStep}</span></div>
+        <div class="ri-row"><span class="ri-key">Patience left</span><span class="ri-val">${patienceHtml}</span></div>
+        <div class="ri-row"><span class="ri-key">ETA</span><span class="ri-val">${etaStr}</span></div>
+        <div class="ri-section-title" style="margin-top:8px">Behaviour Diag (last eval)</div>
+        <div class="ri-row"><span class="ri-key">Standing rate</span><span class="ri-val" style="color:${standCol}">${standPct}</span></div>
+        <div class="ri-row"><span class="ri-key">Falls/ep</span><span class="ri-val">${fallsPerEp}</span></div>
+        <div class="ri-row"><span class="ri-key">Time-to-hop</span><span class="ri-val">${ttfSteps}</span></div>
+        <div class="ri-row"><span class="ri-key">Full-rew rate</span><span class="ri-val">${fullRateStr}</span></div>
+      </div>
+      <div>
+        <div class="ri-section-title">Artifacts</div>
+        <div class="ri-row"><span class="ri-key">Command</span></div>
+        <div class="ri-path" style="margin-bottom:4px;font-size:10px">${cmd}</div>
+        <div class="ri-row"><span class="ri-key">Log path</span></div>
+        <div class="ri-path">${logPath}</div>
+        <div class="ri-row" style="margin-top:4px"><span class="ri-key">Output dir</span></div>
+        <div class="ri-path">${outputDir}</div>
+        <div class="ri-row" style="margin-top:4px"><span class="ri-key">Checkpoint</span></div>
+        <div class="ri-path">${ckptPath}</div>
+        <button class="refresh-btn" onclick="loadRILog('${task.id}')" style="margin-top:8px">📋 tail log</button>
+      </div>
+      <div class="ri-span-full" id="ri-log-${task.id}" style="display:${RI_LOG_CACHE[task.id]?'':'none'}">
+        <div class="ri-section-title">Log tail</div>
+        <div class="ri-log" id="ri-loglines-${task.id}">${(RI_LOG_CACHE[task.id]||[]).join('\n')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function loadRunInspector() {
+  const tasks = LAST_QUEUE_TASKS.filter(t => t.status === 'running');
+  const container = document.getElementById('run-inspector-cards');
+  const count = document.getElementById('ri-count');
+  if (!container) return;
+  if (!tasks.length) {
+    container.innerHTML = '<div class="small" style="color:var(--muted);padding:4px">No running tasks.</div>';
+    if (count) count.textContent = '';
+    return;
+  }
+  if (count) count.textContent = `(${tasks.length} running)`;
+  container.innerHTML = tasks.map(riCardHtml).join('');
+}
+
+function toggleRI(id) {
+  const body = document.getElementById('ri-body-'+id);
+  const chevron = document.querySelector(`#ri-${id} .ri-chevron`);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  if (isOpen) { body.classList.remove('open'); chevron.classList.remove('open'); RI_OPEN.delete(id); }
+  else { body.classList.add('open'); chevron.classList.add('open'); RI_OPEN.add(id); }
+}
+
+function loadRILog(taskId) {
+  const logDiv = document.getElementById('ri-log-'+taskId);
+  const logLines = document.getElementById('ri-loglines-'+taskId);
+  if (!logDiv || !logLines) return;
+  logDiv.style.display = '';
+  logLines.textContent = 'loading…';
+  fetch('/api/queue/'+taskId+'/log').then(r=>r.json()).then(j=>{
+    const lines = j.lines || ['(empty)'];
+    RI_LOG_CACHE[taskId] = lines;
+    logLines.textContent = lines.join('\n');
+    logLines.scrollTop = logLines.scrollHeight;
+  }).catch(()=>{ logLines.textContent = '(fetch error)'; });
+}
+
+// initial + periodic refresh
+loadBoxes(); loadCurves(); loadQueue();
+// Preload phase data for autocomplete + info bar
+fetch('/api/phases').then(r=>r.json()).then(j=>{
+  PHASE_DATA=j.phases;
+  const dl=document.getElementById('phase-list');
+  if(dl){ dl.innerHTML=''; PHASE_DATA.forEach(p=>{const o=document.createElement('option');o.value=p.phase;dl.appendChild(o);}); }
+});
+setInterval(loadBoxes, 30000);
+setInterval(loadCurves, 60000);
+setInterval(loadQueue, 10000);
+
+// Wire up filter inputs
+['only-mppi','only-running'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', loadCurves);
+});
+document.querySelectorAll('input[name="curve-mode"]').forEach(el=>{
+  el.addEventListener('change', loadCurves);
+});
+const pf = document.getElementById('phase-filter');
+if (pf) {
+  pf.addEventListener('keydown', e=>{ if (e.key==='Enter') loadCurves(); });
+  pf.addEventListener('input', ()=>{ const v=pf.value.trim(); if(PHASE_DATA.length) updatePhaseInfo(v); });
+}
+</script>
+</body></html>
