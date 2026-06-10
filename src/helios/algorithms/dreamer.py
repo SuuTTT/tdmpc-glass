@@ -24,9 +24,20 @@ from flax.training.train_state import TrainState
 
 from helios.algorithms.base import BaseAgent
 from helios.core.distributions import OneHotCategorical, TanhNormal
-from helios.core.networks import MLP, CNNEncoder, CNNDecoder
+from helios.core.networks import MLP
 from helios.dynamics.rssm import RSSM, RSSMModule, rssm_kl_loss
 from helios.memory.trajectory import SequenceBatch
+
+# Optional CNN encoder/decoder for pixel observations. These are not part of the
+# core networks module (which only ships MLP variants), so we import them lazily
+# and fall back to ``None`` — the MuJoCo Playground state-based tasks targeted by
+# scripts/run_dreamer.py never need them. ``initial_state`` raises a clear error
+# if a pixel observation is supplied without these available.
+try:  # pragma: no cover - exercised only on pixel envs
+    from helios.core.networks import CNNEncoder, CNNDecoder  # type: ignore
+except ImportError:  # pragma: no cover
+    CNNEncoder = None  # type: ignore
+    CNNDecoder = None  # type: ignore
 
 
 # ---------------------------------------------------------------------------
@@ -67,7 +78,14 @@ class Actor(nn.Module):
 
     @nn.compact
     def __call__(self, feat: jax.Array) -> dict[str, jax.Array]:
-        x = MLP(hidden_dims=self.hidden_dims, activation=self.activation)(feat)
+        # MLP requires an output_dim; use it as a torso whose output feeds the
+        # mean/log_std heads. Width = last hidden dim.
+        x = MLP(
+            hidden_dims=self.hidden_dims[:-1],
+            output_dim=self.hidden_dims[-1],
+            activation=self.activation,
+        )(feat)
+        x = getattr(nn, self.activation)(x)
         mean = nn.Dense(self.action_dim)(x)
         log_std = self.param("log_std", nn.initializers.zeros, (self.action_dim,))
         log_std = jnp.broadcast_to(log_std, mean.shape)
@@ -121,6 +139,11 @@ class DreamerV3Agent(BaseAgent):
 
         # -- Encoder --
         if is_pixel:
+            if CNNEncoder is None:
+                raise NotImplementedError(
+                    "Pixel observations require CNNEncoder/CNNDecoder, which are not "
+                    "available in helios.core.networks. Use a state-based env."
+                )
             encoder = CNNEncoder(depth=int(cfg.encoder_depth), embed_dim=embed_dim)
         else:
             obs_dim = int(jnp.prod(jnp.array(obs_shape)))
