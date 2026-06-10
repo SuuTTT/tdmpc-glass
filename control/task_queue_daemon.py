@@ -65,7 +65,10 @@ BOXES = [
     # Released from ltsf 2026-06-09 (user); 3060 12GB, env bootstrapped + verified (jax 0.10.1+cuda,
     # mujoco 3.8.0, mjx_playground OK). Proxy ssh6.vast.ai:11696 (distinct port from ssh6_titanv).
     ("ssh6_3060",     17241,  "91.150.160.38",  0),  # inst 40121696 (proxy ssh6.vast.ai:11696 refuses; direct IP works)
-    ("ssh7_5070ti",   18385,  "ssh7.vast.ai",   0),  # RTX 5070 Ti (Blackwell, 16GB) added 2026-06-10; jax 0.10.1 OK, ~1.6x A4000
+    # RESERVED AS MAIN DEV PLATFORM 2026-06-10 (user): RTX 5070 Ti (Blackwell, 16GB), ~1.6x A4000.
+    # Pulled from the scheduling pool for mechanism-checks + arm dev. In-flight ti27_jum_Cart20
+    # finishes naturally (daemon no longer tracks ssh7 -> mark that task done manually + harvest).
+    # ("ssh7_5070ti",   18385,  "ssh7.vast.ai",   0),  # jax 0.10.1 OK
     # Added 2026-06-04 (user): 2 more A4000s. 38766691 == ssh9_a4000 above (same proxy
     # ssh9.vast.ai:16690), already covered. 38767427 below (proxy ssh3.vast.ai:17426 —
     # port churned earlier but maps to our instance now; *.vast.ai host-key tolerance +

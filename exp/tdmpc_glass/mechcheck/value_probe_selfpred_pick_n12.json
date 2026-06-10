@@ -1,0 +1,29 @@
+{
+  "ckpt": "/root/helios-rl/exp/tdmpc_glass/PandaPickCube_phasei18hs_H9_PandaPickCube_i18a/seed_3/checkpoints/best_mppi.pkl",
+  "task": "PandaPickCube",
+  "n_states": 12000,
+  "n_ep": 12,
+  "obs_dim": 66,
+  "act_dim": 8,
+  "latent_dim": 512,
+  "probe1_value_equivalence": {
+    "effective_dim_latent": 6.96,
+    "effective_dim_value_subspace": 7.08,
+    "value_irrelevant_variance_frac": 0.9785,
+    "linear_V_decode_r2": 0.9994,
+    "interpretation": "HIGH irrelevant_frac (>~0.5) => headroom for value-equivalence; LOW => latent already value-aligned (predicts ve null)"
+  },
+  "probe2_value_criticality": {
+    "crit_mean": 1.377,
+    "crit_std": 0.5013,
+    "crit_cv": 0.3641,
+    "flat_state_frac": 0.0288,
+    "value_range_over_states": 115.0,
+    "interpretation": "HIGH cv (>~0.5) + nonzero flat_frac => headroom for value-critical adaptive horizon; uniform => dead like error-gated adaptive-k"
+  },
+  "value_stats": {
+    "V_mean": 330.642,
+    "V_min": 268.774,
+    "V_max": 383.774
+  }
+}
