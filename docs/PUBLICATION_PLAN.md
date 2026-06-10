@@ -62,6 +62,18 @@ The understanding paper establishes WHEN explicit abstraction is redundant (suff
 - Domain matters: needs real graph structure (multi-object manipulation, multi-agent, molecular/traffic) —
   single-arm MuJoCo has weak graph structure. Choose the benchmark for genuine relational structure.
 
+**Token-transformer world models (Dreamer 4 family) — the strongest SE substrate.**
+- **Feasibility (settled 2026-06-10):** *faithful* Dreamer 4 (Hafner, arXiv:2509.24527) is pixel/video-based
+  (block-causal transformer tokenizer over 128×128 patches + shortcut-forcing diffusion dynamics) and needs
+  **8×≥24GB GPUs + 256GB RAM + ~350GB data + days** (nicklashansen DMC repro). **Cannot be trained on our
+  fleet** (single 16GB boxes). Their pretrained DMC checkpoints ARE usable at inference (single GPU; torch on
+  an A4000, not the 5070 Ti's sm_120) → option to mechanism-check a *real* Dreamer 4 latent for generality.
+- **What we're building instead (user choice):** a small Dreamer-4-*inspired* block-causal transformer-
+  dynamics WM over STATE (no pixels/VQ), reusing the DreamerV3 actor-critic/imagination machinery, on the
+  5070 Ti. Purpose: a controllable substrate where **SE over the attention/token graph is non-redundant**
+  (tokens = timesteps → temporal-skill graph; v2 = per-entity tokens → relational graph). This is the bridge
+  from the understanding paper to the graph-WM+SE sequel.
+
 **Other live threads (not killed by the sufficiency finding):**
 - High-DoF / long-horizon regime (more state detail → possibly not sufficient).
 - Off-distribution / planning-time robustness (WM sufficient on-policy; MPPI queries off-policy states).
