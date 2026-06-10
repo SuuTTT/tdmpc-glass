@@ -3,8 +3,11 @@
 Guidance for agents working in this repo.
 
 ## Read first
-- `AGENT_HANDOFF_CONTEXT.md` — live experiment status (more authoritative than README for what's running).
+- `docs/INDEX.md` — master documentation map (start here).
+- `docs/HANDOFF_NEXT_SESSION.md` — live experiment status / resume entry point (what's running, what to do first).
+- `docs/iterations/RESEARCH_LEDGER.md` — campaign verdicts (what worked / nulls / next probes).
 - `docs/operations/launch_dashboard.md` — control-plane runbook + queue cheat sheet.
+- (`AGENT_HANDOFF_CONTEXT.md` is OBSOLETE — 2026-05-13 HopperHop era; kept for provenance only.)
 
 ## The one rule that cannot be broken
 **This box (EC2) has NO GPU and NEVER trains.** There is no `"local"` entry in

@@ -1,3 +1,8 @@
+> # ⚠️ OBSOLETE — do not follow. Kept for provenance only.
+> This file is the May 13 / iter-13 HopperHop era. The "iter-13 / PBT / best 422" claims below were
+> later shown to be **basin-lottery, not a Glass win** (see `docs/iterations/RESEARCH_LEDGER.md`).
+> **Live state:** `docs/HANDOFF_NEXT_SESSION.md` · **map:** `docs/INDEX.md` · **verdicts:** `RESEARCH_LEDGER.md`.
+
 # ⏱️ CURRENT STATUS (2026-06-03, Claude Opus 4.8 on EC2 control plane)
 
 **Everything below this banner is STALE (May 13, Phase 1c). Live state is here:**
