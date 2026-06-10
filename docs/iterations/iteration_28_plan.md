@@ -94,3 +94,8 @@ best config stays jum/mlp. Classic "helps weak baseline, not the strong one" mir
 the jum/resmlp gap (~−850 final) is far beyond noise. The arch lever is closed; the campaign's only
 win remains the (prior-art) jumpy WM. Lesson reaffirmed: always test a lever against the STRONGEST
 config, not the weak baseline (this is why the resmlp lead looked real for 3 harvests).
+
+## VE coef-latent trend complete (2026-06-10): value_irrelevant_frac vs coef
+self-pred 0.978 | ve@0.1 0.953 | ve@0.2 0.977 — VE barely moves the value-irrelevant fraction at ANY
+coef AND value stays decodable (R²≈1.0). The loss doesn't reorganize the latent toward value-sufficiency
+because it's ALREADY value-sufficient. Triple confirmation of the null (mechanism + returns + latent).
