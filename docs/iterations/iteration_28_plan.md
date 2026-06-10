@@ -57,3 +57,17 @@ The value-equivalence loss barely reorganized the latent (95% still value-irrele
 stays perfectly linearly decodable (R²=1.0) — i.e. VE didn't even meaningfully change the representation,
 let alone help. Mechanistic confirmation of the null: the latent was already value-sufficient; the VE term
 just traded off against the consistency the planner needs (hence the return regression).
+
+## DREAMER4 / transformer-WM PERF BLOCKER (2026-06-10) + resmlp arch lead
+- DreamerV4 transformer-WM: PE bug fixed, imports+inits clean, but the 60k dev run on the 5070ti ran
+  ~65min at **1% GPU util** (no ckpt) → the per-step Python collection/eval loop is dispatch-bound
+  (GPU-starved), as the build agent warned. NEEDS a vectorized/lax.scan collection loop before it's a
+  usable WM. The SE-over-attention-graph north-star result is GATED on this perf fix (deferred to a
+  hands-on session; scripts/se_attention_graph.py not yet written — no trained transformer-WM to run it on).
+- ARCH A/B (the campaign's ONE positive signal): **van/resmlp 2699/1561 vs van/mlp 1925/1238** on
+  PandaPickCube @≥450k, n=2 each → +40% peak / +26% final. Confirm seeds (Pick3,4 + Ori/Cab) queued
+  (ti27a2_*). If it holds at n≥4 + generalizes, it's the paper's constructive contribution (a deeper
+  gated-residual dynamics backbone beats the MLP) alongside the negative abstraction thesis. van/attn
+  hurts (1627/900); jum/attn helps vs noisy baseline.
+- Generality: value_probe running on a CheetahRun (DMC locomotion) jumpy ckpt — does value-sufficiency
+  hold beyond Panda manipulation? (result next harvest).
