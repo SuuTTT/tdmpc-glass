@@ -4835,9 +4835,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=BallInCup SEEDS=1 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T09:30:02Z",
     "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh1_a4000b",
     "started_at": "2026-06-09T23:54:29Z",
@@ -5087,9 +5087,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T07:14:42Z",
     "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
     "box": "ssh8_a4000",
     "started_at": "2026-06-10T05:48:55Z",
@@ -5283,9 +5283,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=BallInCup SEEDS=3 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T07:14:47Z",
     "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
     "box": "ssh4_a4000",
     "started_at": "2026-06-10T05:12:18Z",
@@ -5507,9 +5507,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T07:20:55Z",
     "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
     "box": "ssh1_2080ti",
     "started_at": "2026-06-10T06:08:36Z",
@@ -5577,9 +5577,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=4 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T07:18:53Z",
     "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh4_a4000b",
     "started_at": "2026-06-10T06:10:47Z",
@@ -5591,10 +5591,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=CheetahRun SEEDS=0 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "done",
     "created_at": "2026-06-10T07:07:59Z",
-    "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "ended_at": "2026-06-10T09:30:08Z",
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh6_titanv",
+    "started_at": "2026-06-10T07:08:39Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_vebase_Ched1",
@@ -5602,10 +5605,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=CheetahRun SEEDS=1 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-10T07:18:53Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_vebase_Ched2",
@@ -5613,10 +5619,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=CheetahRun SEEDS=2 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh1_a4000b",
+    "started_at": "2026-06-10T09:30:27Z",
+    "launched_git_sha": "ccbb355"
   },
   {
     "id": "ti26_vebase_Ched3",
@@ -5624,10 +5633,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=CheetahRun SEEDS=3 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_vebase_Walkd0",
@@ -5635,10 +5644,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=WalkerRun SEEDS=0 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh6_3060",
+    "started_at": "2026-06-10T07:09:00Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_vebase_Walkd1",
@@ -5646,10 +5658,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=WalkerRun SEEDS=1 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "failed",
     "created_at": "2026-06-10T07:07:59Z",
-    "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "ended_at": "2026-06-10T09:17:23Z",
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-10T07:20:55Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_vebase_Walkd2",
@@ -5657,10 +5672,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=WalkerRun SEEDS=2 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_vebase_Walkd3",
@@ -5668,10 +5683,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=WalkerRun SEEDS=3 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_vebase_Pand0",
@@ -5679,10 +5694,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=PandaPickCube SEEDS=0 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh3b_a4000",
+    "started_at": "2026-06-10T07:09:12Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_vebase_Pand1",
@@ -5690,10 +5708,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=PandaPickCube SEEDS=1 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "done",
     "created_at": "2026-06-10T07:07:59Z",
-    "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "ended_at": "2026-06-10T09:19:33Z",
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase",
+    "box": "ssh7_5070ti",
+    "started_at": "2026-06-10T07:30:26Z",
+    "launched_git_sha": "2f637f6"
   },
   {
     "id": "ti26_vebase_Pand2",
@@ -5701,10 +5722,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=PandaPickCube SEEDS=2 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_vebase_Pand3",
@@ -5712,10 +5733,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_vebase ALGO=tdmpc2 TASK=PandaPickCube SEEDS=3 JUMPY_VE_COEF=0.0 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=vebase"
+    "note": "iter26 probe#2 value-equivalent macro head arm=vebase [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Ched0",
@@ -5723,10 +5744,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=CheetahRun SEEDS=0 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-10T07:11:09Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_ve_Ched1",
@@ -5734,10 +5758,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=CheetahRun SEEDS=1 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-10T09:17:23Z",
+    "launched_git_sha": "66dd892"
   },
   {
     "id": "ti26_ve_Ched2",
@@ -5745,10 +5772,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=CheetahRun SEEDS=2 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Ched3",
@@ -5756,10 +5783,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=CheetahRun SEEDS=3 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Walkd0",
@@ -5767,10 +5794,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=WalkerRun SEEDS=0 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh8_a4000",
+    "started_at": "2026-06-10T07:14:47Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_ve_Walkd1",
@@ -5778,10 +5808,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=WalkerRun SEEDS=1 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh7_5070ti",
+    "started_at": "2026-06-10T09:19:33Z",
+    "launched_git_sha": "66dd892"
   },
   {
     "id": "ti26_ve_Walkd2",
@@ -5789,10 +5822,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=WalkerRun SEEDS=2 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Walkd3",
@@ -5800,10 +5833,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=WalkerRun SEEDS=3 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=32 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Pand0",
@@ -5811,10 +5844,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=0 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh4_a4000",
+    "started_at": "2026-06-10T07:15:08Z",
+    "launched_git_sha": "d1511b0"
   },
   {
     "id": "ti26_ve_Pand1",
@@ -5822,10 +5858,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=1 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve",
+    "box": "ssh6_titanv",
+    "started_at": "2026-06-10T09:30:08Z",
+    "launched_git_sha": "ccbb355"
   },
   {
     "id": "ti26_ve_Pand2",
@@ -5833,10 +5872,10 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=2 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
   },
   {
     "id": "ti26_ve_Pand3",
@@ -5844,9 +5883,504 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei26_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=3 JUMPY_VE_COEF=0.5 DISTRACTOR_DIMS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i26a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "pending",
+    "status": "superseded_dup",
     "created_at": "2026-06-10T07:07:59Z",
     "ended_at": null,
-    "note": "iter26 probe#2 value-equivalent macro head arm=ve"
+    "note": "iter26 probe#2 value-equivalent macro head arm=ve [superseded by ti27 Panda re-benchmark \u2014 value-equiv now gated on manipulation]"
+  },
+  {
+    "id": "ti27_van_Pick0",
+    "label": "iter27 Panda-suite van PandaPickCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCube SEEDS=0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Pick1",
+    "label": "iter27 Panda-suite van PandaPickCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCube SEEDS=1 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Pick2",
+    "label": "iter27 Panda-suite van PandaPickCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCube SEEDS=2 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cart20",
+    "label": "iter27 Panda-suite van PandaPickCubeCartesian s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cart21",
+    "label": "iter27 Panda-suite van PandaPickCubeCartesian s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=1 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cart22",
+    "label": "iter27 Panda-suite van PandaPickCubeCartesian s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=2 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Ori0",
+    "label": "iter27 Panda-suite van PandaPickCubeOrientation s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Ori1",
+    "label": "iter27 Panda-suite van PandaPickCubeOrientation s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=1 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Ori2",
+    "label": "iter27 Panda-suite van PandaPickCubeOrientation s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=2 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Push0",
+    "label": "iter27 Panda-suite van PandaRobotiqPushCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Push1",
+    "label": "iter27 Panda-suite van PandaRobotiqPushCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=1 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Push2",
+    "label": "iter27 Panda-suite van PandaRobotiqPushCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=2 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cab0",
+    "label": "iter27 Panda-suite van PandaOpenCabinet s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cab1",
+    "label": "iter27 Panda-suite van PandaOpenCabinet s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=1 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_van_Cab2",
+    "label": "iter27 Panda-suite van PandaOpenCabinet s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_van ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=2 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=van (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Pick0",
+    "label": "iter27 Panda-suite jum PandaPickCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCube SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Pick1",
+    "label": "iter27 Panda-suite jum PandaPickCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCube SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Pick2",
+    "label": "iter27 Panda-suite jum PandaPickCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCube SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cart20",
+    "label": "iter27 Panda-suite jum PandaPickCubeCartesian s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cart21",
+    "label": "iter27 Panda-suite jum PandaPickCubeCartesian s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cart22",
+    "label": "iter27 Panda-suite jum PandaPickCubeCartesian s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Ori0",
+    "label": "iter27 Panda-suite jum PandaPickCubeOrientation s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Ori1",
+    "label": "iter27 Panda-suite jum PandaPickCubeOrientation s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Ori2",
+    "label": "iter27 Panda-suite jum PandaPickCubeOrientation s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Push0",
+    "label": "iter27 Panda-suite jum PandaRobotiqPushCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Push1",
+    "label": "iter27 Panda-suite jum PandaRobotiqPushCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Push2",
+    "label": "iter27 Panda-suite jum PandaRobotiqPushCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cab0",
+    "label": "iter27 Panda-suite jum PandaOpenCabinet s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cab1",
+    "label": "iter27 Panda-suite jum PandaOpenCabinet s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_jum_Cab2",
+    "label": "iter27 Panda-suite jum PandaOpenCabinet s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_jum ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=jum (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Pick0",
+    "label": "iter27 Panda-suite ve PandaPickCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Pick1",
+    "label": "iter27 Panda-suite ve PandaPickCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Pick2",
+    "label": "iter27 Panda-suite ve PandaPickCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCube SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cart20",
+    "label": "iter27 Panda-suite ve PandaPickCubeCartesian s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cart21",
+    "label": "iter27 Panda-suite ve PandaPickCubeCartesian s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cart22",
+    "label": "iter27 Panda-suite ve PandaPickCubeCartesian s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeCartesian SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Ori0",
+    "label": "iter27 Panda-suite ve PandaPickCubeOrientation s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Ori1",
+    "label": "iter27 Panda-suite ve PandaPickCubeOrientation s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Ori2",
+    "label": "iter27 Panda-suite ve PandaPickCubeOrientation s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaPickCubeOrientation SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Push0",
+    "label": "iter27 Panda-suite ve PandaRobotiqPushCube s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Push1",
+    "label": "iter27 Panda-suite ve PandaRobotiqPushCube s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Push2",
+    "label": "iter27 Panda-suite ve PandaRobotiqPushCube s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaRobotiqPushCube SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cab0",
+    "label": "iter27 Panda-suite ve PandaOpenCabinet s0 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=0 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 0,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cab1",
+    "label": "iter27 Panda-suite ve PandaOpenCabinet s1 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=1 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 1,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
+  },
+  {
+    "id": "ti27_ve_Cab2",
+    "label": "iter27 Panda-suite ve PandaOpenCabinet s2 (manipulation re-benchmark, fair)",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "env": "PROBE_ID=phasei27_ve ALGO=tdmpc2 TASK=PandaOpenCabinet SEEDS=2 JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 JUMPY_VE_COEF=0.5 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "priority": 2,
+    "status": "pending",
+    "created_at": "2026-06-10T09:31:05Z",
+    "ended_at": null,
+    "note": "iter27 manipulation re-benchmark arm=ve (van/jumpy/value-equiv; peak+final; n=3->5)"
   }
 ]
