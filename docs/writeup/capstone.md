@@ -163,3 +163,23 @@ Code: helios-rl (iter-14 SHA 4d3b935 for the null core; iter-22 jumpy adds Jumpy
 make_jumpy_mppi_fn in `src/helios/algorithms/tdmpc2.py`, `--jumpy_k/--jumpy_plan/--jumpy_n_macro` flags).
 Per-run CSVs: `exp/tdmpc_glass/remote_mirror/**/phasei22*`, `phasei18hs_H3*`, `phasei14v2*`. Analysis:
 inline IQM + stratified bootstrap (20k resamples, seed 0). Iteration records: `docs/iterations/`.
+
+---
+
+## Addendum (2026-06-10): post-jumpy novel-lever attempts — all honest nulls
+After the jumpy result we treated it as a substrate and chased a *genuinely novel* abstraction lever.
+Two families, both killed cheaply by the mechanism-check-before-fanout discipline:
+- **Adaptive jump-length (iter-23: SE-k structural-entropy k-selection, and F uncertainty-gated horizon).**
+  SE pre-check passed (53% structural-entropy gap in the latent graph) but the mechanism-check failed: the
+  jumpy model's k-step error is small and ~uniform (in-distribution AND under MPPI-perturbed actions,
+  inflation 1.06x), so there is *nothing to adapt to* — which is exactly why fixed-k jumpy already works.
+- **SE-driven exploration (iter-24: faithful VCSE + SI2E, plus the novel `wmsi2e` = SE over the
+  world-model latent + critic value).** Pre-registered solve-rate gate on sparse DMC. NULL: no arm
+  rescued CartpoleSparse/AcrobotSparse beyond vanilla, none beat RND, and the WM-latent novelty added
+  nothing over a random encoder; at coef 1.0 the bonus mildly hurt. Third abstraction-flavored
+  exploration null (after iter-19 community-skills, iter-21 Laplacian).
+**Standing conclusion strengthens:** a strong self-predictive world model (TD-MPC2 + SimNorm) is a high
+bar; explicit abstraction — over state, reward, time, skills, or exploration — is largely redundant with
+what it already learns. The one durable positive remains the (known) jumpy model on manipulation. Live,
+untested ideas that do NOT depend on these null mechanisms: a Hermite-spline action bottleneck and a
+value-equivalent macro head (both action/value abstraction). See docs/iterations/RESEARCH_LEDGER.md.

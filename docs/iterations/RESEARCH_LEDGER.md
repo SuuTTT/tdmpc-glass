@@ -43,15 +43,10 @@ already works, and why adaptive jump-length has nothing to adapt to.
   (its edge over TAP/PLAS). Independent of error-variance, so this campaign's verdict doesn't touch it.
 - **Value-equivalent macro head**: train \(d_k\) return-equivalent over k steps (predict same macro-Q)
   not state-faithful — abstraction keeps only control-relevant info. Single-variable loss change.
-- **SI2E-style SE-driven EXPLORATION** (the real home for our validated SE structure). SI2E (NeurIPS
-  2024, 2410.06621) minimizes SE over a VALUE-difference state-action graph -> encoding tree -> a
-  *value-conditional structural-entropy* intrinsic reward for coverage; beats SOTA exploration baselines
-  on MiniGrid/MetaWorld/DMControl. KEY: this points SE at coverage (where motion-phase/community
-  structure IS the relevant axis), NOT at adaptive-k (where it died). Sparse-task regime = where
-  abstraction has evidence and SimNorm's "sufficient representation" does not help (bottleneck is
-  exploration, not encoding). We already have the harness (iter-21 intrinsic.py RND+Laplacian, --intrinsic
-  flag, sparse tasks) + the RND baseline. CAVEAT: iter-21 Laplacian (geometric SE-flavored exploration)
-  LOST to RND; SI2E is value-conditional (richer) so a fair re-attempt, but prior is cautious.
+- ~~SI2E-style SE-driven exploration~~ **DONE (iter-24) -> NULL** (see #12,13 above). Faithful VCSE/SI2E
+  + the novel world-model-latent variant (wmsi2e) all FAILED to rescue sparse Cart/Acro or beat RND;
+  at coef 1.0 mildly hurt. Third exploration null. The cautious prior held. Do not re-run without a new idea
+  (a coef sweep is the only untested knob, low expected value given 3 nulls).
 - **Reusing the disagreement signal** (jumpy vs iterated-1-step) for safe/abstain planning — cheap,
   orthogonal, the one positive by-product of the F null.
 
@@ -69,14 +64,15 @@ passing means the SE structure is REAL, NOT that clustering will raise dense-tas
    *Highest novelty-per-risk; doesn't need error-variance.*
 2. **Value-equivalent macro head.** Add a macro-Q-equivalence loss to \(d_k\); single-variable vs
    state-faithful jumpy; test under distractors (where state-faithful wastes capacity).
-3. **SI2E-style SE-driven exploration** (the SE lever's correct home). Wire a value-conditional-SE
-   intrinsic reward into the existing iter-21 intrinsic harness; sparse tasks (CartpoleSparse, BallInCup,
-   AcrobotSparse). PRE-CHECK: value-difference SE encoding tree is non-trivial on our latents. KILL-TEST
-   / GATE: **SI2E must BEAT RND** (not just rescue) — the iter-21 G2 bar Laplacian failed — IQM over 5
-   seeds, peak+final, CI. If SI2E <= RND -> abstraction-flavored exploration adds nothing (consistent
-   with Laplacian), record and stop. (Sub-option: jumpy/iter-1-step disagreement as an alternate bonus.)
+3. ~~SI2E-style SE-driven exploration~~ **DONE (iter-24) -> NULL** (#12,13). Exploration via abstraction
+   is now 3x null (community-skills, Laplacian, SI2E/wmsi2e); deprioritized.
 4. **Humanoid/Dog at real budget** (millions of steps) — only with the compute to do it honestly;
    settles whether jumpy's manipulation win extends to high-DoF.
+
+So the LIVE next probes are now just #1 (Hermite-spline action bottleneck) and #2 (value-equivalent macro
+head) — both ACTION/VALUE abstraction, independent of the exploration nulls. Everything SE-flavored
+(clustering for return, skills, adaptive-k, exploration) is now exhausted/null. The standing honest
+takeaway: a strong self-predictive world model is a high bar and most abstraction is redundant with it.
 
 ## Gate discipline (applies to every probe above)
 Single-variable vs the right baseline (jumpy, not vanilla); compute-matched; rliable IQM, ≥5 seeds,
