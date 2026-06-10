@@ -69,3 +69,16 @@ rnd Cart seed0 final=2 (no reward, like a typical van seed). No comparison yet. 
 ### tick ~23:10Z: new arms n=1 (uninformative yet). done: van15 rnd3 vcse2 si2e1, 0 failures.
 Early (n=1, NOT a verdict): on discriminators all new-arm seed0 = 0 solve (Cart/Acro), == typical van seed.
 rnd Ball 1/1(485), vcse Ball 0/1(361). Need n>=3/arm for solve-rate signal (~2-3 ticks out, seed-major).
+
+### tick ~02:20Z: LEANING NULL (n=2-4 on discriminators). done: van15 rnd6 vcse5 si2e6 wmsi2e4, 0 fails.
+SOLVE-RATE on discriminators (mature >=400k):
+  van    Cart 1/5 (best768)  Acro 0/5 (best66)
+  rnd    Cart 0/4 (best147)  Acro 0/3 (best0)
+  vcse   Cart 0/2 (best1)    Acro 0/1
+  si2e   Cart 0/2 (best2)    Acro 0/2
+  wmsi2e Cart 0/2 (best0)    Acro 0/1
+=> NO intrinsic (incl RND) rescues Cart/Acro; their BEST seeds are WORSE than vanilla's best (768 Cart).
+Not just bad luck — the bonus isn't finding sparse reward, may mildly over-shape at coef=1.0. RND not
+rescuing here either (unlike iter-21 max561 — seed variance or harder cfg). NOT final (need n=5), but
+firmly null-leaning: SE-exploration (and value-conditioning/cluster/WM-latent) shows no rescue so far.
+Fleet 10 boxes, ssh3b cleaned 89->69%, forecasting not resumed, ~16 pending (~1.5h to n=5).
