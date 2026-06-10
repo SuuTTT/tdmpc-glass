@@ -1435,6 +1435,84 @@ def train_tdmpc2(
               f"errs={len(Err)}, perturb M={_M} pstd={_pstd}) -> {outp}", flush=True)
         _sys.exit(0)
 
+    # iter-25 Hermite-spline mechanism-check (env-gated HERMITE_CHECK=1; needs --resume_checkpoint).
+    # KILL-TEST: can a few-control-point cubic-Hermite spline express the policy's action trajectory
+    # without losing return? Records pi-rollout actions, fits K-knot Hermite, replays smoothed actions
+    # open-loop from the SAME init, reports R^2 + return-preservation. Then EXIT (no training).
+    if os.environ.get("HERMITE_CHECK", "") == "1":
+        import sys as _sys
+        n_ep = int(os.environ.get("HC_EPS", "6")); Ks = [2, 3, 4, 6]
+
+        def _hermite_smooth(A, K):           # A (T,adim) -> (T,adim) from K cubic-Hermite control points
+            T = len(A)
+            if T <= K:
+                return A.copy()
+            knots = np.unique(np.linspace(0, T - 1, K).round().astype(int))
+            out = np.zeros_like(A)
+            kf = knots.astype(float)
+            for d in range(A.shape[1]):
+                v = A[knots, d]; m = np.gradient(v, kf)
+                for s in range(len(knots) - 1):
+                    i0, i1 = knots[s], knots[s + 1]
+                    L = i1 - i0
+                    tt = (np.arange(i0, i1 + 1) - i0) / L
+                    h00 = 2 * tt**3 - 3 * tt**2 + 1; h10 = tt**3 - 2 * tt**2 + tt
+                    h01 = -2 * tt**3 + 3 * tt**2; h11 = tt**3 - tt**2
+                    out[i0:i1 + 1, d] = h00 * v[s] + h10 * L * m[s] + h01 * v[s + 1] + h11 * L * m[s + 1]
+            return out
+
+        Hwin = int(os.environ.get("HC_HWIN", "8"))   # spline-MPPI granularity = the planning horizon
+
+        def _r2(A, As):
+            return 1.0 - ((A - As) ** 2).sum() / (((A - A.mean(0)) ** 2).sum() + 1e-9)
+
+        def _hwin_r2(A, K):                  # avg R^2 of fitting K control pts per non-overlapping H-window
+            r2s = []
+            for i in range(0, len(A) - 1, Hwin):
+                W = A[i:i + Hwin]
+                if len(W) >= 4:
+                    r2s.append(_r2(W, _hermite_smooth(W, K)))
+            return float(np.mean(r2s)) if r2s else float("nan")
+
+        free_rets = []; ctrl_rets = []; res = {K: [] for K in Ks}
+        for _ep in range(n_ep):
+            key, rk = jax.random.split(key)
+            state = single_env_reset(rk); obs = jnp.asarray(state.obs[0])
+            acts = []; er = 0.0
+            for _ in range(episode_length):
+                a = pi_apply(params, enc_apply(params, obs))
+                acts.append(np.asarray(a).reshape(-1))
+                state = single_env_step(state, a); er += float(state.reward[0])
+                if bool(state.done[0] > 0.5):
+                    break
+                obs = jnp.asarray(state.obs[0])
+            A = np.stack(acts); free_rets.append(er)
+            # CONTROL: replay the ORIGINAL (unsmoothed) actions open-loop -> isolates open-loop fragility
+            stc = single_env_reset(rk); erc = 0.0
+            for t in range(len(A)):
+                stc = single_env_step(stc, jnp.asarray(A[t], jnp.float32)); erc += float(stc.reward[0])
+                if bool(stc.done[0] > 0.5):
+                    break
+            ctrl_rets.append(erc)
+            for K in Ks:
+                As = _hermite_smooth(A, K)
+                st2 = single_env_reset(rk); er2 = 0.0
+                for t in range(len(As)):
+                    st2 = single_env_step(st2, jnp.asarray(As[t], jnp.float32)); er2 += float(st2.reward[0])
+                    if bool(st2.done[0] > 0.5):
+                        break
+                res[K].append((_r2(A, As), _hwin_r2(A, K), er2))
+        fm = float(np.mean(free_rets)); cm = float(np.mean(ctrl_rets))
+        print(f"  [HERMITE_CHECK] {env_id} free pi-return={fm:.1f} | open-loop CONTROL (orig actions)={cm:.1f} "
+              f"({100*cm/(fm+1e-9):.0f}% — isolates open-loop fragility) | Hwin={Hwin} n={n_ep}", flush=True)
+        for K in Ks:
+            er2 = np.mean([x[2] for x in res[K]])
+            print(f"    K={K}: full_R2={np.mean([x[0] for x in res[K]]):.3f}  Hwin_R2={np.nanmean([x[1] for x in res[K]]):.3f}"
+                  f"  spline_replay={er2:.1f} ({100*er2/(cm+1e-9):.0f}% of CONTROL)", flush=True)
+        print("    -> the lever-relevant number is Hwin_R2 (spline-MPPI plans over H-windows) AND "
+              "spline_replay vs CONTROL (not vs free).", flush=True)
+        _sys.exit(0)
+
     # Q-reset (REDQ-style): re-init online Q params + optimizer state when env_steps
     # crosses any threshold in q_reset_steps. Target Q (tp["q"]) is preserved so the
     # critic restarts from the EMA of past good critics rather than from scratch.
