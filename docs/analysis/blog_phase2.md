@@ -30,15 +30,21 @@ off-at-1M beats our internal TD-MPC2 mean on HopperHop, 5-seed confirmations con
 honest closure of that thread: **under a fair, single-variable, adequately-powered protocol, Glass does
 not beat TD-MPC2.** Per-task-normalized IQM over five DMC tasks, with 95% bootstrap CIs:
 
-![TD-MPC-Glass does not beat TD-MPC2: IQM ± 95% CI, all three arms overlap](/images/glass_vs_tdmpc2_null.png)
+We report **both** metrics this project lives by — best/peak (best checkpoint per seed) and final (last-2
+evals) — so no one can object that the null is a reporting artifact:
 
-- vanilla TD-MPC2: **0.950** [0.922, 0.968] (n=37)
-- geometric Glass: **0.940** [0.851, 0.992] (n=16)
-- behavioral Glass: **0.970** [0.952, 0.984] (n=34)
+| arm | best (peak) IQM, 95% CI | final IQM, 95% CI |
+|---|---|---|
+| vanilla TD-MPC2 (n=37) | 0.944 [0.919, 0.965] | 0.950 [0.922, 0.968] |
+| geometric Glass (n=16) | 0.965 [0.925, 0.989] | 0.940 [0.851, 0.992] |
+| behavioral Glass (n=34) | 0.972 [0.953, 0.986] | 0.970 [0.952, 0.984] |
 
-All three intervals **overlap** — no arm is statistically separated from vanilla. The behavioral arm's
-+0.02 nominal edge sits inside the noise (and, as Part 1's §5 showed, its per-snapshot estimate wandered
-to *both* sides of baseline as seeds accumulated). The hopeful HopperHop "win" was **basin-lottery**: under
+![TD-MPC-Glass does not beat TD-MPC2 on peak OR final: IQM ± 95% CI, all arms overlap](/images/glass_vs_tdmpc2_null.png)
+
+On **both** peak and final, all three intervals **overlap** vanilla — no arm is statistically separated.
+The behavioral arm's +0.02–0.03 nominal edge sits inside the noise on either metric (and, as Part 1's §5
+showed, its per-snapshot estimate wandered to *both* sides of baseline as seeds accumulated). The hopeful
+HopperHop "win" was **basin-lottery**: under
 the clean protocol neither Glass nor vanilla entered the high-reward basin (best 323 vs 286), so the earlier
 edge came from restarts/seed-luck, not the representation.
 
