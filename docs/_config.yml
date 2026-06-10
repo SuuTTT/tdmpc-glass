@@ -1,0 +1,8 @@
+title: TD-MPC-Glass
+description: "Beating a strong world model is hard — a fair-protocol field report on model-based RL abstraction."
+theme: minima
+baseurl: "/tdmpc-glass"
+url: "https://suuttt.github.io"
+exclude:
+  - archive/
+  - "*.json"
