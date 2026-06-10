@@ -406,6 +406,7 @@ def make_update_fn(
     jumpy_rew_net: "JumpyReward | None" = None,
     jumpy_k: int = 0,
     jumpy_coef: float = 1.0,
+    jumpy_ve_coef: float = 0.0,   # iter-25 probe#2: value-equivalent macro head (0=off=state-faithful)
 ) -> tuple:
     """Build (single_step, multi_step) JIT-compiled update functions.
 
@@ -549,7 +550,7 @@ def make_update_fn(
         # the 1-step model k times. Trains params["jdyn"]; encoder fed via z0 (grad), target
         # z_{t+k} is stop-grad.
         jumpy_cons = jnp.array(0.0); jumpy_hc = jnp.array(0.0); jumpy_rew = jnp.array(0.0)
-        jumpy_err = jnp.array(0.0); iter1_err = jnp.array(0.0)
+        jumpy_err = jnp.array(0.0); iter1_err = jnp.array(0.0); jumpy_ve = jnp.array(0.0)
         if jumpy_k > 0:
             kk = int(jumpy_k); adim = act_b.shape[-1]
             a_k = act_b[:, :kk].reshape(B, kk * adim)
@@ -557,6 +558,17 @@ def make_update_fn(
             z_k_tgt = z_tgt[:, kk]                                       # sg actual z_{t+k}
             jumpy_cons = jnp.mean(jnp.sum((jpred - z_k_tgt) ** 2, -1))
             total = total + jumpy_coef * jumpy_cons
+            # iter-25 probe#2 — VALUE-EQUIVALENT macro head: the predicted z_{t+k} must preserve the
+            # control-relevant quantity (VALUE), not just reconstruct the latent. V(z)=min-head
+            # two_hot_inv(Q(z,pi(z))); stop-grad Q/pi params so the gradient trains ONLY jdyn (jpred).
+            jumpy_ve = jnp.array(0.0)
+            if jumpy_ve_coef > 0.0:
+                _qp = jax.lax.stop_gradient(params["q"]); _pp = jax.lax.stop_gradient(params["pi"])
+                def _V(zz):
+                    _mu, _ = pi_net.apply(_pp, zz)
+                    return jnp.min(two_hot_inv(q_net.apply(_qp, zz, jnp.tanh(_mu))), axis=-1)
+                jumpy_ve = jnp.mean((_V(jpred) - jax.lax.stop_gradient(_V(z_k_tgt))) ** 2)
+                total = total + jumpy_ve_coef * jumpy_ve
             # jumpy macro-reward head: predict sum of the k rewards over the jump
             if jumpy_rew_net is not None:
                 rJ = jumpy_rew_net.apply(params["jrew"], z0, a_k)
@@ -581,6 +593,7 @@ def make_update_fn(
             "mpc": mpc_loss,
             "scale": final_scale,
             "jumpy_cons": jumpy_cons,
+            "jumpy_ve": jumpy_ve,
             "jumpy_hc": jumpy_hc,
             "jumpy_rew": jumpy_rew,
             "jumpy_err": jumpy_err,

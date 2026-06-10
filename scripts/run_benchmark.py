@@ -573,6 +573,7 @@ def train_tdmpc2(
     intrinsic_coef: float = 0.0,
     jumpy_k: int = 0,
     jumpy_coef: float = 1.0,
+    jumpy_ve_coef: float = 0.0,
     jumpy_plan: bool = False,
     jumpy_n_macro: int = 3,
 ) -> None:
@@ -842,6 +843,7 @@ def train_tdmpc2(
                 jumpy_rew_net=jumpy_rew_net,
                 jumpy_k=_jumpy_k,
                 jumpy_coef=float(jumpy_coef),
+                jumpy_ve_coef=float(jumpy_ve_coef),
             )
         return ms
 
@@ -2112,6 +2114,8 @@ def parse_args():
                     help="iter-22: k-step jumpy latent model (0=off). Trains JumpyDynamics + horizon-"
                          "consistency; logs mechanism check (jumpy_err vs iter1_err). Needs mppi_horizon>=2k. "
                          "vanilla tdmpc2 path only.")
+    ap.add_argument("--jumpy_ve_coef", type=float, default=0.0,
+                    help="iter-25 probe#2: value-equivalent macro head weight (0=off)")
     ap.add_argument("--jumpy_coef", type=float, default=1.0,
                     help="iter-22: weight on the jumpy consistency + horizon-consistency loss.")
     ap.add_argument("--jumpy_plan", action="store_true",
@@ -2300,6 +2304,7 @@ def main():
                         intrinsic_coef=args.intrinsic_coef,
                         jumpy_k=args.jumpy_k,
                         jumpy_coef=args.jumpy_coef,
+                        jumpy_ve_coef=args.jumpy_ve_coef,
                         jumpy_plan=args.jumpy_plan,
                         jumpy_n_macro=args.jumpy_n_macro,
                     )

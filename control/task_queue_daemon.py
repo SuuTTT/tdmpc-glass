@@ -48,8 +48,8 @@ BOXES = [
     # instruction; the kills coincided with a now-finished se-bench workload on this
     # box (likely host-side competition), so risk may have passed. Prefer <=500k tasks;
     # any new silent death -> disable again and requeue via failed_box_died.
-    # DISABLED 2026-06-09 (killed ti22jPand0/2): ("ssh4_1660s_g0", 22607, "ssh4.vast.ai",   0),
-    # DISABLED 2026-06-09 (killed ti22jPand0/2): ("ssh4_1660s_g1", 22607, "ssh4.vast.ai",   1),
+    # ASSIGNED TO LTSF 2026-06-10 (user, inst 38342607): do NOT touch. ("ssh4_1660s_g0", 22607, ...)
+    # ASSIGNED TO LTSF 2026-06-10 (user, inst 38342607): do NOT touch. ("ssh4_1660s_g1", 22607, ...)
     # ── Former PBT pool, FOLDED BACK into the daemon 2026-06-04 (orchestrator stopped;
     # research pivoted off PBT). Daemon is now the single manager. In-flight PBT members
     # finish naturally (daemon sees the box busy, won't touch); when they finish the
@@ -58,7 +58,7 @@ BOXES = [
     # box (a 'forecast' python job uses the GPU but not via run_benchmark, so is_box_idle
     # would falsely see it idle and clobber it). Do NOT schedule tdmpc here.
     # ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
-    ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),  # RE-FREED 2026-06-10 (user): forecasting done
+    # ASSIGNED TO LTSF 2026-06-10 (user, permanent): do NOT touch. ("ssh2_a4000", 18950, "ssh2.vast.ai", 0)
     ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
     ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
     ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),

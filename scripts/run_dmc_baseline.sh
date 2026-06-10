@@ -31,6 +31,7 @@ INTRINSIC=${INTRINSIC:-none}           # iter-21: none | rnd | laplacian (explor
 INTRINSIC_COEF=${INTRINSIC_COEF:-0.0}  # iter-21: weight on normalized intrinsic reward
 JUMPY_K=${JUMPY_K:-0}                   # iter-22: k-step jumpy latent head (0=off; needs MPPI_H>=2k)
 JUMPY_COEF=${JUMPY_COEF:-1.0}          # iter-22: jumpy consistency + horizon-consistency weight
+JUMPY_VE_COEF=${JUMPY_VE_COEF:-0.0}    # iter-25 probe#2: value-equivalent macro head weight (0=off)
 JUMPY_PLAN=${JUMPY_PLAN:-0}            # iter-22: 1 = eval with jumpy-MPPI (writes 'jumpy' rows)
 JUMPY_NMACRO=${JUMPY_NMACRO:-3}        # iter-22: jumpy macro-steps (eff horizon = k*n_macro)
 JUMPY_PLAN_FLAG=""; [[ "$JUMPY_PLAN" == "1" ]] && JUMPY_PLAN_FLAG="--jumpy_plan"
@@ -52,7 +53,7 @@ for seed in $SEEDS; do
     --k_update "$K_UPDATE" --mppi_n_samples "$MPPI_NS" --mppi_horizon "$MPPI_H" --expl_until "$EXPL_UNTIL" \
     $RHO_FLAG \
     --intrinsic "$INTRINSIC" --intrinsic_coef "$INTRINSIC_COEF" \
-    --jumpy_k "$JUMPY_K" --jumpy_coef "$JUMPY_COEF" --jumpy_n_macro "$JUMPY_NMACRO" $JUMPY_PLAN_FLAG \
+    --jumpy_k "$JUMPY_K" --jumpy_coef "$JUMPY_COEF" --jumpy_ve_coef "$JUMPY_VE_COEF" --jumpy_n_macro "$JUMPY_NMACRO" $JUMPY_PLAN_FLAG \
     --bisim_coef "$BISIM_COEF" \
     --distractor_dims "$DISTRACTOR_DIMS" \
     --latent_norm "$LATENT_NORM" --fsq_levels "$FSQ_LEVELS" \
