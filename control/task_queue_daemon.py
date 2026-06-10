@@ -58,8 +58,7 @@ BOXES = [
     # box (a 'forecast' python job uses the GPU but not via run_benchmark, so is_box_idle
     # would falsely see it idle and clobber it). Do NOT schedule tdmpc here.
     # ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
-    # PROTECTED 2026-06-09: user's MultiRel/Crossformer forecasting running here. Do NOT clobber.
-    # ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),
+    ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),  # RE-FREED 2026-06-10 (user): forecasting done
     ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
     ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
     ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
@@ -72,8 +71,7 @@ BOXES = [
     # is_box_idle fail-safe handle any re-churn). Env verified: jax 0.10.1 + repo present.
     # REMOVED 2026-06-08 (user): ssh3:17426 (inst 38767427) is the USER's mahjong box.
     # Same clobber risk (mahjong GPU job is run_benchmark-free). Do NOT schedule tdmpc here.
-    # PROTECTED 2026-06-09: user resumed Crossformer forecasting here. Do NOT clobber (was briefly free).
-    # ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427
+    ("ssh3b_a4000",   17426,  "ssh3.vast.ai",   0),  # inst 38767427 — RE-FREED 2026-06-10 (user): forecasting done
     # ssh9 4x2060 (inst 37457647) DEGRADED 2026-06-01: GPU2/GPU3 device-handle
     # "Unknown Error" (fell off the bus), JAX -> "Unknown backend cuda". Removed
     # from the fleet so the daemon stops churning fast-fails. Reboot the vast.ai
