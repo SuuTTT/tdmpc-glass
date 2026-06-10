@@ -82,3 +82,18 @@ Not just bad luck — the bonus isn't finding sparse reward, may mildly over-sha
 rescuing here either (unlike iter-21 max561 — seed variance or harder cfg). NOT final (need n=5), but
 firmly null-leaning: SE-exploration (and value-conditioning/cluster/WM-latent) shows no rescue so far.
 Fleet 10 boxes, ssh3b cleaned 89->69%, forecasting not resumed, ~16 pending (~1.5h to n=5).
+
+## FINAL VERDICT (2026-06-10, n=3-4/arm, stable; last ~8 seeds pending but picture unambiguous): NULL
+SOLVE-RATE @>=400k on discriminators (van baseline: Cart 1/5 best768, Acro 0/5 best66):
+  rnd    Cart 0/4(best147)  Acro 0/3(best0)
+  vcse   Cart 0/3(best1)    Acro 0/3(best22)
+  si2e   Cart 0/3(best2)    Acro 0/3(best0)
+  wmsi2e Cart 0/2(best0)    Acro 0/3(best6)
+GATES ALL FAIL: (a) rescue vs vanilla = NO (all intrinsics 0/n on both); (b) vcse>rnd = NO; (c) si2e>=vcse
+= NO; (d) NOVELTY wmsi2e>si2e = NO (both 0). Worse: intrinsics' BEST Cart seeds (<=147) are BELOW vanilla's
+best (768) -> at coef=1.0 the bonus mildly HURTS (over-shaping), doesn't find sparse reward.
+CAVEAT: even RND failed to rescue here (0/4 Cart; cf iter-21 RND max561) -> the coef=1.0 setting may be too
+strong on these tasks; a coef sweep is the only thing that could revive the test, but with THREE prior
+exploration nulls (iter-19 community-skills, iter-21 Laplacian, iter-24 SI2E/wmsi2e) the expected value is low.
+=> SE-driven exploration (value-conditional VCSE, cluster-term SI2E, AND the novel world-model-latent
+wmsi2e) does NOT rescue sparse TD-MPC2 beyond RND/vanilla. The WM-latent novelty adds nothing. Honest null.

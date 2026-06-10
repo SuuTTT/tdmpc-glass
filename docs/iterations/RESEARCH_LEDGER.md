@@ -27,6 +27,9 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 | 10 | **SE-k adaptive jump-length** (structural entropy → k) | 23 | SE pre-check PASSED (53% gap) but mechanism-check FAILED: boundary score does NOT track k-step error (Spearman +0.09 Panda / −0.18 Cart) |
 | 11 | **F: uncertainty-gated horizon** | 23 | signal valid (disc↔err Spearman 0.72) but **no headroom**: k-step error uniform in-dist AND under MPPI-perturbed actions (inflation 1.06×) — nothing to gate |
 
+| 12 | **SI2E / VCSE SE-exploration** (value-conditional kNN entropy + cluster term) | 24 | NULL: no rescue of sparse Cart/Acro beyond vanilla; doesn't beat RND (all 0/n); at coef 1.0 mildly HURTS (best seeds < vanilla) |
+| 13 | **wmsi2e — SE-exploration over the WORLD-MODEL latent (the novel bet)** | 24 | NULL: ties si2e at 0/n; WM-latent + critic-value conditioning adds nothing over random-encoder SI2E or RND. 3rd exploration null (after community-skills, Laplacian) |
+
 **Root cause for #10–11 (and the whole adaptive-k family):** the trained jumpy model is **uniformly
 accurate** over the states/actions a near-optimal policy visits — which is exactly why fixed-k jumpy
 already works, and why adaptive jump-length has nothing to adapt to.
