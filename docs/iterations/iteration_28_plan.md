@@ -99,3 +99,13 @@ config, not the weak baseline (this is why the resmlp lead looked real for 3 har
 self-pred 0.978 | ve@0.1 0.953 | ve@0.2 0.977 — VE barely moves the value-irrelevant fraction at ANY
 coef AND value stays decodable (R²≈1.0). The loss doesn't reorganize the latent toward value-sufficiency
 because it's ALREADY value-sufficient. Triple confirmation of the null (mechanism + returns + latent).
+
+## DREAMER-FAMILY PERF BLOCKER confirmed (2026-06-10) + jumpy gen firming
+- DreamerV3 gen run on 5070ti ALSO GPU-starved: 1% util >60min, stuck in warmup, no ckpt — KILLED.
+  So the slow per-step (non-vectorized) collection loop is a DREAMER-FAMILY issue (both dreamer.py +
+  dreamer4.py), not specific to the transformer-WM. Both the SE-attention-graph north-star AND the
+  WM-family value-sufficiency generality probe are gated on ONE fix: vectorize the collection loop
+  (lax.scan over the batched env, like run_benchmark's tdmpc2 loop). Deferred to a hands-on session.
+- Jumpy generalization (the anchor) firming, @≥450k: Pick jum 2645/2319 vs van 1925/1238 (n=2, +87% final);
+  Ori jum 2474/2357 vs van 2370/982 (n=2, +140% final); Cab jum 2167/1261 vs van 3097/596 (n=1, +112%
+  final, van higher peak). Jumpy SUSTAINS final across the suite; peak ~tie/mixed. n→5 in progress.
