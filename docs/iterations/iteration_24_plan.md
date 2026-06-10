@@ -97,3 +97,6 @@ strong on these tasks; a coef sweep is the only thing that could revive the test
 exploration nulls (iter-19 community-skills, iter-21 Laplacian, iter-24 SI2E/wmsi2e) the expected value is low.
 => SE-driven exploration (value-conditional VCSE, cluster-term SI2E, AND the novel world-model-latent
 wmsi2e) does NOT rescue sparse TD-MPC2 beyond RND/vanilla. The WM-latent novelty adds nothing. Honest null.
+
+### VERDICT CONFIRMED stable (n=4-6/arm): rnd Cart0/6 Acro0/4, vcse/si2e/wmsi2e Cart0/4 Acro0/3-4. NULL holds.
+Re-queued dropped BallInCup (fleet-fill, proven, completes 5x3 dataset for writeup). No scientific change.

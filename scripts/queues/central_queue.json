@@ -4793,9 +4793,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=3 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T03:40:30Z",
     "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh3b_a4000",
     "started_at": "2026-06-10T02:33:06Z",
@@ -4807,10 +4807,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=4 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh6_3060",
+    "started_at": "2026-06-10T03:38:35Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_rnd_Ball0",
@@ -4846,10 +4849,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=BallInCup SEEDS=2 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_rnd_Ball3",
@@ -4857,10 +4862,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=BallInCup SEEDS=3 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_rnd_Ball4",
@@ -4868,10 +4875,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_rnd_Acro0",
@@ -4921,9 +4930,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=3 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T03:59:45Z",
     "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh2_a4000",
     "started_at": "2026-06-10T02:45:12Z",
@@ -4935,10 +4944,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_rnd ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=4 INTRINSIC=rnd INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=rnd (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh3b_a4000",
+    "started_at": "2026-06-10T03:40:30Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_vcse_Cart0",
@@ -4988,9 +5000,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=3 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T03:57:43Z",
     "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh4_a4000b",
     "started_at": "2026-06-10T02:52:18Z",
@@ -5002,10 +5014,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=4 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-10T03:57:43Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_vcse_Ball0",
@@ -5041,10 +5056,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=BallInCup SEEDS=2 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_vcse_Ball3",
@@ -5052,10 +5069,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=BallInCup SEEDS=3 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_vcse_Ball4",
@@ -5063,10 +5082,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_vcse_Acro0",
@@ -5130,10 +5151,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_vcse ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=4 INTRINSIC=vcse INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=vcse (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh2_a4000",
+    "started_at": "2026-06-10T03:59:45Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_si2e_Cart0",
@@ -5197,10 +5221,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=4 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh6_titanv",
+    "started_at": "2026-06-10T04:05:15Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_si2e_Ball0",
@@ -5236,10 +5263,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=BallInCup SEEDS=2 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_si2e_Ball3",
@@ -5247,10 +5276,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=BallInCup SEEDS=3 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_si2e_Ball4",
@@ -5258,10 +5289,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_si2e_Acro0",
@@ -5311,9 +5344,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=3 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T04:05:15Z",
     "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh6_titanv",
     "started_at": "2026-06-10T03:08:49Z",
@@ -5325,10 +5358,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_si2e ALGO=tdmpc2 TASK=AcrobotSwingupSparse SEEDS=4 INTRINSIC=si2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)"
+    "note": "iter24 SE-exploration probe arm=si2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
+    "box": "ssh1_2080ti",
+    "started_at": "2026-06-10T04:07:23Z",
+    "launched_git_sha": "81c82c8"
   },
   {
     "id": "ti24_wmsi2e_Cart0",
@@ -5364,9 +5400,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=2 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T03:38:35Z",
     "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh6_3060",
     "started_at": "2026-06-10T02:20:34Z",
@@ -5378,9 +5414,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=CartpoleSwingupSparse SEEDS=3 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-09T20:16:44Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T04:07:23Z",
     "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND)",
     "box": "ssh1_2080ti",
     "started_at": "2026-06-10T03:14:18Z",
@@ -5417,10 +5453,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=BallInCup SEEDS=1 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 1,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_wmsi2e_Ball2",
@@ -5428,10 +5466,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=BallInCup SEEDS=2 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 2,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_wmsi2e_Ball3",
@@ -5439,10 +5479,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=BallInCup SEEDS=3 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 3,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_wmsi2e_Ball4",
@@ -5450,10 +5492,12 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei24_wmsi2e ALGO=tdmpc2 TASK=BallInCup SEEDS=4 INTRINSIC=wmsi2e INTRINSIC_COEF=1.0 MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i24a XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 4,
-    "status": "superseded_dup",
+    "status": "pending",
     "created_at": "2026-06-09T20:16:44Z",
     "ended_at": null,
-    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart]"
+    "note": "iter24 SE-exploration probe arm=wmsi2e (rnd<vcse<si2e<wmsi2e ablation; gate=beat RND) [dropped: BallInCup saturated/uninformative, focus Acro+Cart] [re-queued: complete 5x3 dataset, fleet-fill]",
+    "box": null,
+    "started_at": null
   },
   {
     "id": "ti24_wmsi2e_Acro0",
