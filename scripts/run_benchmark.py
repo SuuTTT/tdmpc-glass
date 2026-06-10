@@ -568,6 +568,7 @@ def train_tdmpc2(
     arbitration_margin: float = 0.0,
     latent_norm: str = "simnorm",
     fsq_levels: int = 5,
+    dyn_arch: str = "mlp",
     rho_override: float | None = None,
     intrinsic: str = "none",
     intrinsic_coef: float = 0.0,
@@ -670,16 +671,23 @@ def train_tdmpc2(
     # iter-16: latent_norm swaps SimNorm for FSQ discrete codes (vanilla tdmpc2
     # path only — the Glass module keeps its own SimNorm Encoder/Dynamics).
     _latent_norm = str(latent_norm or "simnorm")
+    _dyn_arch = str(dyn_arch or "mlp")
+    if _dyn_arch not in ("mlp", "attn", "resmlp"):
+        raise ValueError(f"--dyn_arch must be mlp|attn|resmlp, got {_dyn_arch}")
+    if _dyn_arch != "mlp":
+        if use_glass:
+            raise ValueError("--dyn_arch attn/resmlp is only supported on the vanilla tdmpc2 path")
+        print(f"  iter-27 dyn_arch={_dyn_arch} (backbone swap for enc/dyn/jumpy; SimNorm geometry kept)", flush=True)
     if _latent_norm != "simnorm":
         if use_glass:
             raise ValueError("--latent_norm fsq is only supported on the vanilla tdmpc2 path")
         _fsq_levels = int(fsq_levels)
         print(f"  iter-16 latent_norm={_latent_norm} (FSQ levels={_fsq_levels}, SimNorm replaced)", flush=True)
-        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels)
-        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels)
+        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels, arch=_dyn_arch)
+        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels, arch=_dyn_arch)
     else:
-        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V)
-        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V)
+        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, arch=_dyn_arch)
+        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, arch=_dyn_arch)
     rew_net = RewardHead(hidden=hidden, num_bins=num_bins)
     q_net   = QEnsemble(hidden=hidden, num_bins=num_bins)
     pi_net  = Pi(action_dim=act_dim, hidden=hidden)
@@ -732,7 +740,7 @@ def train_tdmpc2(
     _jumpy_n_macro = int(jumpy_n_macro)
     jumpy_net = None; jumpy_rew_net = None
     if _jumpy_k > 0:
-        jumpy_net = JumpyDynamics(latent_dim=latent_dim, hidden=hidden, V=V)
+        jumpy_net = JumpyDynamics(latent_dim=latent_dim, hidden=hidden, V=V, arch=_dyn_arch)
         jumpy_rew_net = JumpyReward(hidden=hidden, num_bins=num_bins)
         key, jk, jk2 = jax.random.split(key, 3)
         _adummy = jnp.zeros((1, _jumpy_k * act_dim))
@@ -2097,6 +2105,10 @@ def parse_args():
                     help="iter-16: latent bound for vanilla tdmpc2. 'fsq' replaces SimNorm with Finite "
                          "Scalar Quantization (5 levels/dim, straight-through; DC-MPC-style discrete codes). "
                          "Representation swap — single-variable vs vanilla. tdmpc2 path only.")
+    ap.add_argument("--dyn_arch", choices=["mlp", "attn", "resmlp"], default="mlp",
+                    help="iter-27: backbone for enc/dyn/jumpy pre-norm latent. 'attn' = group-wise "
+                         "self-attention over SimNorm's V groups; 'resmlp' = deeper gated-residual MLP. "
+                         "SimNorm geometry unchanged — single-variable arch swap vs 'mlp'. tdmpc2 path only.")
     ap.add_argument("--fsq_levels", type=int, default=5,
                     help="iter-16: quantization levels per dim for --latent_norm fsq (default 5; "
                          "retune band uses 8 = finer codes).")
@@ -2299,6 +2311,7 @@ def main():
                         arbitration_margin=args.arbitration_margin,
                         latent_norm=args.latent_norm,
                         fsq_levels=args.fsq_levels,
+                        dyn_arch=args.dyn_arch,
                         rho_override=args.rho,
                         intrinsic=args.intrinsic,
                         intrinsic_coef=args.intrinsic_coef,

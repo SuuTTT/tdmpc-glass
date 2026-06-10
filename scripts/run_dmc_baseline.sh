@@ -24,6 +24,7 @@ BISIM_COEF=${BISIM_COEF:-0}            # iter-14: BS-MPC bisimulation aux weight
 DISTRACTOR_DIMS=${DISTRACTOR_DIMS:-0}  # iter-14 Stage-2a: OU nuisance obs dims (0=off)
 LATENT_NORM=${LATENT_NORM:-simnorm}    # iter-16: simnorm (vanilla) | fsq (codebook swap)
 FSQ_LEVELS=${FSQ_LEVELS:-5}            # iter-16: FSQ levels/dim (8 = pre-registered retune)
+DYN_ARCH=${DYN_ARCH:-mlp}              # iter-27: mlp (vanilla) | attn (group-attn) | resmlp (gated-residual)
 MPPI_H=${MPPI_H:-3}                    # iter-18: MPPI planning horizon (H-sweep gate for temporal abstraction)
 RHO=${RHO:-}                           # iter-20: consistency-horizon decay (empty=default 0.5; 0.9=deep-planning lever)
 RHO_FLAG=""; [[ -n "$RHO" ]] && RHO_FLAG="--rho $RHO"
@@ -56,7 +57,7 @@ for seed in $SEEDS; do
     --jumpy_k "$JUMPY_K" --jumpy_coef "$JUMPY_COEF" --jumpy_ve_coef "$JUMPY_VE_COEF" --jumpy_n_macro "$JUMPY_NMACRO" $JUMPY_PLAN_FLAG \
     --bisim_coef "$BISIM_COEF" \
     --distractor_dims "$DISTRACTOR_DIMS" \
-    --latent_norm "$LATENT_NORM" --fsq_levels "$FSQ_LEVELS" \
+    --latent_norm "$LATENT_NORM" --fsq_levels "$FSQ_LEVELS" --dyn_arch "$DYN_ARCH" \
     --no_plot 2>&1 | tee -a "$log"
   rc=${PIPESTATUS[0]}; [[ $rc -ne 0 ]] && status=$rc
   echo "[${PROBE_ID}] === ${TASK} seed=${seed} done rc=${rc} $(date -u +%FT%TZ) ===" | tee -a "$log" | tee -a "$LOG_DIR/queue.log"

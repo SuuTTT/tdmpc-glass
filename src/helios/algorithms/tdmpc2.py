@@ -125,6 +125,61 @@ class NormMLP(nn.Module):
         return nn.Dense(self.out)(x)
 
 
+class GroupAttn(nn.Module):
+    """iter-27 arch A/B (attn): group-wise self-attention over SimNorm's V latent
+    groups. The pre-norm latent (latent_dim) is reshaped into V tokens of dim
+    latent_dim//V; a 1-block pre-LN transformer (multi-head attention + gated FFN)
+    lets the V soft-categorical groups exchange information before the simplex
+    projection; then it's flattened back to latent_dim. SimNorm/FSQ is applied by
+    the caller afterward, so the latent geometry is unchanged — only the backbone
+    that produces the pre-norm vector differs from the plain NormMLP. Single-variable
+    swap vs --dyn_arch mlp."""
+
+    V: int = 8
+    heads: int = 4
+
+    @nn.compact
+    def __call__(self, x: jax.Array) -> jax.Array:
+        D = x.shape[-1] // self.V
+        t = x.reshape(x.shape[:-1] + (self.V, D))
+        t = t + nn.MultiHeadDotProductAttention(num_heads=self.heads)(nn.LayerNorm()(t))
+        r = nn.LayerNorm()(t)
+        t = t + nn.Dense(D)(nn.silu(nn.Dense(2 * D)(r)))
+        return t.reshape(x.shape)
+
+
+class ResGatedMLP(nn.Module):
+    """iter-27 arch A/B (resmlp): deeper gated-residual backbone replacing the plain
+    NormMLP. Project to `width`, then `blocks` pre-LN gated residual blocks
+    (SiLU(Dense) * sigmoid(Dense) gate, residual-added), final linear to `out`. More
+    depth + gating than the 2-layer NormMLP at a comparable width. Single-variable
+    swap vs --dyn_arch mlp."""
+
+    width: int
+    out: int
+    blocks: int = 4
+
+    @nn.compact
+    def __call__(self, x: jax.Array) -> jax.Array:
+        h = nn.Dense(self.width)(x)
+        for _ in range(self.blocks):
+            r = nn.LayerNorm()(h)
+            a = nn.silu(nn.Dense(self.width)(r))
+            g = nn.sigmoid(nn.Dense(self.width)(r))
+            h = h + a * g
+        return nn.Dense(self.out)(h)
+
+
+def _arch_backbone(arch: str, x: jax.Array, hidden, latent_dim: int, V: int) -> jax.Array:
+    """iter-27: produce the pre-norm latent vector via the chosen backbone. Used by
+    Encoder/Dynamics/JumpyDynamics so the arch swap is a one-line branch each."""
+    if arch == "resmlp":
+        return ResGatedMLP(hidden[0], latent_dim)(x)
+    if arch == "attn":
+        return GroupAttn(V)(NormMLP(hidden, latent_dim)(x))
+    return NormMLP(hidden, latent_dim)(x)
+
+
 def fsq(x: jax.Array, levels: int = 5) -> jax.Array:
     """iter-16: Finite Scalar Quantization latent bound (DC-MPC-style discrete
     codes, table-free). tanh-bound each dim, round to `levels` uniform values in
@@ -144,10 +199,11 @@ class Encoder(nn.Module):
     V: int = 8
     latent_norm: str = "simnorm"  # iter-16: "simnorm" | "fsq"
     fsq_levels: int = 5
+    arch: str = "mlp"  # iter-27: "mlp" | "attn" | "resmlp"
 
     @nn.compact
     def __call__(self, obs: jax.Array) -> jax.Array:
-        h = NormMLP(self.hidden, self.latent_dim)(obs)
+        h = _arch_backbone(self.arch, obs, self.hidden, self.latent_dim, self.V)
         if self.latent_norm == "fsq":
             return fsq(h, self.fsq_levels)
         return simnorm(h, self.V)
@@ -161,10 +217,13 @@ class Dynamics(nn.Module):
     V: int = 8
     latent_norm: str = "simnorm"  # iter-16: "simnorm" | "fsq"
     fsq_levels: int = 5
+    arch: str = "mlp"  # iter-27: "mlp" | "attn" | "resmlp"
 
     @nn.compact
     def __call__(self, z: jax.Array, a: jax.Array) -> jax.Array:
-        h = NormMLP(self.hidden, self.latent_dim)(jnp.concatenate([z, a], -1))
+        h = _arch_backbone(
+            self.arch, jnp.concatenate([z, a], -1), self.hidden, self.latent_dim, self.V
+        )
         if self.latent_norm == "fsq":
             return fsq(h, self.fsq_levels)
         return simnorm(h, self.V)
@@ -179,11 +238,15 @@ class JumpyDynamics(nn.Module):
     latent_dim: int
     hidden: tuple[int, ...] = (512, 512)
     V: int = 8
+    arch: str = "mlp"  # iter-27: "mlp" | "attn" | "resmlp"
 
     @nn.compact
     def __call__(self, z: jax.Array, a_concat: jax.Array) -> jax.Array:
         return simnorm(
-            NormMLP(self.hidden, self.latent_dim)(jnp.concatenate([z, a_concat], -1)), self.V
+            _arch_backbone(
+                self.arch, jnp.concatenate([z, a_concat], -1), self.hidden, self.latent_dim, self.V
+            ),
+            self.V,
         )
 
 
