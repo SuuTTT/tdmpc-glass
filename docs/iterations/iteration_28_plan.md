@@ -71,3 +71,11 @@ just traded off against the consistency the planner needs (hence the return regr
   hurts (1627/900); jum/attn helps vs noisy baseline.
 - Generality: value_probe running on a CheetahRun (DMC locomotion) jumpy ckpt — does value-sufficiency
   hold beyond Panda manipulation? (result next harvest).
+
+## JUMPY GENERALIZATION firming (2026-06-10, Panda suite @≥450k, MPPI)
+jumpy vs vanilla FINAL return: Pick 2458 vs 1238 (+99%, n=2), Ori 2170 vs 982 (+121%, n=1),
+Cab 1261 vs 596 (+112%, n=1). Jumpy SUSTAINS final return where vanilla degrades, across all 3
+Franka tasks; PEAK is mixed (jum wins Pick peak, ~ties Ori, loses Cab peak). The jumpy-WM win
+(prior art, Farebrother 2026) GENERALIZES across the manipulation suite on final return. n building to 5.
+Note: jumpy final (2458) > resmlp final (1561) on Pick → resmlp beats MLP but not jumpy; the open
+question = does resmlp help ON TOP of jumpy (jum/resmlp vs jum/mlp, ti27a2_jum_resmlp_* queued).
