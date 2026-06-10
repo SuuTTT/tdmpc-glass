@@ -28,23 +28,30 @@ tags: ["tdmpc2", "glass-jax", "structural-entropy", "world-models", "jumpy-model
 The [previous post](/projects/2026-05-27-tdmpc-glass-iterations-8-9/) ended on a hopeful note — "Glass
 off-at-1M beats our internal TD-MPC2 mean on HopperHop, 5-seed confirmations continuing." Here is the
 honest closure of that thread: **under a fair, single-variable, adequately-powered protocol, Glass does
-not beat TD-MPC2.** Per-task-normalized IQM over five DMC tasks, with 95% bootstrap CIs:
+not beat TD-MPC2.**
 
-We report **both** metrics this project lives by — best/peak (best checkpoint per seed) and final (last-2
-evals) — so no one can object that the null is a reporting artifact:
+We report **absolute** returns (not normalized — a reviewer rightly pushed back that per-task-max
+normalization compresses everything toward 1.0 and hides the scale) on the five shared DMC tasks, both
+final (last-2 eval) and best/peak, mean ± 95% bootstrap CI:
 
-| arm | best (peak) IQM, 95% CI | final IQM, 95% CI |
-|---|---|---|
-| vanilla TD-MPC2 (n=37) | 0.944 [0.919, 0.965] | 0.950 [0.922, 0.968] |
-| geometric Glass (n=16) | 0.965 [0.925, 0.989] | 0.940 [0.851, 0.992] |
-| behavioral Glass (n=34) | 0.972 [0.953, 0.986] | 0.970 [0.952, 0.984] |
+| task | vanilla final [CI] | behavioral Glass final [CI] | vanilla peak | behav peak |
+|---|---|---|---|---|
+| FingerSpin | 922 [861, 973] | 983 [974, 987] | 937 | 989 |
+| WalkerWalk | 973 [971, 975] | 965 [964, 966] | 982 | 975 |
+| CheetahRun | 707 [679, 732] | 717 [695, 736] | 736 | 757 |
+| WalkerRun | 676 [632, 704] | 674 [585, 724] | 702 | 720 |
+| AcrobotSwingup | 323 [308, 354] | 343 [340, 346] | 366 | 419 |
 
-![TD-MPC-Glass does not beat TD-MPC2 on peak OR final: IQM ± 95% CI, all arms overlap](/images/glass_vs_tdmpc2_null.png)
+![TD-MPC-Glass does not beat TD-MPC2: absolute per-task return, mean ± 95% CI, arms overlap on every task](/images/glass_vs_tdmpc2_null.png)
 
-On **both** peak and final, all three intervals **overlap** vanilla — no arm is statistically separated.
-The behavioral arm's +0.02–0.03 nominal edge sits inside the noise on either metric (and, as Part 1's §5
-showed, its per-snapshot estimate wandered to *both* sides of baseline as seeds accumulated). The hopeful
-HopperHop "win" was **basin-lottery**: under
+The scale is now honest: FingerSpin/WalkerWalk are **near-saturated** (~950–980), CheetahRun/WalkerRun
+mid (~700), AcrobotSwingup hard (~330). On **both** metrics the arms **overlap on every task** — Glass
+wins nowhere consistently. (Its only nominal edge is FingerSpin, a near-ceiling task where both arms are
+≈1000 and the CIs still touch; meanwhile vanilla edges it on WalkerWalk — i.e. noise, not a win.) Two
+honest consequences of this table, which a reviewer flagged: (i) **these DMC tasks are weak
+discriminators** — they either saturate (~1000) or, in their sparse variants, floor at 0 — so they can't
+separate methods; we move future evaluation to **graded manipulation** (PandaPickCube & friends, §12).
+(ii) The hopeful HopperHop "win" from the last post was **basin-lottery**: under
 the clean protocol neither Glass nor vanilla entered the high-reward basin (best 323 vs 286), so the earlier
 edge came from restarts/seed-luck, not the representation.
 
@@ -358,6 +365,100 @@ Honestly:
 Bottom line: a credible, honest **negative-results-with-methodology** paper, not a SOTA claim. Whether
 that's worth writing up depends on appetite for the negative-results genre — but the data and the
 discipline behind it are solid.
+
+## 11. Q&A (from a supervisor review)
+
+**Q1 — What are the five tasks in §0, and why are the normalized numbers so high? Is one of them Hopper?**
+The five are CheetahRun, WalkerRun, FingerSpin, AcrobotSwingup, WalkerWalk — *not* Hopper (HopperHop is
+bimodal 0/~500 and only had two arms, so it was excluded). The originally-high (~0.95) numbers were an
+artifact of **normalizing per-task by the best score in the study**, which pins every arm near 1.0 and
+hides the scale. §0 now shows **absolute** returns: FingerSpin/WalkerWalk are near-saturated (~950–980),
+Cheetah/Walker mid (~700), Acrobot hard (~330). The conclusion (arms overlap, no Glass win) is unchanged;
+the lesson is that several of these tasks are **near-ceiling and therefore weak discriminators** — which is
+half the motivation for moving to manipulation (§12).
+
+**Q2 — What is the current TD-MPC2 architecture, and would a transformer be better?**
+All-MLP: `NormMLP` blocks (Dense→LayerNorm→SiLU) for the encoder, latent dynamics, reward head, twin-Q
+ensemble, and policy; 512-d latent with **SimNorm** (8 softmax groups), 101-bin two-hot value, MPPI
+planning over the 1-step latent. No recurrence, no attention. Would a transformer help? For
+**single-task, proprioceptive** control, probably not much: the latent is Markovian (no history to attend
+over), and the empirical bottleneck is the simulator + dispatch latency and the *sufficient-abstraction
+ceiling*, not MLP capacity (TD-MPC2 scales to a 317M-param MLP across 80 tasks). Transformers earn their
+keep in **pixel/token world models** (IRIS, TWM, TAP), **long-memory** tasks, and **massively multi-task**
+settings. That said, it's cheap to falsify and worth one clean A/B — see §12.
+
+**Q3 — Jumpy world model: motivation, our implementation, Meta's, and the difference?**
+*Motivation:* a longer planning horizon helps when reward is beyond a short planner's reach, but rolling
+the 1-step model deep **compounds error** (vanilla H9 collapses on Panda). A k-step head predicts
+\(z_{t+k}\) in one shot → long *effective* horizon (\(k\cdot n_{\text{macro}}\)) with few model applies.
+*Ours:* a **deterministic** k-step latent head \(d_k(z_t,a_{t:t+k})\to z_{t+k}\) (an MLP on the
+concatenation, SimNorm output), trained with k-step consistency + a horizon-consistency term
+\(\lVert d(z,a,2k)-d(d(z,a,k),a,k)\rVert^2\) + a macro-reward head; planned by **macro-MPPI** inside online
+TD-MPC2. *Meta's (Farebrother et al., 2026):* jumpy models on **Temporal-Difference Flows** — they learn the
+**discounted occupancy / successor measure** at multiple timescales (a distribution, not a point latent),
+with a cross-timescale consistency objective, and use it for **zero-shot composition of pre-trained
+policies**. *Difference:* point-latent vs occupancy-measure; **MPC planning** vs **policy composition**;
+online vs offline. The *concept* (multi-step prediction + cross-timescale consistency) is theirs; our
+realization is a simpler latent head for online control — an instantiation, not a new mechanism.
+
+**Q4 — DreamerV3 vs TD-MPC2?**
+Dreamer learns a **recurrent** state-space model (RSSM: GRU + stochastic categorical latents) with a
+reconstruction objective and trains an actor-critic **purely in imagination** (no test-time planning),
+with robustness tricks (symlog, two-hot, free-bits, percentile return norm) so one config spans many
+domains. TD-MPC2 learns a **deterministic, self-predictive** latent (no reconstruction) and does
+**test-time MPPI planning** plus a TD-learned value and policy prior. Practically: Dreamer shines on
+**pixel/game** benchmarks; TD-MPC2 on **continuous control / proprioception**. (Which is exactly why we
+should test on robotics-flavored manipulation, not game-like envs — Q7.)
+
+**Q5 — What did "temporal abstraction" mean in the SE-shaped SimNorm idea, and isn't that just Glass with
+another loss + a sparsified graph?**
+Yes — and that's the right criticism, so we're **dropping it**. The proposal would have built a sparsified
+latent **transition graph**, minimized its 2-D structural entropy, and added that as an **encoder loss** to
+*shape* the latent into macro-timescale regions. That is the Glass recipe again, and Glass was null because
+the structure it imposes is redundant with SimNorm + the consistency loss. Re-adding an SE loss is
+low-expected-value. The only SE direction we still consider worthwhile is **analysis/interpretability**
+(measuring what the latent encodes), not a control objective.
+
+**Q6 — If "motion phase" structure is useless, what abstraction *is* useful for control, and how do you
+find it?**
+The useful axis is **reward/value-equivalence (π\*-bisimulation)**: aggregate states that require the
+**same action / share the same value**, not states that merely look or move similarly. Motion phases fail
+because they describe *what the dynamics do*, not *what to do*. You **find** such an abstraction by training
+it to **preserve a control-relevant quantity** (Q, return, or the optimal action) and validating that it
+*predicts value better* — not that it clusters states. That is exactly our **value-equivalent macro head**
+(probe #2): train \(d_k\) so the predicted latent preserves \(V=\min\text{-}Q(z,\pi(z))\), not the full
+state. The honest catch: TD-MPC2's value loss already does this *implicitly*, so the open question is
+whether an **explicit** value-equivalence objective helps where the implicit one is capacity-limited —
+**distractors** and **transfer**. (The other genuinely-useful family is **reusable action/temporal
+abstractions for multi-task transfer**, again defined by the task, not the data geometry.)
+
+**Q7 — Shouldn't we focus on PandaPickCube? DMC tasks aren't ideal (either ~1000 or 0; not real envs;
+Dreamer is good on games but bad on real robotics).**
+Agreed, and it's the strongest strategic point. The §0 table makes it concrete: DMC tasks **saturate or
+floor**, so they can't separate methods (a method can only "win" in the narrow band where vanilla is
+neither solved nor stuck). Manipulation (PandaPickCube and the Franka/MJX suite) is **graded,
+contact-rich, and closer to real robotics** — and it is where our one real result (jumpy) lives. We are
+refocusing evaluation there (§12).
+
+## 12. Plan / TODO (next)
+
+**A. Re-benchmark every method on a manipulation suite — done right.** Mujoco-Playground manipulation
+tasks available: **PandaPickCube, PandaPickCubeCartesian, PandaPickCubeOrientation, PandaOpenCabinet,
+PandaRobotiqPushCube** (+ harder: AlohaHandOver, AlohaSinglePegInsertion, LeapCubeReorient). Run
+vanilla / behavioral-Glass / jumpy / value-equivalent / (RND) across this suite under the lessons we paid
+for: single-variable, compute-matched, **peak AND final**, **mechanism-check before fan-out**, n≥5 with
+bootstrap CI, no procedure tricks, read ≥400k. Graded contact tasks should actually *discriminate*.
+**B. Make value-equivalence the lead control-useful lever** (Q6): finish probe #2's gate on
+**manipulation + distractor-manipulation** (not DMC), where the value-vs-state distinction should bite.
+**C. Re-confirm the jumpy win on the broader Panda suite** — does the +44% peak / +80% final on
+PandaPickCube generalize across Franka tasks, or is it cube-pick-specific?
+**D. Architecture A/B (worth trying, per review):** swap the TD-MPC2 MLP for an alternative backbone —
+e.g. a small **transformer/attention** dynamics head, or a deeper residual/gated MLP — single-variable vs
+the MLP on the Panda suite. Honest prior is modest for single-task proprio, but it's cheap to falsify and
+the one place added *capacity* (not added *abstraction*) might move the sufficient-abstraction ceiling.
+**E. Drop** SE-shaped SimNorm (Glass-again, Q5); keep SE only as an interpretability lens.
+**F. Hygiene:** retire the saturated/sparse DMC suite to sanity-check status; standardize the manipulation
+benchmark + seeds so every future probe reports on the same graded tasks.
 
 ---
 
