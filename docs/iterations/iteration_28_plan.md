@@ -51,3 +51,9 @@ jumpy baseline on peak AND final (best case 0.05 ties peak, loses final). Confir
 planner needs). n=1/coef (seed0) — direction unambiguous, not worth more compute. Both value-organized
 levers (value-equivalence + value-criticality) now closed; the win-path is exhausted → understanding paper
 is the output, graph-WM+SE the sequel.
+
+## VE LATENT PROBE (ve01 ckpt, 2026-06-10): value_irrelevant_frac 0.978(selfpred)→0.953(ve), linR2=1.0
+The value-equivalence loss barely reorganized the latent (95% still value-irrelevant variance) and value
+stays perfectly linearly decodable (R²=1.0) — i.e. VE didn't even meaningfully change the representation,
+let alone help. Mechanistic confirmation of the null: the latent was already value-sufficient; the VE term
+just traded off against the consistency the planner needs (hence the return regression).
