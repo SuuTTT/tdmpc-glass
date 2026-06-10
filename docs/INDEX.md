@@ -15,6 +15,9 @@ three canonical docs below win.*
 - [operations/experiment_ops.md](operations/experiment_ops.md) — general experiment runbook
 - [operations/env_setup.md](operations/env_setup.md) · [operations/hardware_req.md](operations/hardware_req.md) · [operations/storageAWS.md](operations/storageAWS.md) · [operations/data_corruption_fix.md](operations/data_corruption_fix.md) · [operations/fleet_rebuild_recovery_codex.md](operations/fleet_rebuild_recovery_codex.md)
 
+## Engineering
+- [REFACTOR_PLAN.md](REFACTOR_PLAN.md) — Phase 1 done (dead-code + docs); Phase 2 hot-path dedup deferred to campaign boundary.
+
 ## Scientific write-ups
 - [writeup/capstone.md](writeup/capstone.md) — campaign overview ("8 mirages, 1 borrowed win")
 - [writeup/draft.md](writeup/draft.md) — "Six Mirages" paper draft
