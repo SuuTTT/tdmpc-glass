@@ -1,1 +1,4 @@
 step,reward,eval_type,seed
+50176,515.9,pi,1
+50176,617.3,mppi,1
+50176,1751.7,jumpy,1
