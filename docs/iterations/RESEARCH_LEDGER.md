@@ -29,6 +29,7 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 
 | 12 | **SI2E / VCSE SE-exploration** (value-conditional kNN entropy + cluster term) | 24 | NULL: no rescue of sparse Cart/Acro beyond vanilla; doesn't beat RND (all 0/n); at coef 1.0 mildly HURTS (best seeds < vanilla) |
 | 13 | **wmsi2e — SE-exploration over the WORLD-MODEL latent (the novel bet)** | 24 | NULL: ties si2e at 0/n; WM-latent + critic-value conditioning adds nothing over random-encoder SI2E or RND. 3rd exploration null (after community-skills, Laplacian) |
+| 14 | **Value-equivalence loss** (jumpy macro-model preserves return not state) | 26-28 | NULL: mechanism-check says latent already value-sufficient (linear V-decode R²=0.9994); coef sweep {0.05,0.1,0.2,0.5} never beats jumpy baseline, monotone harm |
 
 **Root cause for #10–11 (and the whole adaptive-k family):** the trained jumpy model is **uniformly
 accurate** over the states/actions a near-optimal policy visits — which is exactly why fixed-k jumpy

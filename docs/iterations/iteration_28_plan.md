@@ -37,3 +37,17 @@ Honest prior: low (mechanism-check predicts redundant/neutral-at-best).
 The analysis/understanding paper ("a strong self-predictive WM is already value-sufficient — why 13
 explicit-abstraction levers were redundant") is the ICLR-viable output; the only remaining headroom the
 theory permits is high-DoF (more value-irrelevant capacity), gated by a high-DoF value_probe before any big-budget run.
+
+## COEF SWEEP RESULT (2026-06-10, read from ssh7 CSVs, PandaPickCube seed0 MPPI)
+| coef | peak | final | vs vebase(2692/2243) |
+|---|---|---|---|
+| 0.05 | 2752 | 1939 | peak ~tie, final −304 |
+| 0.1  | 2638 | 2118 | peak −54, final −125 |
+| 0.2  | 2084 | 1930 | both worse |
+| 0.5  | 1616 | 916  | much worse |
+**VERDICT: value-equivalence lever CLOSED = NULL.** Monotone degradation with coef; no coef beats the
+jumpy baseline on peak AND final (best case 0.05 ties peak, loses final). Confirms the iter-28 mechanism-check
+(latent already value-sufficient, linear V-decode R²=0.9994 → VE redundant; trades off vs consistency the
+planner needs). n=1/coef (seed0) — direction unambiguous, not worth more compute. Both value-organized
+levers (value-equivalence + value-criticality) now closed; the win-path is exhausted → understanding paper
+is the output, graph-WM+SE the sequel.
