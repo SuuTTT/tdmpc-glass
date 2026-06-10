@@ -65,3 +65,7 @@ van solve-rate: Cart 1/5 (m195), Ball 4/5 (m754), Acro 0/5 (m21).
 BallInCup (4/5) nearly saturated, least useful. The gate hinges on Acro+Cart: can rnd/vcse/si2e/wmsi2e
 solve MORE seeds than van (0/5 Acro, 1/5 Cart)? New arms still immature (seed-0 just launched seed-major).
 rnd Cart seed0 final=2 (no reward, like a typical van seed). No comparison yet. 8 boxes busy, 0 failures.
+
+### tick ~23:10Z: new arms n=1 (uninformative yet). done: van15 rnd3 vcse2 si2e1, 0 failures.
+Early (n=1, NOT a verdict): on discriminators all new-arm seed0 = 0 solve (Cart/Acro), == typical van seed.
+rnd Ball 1/1(485), vcse Ball 0/1(361). Need n>=3/arm for solve-rate signal (~2-3 ticks out, seed-major).
