@@ -79,3 +79,18 @@ Franka tasks; PEAK is mixed (jum wins Pick peak, ~ties Ori, loses Cab peak). The
 (prior art, Farebrother 2026) GENERALIZES across the manipulation suite on final return. n building to 5.
 Note: jumpy final (2458) > resmlp final (1561) on Pick → resmlp beats MLP but not jumpy; the open
 question = does resmlp help ON TOP of jumpy (jum/resmlp vs jum/mlp, ti27a2_jum_resmlp_* queued).
+
+## ARCH A/B VERDICT (2026-06-10, PandaPickCube @≥450k, n=2 each) — resmlp NULL (mirage)
+| config | peak | final |
+|---|---|---|
+| van/mlp    | 1925 | 1238 |
+| van/resmlp | 2699 | 1561 |
+| jum/mlp    | 2645 | 2319 |  ← BEST
+| jum/resmlp | 1796 | 1381 |
+**resmlp helps the WEAK vanilla baseline (+40%/+26%) but HURTS the strong jumpy model
+(jum/resmlp 1796/1381 ≪ jum/mlp 2645/2319). attn likewise: van/attn 1627/900 < mlp, jum/attn
+2081/1184 < jum/mlp.** Neither backbone improves the best config → NOT a real architecture win;
+best config stays jum/mlp. Classic "helps weak baseline, not the strong one" mirage. n=2 caveat but
+the jum/resmlp gap (~−850 final) is far beyond noise. The arch lever is closed; the campaign's only
+win remains the (prior-art) jumpy WM. Lesson reaffirmed: always test a lever against the STRONGEST
+config, not the weak baseline (this is why the resmlp lead looked real for 3 harvests).

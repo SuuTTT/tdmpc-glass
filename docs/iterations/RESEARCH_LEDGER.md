@@ -16,6 +16,7 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 | # | lever | iter | why it died |
 |---|---|---|---|
 | 1 | Geometric prototype clustering (structural-entropy Glass) | 14 | redundant with SimNorm's soft-categorical latent (IQM 0.748 vs 0.738, overlap) |
+| 15 | **Alt dynamics backbone** (resmlp gated-residual / attn over SimNorm groups) | 27-28 | NULL/mirage: resmlp beats MLP on weak vanilla (+40%/26%) but HURTS strong jumpy (jum/resmlp 1796/1381 ≪ jum/mlp 2645/2319); attn also < jum/mlp. Best config stays jum/mlp. Helps-weak-baseline-only effect |
 | 2 | Behavioral / reward-grounded clustering | 14 | null at n=34; gain crossed CI-separation 3× then settled in overlap |
 | 3 | Bisimulation auxiliary (BS-MPC style) | 14 | actively hurts (0.549); brittle to coef; **failed twice** |
 | 4 | Distractor robustness from abstraction | 14 | falsified (1.23× < 1.5× gate); both encoders crushed equally |
