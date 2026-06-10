@@ -1,6 +1,9 @@
 import flax.linen as nn
 import jax.numpy as jnp
-import distrax
+# NOTE: distrax is imported lazily inside the PPO actor-critic classes below.
+# The Dreamer/transformer-WM path imports MLP/NormedLinear from this module but
+# does NOT use distrax (it uses helios.core.distributions); a top-level distrax
+# import would crash those paths on workers without distrax installed.
 
 class ActorCritic(nn.Module):
     action_dim: int
@@ -22,6 +25,7 @@ class ActorCritic(nn.Module):
         actor = nn.Dense(64, kernel_init=nn.initializers.orthogonal(jnp.sqrt(2)))(actor)
         actor = nn.tanh(actor)
         logits = nn.Dense(self.action_dim, kernel_init=nn.initializers.orthogonal(0.01))(actor)
+        import distrax
         pi = distrax.Categorical(logits=logits)
         
         return pi, jnp.squeeze(value, axis=-1)
@@ -45,6 +49,7 @@ class ContinuousActorCritic(nn.Module):
         action_mean = nn.Dense(self.action_dim, kernel_init=nn.initializers.orthogonal(0.01))(actor_mean)
 
         actor_logtstd = self.param('log_std', nn.initializers.zeros, (self.action_dim,))
+        import distrax
         pi = distrax.Normal(loc=action_mean, scale=jnp.exp(actor_logtstd))
         
         return pi, jnp.squeeze(value, axis=-1)

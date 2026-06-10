@@ -320,9 +320,9 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei27a_van_resmlp DYN_ARCH=resmlp MPPI_H=3 SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCube MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27arch XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "running",
+    "status": "done",
     "created_at": "2026-06-10T11:05:00Z",
-    "ended_at": null,
+    "ended_at": "2026-06-10T17:42:16Z",
     "note": "arch A/B discriminating-task-first (van/resmlp); full 4-task fanout GATED on Pick signal vs mlp",
     "box": "ssh9_a4000",
     "started_at": "2026-06-10T15:52:30Z",
@@ -362,10 +362,13 @@
     "launcher": "scripts/run_dmc_baseline.sh",
     "env": "PROBE_ID=phasei27a_jum_resmlp DYN_ARCH=resmlp JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCube MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i27arch XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "priority": 0,
-    "status": "pending",
+    "status": "running",
     "created_at": "2026-06-10T11:05:00Z",
     "ended_at": null,
-    "note": "arch A/B discriminating-task-first (jum/resmlp); full 4-task fanout GATED on Pick signal vs mlp"
+    "note": "arch A/B discriminating-task-first (jum/resmlp); full 4-task fanout GATED on Pick signal vs mlp",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-10T17:42:16Z",
+    "launched_git_sha": "1659281"
   },
   {
     "id": "ti27a_van_attn_Pick0",
