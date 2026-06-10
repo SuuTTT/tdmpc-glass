@@ -100,3 +100,19 @@ wmsi2e) does NOT rescue sparse TD-MPC2 beyond RND/vanilla. The WM-latent novelty
 
 ### VERDICT CONFIRMED stable (n=4-6/arm): rnd Cart0/6 Acro0/4, vcse/si2e/wmsi2e Cart0/4 Acro0/3-4. NULL holds.
 Re-queued dropped BallInCup (fleet-fill, proven, completes 5x3 dataset for writeup). No scientific change.
+
+## CLOSING TABLE (2026-06-10, campaign complete, 75/75, 0 failures) — NULL (and worse: intrinsic HURTS)
+solve-rate (#solved>400 / n mature @>=400k, best):
+  arm     Cart        Ball        Acro
+  van     1/5(768)    4/5(975)    0/5(66)
+  rnd     0/7(147)    3/4(485)    0/6(0)
+  vcse    0/5(2)      2/5(403)    0/5(22)
+  si2e    0/5(2)      0/3(1)      0/5(0)
+  wmsi2e  0/4(1)      0/3(0)      0/4(6)
+VERDICT: no intrinsic rescues the discriminators (Cart/Acro); ALL fail. Stronger finding: on the EASY task
+(Ball, van 4/5) the cluster-term arms si2e/wmsi2e COLLAPSE to 0/3 -> the SE intrinsic at coef=1.0 actively
+DEGRADES, not just fails to help. Ladder: rnd > vcse > si2e ~ wmsi2e (more SE = more harm). The novel
+world-model-latent wmsi2e adds NOTHING over random-encoder si2e (both broken). value-conditioning (vcse)
+least harmful but still no rescue. => SE-driven exploration is a clean NULL/negative on TD-MPC2 sparse.
+Caveat unchanged: coef=1.0 may be too strong (even RND degraded on Cart vs iter-21); a coef sweep is the
+only untested knob but expected value is low (4th SE-related null). Campaign DONE; fleet idle for user.
