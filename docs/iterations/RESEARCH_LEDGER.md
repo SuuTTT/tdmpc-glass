@@ -43,6 +43,28 @@ already works, and why adaptive jump-length has nothing to adapt to.
 **Cross-cutting lesson:** a strong self-predictive world model (TD-MPC2 + SimNorm) is a high bar; most
 "abstraction" is redundant with what it already learns ([Ni et al. 2024] sufficient-abstraction theory).
 
+### 2026-06-11 — VG-SE mechanism-check (entity-graph class, synthetic instrument-validation)
+Built a controlled synthetic multi-entity world (`src/helios/envs/synthetic_entities.py`) whose
+ground-truth value-coupling is KNOWN by construction: reward `= -‖p0-p1‖ - w‖p2-p3‖`, so the value
+couples ONLY pairs {(0,1),(2,3)}. Trained a flat entity-transformer WM (`entity_wm.py`) and probed
+whether a **value-coupling graph** (`w_ij = E‖∂²reward/∂s_i∂s_j‖_F`, the cross-Hessian — also Q head)
+recovers the known pairs vs a label-shuffle null and vs a similarity/attention graph
+(`scripts/value_coupling_probe.py`; results `exp/synthetic_gate/gate0b_vcoupling.json`).
+**NO-GO (in-distribution, with a NEAR-PERFECT reward fit, reward_loss=0.0026):** value-coupling
+AP=0.500, z=−0.08 over null (= chance; chance_AP=0.33); Q-head identical; **similarity AP=0.750 (z=1.38)
+and attention AP=0.750 (z=1.42) BEAT it** (value−similarity AP = −0.25). Even the winners are not
+significant (z<3; only 6 pairs at N=4). Mechanism: the transformer computes the correct reward but
+routes the dependence through attention-mixing + mean-pool, so the cross-Hessian reflects computational
+mixing, not semantic coupling. **This is the 3rd redundancy data point (entity-graph), and the cleanest:
+the structure provably EXISTS yet the instrument can't expose it.** Honest caveats: (a) the *input
+cross-Hessian* operationalization — the proposal's literal form was message-level (|∂Q/∂message_ij|);
+the closest proxy tested (attention graph) is also non-significant, but a true attention-EDGE ABLATION
+(zero edge i-j, measure Δreward) needs model surgery and is UNTESTED; (b) OOD-by-distractor is confounded
+(reward depends on fixed indices → model needs id-embeddings → OOD slots have untrained embeddings), so
+only the in-dist result is confound-free; (c) synthetic, small WM, single seed. Decision pending user:
+pursue the attention-ablation operationalization, or fold this in as the entity-graph NO-GO and finalize
+the principle paper.
+
 ## 🔭 WHAT'S PROMISING (untested; NOT killed by the uniform-error finding)
 - **Hermite-spline action bottleneck** (Gemini DR): macro-action = target (q,v), cubic-Hermite interp +
   PD tracker. Shrinks MPPI search dim \(k\cdot d \to 2d\); **no learned codec → no online repr-shift**

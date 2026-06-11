@@ -1,0 +1,76 @@
+{
+  "tag": "gate0",
+  "config": {
+    "n_train": 4,
+    "n_ood": [
+      6,
+      8
+    ],
+    "steps": 3000,
+    "episodes": 256,
+    "ep_len": 100,
+    "seed": 0,
+    "batch": 256,
+    "lr": 0.0003,
+    "d_model": 64,
+    "n_layers": 2,
+    "n_heads": 4
+  },
+  "train_metrics": {
+    "loss": 29.839963912963867,
+    "q_loss": 29.502138137817383,
+    "reward_loss": 0.27638840675354004,
+    "self_loss": 0.06143748760223389
+  },
+  "probe_value_decodability": {
+    "4": {
+      "r2_latent": 0.9612039269060905,
+      "r2_raw_obs": 0.6226397714627729,
+      "n_samples": 25600,
+      "value_relevant_entities": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "value_pair": [
+        2,
+        3
+      ],
+      "coupling_nnz": 6
+    },
+    "6": {
+      "r2_latent": 0.9241479043715759,
+      "r2_raw_obs": 0.565848695160115,
+      "n_samples": 25600,
+      "value_relevant_entities": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "value_pair": [
+        2,
+        3
+      ],
+      "coupling_nnz": 6
+    },
+    "8": {
+      "r2_latent": 0.9361390848321358,
+      "r2_raw_obs": 0.7171136476804134,
+      "n_samples": 25600,
+      "value_relevant_entities": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "value_pair": [
+        2,
+        3
+      ],
+      "coupling_nnz": 20
+    }
+  },
+  "wall_time_sec": 117.15958762168884
+}
