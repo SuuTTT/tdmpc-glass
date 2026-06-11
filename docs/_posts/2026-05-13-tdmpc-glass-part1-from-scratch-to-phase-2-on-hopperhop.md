@@ -1034,3 +1034,6 @@ Equations follow the canonical compact form of 2D structural entropy
 The implementation uses \(\log_2\) throughout and clamps \(p_{\text{vol}}\) and
 \(d_i/2m\) to \([\varepsilon, 1]\) before the log to keep gradients finite at
 the uniform boundary.
+
+
+{% include mathjax.html %}

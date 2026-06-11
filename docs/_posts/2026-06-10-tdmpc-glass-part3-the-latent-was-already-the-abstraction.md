@@ -286,3 +286,6 @@ under `exp/tdmpc_glass/`; iteration records in `docs/iterations/` (iter-26 value
 value-organized mechanism-check); campaign verdicts in `docs/iterations/RESEARCH_LEDGER.md`; the SimNorm
 structural-entropy retrospective in `docs/analysis/why-glass-failed-simnorm-redundancy.md`. All numbers are
 read from run CSVs / probe JSON, not notebooks — verification discipline, the hard way.*
+
+
+{% include mathjax.html %}

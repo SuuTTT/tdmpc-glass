@@ -461,3 +461,6 @@ benchmark + seeds so every future probe reports on the same graded tasks.
 CSVs under `exp/tdmpc_glass/`; iteration records in `docs/iterations/` (iter-22 jumpy, iter-23 adaptive-k null, iter-24 SE-exploration
 null, iter-25 spline, iter-26 value-equiv); SE pre-check `scripts/se_precheck.py`; CI figure from per-seed CSVs; campaign capstone in `docs/writeup/capstone.md`. All numbers are read from run CSVs, not
 notebooks — verification discipline, the hard way.*
+
+
+{% include mathjax.html %}
