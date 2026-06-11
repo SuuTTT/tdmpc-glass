@@ -40,8 +40,11 @@ BOXES = [
     # (fast-failed every task incl. all geoglass/behavglass arms). User reclaiming it
     # for another project; tdmpc files/env cleared. Do NOT re-add.
     # ("ssh5_3060",     24701,  "ssh5.vast.ai",   0),
-    ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),  # rented 2026-06-02; seed3=501 G1 (finishing)
-    ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),  # rented 2026-06-02; seed4=550 G1 (finishing)
+    # DESTROYED 2026-06-11 (fleet right-size, user-authorized): ssh1_a4000b (inst 39016822,
+    # priciest A4000 $0.103/hr), ssh8_a4000 (inst 39039561, only 2 CPU cores), plus the
+    # orphaned ssh3 A4000 (38767427) and three dead boxes (34824701/37906248/36660304).
+    # ("ssh1_a4000b",   16822,  "ssh1.vast.ai",   0),
+    # ("ssh8_a4000",    39560,  "ssh8.vast.ai",   0),
     # ── 1660 Super x2 (inst 38342607, ssh4.vast.ai:22607) — UNSTABLE/flaky, 6GB each.
     # 2026-06-07: silently killed 3/3 long runs (iter-15 seed1 @496k, both iter-17
     # BallInCup seeds @~200k — no traceback, GPUs empty). RE-ENABLED same day on user

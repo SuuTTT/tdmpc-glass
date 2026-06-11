@@ -68,15 +68,12 @@ summarize_box() {
 
 while true; do
   # Mirror all remote boxes in parallel for speed. Fleet as of 2026-06-01.
+  # 2026-06-11 fleet right-size: destroyed ssh1_a4000b(16822), ssh8_a4000(39560),
+  # ssh3(17426); dropped ssh1_a4000(24456, user's box) and ssh4_1660s(22607, LTSF).
   sync_box 34217 ssh1.vast.ai          $MIRROR/ssh1_2080ti       &
-  sync_box 24456 ssh1.vast.ai          $MIRROR/ssh1_a4000        &
   sync_box 18950 ssh2.vast.ai          $MIRROR/ssh2_a4000        &
-  sync_box 17426 ssh3.vast.ai          $MIRROR/ssh3_a4000        &
   sync_box 31740 ssh6.vast.ai          $MIRROR/ssh6_titanv       &
   sync_box 16690 ssh9.vast.ai          $MIRROR/ssh9_a4000        &
-  sync_box 22607 ssh4.vast.ai          $MIRROR/ssh4_1660s        &
-  sync_box 16822 ssh1.vast.ai          $MIRROR/ssh1_a4000b       &
-  sync_box 39560 ssh8.vast.ai          $MIRROR/ssh8_a4000        &
   sync_box 29168 ssh4.vast.ai          $MIRROR/ssh4_a4000        &
   sync_box 10022 ssh4.vast.ai          $MIRROR/ssh4_a4000b       &
   sync_box 17241 91.150.160.38         $MIRROR/ssh6_3060         &
