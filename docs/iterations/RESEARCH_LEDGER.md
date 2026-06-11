@@ -14,7 +14,7 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 
 
 
-**iter-27/28 update (2026-06-11): jumpy GENERALIZES across the Franka manipulation suite on FINAL return** — PandaPickCube +104% (jum final 2319 vs van 1136), PandaPickCubeOrientation +137% (2323 vs 982), PandaOpenCabinet +112% (1261 vs 596); peak mixed (+32/+4/−30%). The jumpy WM sustains final-return where vanilla degrades, across tasks. n=2-3 (firming to 5). This is the paper's empirical anchor (prior-art method, fair-protocol generalization result).
+**iter-27/28 update (2026-06-11): jumpy GENERALIZES across the Franka manipulation suite on FINAL return** — PandaPickCube +101% (jum final 2319 n=2 vs van 1154 n=4), PandaPickCubeOrientation +75% (2323 n=2 vs van 1329 n=3), PandaOpenCabinet +112% (1261 vs 596, n=1); peak mixed (jum +23/+5/−30%). The jumpy WM sustains final-return where vanilla degrades, robust in DIRECTION across all 3 tasks; MAGNITUDE settles downward as van's n grows (Ori 137%→75% from n=2→3) — n=2-3 now, firming to 5. Honest caveat: jum still lags in seed count (n=2 vs van n=3-4). This is the paper's empirical anchor (prior-art method, fair-protocol generalization result).
 
 ## ❌ WHAT DID NOT WORK (nulls, most→least thoroughly killed)
 | # | lever | iter | why it died |
