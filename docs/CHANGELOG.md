@@ -37,6 +37,16 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   36994217 (2080 Ti, unreachable), 38751740 (Titan V, ckpts rescued). Keepers (~$0.57/hr): ssh7 dev
   5070 Ti, ssh4_a4000 (25 cpu), ssh2/ssh4b/ssh9 A4000s, ssh6_3060.
 
+### 16:50 update
+- **P2 spline mechanism-check: NO-GO at the pre-registered gate** (`spline_mechcheck_PandaPickCube.json`):
+  mean return-preservation 0.364 at knot k=4 (gate ≥0.95); ZOH 0.305; spline adds only +0.06 over ZOH.
+  Expert action L2 deviation ~0.49/step → TD-MPC2's winning Panda actions carry high-frequency content a
+  2d-per-knot bottleneck cannot express open-loop. Caveat (pre-stated): open-loop replay is an upper-bound
+  test; closed-loop spline-MPPI could differ — but per pre-registration, do NOT build. Missing control to
+  add before final write-up: exact-action open-loop replay (isolates reconstruction-error vs chaos).
+- **P1 dumps**: first launch failed on a CLI flag (`--seeds`→`--seed`); relaunched on ssh7.
+- 2080 Ti + Titan V confirmed destroy-ready to user.
+
 ### Verdicts (ledger/paper updated)
 - **Entity-graph NO-GO** (3rd redundancy data point, cleanest): value-coupling cross-Hessian recovers
   known-by-construction pairs at chance (AP 0.50, z −0.08) with near-perfect reward fit (0.0026);

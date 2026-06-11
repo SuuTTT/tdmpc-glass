@@ -1,0 +1,251 @@
+{
+  "probe": "P2 spline mechanism-check (abstraction-axes-plan \u00a7P2 / ledger NEXT PROBES #1)",
+  "config": {
+    "ckpt": "exp/tdmpc_glass/PandaPickCube_phasei26_vebase_PandaPickCube_i26a/seed_1/checkpoints/best_mppi.pkl",
+    "task": "PandaPickCube",
+    "n_ep": 8,
+    "knot_every": [
+      4,
+      8
+    ],
+    "seed": 0,
+    "episode_length": 1000,
+    "latent_dim": 512,
+    "obs_dim": 66,
+    "act_dim": 8,
+    "spline": "cubic Hermite, knot values = recorded actions, Catmull-Rom finite-difference tangents, clipped to [-1,1]",
+    "control": "zero-order hold at the same knot spacing"
+  },
+  "episodes": [
+    {
+      "ep": 0,
+      "T": 1000,
+      "reference_return": 2220.737,
+      "k4": {
+        "spline_return": 928.5215,
+        "zoh_return": 833.0385,
+        "spline_preservation": 0.4181,
+        "zoh_preservation": 0.3751,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.79301,
+        "zoh_l2_per_step": 1.17697
+      },
+      "k8": {
+        "spline_return": 305.2671,
+        "zoh_return": 306.6085,
+        "spline_preservation": 0.1375,
+        "zoh_preservation": 0.1381,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 1.35096,
+        "zoh_l2_per_step": 1.6688
+      }
+    },
+    {
+      "ep": 1,
+      "T": 1000,
+      "reference_return": 1980.8302,
+      "k4": {
+        "spline_return": 351.5646,
+        "zoh_return": 349.4341,
+        "spline_preservation": 0.1775,
+        "zoh_preservation": 0.1764,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.15383,
+        "zoh_l2_per_step": 0.33094
+      },
+      "k8": {
+        "spline_return": 760.6434,
+        "zoh_return": 639.5481,
+        "spline_preservation": 0.384,
+        "zoh_preservation": 0.3229,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.31344,
+        "zoh_l2_per_step": 0.61879
+      }
+    },
+    {
+      "ep": 2,
+      "T": 1000,
+      "reference_return": 2913.8915,
+      "k4": {
+        "spline_return": 1416.2638,
+        "zoh_return": 1667.9469,
+        "spline_preservation": 0.486,
+        "zoh_preservation": 0.5724,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.04043,
+        "zoh_l2_per_step": 0.06919
+      },
+      "k8": {
+        "spline_return": 929.152,
+        "zoh_return": 2672.3982,
+        "spline_preservation": 0.3189,
+        "zoh_preservation": 0.9171,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.06694,
+        "zoh_l2_per_step": 0.11693
+      }
+    },
+    {
+      "ep": 3,
+      "T": 1000,
+      "reference_return": 3472.6378,
+      "k4": {
+        "spline_return": 216.9841,
+        "zoh_return": 164.8243,
+        "spline_preservation": 0.0625,
+        "zoh_preservation": 0.0475,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.06707,
+        "zoh_l2_per_step": 0.09632
+      },
+      "k8": {
+        "spline_return": 93.4121,
+        "zoh_return": 65.719,
+        "spline_preservation": 0.0269,
+        "zoh_preservation": 0.0189,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.10355,
+        "zoh_l2_per_step": 0.15062
+      }
+    },
+    {
+      "ep": 4,
+      "T": 1000,
+      "reference_return": 2693.5409,
+      "k4": {
+        "spline_return": 869.7817,
+        "zoh_return": 743.4972,
+        "spline_preservation": 0.3229,
+        "zoh_preservation": 0.276,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.10743,
+        "zoh_l2_per_step": 0.1759
+      },
+      "k8": {
+        "spline_return": 309.8346,
+        "zoh_return": 398.6879,
+        "spline_preservation": 0.115,
+        "zoh_preservation": 0.148,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.19595,
+        "zoh_l2_per_step": 0.3033
+      }
+    },
+    {
+      "ep": 5,
+      "T": 1000,
+      "reference_return": 2411.7435,
+      "k4": {
+        "spline_return": 667.4099,
+        "zoh_return": 433.2062,
+        "spline_preservation": 0.2767,
+        "zoh_preservation": 0.1796,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.27223,
+        "zoh_l2_per_step": 0.44125
+      },
+      "k8": {
+        "spline_return": 555.5075,
+        "zoh_return": 1821.3785,
+        "spline_preservation": 0.2303,
+        "zoh_preservation": 0.7552,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.46048,
+        "zoh_l2_per_step": 0.70305
+      }
+    },
+    {
+      "ep": 6,
+      "T": 1000,
+      "reference_return": 1179.7644,
+      "k4": {
+        "spline_return": 1146.6334,
+        "zoh_return": 723.0992,
+        "spline_preservation": 0.9719,
+        "zoh_preservation": 0.6129,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.50771,
+        "zoh_l2_per_step": 1.0156
+      },
+      "k8": {
+        "spline_return": 782.6248,
+        "zoh_return": 510.5434,
+        "spline_preservation": 0.6634,
+        "zoh_preservation": 0.4328,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 1.02533,
+        "zoh_l2_per_step": 1.8469
+      }
+    },
+    {
+      "ep": 7,
+      "T": 1000,
+      "reference_return": 2301.8597,
+      "k4": {
+        "spline_return": 459.0801,
+        "zoh_return": 458.0367,
+        "spline_preservation": 0.1994,
+        "zoh_preservation": 0.199,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 2.00636,
+        "zoh_l2_per_step": 2.01773
+      },
+      "k8": {
+        "spline_return": 456.4922,
+        "zoh_return": 464.1125,
+        "spline_preservation": 0.1983,
+        "zoh_preservation": 0.2016,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 2.02976,
+        "zoh_l2_per_step": 2.05668
+      }
+    }
+  ],
+  "summary": {
+    "k4": {
+      "spline_preservation_mean": 0.3644,
+      "spline_preservation_min": 0.0625,
+      "zoh_preservation_mean": 0.3049,
+      "zoh_preservation_min": 0.0475,
+      "spline_l2_mean": 0.49351,
+      "zoh_l2_mean": 0.66549,
+      "n_episodes_scored": 8
+    },
+    "k8": {
+      "spline_preservation_mean": 0.2593,
+      "spline_preservation_min": 0.0269,
+      "zoh_preservation_mean": 0.3668,
+      "zoh_preservation_min": 0.0189,
+      "spline_l2_mean": 0.6933,
+      "zoh_l2_mean": 0.93313,
+      "n_episodes_scored": 8
+    }
+  },
+  "verdict": {
+    "rule": "GO iff mean spline return-preservation >= 0.95 at knot_every=4 (pre-registered in abstraction-axes-plan.md \u00a7P2)",
+    "gate_knot_every": 4,
+    "spline_preservation_mean": 0.3644,
+    "zoh_preservation_mean": 0.3049,
+    "GO": false,
+    "spline_adds_over_zoh": true,
+    "zoh_note": "if ZOH preserves return as well as splines, the spline structure is unnecessary \u2014 the bottleneck could be even simpler"
+  },
+  "caveat": "Reference rollout is CLOSED-loop (policy reacts); spline/ZOH replays are OPEN-loop (fixed action sequence). This upper-bounds the return lost by the spline restriction on the expert trajectory, but UNDERSTATES what spline-MPPI could achieve since it replans every step. A PASS is meaningful; a marginal FAIL is not necessarily fatal."
+}
