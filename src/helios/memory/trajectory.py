@@ -104,6 +104,62 @@ class TrajectoryBuffer:
         self._ptr = (self._ptr + 1) % self.capacity
         self._size = min(self._size + 1, self.capacity)
 
+    def add_chunk(
+        self,
+        obs: np.ndarray,
+        actions: np.ndarray,
+        rewards: np.ndarray,
+        dones: np.ndarray,
+    ) -> None:
+        """Batched push of a scanned collection chunk.
+
+        Args have shape ``(K, num_envs, ...)`` (step-major, env-minor). The
+        transitions are flattened in the SAME order the per-step / per-env
+        Python loop would have produced — for each step k, all envs 0..N-1 in
+        order — so the resulting ring-buffer layout is byte-for-byte identical
+        to repeatedly calling :meth:`add_transition`. This lets the collection
+        loop do ONE host transfer + ONE buffer push per chunk instead of a
+        per-step device→host sync.
+
+        Args:
+            obs: Shape (K, num_envs, *obs_shape).
+            actions: Shape (K, num_envs, *act_shape).
+            rewards: Shape (K, num_envs).
+            dones: Shape (K, num_envs).
+        """
+        K = obs.shape[0]
+        N = obs.shape[1]
+        # Flatten step-major / env-minor: (K, N, ...) -> (K*N, ...)
+        obs_f = np.asarray(obs, dtype=self._obs.dtype).reshape((K * N,) + self.obs_shape)
+        act_f = np.asarray(actions, dtype=np.float32).reshape((K * N,) + self.action_shape)
+        rew_f = np.asarray(rewards, dtype=np.float32).reshape(K * N)
+        done_f = np.asarray(dones, dtype=np.float32).reshape(K * N)
+
+        total = K * N
+        ptr = self._ptr
+        cap = self.capacity
+        # Write in contiguous spans, handling ring wrap, so this is O(spans) not O(total).
+        written = 0
+        while written < total:
+            span = min(total - written, cap - ptr)
+            dst = slice(ptr, ptr + span)
+            src = slice(written, written + span)
+            self._obs[dst] = obs_f[src]
+            self._actions[dst] = act_f[src]
+            self._rewards[dst] = rew_f[src]
+            self._dones[dst] = done_f[src]
+            # Maintain episode-boundary set for the positions just written.
+            for j in range(span):
+                pos = ptr + j
+                if done_f[written + j] > 0.5:
+                    self._episode_ends.add(pos)
+                else:
+                    self._episode_ends.discard(pos)
+            ptr = (ptr + span) % cap
+            written += span
+        self._ptr = ptr
+        self._size = min(self._size + total, cap)
+
     def add_episode(
         self,
         obs: np.ndarray,

@@ -203,6 +203,10 @@ def train_dreamer(
     cfg = make_config()
     episode_length = 1000
     eval_interval = 250_000 if env_id == "HopperHop" else 50_000
+    # Optional smoke-test override (defaults preserve production cadence).
+    _ei_env = os.environ.get("DREAMER_EVAL_INTERVAL", "").strip()
+    if _ei_env:
+        eval_interval = int(_ei_env)
 
     # ── Environment (identical construction to run_benchmark.train_tdmpc2) ──
     env = registry.load(env_id)
@@ -276,6 +280,45 @@ def train_dreamer(
             jnp.zeros((n, stoch_dim, stoch_classes)),
         )
 
+    # ── Vectorised on-device collection: lax.scan K env steps per call ──
+    # Carry = (env_state, h, z, prev_act, key). Per step:
+    #   1. policy_step -> action, new (h, z)  [deterministic=False, training]
+    #   2. (warmup) replace action with uniform-random actions
+    #   3. env.step (vectorised over num_envs)
+    #   4. emit (obs_t, action_t, reward_t, done_t) for the buffer
+    #   5. reset (h, z, prev_act) per-env on done via jnp.where on the mask
+    # ONE host transfer + ONE batched buffer push happens AFTER the scan.
+    def _make_collect(chunk_len: int):
+        @jax.jit
+        def collect_chunk(env_state, h, z, prev_act, key, use_random):
+            def body(carry, _):
+                es, h, z, prev_act, k = carry
+                obs_t = es.obs
+                k, sk, rk = jax.random.split(k, 3)
+                pol_a, nh, nz = policy_step(
+                    state["wm_params"], state["actor_params"],
+                    obs_t, h, z, prev_act, sk, jnp.bool_(False),
+                )
+                rand_a = jax.random.uniform(rk, pol_a.shape, minval=-1.0, maxval=1.0)
+                action = jnp.where(use_random, rand_a, pol_a)
+                nes = env.step(es, action)
+                done = (nes.done > 0.5)
+                # Reset recurrent state + prev action per-env on episode end.
+                m = done[:, None]
+                nh = jnp.where(m, 0.0, nh)
+                nz = jnp.where(m[:, :, None], 0.0, nz)
+                nprev = jnp.where(m, 0.0, action)
+                emit = (obs_t, action, nes.reward, done.astype(jnp.float32))
+                return (nes, nh, nz, nprev, k), emit
+
+            (nes, nh, nz, nprev, nk), traj = jax.lax.scan(
+                body, (env_state, h, z, prev_act, key), None, length=chunk_len
+            )
+            # traj arrays are (chunk_len, num_envs, ...)
+            return nes, nh, nz, nprev, nk, traj
+
+        return collect_chunk
+
     # ── Evaluation: deterministic actor rollout, single env, real env reward ──
     def eval_actor(n_eps: int = 5) -> float:
         nonlocal key
@@ -311,12 +354,29 @@ def train_dreamer(
         with open(roll_csv, "a") as f:
             f.write(f"{env_id},{seed},{step},{reward:.4f}\n")
 
-    # ── Collection + training loop ──
+    # ── Collection + training loop (chunked, on-device scan) ──
+    # K = chunk length in scan-steps (each scan-step advances all num_envs
+    # envs, i.e. num_envs env-steps). We default to max(train_every//num_envs, 50)
+    # scan-steps so collection is amortised over a big on-device scan, but cut
+    # each chunk at the next {warmup, eval, total} boundary so the warmup/policy
+    # branch and the eval cadence stay byte-identical to the per-step version.
+    base_chunk = max(train_every // num_envs, 50)
+    collect_chunk = _make_collect(base_chunk)
+    # Small dedicated collectors get rebuilt on demand for short tail chunks;
+    # cache them so we don't re-JIT every iteration.
+    _chunk_cache: dict[int, "callable"] = {base_chunk: collect_chunk}
+
+    def get_collector(n):
+        c = _chunk_cache.get(n)
+        if c is None:
+            c = _make_collect(n)
+            _chunk_cache[n] = c
+        return c
+
     key, rk = jax.random.split(key)
     env_state = batch_reset(rk)
-    obs_np = np.array(env_state.obs)
     h, z = zero_rssm(num_envs)
-    prev_act = np.zeros((num_envs, act_dim), np.float32)
+    prev_act = jnp.zeros((num_envs, act_dim), np.float32)
 
     env_steps = 0
     next_eval = eval_interval
@@ -324,54 +384,48 @@ def train_dreamer(
     last_metrics: dict[str, float] = {}
 
     print(f"  [dreamer] training to {total_steps:,} env-steps "
-          f"(num_envs={num_envs}, warmup={warmup_env_steps:,})", flush=True)
+          f"(num_envs={num_envs}, warmup={warmup_env_steps:,}, chunk={base_chunk} scan-steps)",
+          flush=True)
 
     while env_steps < total_steps:
-        # -- Act --
+        # Determine the next hard boundary in env-steps so a chunk never straddles
+        # warmup-end or an eval point (keeps branch + cadence identical).
+        boundaries = [total_steps]
         if env_steps < warmup_env_steps:
-            acts_np = rng_np.uniform(-1.0, 1.0, (num_envs, act_dim)).astype(np.float32)
-            # still advance RSSM state for continuity
-            key, sk = jax.random.split(key)
-            _, h, z = policy_step(
-                state["wm_params"], state["actor_params"], jnp.asarray(obs_np),
-                h, z, jnp.asarray(prev_act), sk, False,
-            )
-        else:
-            key, sk = jax.random.split(key)
-            action, h, z = policy_step(
-                state["wm_params"], state["actor_params"], jnp.asarray(obs_np),
-                h, z, jnp.asarray(prev_act), sk, False,
-            )
-            acts_np = np.array(action, dtype=np.float32)
+            boundaries.append(warmup_env_steps)
+        boundaries.append(next_eval)
+        next_boundary = min(b for b in boundaries if b > env_steps)
+        steps_to_boundary = next_boundary - env_steps           # env-steps
+        scan_steps = min(base_chunk, max(steps_to_boundary // num_envs, 1))
+        chunk_env_steps = scan_steps * num_envs
 
-        env_state = batch_step(env_state, jnp.asarray(acts_np))
-        new_obs = np.array(env_state.obs)
-        rews_np = np.array(env_state.reward, np.float32)
-        done_np = np.array(env_state.done > 0.5, np.float32)
+        use_random = env_steps < warmup_env_steps
+        collector = get_collector(scan_steps)
+        key, ck = jax.random.split(key)
+        env_state, h, z, prev_act, _, traj = collector(
+            env_state, h, z, prev_act, ck, jnp.bool_(use_random)
+        )
+        obs_t, act_t, rew_t, done_t = traj  # each (scan_steps, num_envs, ...)
+        # ONE host transfer + ONE batched buffer push for the whole chunk.
+        obs_h = np.asarray(obs_t)
+        act_h = np.asarray(act_t)
+        rew_h = np.asarray(rew_t)
+        done_h = np.asarray(done_t)
+        buffer.add_chunk(obs_h, act_h, rew_h, done_h)
 
-        for i in range(num_envs):
-            buffer.add_transition(obs_np[i], acts_np[i], float(rews_np[i]), bool(done_np[i]))
-
-        # Reset RSSM state for envs that terminated (brax wrapper auto-resets obs).
-        if done_np.any():
-            mask = jnp.asarray(done_np)[:, None]
-            h = jnp.where(mask, 0.0, h)
-            z = jnp.where(mask[:, :, None], 0.0, z)
-            acts_np = np.where(done_np[:, None] > 0.5, 0.0, acts_np)
-
-        obs_np = new_obs
-        prev_act = acts_np
-        env_steps += num_envs
-
-        # -- Train --
-        if (
-            env_steps >= warmup_env_steps
-            and env_steps % train_every < num_envs
-            and buffer.can_sample(int(cfg.batch_size))
-        ):
-            for _ in range(updates_per_step):
-                batch = buffer.sample(int(cfg.batch_size), rng_np)
-                state, last_metrics = agent.update(batch, state)
+        # -- Train -- (replicate per-step trigger cadence over the chunk)
+        prev_steps = env_steps
+        env_steps += chunk_env_steps
+        if buffer.can_sample(int(cfg.batch_size)):
+            # Trigger when env_steps (post-increment, multiple of num_envs) hits a
+            # train_every boundary, matching the original `% train_every < num_envs`.
+            s = prev_steps + num_envs
+            while s <= env_steps:
+                if s >= warmup_env_steps and s % train_every < num_envs:
+                    for _ in range(updates_per_step):
+                        batch = buffer.sample(int(cfg.batch_size), rng_np)
+                        state, last_metrics = agent.update(batch, state)
+                s += num_envs
 
         # -- Eval --
         if env_steps >= next_eval:

@@ -15,6 +15,8 @@ export MUJOCO_GL=${MUJOCO_GL:-egl}
 
 PROBE_ID=${PROBE_ID:-phasei14_dmc_baseline}
 ALGO=${ALGO:-tdmpc2}
+GLASS_LAMBDA_BEHAV=${GLASS_LAMBDA_BEHAV:-0.0}   # iter-29 Panda re-test of behavioral Glass
+GLASS_LAMBDA_SE=${GLASS_LAMBDA_SE:-0.005}
 TASK=${TASK:-HumanoidWalk}
 SEEDS=${SEEDS:-1}
 K_UPDATE=${K_UPDATE:-128}
@@ -56,6 +58,7 @@ for seed in $SEEDS; do
     --intrinsic "$INTRINSIC" --intrinsic_coef "$INTRINSIC_COEF" \
     --jumpy_k "$JUMPY_K" --jumpy_coef "$JUMPY_COEF" --jumpy_ve_coef "$JUMPY_VE_COEF" --jumpy_n_macro "$JUMPY_NMACRO" $JUMPY_PLAN_FLAG \
     --bisim_coef "$BISIM_COEF" \
+    --glass_lambda_behav "$GLASS_LAMBDA_BEHAV" --glass_lambda_se "$GLASS_LAMBDA_SE" \
     --distractor_dims "$DISTRACTOR_DIMS" \
     --latent_norm "$LATENT_NORM" --fsq_levels "$FSQ_LEVELS" --dyn_arch "$DYN_ARCH" \
     --no_plot 2>&1 | tee -a "$log"

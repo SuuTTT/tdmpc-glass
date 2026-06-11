@@ -184,6 +184,9 @@ def train_dreamer4(
     cfg = make_config()
     episode_length = 1000
     eval_interval = 250_000 if env_id == "HopperHop" else 50_000
+    _ei_env = os.environ.get("DREAMER_EVAL_INTERVAL", "").strip()
+    if _ei_env:
+        eval_interval = int(_ei_env)
     ctx = int(cfg.transformer.context_len)
 
     # ── Environment (identical construction to run_dreamer / run_benchmark) ──
@@ -254,6 +257,50 @@ def train_dreamer4(
         """Drop oldest, append newest along the time axis. hist:(B,ctx,*)."""
         return np.concatenate([hist[:, 1:, :], new_step[:, None, :]], axis=1)
 
+    def roll_window_j(hist, new_step):
+        """jnp version of roll_window for use inside the scanned collector."""
+        return jnp.concatenate([hist[:, 1:, :], new_step[:, None, :]], axis=1)
+
+    # ── Vectorised on-device collection: lax.scan K env steps per call ──
+    # Carry = (env_state, emb_hist, act_hist, key). Per step:
+    #   1. encode current obs -> append to emb_hist rolling window
+    #   2. policy_step on the full (emb_hist, act_hist) window (transformer fwd)
+    #   3. (warmup) replace action with uniform-random actions
+    #   4. append action to act_hist; env.step; emit (obs,action,reward,done)
+    #   5. zero both windows per-env on done via jnp.where on the mask
+    # ONE host transfer + ONE batched buffer push happens AFTER the scan.
+    def _make_collect(chunk_len: int):
+        @jax.jit
+        def collect_chunk(env_state, emb_hist, act_hist, key, use_random):
+            def body(carry, _):
+                es, emb_hist, act_hist, k = carry
+                obs_t = es.obs
+                emb = enc.apply(state["wm_params"]["encoder"], obs_t)
+                emb_hist = roll_window_j(emb_hist, emb)
+                k, sk, rk = jax.random.split(k, 3)
+                pol_a = policy_step(
+                    state["wm_params"], state["actor_params"],
+                    emb_hist, act_hist, sk, jnp.bool_(False),
+                )
+                rand_a = jax.random.uniform(rk, pol_a.shape, minval=-1.0, maxval=1.0)
+                action = jnp.where(use_random, rand_a, pol_a)
+                act_hist = roll_window_j(act_hist, action)
+                nes = env.step(es, action)
+                done = (nes.done > 0.5)
+                # Zero rolling windows per-env on episode end (auto-reset obs).
+                keep = (~done)[:, None, None]
+                emb_hist = jnp.where(keep, emb_hist, 0.0)
+                act_hist = jnp.where(keep, act_hist, 0.0)
+                emit = (obs_t, action, nes.reward, done.astype(jnp.float32))
+                return (nes, emb_hist, act_hist, k), emit
+
+            (nes, emb_hist, act_hist, nk), traj = jax.lax.scan(
+                body, (env_state, emb_hist, act_hist, key), None, length=chunk_len
+            )
+            return nes, emb_hist, act_hist, nk, traj
+
+        return collect_chunk
+
     # ── Evaluation: deterministic actor rollout, single env, real env reward ──
     def eval_actor(n_eps: int = 5) -> float:
         nonlocal key
@@ -293,12 +340,28 @@ def train_dreamer4(
         with open(roll_csv, "a") as f:
             f.write(f"{env_id},{seed},{step},{reward:.4f}\n")
 
-    # ── Collection + training loop ──
+    # ── Collection + training loop (chunked, on-device scan) ──
+    # The transformer forward runs per scan-step on the full rolling window, but
+    # the scan keeps the whole chunk on-device so there is ONE host sync + ONE
+    # batched buffer push per chunk instead of a per-step device→host sync. We
+    # cut each chunk at the next {warmup, eval, total} boundary to keep the
+    # warmup/policy branch and the eval cadence byte-identical to the per-step
+    # version. Chunk default is smaller than DreamerV3 because each scan-step is
+    # a full transformer forward (memory/compile cost grows with chunk_len).
+    base_chunk = max(train_every // num_envs, 16)
+    _chunk_cache: dict[int, "callable"] = {}
+
+    def get_collector(n):
+        c = _chunk_cache.get(n)
+        if c is None:
+            c = _make_collect(n)
+            _chunk_cache[n] = c
+        return c
+
     key, rk = jax.random.split(key)
     env_state = batch_reset(rk)
-    obs_np = np.array(env_state.obs)
-    emb_hist = np.zeros((num_envs, ctx, embed_dim), np.float32)
-    act_hist = np.zeros((num_envs, ctx, act_dim), np.float32)
+    emb_hist = jnp.zeros((num_envs, ctx, embed_dim), np.float32)
+    act_hist = jnp.zeros((num_envs, ctx, act_dim), np.float32)
 
     env_steps = 0
     next_eval = eval_interval
@@ -306,53 +369,43 @@ def train_dreamer4(
     last_metrics: dict[str, float] = {}
 
     print(f"  [dreamer4] training to {total_steps:,} env-steps "
-          f"(num_envs={num_envs}, warmup={warmup_env_steps:,})", flush=True)
+          f"(num_envs={num_envs}, warmup={warmup_env_steps:,}, chunk={base_chunk} scan-steps)",
+          flush=True)
 
     while env_steps < total_steps:
-        # Encode current obs and append to the rolling embedding window.
-        emb = np.array(encode(state["wm_params"], jnp.asarray(obs_np)))
-        emb_hist = roll_window(emb_hist, emb)
-
-        # -- Act --
+        boundaries = [total_steps]
         if env_steps < warmup_env_steps:
-            acts_np = rng_np.uniform(-1.0, 1.0, (num_envs, act_dim)).astype(np.float32)
-        else:
-            key, sk = jax.random.split(key)
-            action = policy_step(
-                state["wm_params"], state["actor_params"],
-                jnp.asarray(emb_hist), jnp.asarray(act_hist), sk, False,
-            )
-            acts_np = np.array(action, dtype=np.float32)
+            boundaries.append(warmup_env_steps)
+        boundaries.append(next_eval)
+        next_boundary = min(b for b in boundaries if b > env_steps)
+        steps_to_boundary = next_boundary - env_steps
+        scan_steps = min(base_chunk, max(steps_to_boundary // num_envs, 1))
+        chunk_env_steps = scan_steps * num_envs
 
-        # Record the action taken into the action window.
-        act_hist = roll_window(act_hist, acts_np)
+        use_random = env_steps < warmup_env_steps
+        collector = get_collector(scan_steps)
+        key, ck = jax.random.split(key)
+        env_state, emb_hist, act_hist, _, traj = collector(
+            env_state, emb_hist, act_hist, ck, jnp.bool_(use_random)
+        )
+        obs_t, act_t, rew_t, done_t = traj
+        # ONE host transfer + ONE batched buffer push for the whole chunk.
+        buffer.add_chunk(
+            np.asarray(obs_t), np.asarray(act_t),
+            np.asarray(rew_t), np.asarray(done_t),
+        )
 
-        env_state = batch_step(env_state, jnp.asarray(acts_np))
-        new_obs = np.array(env_state.obs)
-        rews_np = np.array(env_state.reward, np.float32)
-        done_np = np.array(env_state.done > 0.5, np.float32)
-
-        for i in range(num_envs):
-            buffer.add_transition(obs_np[i], acts_np[i], float(rews_np[i]), bool(done_np[i]))
-
-        # Reset the rolling windows for envs that terminated (auto-reset obs).
-        if done_np.any():
-            m = done_np > 0.5
-            emb_hist[m] = 0.0
-            act_hist[m] = 0.0
-
-        obs_np = new_obs
-        env_steps += num_envs
-
-        # -- Train --
-        if (
-            env_steps >= warmup_env_steps
-            and env_steps % train_every < num_envs
-            and buffer.can_sample(int(cfg.batch_size))
-        ):
-            for _ in range(updates_per_step):
-                batch = buffer.sample(int(cfg.batch_size), rng_np)
-                state, last_metrics = agent.update(batch, state)
+        # -- Train -- (replicate per-step trigger cadence over the chunk)
+        prev_steps = env_steps
+        env_steps += chunk_env_steps
+        if buffer.can_sample(int(cfg.batch_size)):
+            s = prev_steps + num_envs
+            while s <= env_steps:
+                if s >= warmup_env_steps and s % train_every < num_envs:
+                    for _ in range(updates_per_step):
+                        batch = buffer.sample(int(cfg.batch_size), rng_np)
+                        state, last_metrics = agent.update(batch, state)
+                s += num_envs
 
         # -- Eval --
         if env_steps >= next_eval:
