@@ -14,7 +14,11 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 
 
 
-**iter-27/28 update (2026-06-11): jumpy GENERALIZES across the Franka manipulation suite on FINAL return** — PandaPickCube +101% (jum final 2319 n=2 vs van 1154 n=4), PandaPickCubeOrientation +75% (2323 n=2 vs van 1329 n=3), PandaOpenCabinet +74% (jum 1311 n=4 vs van 754 n=5); peak mixed (jum +23/+5/−30%). The jumpy WM sustains final-return where vanilla degrades, robust in DIRECTION across all 3 tasks; MAGNITUDE settles downward as van's n grows (Ori 137%→75% from n=2→3) — n=2-3 now, firming to 5. Honest caveat: jum still lags in seed count (n=2 vs van n=3-4). This is the paper's empirical anchor (prior-art method, fair-protocol generalization result).
+**iter-27/28 anchor — SUPERSEDED 2026-06-11 by the persisted n=5 aggregation** (`exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json`, produced by `scripts/aggregate_anchor.py`; the earlier hand-aggregated "+101%/+75%/+74% direction-robust across all 3 tasks" was an n=2–4 snapshot that settled, exactly as this entry's own caveat predicted):
+- **PandaPickCubeOrientation: REAL, CI-separated** — jum final 2145 (n=5) vs van 1129 (n=5), **+90%**, diff CI95 [685, 1344]; every jum seed (min 1803) beats every van seed (max 1443).
+- **PandaPickCube: positive trend, NOT CI-separated** — jum 1872 vs van 1416 (+32%), diff CI95 [−267, 1169]; jum worst seed 779 below van median.
+- **PandaOpenCabinet: NULL** — jum 1050 vs van 1053 (±0%), diff CI95 [−563, 685]. The old +74% was an incomplete-n artifact erased by the final continuation seeds.
+Honest verdict: jumpy's final-return edge is **task-dependent, not suite-wide** — one strong win (Ori), one trend (Pick), one null (Cabinet). Peak remains mixed. Still prior art (Farebrother 2026); still the campaign's only positive lever; claim narrowed accordingly.
 
 ## ❌ WHAT DID NOT WORK (nulls, most→least thoroughly killed)
 | # | lever | iter | why it died |

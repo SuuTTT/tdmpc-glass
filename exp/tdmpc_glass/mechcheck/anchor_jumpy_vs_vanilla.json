@@ -1,0 +1,414 @@
+{
+  "final_from_step": 400000,
+  "n_boot": 10000,
+  "tasks": {
+    "PandaPickCube": {
+      "jum": {
+        "probe_id": "phasei27_jum",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 2449.7,
+        "final_mean": 1872.186666666667,
+        "final_per_seed": [
+          778.9,
+          1580.0,
+          1886.9,
+          2501.4,
+          2613.8
+        ],
+        "final_ci95": [
+          1283.6266666666666,
+          2407.0333333333333
+        ],
+        "peak_ci95": [
+          2050.4,
+          2841.64
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 1862.4,
+            "final": 778.9333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh8_a4000/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 3039.9,
+            "final": 2613.7999999999997,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 2681.4,
+            "final": 1886.8666666666668,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 1941.3,
+            "final": 1579.9666666666665,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 2723.5,
+            "final": 2501.366666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "van": {
+        "probe_id": "phasei27_van",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 2232.8599999999997,
+        "final_mean": 1415.6933333333334,
+        "final_per_seed": [
+          838.3,
+          841.1,
+          1693.7,
+          1796.1,
+          1909.3
+        ],
+        "final_ci95": [
+          1010.4933333333335,
+          1820.8933333333334
+        ],
+        "peak_ci95": [
+          1972.78,
+          2492.94
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 1981.0,
+            "final": 841.1,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 1869.4,
+            "final": 1693.6666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_a4000b/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 2598.0,
+            "final": 1796.0666666666666,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_titanv/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 2163.1,
+            "final": 838.3000000000001,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 2552.8,
+            "final": 1909.3333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "final_rel_gain_jum_over_van": 0.32245213181762544,
+      "final_diff_ci95": [
+        -266.7241666666669,
+        1168.7828333333323
+      ],
+      "ci_separated_final": false
+    },
+    "PandaPickCubeOrientation": {
+      "jum": {
+        "probe_id": "phasei27_jum",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 2601.34,
+        "final_mean": 2144.9466666666667,
+        "final_per_seed": [
+          1803.4,
+          1896.5,
+          2165.8,
+          2309.3,
+          2549.7
+        ],
+        "final_ci95": [
+          1913.1266666666666,
+          2376.766666666667
+        ],
+        "peak_ci95": [
+          2417.3599999999997,
+          2737.66
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 2249.2,
+            "final": 2165.8333333333335,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 2699.3,
+            "final": 2549.6666666666665,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 2775.5,
+            "final": 1803.3666666666666,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh8_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 2563.7,
+            "final": 2309.3333333333335,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_titanv/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 2719.0,
+            "final": 1896.5333333333335,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh3_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "van": {
+        "probe_id": "phasei27_van",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 2242.2200000000003,
+        "final_mean": 1129.26,
+        "final_per_seed": [
+          767.4,
+          903.7,
+          1180.7,
+          1351.3,
+          1443.1
+        ],
+        "final_ci95": [
+          904.5866666666667,
+          1353.9333333333334
+        ],
+        "peak_ci95": [
+          1886.3,
+          2505.6
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 2259.7,
+            "final": 1180.7333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh3_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 2480.7,
+            "final": 1351.3333333333335,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_a4000b/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 2605.2,
+            "final": 767.4333333333334,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 2301.8,
+            "final": 1443.1333333333334,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_titanv/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 1563.7,
+            "final": 903.6666666666666,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh8_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "final_rel_gain_jum_over_van": 0.8994267632490894,
+      "final_diff_ci95": [
+        685.4205000000001,
+        1344.3956666666663
+      ],
+      "ci_separated_final": true
+    },
+    "PandaOpenCabinet": {
+      "jum": {
+        "probe_id": "phasei27_jum",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 1942.02,
+        "final_mean": 1050.4133333333334,
+        "final_per_seed": [
+          455.9,
+          684.4,
+          913.7,
+          937.1,
+          2260.9
+        ],
+        "final_ci95": [
+          597.8533333333334,
+          1680.873333333333
+        ],
+        "peak_ci95": [
+          1523.3,
+          2292.52
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 2166.8,
+            "final": 937.1333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh3_a4000/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 2141.0,
+            "final": 684.4333333333334,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i29/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 2494.0,
+            "final": 2260.933333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 1108.4,
+            "final": 455.90000000000003,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh8_a4000/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 1799.9,
+            "final": 913.6666666666666,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "van": {
+        "probe_id": "phasei27_van",
+        "n_seeds_total": 5,
+        "n_seeds_final": 5,
+        "peak_mean": 2568.46,
+        "final_mean": 1053.1,
+        "final_per_seed": [
+          550.8,
+          846.3,
+          997.0,
+          1300.2,
+          1571.3
+        ],
+        "final_ci95": [
+          758.2133333333334,
+          1372.0666666666668
+        ],
+        "peak_ci95": [
+          1959.5,
+          3181.98
+        ],
+        "seeds": [
+          {
+            "rows": 10,
+            "peak": 1641.1,
+            "final": 997.0,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i29/seed_0.csv",
+            "seed": 0
+          },
+          {
+            "rows": 10,
+            "peak": 3096.7,
+            "final": 550.7666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i27a/seed_1.csv",
+            "seed": 1
+          },
+          {
+            "rows": 10,
+            "peak": 3600.6,
+            "final": 1571.3000000000002,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_titanv/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i27a/seed_2.csv",
+            "seed": 2
+          },
+          {
+            "rows": 10,
+            "peak": 2492.5,
+            "final": 1300.1666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i27a/seed_3.csv",
+            "seed": 3
+          },
+          {
+            "rows": 10,
+            "peak": 2011.4,
+            "final": 846.2666666666668,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh3_a4000/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i27a/seed_4.csv",
+            "seed": 4
+          }
+        ]
+      },
+      "final_rel_gain_jum_over_van": -0.002551198050200833,
+      "final_diff_ci95": [
+        -563.3558333333335,
+        684.7933333333322
+      ],
+      "ci_separated_final": false
+    }
+  }
+}

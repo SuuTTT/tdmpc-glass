@@ -288,18 +288,20 @@ so explicit clustering / value objectives re-derive structure already present
 [docs/iterations/RESEARCH_LEDGER.md "Cross-cutting lesson"]. The criterion makes the second
 finding measurable and predictive.
 
-**The campaign's one positive result is consistent with the criterion.** The only lever that
-beat the baseline was the (prior-art) jumpy / k-step world model itself — *not* an abstraction
-objective. On the Franka manipulation suite, jumpy sustains final return where vanilla degrades:
-PandaPickCube +101% (jumpy final 2319, n=2 vs vanilla 1154, n=4), PandaPickCubeOrientation +75%
-(2323 vs 1329, n≈3–4), PandaOpenCabinet +74% (jumpy 1311, n=4 vs vanilla 754, n=5)
-[docs/iterations/iteration_28_plan.md, "ANCHOR FINALIZED" block — these are hand-aggregated from
-per-seed Panda CSVs under exp/tdmpc_glass/remote_mirror/.../Panda*_phasei27_{jum,van}_...; they
-are NOT collected in a single persisted aggregation JSON; `TBD-persist-anchor-json` (write an
-aggregation script that reads the per-seed CSVs and emits one JSON with the peak/final/n/CI per
-task)]. Peak is mixed (vanilla often higher peak; jumpy sustains final). Jumpy is a temporal,
-not an abstraction, lever — consistent with the thesis that abstraction is the redundant axis on
-this substrate while temporal coarse-graining is not.
+**The campaign's one positive result is consistent with the criterion — and narrower than our
+interim notes claimed.** The only lever that beat the baseline was the (prior-art) jumpy / k-step
+world model itself — *not* an abstraction objective. At full n=5 per arm (persisted aggregation,
+10k-resample bootstrap on seed means), the picture is task-dependent rather than suite-wide:
+PandaPickCubeOrientation is a clean CI-separated win (jumpy final 2145 vs vanilla 1129, +90%,
+difference CI95 [685, 1344]; every jumpy seed beats every vanilla seed); PandaPickCube is a
+positive trend that does not reach CI separation (1872 vs 1416, +32%, difference CI95
+[−267, 1169]); PandaOpenCabinet is null (1050 vs 1053, difference CI95 [−563, 685])
+[exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json, from scripts/aggregate_anchor.py].
+Earlier hand-aggregated interim numbers (+101%/+75%/+74% across all three tasks at n=2–4) settled
+to this as seeds completed — itself a demonstration of why we persist aggregations and report
+final-n CIs. Peak is mixed (vanilla often higher peak; jumpy sustains final where it wins). Jumpy
+is a temporal, not an abstraction, lever — consistent with the thesis that abstraction is the
+redundant axis on this substrate while temporal coarse-graining (on some tasks) is not.
 
 ---
 
@@ -358,10 +360,10 @@ We are deliberately conservative about scope.
   single-agent CheetahRun for the SimNorm SE gap). Genuinely relational domains (multi-object,
   multi-agent) are exactly where the entity-graph class might break C1 OOD — untested here.
 
-- **Seed counts are modest.** The jumpy anchor is n=2–5 per arm
-  [docs/iterations/iteration_28_plan.md "ANCHOR FINALIZED"]; several ledger nulls are decisive in
-  *direction* at small n but not all reach the full n=5 CI gate
-  [docs/iterations/RESEARCH_LEDGER.md].
+- **Seed counts are modest.** The jumpy anchor is now n=5 per arm with persisted CIs
+  [exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json]; only 1 of 3 tasks is CI-separated.
+  Several ledger nulls are decisive in *direction* at small n but not all reach the full n=5 CI
+  gate [docs/iterations/RESEARCH_LEDGER.md].
 
 - **Unpersisted numbers.** Several quantities (the SimNorm 53.1%/47.2% SE gap; the ve-checkpoint
   probe numbers 0.953/0.977/R²≈1.0; the jumpy anchor aggregation) currently live in iteration
