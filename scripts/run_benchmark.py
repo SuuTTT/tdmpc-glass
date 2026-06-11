@@ -685,6 +685,11 @@ def train_tdmpc2(
         print(f"  iter-16 latent_norm={_latent_norm} (FSQ levels={_fsq_levels}, SimNorm replaced)", flush=True)
         enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels, arch=_dyn_arch)
         dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, latent_norm=_latent_norm, fsq_levels=_fsq_levels, arch=_dyn_arch)
+    elif use_glass:
+        # Glass path uses tdmpc_glass.Encoder/Dynamics which have no `arch` kwarg
+        # (the iter-27 dyn_arch A/B is tdmpc2-only). Do NOT pass arch here.
+        enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V)
+        dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V)
     else:
         enc_net = Encoder(latent_dim=latent_dim, hidden=hidden, V=V, arch=_dyn_arch)
         dyn_net = Dynamics(latent_dim=latent_dim, hidden=hidden, V=V, arch=_dyn_arch)
