@@ -60,6 +60,19 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   committed, THEN harvest its gain. Plus the running k-sweep as dose-response.
 - Dev-box chain: ori+cab mech dumps done → value-probes (Ori/Cab) running → P3 ×2 → Cartesian dump.
 
+### 19:15 update — P3 closed, C1 cross-task, P3-mechcheck falsification
+- **C1 holds on all 3 anchor tasks** (`value_probe_jum_{ori,cab}_n12.json`): Ori R²=0.9983, Cab
+  R²=0.9995 (Pick 0.9994 prior). Cross-task evidence for the paper's §4.1.
+- **P3 mechanism-check contrast mirrors the jumpy gains** (`p3_macroq_{ori,cab}.json`): Ori GO
+  (value_cost_ratio 0.352, ρ=0.57 — errors systematically cost value); Cab NO-GO (ρ=0.23, errors
+  large but value-unstructured). Reinforces the P1 "accurate+calibrated vs bad+overconfident" story.
+- **BUT P3 is closed by existing data**: phasei27_ve already ran the value-equivalent macro head on
+  Ori — final 583 (n=3) vs jumpy 2145 (n=5), catastrophic harm on the exact task the mechcheck said
+  GO. Verdict: P3 dead; AND a falsification-grade lesson — mechanism-check GO licenses a test, it
+  does not predict success (NO-GO direction remains reliable). Goes into the paper's §6/§7.
+- Iter-30 now rides on P1 alone: disc_err_gap + k-sweep (4 more finals landed, 94 done) +
+  Cartesian pre-registration (dump chained).
+
 ### Verdicts (ledger/paper updated)
 - **Entity-graph NO-GO** (3rd redundancy data point, cleanest): value-coupling cross-Hessian recovers
   known-by-construction pairs at chance (AP 0.50, z −0.08) with near-perfect reward fit (0.0026);

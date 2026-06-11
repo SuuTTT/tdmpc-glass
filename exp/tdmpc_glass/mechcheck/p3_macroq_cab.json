@@ -1,0 +1,115 @@
+{
+  "probe": "p3_macroq_decomp",
+  "config": {
+    "ckpt": "exp/tdmpc_glass/ckpt_rescue/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_4/checkpoints/best_mppi.pkl",
+    "task": "PandaOpenCabinet",
+    "jumpy_k": 4,
+    "n_ep": 8,
+    "seed": 0,
+    "episode_length": 1000,
+    "latent_dim": 512,
+    "num_bins": 101,
+    "V": 8,
+    "dyn_arch": "mlp",
+    "q_reduce": "min",
+    "obs_dim": 55,
+    "act_dim": 8,
+    "gates": {
+      "value_cost_ratio_min": 0.3,
+      "spearman_min": 0.4
+    }
+  },
+  "n_pairs": 7968,
+  "ep_lens": [
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000
+  ],
+  "latent_err": {
+    "p5": 0.3411,
+    "p25": 0.5732,
+    "p50": 0.6351,
+    "p75": 0.6894,
+    "p95": 0.8417,
+    "mean": 0.6241
+  },
+  "q_err": {
+    "p5": 0.1521,
+    "p25": 0.6983,
+    "p50": 1.0722,
+    "p75": 1.3397,
+    "p95": 3.6307,
+    "mean": 1.2653
+  },
+  "q_true_stats": {
+    "median": 229.305,
+    "mad": 0.8789,
+    "std": 4.2365,
+    "p5": 222.2617,
+    "p50": 229.305,
+    "p95": 237.591
+  },
+  "correlations": {
+    "spearman_latent_err_vs_q_err": 0.2288,
+    "pearson_latent_err_vs_q_err": 0.2721
+  },
+  "value_cost_ratio": 1.22,
+  "value_irrelevant_error_frac": {
+    "joint": 0.0762,
+    "joint_baseline_if_independent": 0.125,
+    "conditional_on_top_latent_quartile": 0.3047,
+    "conditional_baseline_if_independent": 0.5
+  },
+  "per_latent_err_quartile": [
+    {
+      "latent_err_range": [
+        0.0771,
+        0.5732
+      ],
+      "n": 1992,
+      "q_err_median": 0.8964,
+      "q_err_mean": 0.9953
+    },
+    {
+      "latent_err_range": [
+        0.5732,
+        0.6351
+      ],
+      "n": 1992,
+      "q_err_median": 1.0793,
+      "q_err_mean": 1.1526
+    },
+    {
+      "latent_err_range": [
+        0.6351,
+        0.6894
+      ],
+      "n": 1992,
+      "q_err_median": 0.7966,
+      "q_err_mean": 1.0233
+    },
+    {
+      "latent_err_range": [
+        0.6894,
+        1.05
+      ],
+      "n": 1992,
+      "q_err_median": 1.4703,
+      "q_err_mean": 1.8902
+    }
+  ],
+  "verdict": "NO-GO",
+  "verdict_rule": "GO iff value_cost_ratio >= 0.3 AND spearman >= 0.4; NO-GO means d_k errors are already value-benign -> value-equivalent training has nothing to gain (redundancy criterion C1 applied to the macro head)",
+  "caveats": [
+    "single checkpoint / single seed \u2014 no across-seed variance estimate",
+    "pi-policy state-action distribution only; MPPI's planning distribution (where the jumpy head is actually consumed) may stress d_k differently",
+    "Q is used as its own judge: q_err is measured with the ckpt's own Q ensemble, so Q-approximation error and Q's own smoothness both contaminate the decomposition",
+    "deterministic pi (tanh(mu)) rollouts \u2014 no exploration-noise coverage",
+    "q_reduce=min over the 2-head ensemble (value_probe used min)"
+  ]
+}

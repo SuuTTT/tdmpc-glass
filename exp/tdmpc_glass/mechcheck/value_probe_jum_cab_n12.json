@@ -1,0 +1,29 @@
+{
+  "ckpt": "exp/tdmpc_glass/ckpt_rescue/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_4/checkpoints/best_mppi.pkl",
+  "task": "PandaOpenCabinet",
+  "n_states": 12000,
+  "n_ep": 12,
+  "obs_dim": 55,
+  "act_dim": 8,
+  "latent_dim": 512,
+  "probe1_value_equivalence": {
+    "effective_dim_latent": 4.05,
+    "effective_dim_value_subspace": 2.88,
+    "value_irrelevant_variance_frac": 0.988,
+    "linear_V_decode_r2": 0.9995,
+    "interpretation": "HIGH irrelevant_frac (>~0.5) => headroom for value-equivalence; LOW => latent already value-aligned (predicts ve null)"
+  },
+  "probe2_value_criticality": {
+    "crit_mean": 0.337,
+    "crit_std": 0.1724,
+    "crit_cv": 0.5117,
+    "flat_state_frac": 0.0838,
+    "value_range_over_states": 32.441,
+    "interpretation": "HIGH cv (>~0.5) + nonzero flat_frac => headroom for value-critical adaptive horizon; uniform => dead like error-gated adaptive-k"
+  },
+  "value_stats": {
+    "V_mean": 229.361,
+    "V_min": 215.519,
+    "V_max": 247.96
+  }
+}

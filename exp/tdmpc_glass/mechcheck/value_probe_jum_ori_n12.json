@@ -1,0 +1,29 @@
+{
+  "ckpt": "exp/tdmpc_glass/ckpt_rescue/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_3/checkpoints/best_mppi.pkl",
+  "task": "PandaPickCubeOrientation",
+  "n_states": 12000,
+  "n_ep": 12,
+  "obs_dim": 66,
+  "act_dim": 8,
+  "latent_dim": 512,
+  "probe1_value_equivalence": {
+    "effective_dim_latent": 11.34,
+    "effective_dim_value_subspace": 15.81,
+    "value_irrelevant_variance_frac": 0.9528,
+    "linear_V_decode_r2": 0.9983,
+    "interpretation": "HIGH irrelevant_frac (>~0.5) => headroom for value-equivalence; LOW => latent already value-aligned (predicts ve null)"
+  },
+  "probe2_value_criticality": {
+    "crit_mean": 1.9816,
+    "crit_std": 1.0269,
+    "crit_cv": 0.5182,
+    "flat_state_frac": 0.8203,
+    "value_range_over_states": 92.843,
+    "interpretation": "HIGH cv (>~0.5) + nonzero flat_frac => headroom for value-critical adaptive horizon; uniform => dead like error-gated adaptive-k"
+  },
+  "value_stats": {
+    "V_mean": 346.175,
+    "V_min": 295.391,
+    "V_max": 388.235
+  }
+}
