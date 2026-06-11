@@ -1,0 +1,31 @@
+{
+  "note": "DreamerV3 (our JAX impl) generality probe on Franka manipulation, 150k steps, NUM_ENVS=16",
+  "runs": {
+    "PandaPickCube_dgen_PandaPickCube_i29B/s1": {
+      "max_step": 150000,
+      "peak": 338.0,
+      "final": 258.1,
+      "complete": true
+    },
+    "PandaPickCube_dreamergen2_PandaPickCube_i29B/s0": {
+      "max_step": 150000,
+      "peak": 295.4,
+      "final": 188.7,
+      "complete": true
+    },
+    "PandaPickCubeOrientation_dgen_PandaPickCubeOrientation_i29B/s0": {
+      "max_step": 150000,
+      "peak": 290.4,
+      "final": 241.4,
+      "complete": true
+    },
+    "PandaPickCube_dgen_PandaPickCube_i29B/s2": {
+      "max_step": 100000,
+      "peak": 319.4,
+      "final": 319.4,
+      "complete": false
+    }
+  },
+  "reference": "TD-MPC2 vanilla PandaPickCube final ~1416 (n=5, 500k); jumpy 1872",
+  "verdict": "DreamerV3 reaches only ~190-340 on Panda manipulation at 150k/16env \u2014 far below TD-MPC2-class planners at comparable wall-clock; generality probe closed (n=3 complete + 1 partial), no further seeds."
+}
