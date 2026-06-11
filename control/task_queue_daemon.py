@@ -204,6 +204,21 @@ def is_box_idle(tag: str, port: int, host: str, gpu_idx: int) -> bool:
     except Exception:
         return False  # SSH/probe failed → treat as busy (never launch blind)
 
+    # DISK self-heal (2026-06-11): before the hard refusal, fire a best-effort
+    # cleanup so a filling box recovers on its own instead of becoming a dead
+    # slot (happened 3x: ssh9/2080ti/ssh2). Safe: only caches + checkpoints
+    # untouched >30min (never the active run's). Fire-and-forget.
+    if disk_pct >= 88:
+        clean = ("rm -rf /root/.cache/pip /root/.cache/uv /root/.cache/warp 2>/dev/null; "
+                 "rm -f /root/*.log /tmp/*.log 2>/dev/null; "
+                 "find /root/helios-rl/exp -type d -name checkpoints -mmin +30 -exec rm -rf {} + 2>/dev/null")
+        try:
+            subprocess.Popen(["ssh", "-p", str(port), "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
+                              "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", f"root@{host}", clean],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            log(f"{tag}: disk {disk_pct}% — fired self-heal cleanup (caches + >30min checkpoints)")
+        except Exception:
+            pass
     # DISK-FULL guard (2026-06-06, after ssh5_3060 silently fast-failed every task
     # at 100% disk and became a failure sink that ate a whole experiment batch):
     # never launch onto a box at >=93% — runs would crash at checkpoint/CSV writes.
