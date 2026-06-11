@@ -47,6 +47,17 @@ already works, and why adaptive jump-length has nothing to adapt to.
 **Cross-cutting lesson:** a strong self-predictive world model (TD-MPC2 + SimNorm) is a high bar; most
 "abstraction" is redundant with what it already learns ([Ni et al. 2024] sufficient-abstraction theory).
 
+### 2026-06-11 — clustering-on-Panda matrix COMPLETE (nulls #1–#2 closed on manipulation)
+User asked whether the DMC-era nulls were ever tested on Panda. Audit: #2 behav, #14 ve, #15 arch
+already were; #1 geoglass was NOT (DMC/Humanoid only). Re-ran geoglass on PandaPickCube n=5
+(`exp/tdmpc_glass/mechcheck/clustering_panda_pick_n5.json`): **geoglass final 1247 CI[815,1693]
+≈ behavglass 1586 CI[1181,2131] ≈ vanilla 1416 CI[1010,1821], all ≪ jumpy 1872** — both clustering
+flavors NULL on the manipulation suite too, on the exact task where the latent is provably
+value-sufficient (R²=0.9994). The five sparse-reward exploration levers (#5/#7/#8/#12/#13) were
+deliberately NOT re-run on Panda: dense-reward manipulation has no exploration bottleneck for them
+to act on (category mismatch, not an evidence gap). #4 (distractor) would need a Panda-distractor
+env we don't have; #3 (bisim) remains coef-ambiguous on DMC only.
+
 ### 2026-06-11 — VG-SE mechanism-check (entity-graph class, synthetic instrument-validation)
 Built a controlled synthetic multi-entity world (`src/helios/envs/synthetic_entities.py`) whose
 ground-truth value-coupling is KNOWN by construction: reward `= -‖p0-p1‖ - w‖p2-p3‖`, so the value

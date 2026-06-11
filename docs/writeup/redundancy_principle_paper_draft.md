@@ -258,7 +258,7 @@ and why each died; all entries are read from the ledger.
 
 | # | Lever | Outcome | Why (per ledger) |
 |---|-------|---------|------------------|
-| 1 | Geometric prototype clustering (SE Glass) | NULL | redundant with SimNorm's soft-categorical latent (IQM 0.748 vs 0.738, overlapping) |
+| 1 | Geometric prototype clustering (SE Glass) | NULL | redundant with SimNorm's soft-categorical latent (IQM 0.748 vs 0.738, overlapping); confirmed on manipulation at n=5 (PandaPickCube final 1247 CI[815,1693] ≈ vanilla 1416 CI[1010,1821]) [exp/tdmpc_glass/mechcheck/clustering_panda_pick_n5.json] |
 | 2 | Behavioral / reward-grounded clustering | NULL | null at n=34; gain crossed CI-separation then settled in overlap |
 | 3 | Bisimulation auxiliary (BS-MPC style) | HARMFUL | actively hurts (0.549); brittle to coefficient; failed twice |
 | 4 | Distractor robustness from abstraction | FALSIFIED | 1.23× < 1.5× gate; both encoders crushed equally |
