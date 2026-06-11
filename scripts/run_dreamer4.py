@@ -348,7 +348,10 @@ def train_dreamer4(
     # warmup/policy branch and the eval cadence byte-identical to the per-step
     # version. Chunk default is smaller than DreamerV3 because each scan-step is
     # a full transformer forward (memory/compile cost grows with chunk_len).
-    base_chunk = max(train_every // num_envs, 16)
+    # iter-29: a 16-deep scan over the transformer + MJX env OOM-killed XLA compile
+    # on the 5070 Ti. Small chunk = much cheaper compile; the transformer's per-step
+    # GPU work is tiny so the extra host syncs barely matter. Cap small + env override.
+    base_chunk = int(os.environ.get("DREAMER4_CHUNK", "0")) or max(min(train_every // num_envs or 1, 4), 4)
     _chunk_cache: dict[int, "callable"] = {}
 
     def get_collector(n):
