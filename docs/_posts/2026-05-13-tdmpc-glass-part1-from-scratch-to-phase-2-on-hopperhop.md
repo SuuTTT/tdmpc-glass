@@ -1,15 +1,9 @@
 ---
-title: "TD-MPC-Glass: From Scratch to Phase 2 on HopperHop"
+layout: post
+title: "TD-MPC-Glass, Part 1: From Scratch to Phase 2 on HopperHop"
 date: 2026-05-13
 description: "A practical walkthrough of TD-MPC2, a JAX/Flax reimplementation that runs ~50x faster than the original, integrating Glass-JAX structural entropy into it, Phase 1 / Phase 1b / Phase 2 results on DMC HopperHop, the cluster-basin failure analysis, an ELI5 of the math, and a reusable recipe for scaling experiments on vast.ai."
-layout: "post"
-showTableOfContents: true
-math: true
-katex: true
-tags: ["tdmpc2", "glass-jax", "structural-entropy", "jax", "reinforcement-learning", "dmc", "hopper", "vastai"]
 ---
-
-{{< katex >}}
 
 > A practical write-up of (a) what TD-MPC2 is, (b) our JAX/Flax reimplementation
 > that runs **~50× faster** than the official PyTorch one, (c) what Glass-JAX
@@ -443,8 +437,8 @@ across all 15 seeds.)
 
 ### 5.4 How to diagnose Glass — what \(S\), the four scalars, and the transition matrix actually tell you
 
-Every gradient step we log five things (the four scalars in
-[Figure 2](#fig2) plus the raw matrices in [Figure 3](#fig3)).
+Every gradient step we log five things (the four diagnostic scalars plus the
+raw transition/assignment matrices).
 
 - **The assignment matrix \(S\) (size \(N \times K\)).** Each row is a soft
   distribution over the \(K=8\) clusters. `argmax(S, axis=1)` says which
@@ -477,46 +471,36 @@ Empirically the basin is locked within the first 250 k env steps and never
 moves — so the *first* diagnostic dump tells you which basin this seed will
 spend the rest of training in.
 
-<a id="fig2"></a>
+*(Figure 2 in the original post: the four diagnostic scalars over Phase-1
+training, four seeds. The dashed grey line is the Pre-Phase-1 (inert)
+reference at uniform values. Within the first 250 k env steps each seed locks
+onto a small-integer basin: seeds 1–3 onto \(H_{cm}=\log 4 = 1.386\) with
+max\_mass \(=0.250\) (the 4-cluster basin); seed 4 onto \(H_{cm}=\log 3 =
+1.099\) with max\_mass \(\approx 1/3\) (the 3-cluster basin). That's where
+"K=4" comes from: the data, not the hyperparameter.)*
 
-![Glass diagnostics across Phase 1 training](/img/tdmpc-glass/glass_diagnostics.png)
-
-*Figure 2. The four diagnostic scalars over Phase-1 training, four seeds. The
-dashed grey line is the Pre-Phase-1 (inert) reference at uniform values.
-Within the first 250 k env steps each seed locks onto a small-integer basin:
-seeds 1–3 onto \(H_{cm}=\log 4 = 1.386\) with max\_mass \(=0.250\) (the
-4-cluster basin); seed 4 onto \(H_{cm}=\log 3 = 1.099\) with max\_mass
-\(\approx 1/3\) (the 3-cluster basin). **That's where "K=4" comes from**: the
-data, not the hyperparameter.*
-
-<a id="fig3"></a>
-
-![Prototype transition matrix and S assignment at 4M, seed 3](/img/tdmpc-glass/transition_matrix_seed3.png)
-
-*Figure 3. Left: prototype transition matrix \(P\) at 4 M steps for seed 3,
-re-ordered so prototypes belonging to the same cluster are adjacent — four
-clean diagonal blocks. Middle: symmetrised \(A\). Right: the prototype→cluster
-matrix \(S\), with four columns each absorbing 4 prototypes.*
+*(Figure 3 in the original post: left, prototype transition matrix \(P\) at
+4 M steps for seed 3, re-ordered so prototypes belonging to the same cluster
+are adjacent — four clean diagonal blocks. Middle: symmetrised \(A\). Right:
+the prototype→cluster matrix \(S\), with four columns each absorbing 4
+prototypes.)*
 
 ### 5.5 Cluster count predicts return — the Phase-1 failure case
 
 The diagnostic table in §5.3 has only **two** distinct values of "active
 clusters" across all five Phase-1 seeds. Sorting by that value:
 
-![Cluster basin predicts return](/img/tdmpc-glass/cluster_count_vs_return.png)
+*(Figure 4 in the original post: final MPPI return at 4 M as a function of
+the basin Glass landed in. K=4 seeds average **403.7** (n=3, top-quartile
+near official); K=3 seeds average **310.6** (n=2, well below). The dashed
+line is the official 5-seed mean (449.2).)*
 
-*Figure 4. Final MPPI return at 4 M as a function of the basin Glass landed
-in. K=4 seeds average **403.7** (n=3, top-quartile near official); K=3 seeds
-average **310.6** (n=2, well below). The dashed line is the official 5-seed
-mean (449.2).*
-
-![Failure case seed 4](/img/tdmpc-glass/failure_case_seed4.png)
-
-*Figure 5. Left: seed 4 (red) plateaus near 260 the entire run while the other
-seeds rise to 320–450. Right: Glass's `active_clusters` for every seed,
-constant across the run — seeds 4 and 5 lock onto **K=3** within the first
-diagnostic dump and never leave; the other three lock onto **K=4** the same
-way. The basin is decided *before* return separates.*
+*(Figure 5 in the original post: left, seed 4 (red) plateaus near 260 the
+entire run while the other seeds rise to 320–450. Right: Glass's
+`active_clusters` for every seed, constant across the run — seeds 4 and 5
+lock onto **K=3** within the first diagnostic dump and never leave; the other
+three lock onto **K=4** the same way. The basin is decided *before* return
+separates.)*
 
 ### 5.6 Phase 1b — two more knobs, on a 4070 Ti
 
@@ -540,19 +524,15 @@ Phase 1b mean across all five seeds: **\(401.5\pm 158\)** vs Phase 1's
 \(366.5\pm 78\) and official \(449.2\pm 312\). Three of five seeds (1, 2, 5)
 sit *at or above* the official mean; two (3, 4) plateau well below it.
 
-![Phase 1b: all 5 seeds locked onto K=4, returns bimodal](/img/tdmpc-glass/phase1b_basin.png)
+*(Figure 6 in the original post: every one of the five Phase-1b seeds settles
+into the K=4 cluster basin (annotated on top of each bar) — but only 3/5 of
+them turn that basin into a near-optimal hopping policy. The other two get
+stuck in qualitatively different sub-optimal corners (§5.6.1).)*
 
-*Figure 6. Every one of the five Phase-1b seeds settles into the K=4 cluster
-basin (annotated on top of each bar) — but only 3/5 of them turn that basin
-into a near-optimal hopping policy. The other two get stuck in
-qualitatively different sub-optimal corners (§5.6.1).*
-
-![Phase 1 (5 seeds) vs Phase 1b (5 seeds) vs Official TD-MPC2](/img/tdmpc-glass/ci_phase1_vs_phase1b.png)
-
-*Figure 1. MPPI return on HopperHop. Phase 1 (red, n=5) lands within the
-official 95% CI (grey). Phase 1b (blue, n=5) has a wider band because of
-two stuck seeds, but the upper half of the band is consistently above the
-official mean from 1.5 M onward.*
+*(Figure 1 in the original post: MPPI return on HopperHop. Phase 1 (red, n=5)
+lands within the official 95% CI (grey). Phase 1b (blue, n=5) has a wider band
+because of two stuck seeds, but the upper half of the band is consistently
+above the official mean from 1.5 M onward.)*
 
 #### 5.6.1 Why do seeds 3 and 4 not reach 500? — analysis
 
@@ -1053,5 +1033,4 @@ Equations follow the canonical compact form of 2D structural entropy
 [`two_dimensional_structural_entropy()`](https://github.com/SuuTTT/glass-jax/blob/main/src/glass/objectives/structural_entropy.py).
 The implementation uses \(\log_2\) throughout and clamps \(p_{\text{vol}}\) and
 \(d_i/2m\) to \([\varepsilon, 1]\) before the log to keep gradients finite at
-the uniform boundary. KaTeX rendering: inline math uses `\( ... \)` and
-display math uses `$$ ... $$` (Hugo + KaTeX convention).
+the uniform boundary.

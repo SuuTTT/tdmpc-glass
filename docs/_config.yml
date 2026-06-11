@@ -3,6 +3,28 @@ description: "Beating a strong world model is hard — a fair-protocol field rep
 theme: minima
 baseurl: "/tdmpc-glass"
 url: "https://suuttt.github.io"
+
+# Home page lists each post with its description as an excerpt.
+show_excerpts: true
+
+# Curated nav: minima builds the header from header_pages only.
+# Keep it to a short, clean list (Home is added automatically).
+header_pages:
+  - about.md
+
+# Keep the doc tree out of the built site so it does not leak in as pages.
 exclude:
+  - blog/
+  - iterations/
+  - analysis/
+  - design/
+  - operations/
+  - research/
+  - writeup/
   - archive/
+  - HANDOFF_NEXT_SESSION.md
+  - INDEX.md
+  - PUBLICATION_PLAN.md
+  - REFACTOR_PLAN.md
+  - README.md
   - "*.json"

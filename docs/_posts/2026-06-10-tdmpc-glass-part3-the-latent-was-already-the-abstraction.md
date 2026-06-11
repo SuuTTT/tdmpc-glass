@@ -1,15 +1,9 @@
 ---
+layout: post
 title: "TD-MPC-Glass, Part 3: The Latent Was Already the Abstraction"
 date: 2026-06-10
 description: "Thirteen abstraction levers, all null; the one method that beat vanilla TD-MPC2 (a jumpy k-step world model) is prior art, not ours. This is the post where we stop guessing and measure why — a cheap probe shows the trained latent is already a sufficient, value-aligned abstraction (value linearly decodable at R²≈1.0; criticality near-uniform). Ni et al.'s sufficient-self-predictive-abstraction theory, showing up as a number on our own checkpoints. The transferable lesson is the mechanism-check-before-fanout methodology that called every null correctly."
-layout: "post"
-showTableOfContents: true
-math: true
-katex: true
-tags: ["tdmpc2", "glass-jax", "abstraction", "world-models", "value-equivalence", "self-predictive", "reinforcement-learning", "negative-results", "reproducibility", "rliable", "vastai"]
 ---
-
-{{< katex >}}
 
 > Part 2 ended with a scoreboard nobody wants to publish: eight abstraction mirages dissolved to null,
 > one real win (a jumpy k-step world model) that turned out to be someone else's idea, and a methodology
@@ -25,7 +19,7 @@ tags: ["tdmpc2", "glass-jax", "abstraction", "world-models", "value-equivalence"
 
 ## 0. Where Part 2 left us
 
-If you read [Part 2](/projects/2026-06-09-tdmpc-glass-eight-mirages/), you know the verdict and you know the
+If you read [Part 2]({{ '/2026/06/09/tdmpc-glass-part2-mechanism-check-saved-a-campaign/' | relative_url }}), you know the verdict and you know the
 caveats. The one-line recap, for everyone else:
 
 We set out to **beat TD-MPC2 at the architecture/algorithm level** with an "abstraction" idea — our own

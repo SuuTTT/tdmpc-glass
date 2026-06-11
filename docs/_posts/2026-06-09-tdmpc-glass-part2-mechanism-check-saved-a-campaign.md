@@ -5,8 +5,6 @@ date: 2026-06-09
 description: "After Part 1 we put every abstraction idea we had — including our own structural-entropy Glass — through a strict fair protocol on TD-MPC2. Eight apparent wins dissolved to null; one method (a jumpy k-step world model) really did beat vanilla on manipulation, but it isn't ours. We learned a hard lesson on peak-vs-final reporting, and our next novel bet — structural entropy over the jumpy latent graph — was killed by a cheap mechanism-check before it cost a multi-week campaign. A field report on how hard a strong world model is to beat."
 ---
 
-{{< katex >}}
-
 > Part 1 ended on a high: a structural-entropy ("Glass") augmentation of TD-MPC2 that climbed
 > above the official 4M-step HopperHop mean. This post is the honest sequel. We asked one question —
 > **does abstraction actually improve a strong latent world model when you remove every procedure
@@ -21,7 +19,7 @@ description: "After Part 1 we put every abstraction idea we had — including ou
 
 ## 0. First, the bottom line: TD-MPC-Glass does **not** beat TD-MPC2 (recap of the last post)
 
-The [previous post](/projects/2026-05-27-tdmpc-glass-iterations-8-9/) ended on a hopeful note — "Glass
+The [previous post]({{ '/2026/05/13/tdmpc-glass-part1-from-scratch-to-phase-2-on-hopperhop/' | relative_url }}) ended on a hopeful note — "Glass
 off-at-1M beats our internal TD-MPC2 mean on HopperHop, 5-seed confirmations continuing." Here is the
 honest closure of that thread: **under a fair, single-variable, adequately-powered protocol, Glass does
 not beat TD-MPC2.**
