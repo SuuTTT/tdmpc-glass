@@ -1374,135 +1374,163 @@
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCube s0 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
     "box": "ssh2_a4000",
     "started_at": "2026-06-11T15:50:40Z",
-    "launched_git_sha": "1e8c33f"
+    "launched_git_sha": "1e8c33f",
+    "ended_at": "2026-06-11T17:56:58Z"
   },
   {
     "id": "ti30_jumk2_Pick1",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCube s1 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=1 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
     "box": "ssh9_a4000",
     "started_at": "2026-06-11T15:50:56Z",
-    "launched_git_sha": "1e8c33f"
+    "launched_git_sha": "1e8c33f",
+    "ended_at": "2026-06-11T17:47:21Z"
   },
   {
     "id": "ti30_jumk2_Pick2",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCube s2 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
     "box": "ssh4_a4000",
     "started_at": "2026-06-11T15:51:11Z",
-    "launched_git_sha": "1e8c33f"
+    "launched_git_sha": "1e8c33f",
+    "ended_at": "2026-06-11T19:24:20Z"
   },
   {
     "id": "ti30_jumk2_Ori0",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCubeOrientation s0 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
     "box": "ssh4_a4000b",
     "started_at": "2026-06-11T15:51:33Z",
-    "launched_git_sha": "1e8c33f"
+    "launched_git_sha": "1e8c33f",
+    "ended_at": "2026-06-11T17:45:43Z"
   },
   {
     "id": "ti30_jumk2_Ori1",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCubeOrientation s1 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=1 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
     "box": "ssh6_3060",
     "started_at": "2026-06-11T15:51:48Z",
-    "launched_git_sha": "1e8c33f"
+    "launched_git_sha": "1e8c33f",
+    "ended_at": "2026-06-11T18:06:32Z"
   },
   {
     "id": "ti30_jumk2_Ori2",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaPickCubeOrientation s2 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-11T17:45:43Z",
+    "launched_git_sha": "02df3a7",
+    "ended_at": "2026-06-11T19:39:34Z"
   },
   {
     "id": "ti30_jumk2_Cab0",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaOpenCabinet s0 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=0 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-11T17:47:21Z",
+    "launched_git_sha": "02df3a7",
+    "ended_at": "2026-06-11T19:42:37Z"
   },
   {
     "id": "ti30_jumk2_Cab1",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaOpenCabinet s1 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=1 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh2_a4000",
+    "started_at": "2026-06-11T17:56:59Z",
+    "launched_git_sha": "02df3a7"
   },
   {
     "id": "ti30_jumk2_Cab2",
     "label": "iter30 P1 k-sweep jumpy k=2 PandaOpenCabinet s2 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk2 SEEDS=2 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=2 JUMPY_PLAN=1 JUMPY_NMACRO=12 MPPI_H=4 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh6_3060",
+    "started_at": "2026-06-11T18:06:32Z",
+    "launched_git_sha": "02df3a7"
   },
   {
     "id": "ti30_jumk8_Pick0",
     "label": "iter30 P1 k-sweep jumpy k=8 PandaPickCube s0 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk8 SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=8 JUMPY_PLAN=1 JUMPY_NMACRO=3 MPPI_H=16 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh4_a4000",
+    "started_at": "2026-06-11T19:24:20Z",
+    "launched_git_sha": "1b9c6e2"
   },
   {
     "id": "ti30_jumk8_Pick1",
     "label": "iter30 P1 k-sweep jumpy k=8 PandaPickCube s1 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk8 SEEDS=1 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=8 JUMPY_PLAN=1 JUMPY_NMACRO=3 MPPI_H=16 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-11T19:39:34Z",
+    "launched_git_sha": "1b9c6e2"
   },
   {
     "id": "ti30_jumk8_Pick2",
     "label": "iter30 P1 k-sweep jumpy k=8 PandaPickCube s2 (eff horizon 24)",
     "env": "PROBE_ID=phasei30_jumk8 SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=8 JUMPY_PLAN=1 JUMPY_NMACRO=3 MPPI_H=16 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-11T15:40:00Z",
-    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor."
+    "note": "P1 dose-response: does jumpy gain vary with k at fixed effective horizon 24? Pre-registered vs k=4 anchor (phasei27_jum) + vanilla. Verification data for the temporal-abstraction predictor.",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-11T19:42:37Z",
+    "launched_git_sha": "1b9c6e2"
   },
   {
     "id": "ti30_jumk8_Ori0",
@@ -1623,5 +1651,15 @@
     "priority": 2,
     "created_at": "2026-06-11T15:40:00Z",
     "note": "Anchor strengthening: Pick jum-vs-van diff CI95 [-267,1169] at n=5; n=8 resolves the trend. Same PROBE_IDs as phasei27 so aggregate_anchor picks them up."
+  },
+  {
+    "id": "ti30_jum_Cart0",
+    "label": "iter30 P1 out-of-sample: jumpy PandaPickCubeCartesian s0 (ckpt for disc_err_gap pre-reg)",
+    "env": "PROBE_ID=phasei30_jum_cart SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCubeCartesian JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 1,
+    "created_at": "2026-06-11T19:45:00Z",
+    "note": "P1 pre-registration: ckpt -> disc_err_gap signal -> commit prediction -> ONLY THEN harvest this run's gain + the existing unread phasei27 Cartesian CSVs. Original phasei27 cart jum ckpts lost with destroyed boxes."
   }
 ]
