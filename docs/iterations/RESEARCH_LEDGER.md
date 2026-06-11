@@ -12,6 +12,10 @@ peak+final CI gates, mechanism-check before fan-out, no procedure tricks).*
 | **Methodology: peak+final + pre-registered CI gates + mechanism-check-before-fanout** | caught all 8 mirages; killed SE-k/F in an afternoon instead of a multi-week campaign | The most transferable output of the project. |
 | **Ensemble-free uncertainty signal** (jumpy-pred vs iterated-1-step-pred) | tracks true k-step error, Spearman +0.72 | Validated, reusable (exploration/abstention) — just not for horizon-gating (see below). |
 
+
+
+**iter-27/28 update (2026-06-11): jumpy GENERALIZES across the Franka manipulation suite on FINAL return** — PandaPickCube +104% (jum final 2319 vs van 1136), PandaPickCubeOrientation +137% (2323 vs 982), PandaOpenCabinet +112% (1261 vs 596); peak mixed (+32/+4/−30%). The jumpy WM sustains final-return where vanilla degrades, across tasks. n=2-3 (firming to 5). This is the paper's empirical anchor (prior-art method, fair-protocol generalization result).
+
 ## ❌ WHAT DID NOT WORK (nulls, most→least thoroughly killed)
 | # | lever | iter | why it died |
 |---|---|---|---|

@@ -1,0 +1,5 @@
+step,eval_type,seed,full_reward_rate,standing_rate,fall_count,time_to_first_full
+50176,pi,4,0.9824,1.0000,0.0,11.6
+50176,mppi,4,0.2223,1.0000,0.0,7.0
+100096,pi,4,0.9970,1.0000,0.0,3.0
+100096,mppi,4,0.9953,1.0000,0.0,4.666666666666667
