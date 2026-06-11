@@ -47,6 +47,19 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - **P1 dumps**: first launch failed on a CLI flag (`--seeds`→`--seed`); relaunched on ssh7.
 - 2080 Ti + Titan V confirmed destroy-ready to user.
 
+### 18:30 update — P1 first result
+- **P1 candidate-signal screen** (`p1_temporal_signals.json`): of 9 checkpoint signals, exactly ONE
+  orders the tasks like the measured jumpy gains (+90/+32/0): **disc_err_gap** = median(disagreement)/
+  median(true k-step error) — Ori 1.33 > Pick 1.12 > Cab 0.95. Story: jumpy pays where the k-step model
+  is accurate AND calibrated-conservative (disagreement ≥ error); fails where bad + overconfident
+  (Cab err 3× Ori at same latent scale, disc/err < 1). Survivor is scale-invariant (ratios only —
+  absolute latent scales differ ~30× between the Pick dump era and ori/cab dumps; flagged).
+  n=3 honesty: hypothesis-generating only.
+- **Pre-registered out-of-sample test chained**: PandaPickCubeCartesian phasei27 jum/van ran but was
+  never harvested → computing disc_err_gap on its ckpt FIRST (dump chained on ssh7), prediction
+  committed, THEN harvest its gain. Plus the running k-sweep as dose-response.
+- Dev-box chain: ori+cab mech dumps done → value-probes (Ori/Cab) running → P3 ×2 → Cartesian dump.
+
 ### Verdicts (ledger/paper updated)
 - **Entity-graph NO-GO** (3rd redundancy data point, cleanest): value-coupling cross-Hessian recovers
   known-by-construction pairs at chance (AP 0.50, z −0.08) with near-perfect reward fit (0.0026);
