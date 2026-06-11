@@ -4,6 +4,9 @@ Guidance for agents working in this repo.
 
 ## Read first
 - `docs/INDEX.md` — master documentation map (start here).
+- `docs/CHANGELOG.md` — dev & training log (what's being built, what's running on which box).
+  **Append an entry every monitor tick that changes state** (new runs queued/harvested, scripts
+  built, verdicts landed, boxes added/removed). User-requested 2026-06-11.
 - `docs/HANDOFF_NEXT_SESSION.md` — live experiment status / resume entry point (what's running, what to do first).
 - `docs/iterations/RESEARCH_LEDGER.md` — campaign verdicts (what worked / nulls / next probes).
 - `docs/operations/launch_dashboard.md` — control-plane runbook + queue cheat sheet.
