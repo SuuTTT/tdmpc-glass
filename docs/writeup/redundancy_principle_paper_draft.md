@@ -168,21 +168,19 @@ was null-to-harmful: a coefficient sweep on PandaPickCube (seed 0, MPPI) gave pe
 vebase(0) baseline 2692/2243 — monotone degradation, no coefficient beating baseline on both
 peak and final [docs/iterations/iteration_28_plan.md, "COEF SWEEP RESULT" table, read from ssh7
 CSVs]. Probing the resulting value-equivalence checkpoints showed the loss barely reorganized
-the latent: the value-irrelevant fraction moved only from 0.978 (self-pred) to 0.953 (ve@0.1)
-to 0.977 (ve@0.2), with value still linearly decodable at R²≈1.0
-[docs/iterations/iteration_28_plan.md, "VE LATENT PROBE" / "VE coef-latent trend" notes — these
-ve-checkpoint probe numbers are recorded in the iteration plan but were NOT persisted to a
-standalone JSON; `TBD-persist-ve-probe-json` (rerun `scripts/value_probe.py` on the ve01/ve02
-checkpoints and save JSON to back 0.953 / 0.977 / R²≈1.0)].
+the latent: the value-irrelevant fraction moved only from 0.9785 (self-pred) to 0.9728 (ve@0.05)
+to 0.9505 (ve@0.1) to 0.9773 (ve@0.2), with value still linearly decodable at R²=0.9998–1.0
+[exp/tdmpc_glass/mechcheck/value_probe_ve005_pick_n12.json, value_probe_ve01_pick_n12.json,
+value_probe_ve02_pick_n12.json — persisted re-runs of `scripts/value_probe.py` on the ve
+checkpoints, 12 episodes / 12,000 states each].
 
 **C2 — pre-existing interaction structure (holds for (a), fails for (b)).** The SimNorm latent's
 *transition graph* already carries strong community structure. On a trained jumpy CheetahRun
 checkpoint, dumping 12,000 latents, clustering to 128 nodes, and building the k-step transition
 graph, the SE-optimal partition yields a best compression gap of **53.1%** (and **47.2%** for a
-kNN-on-centroids graph) [docs/research/se-precheck-note.md §6, "TIER-2 RESULT" — this number was
-printed by `scripts/se_precheck.py` to logs and recorded in the note, but is NOT persisted in a
-JSON/CSV; `TBD-persist-simnorm-se-json` (rerun `se_precheck.py` and save JSON to back the 53.1% /
-47.2% tier-2 gap)]. Crucially this was measured on a *jumpy encoder trained with no SE pressure*,
+kNN-on-centroids graph) [exp/tdmpc_glass/mechcheck/se_precheck_simnorm_cheetah.json — persisted
+re-run of the tier-2 analysis (`scripts/persist_se_precheck.py`) on the original latent dump,
+reproducing the figures first recorded in docs/research/se-precheck-note.md §6]. Crucially this was measured on a *jumpy encoder trained with no SE pressure*,
 ruling out the objection that the structure is an artifact of a clustering loss. So C2(a) — the
 structure is already present — holds, and an SE-clustering objective can only re-derive it.
 
@@ -365,11 +363,10 @@ We are deliberately conservative about scope.
   Several ledger nulls are decisive in *direction* at small n but not all reach the full n=5 CI
   gate [docs/iterations/RESEARCH_LEDGER.md].
 
-- **Unpersisted numbers.** Several quantities (the SimNorm 53.1%/47.2% SE gap; the ve-checkpoint
-  probe numbers 0.953/0.977/R²≈1.0; the jumpy anchor aggregation) currently live in iteration
-  notes from log output, not in standalone JSON/CSV. They must be re-run-to-persist before
-  submission (see TBDs). The value_probe R²=0.9994 and the attention-graph NO-GO gaps **are**
-  persisted in JSON.
+- ~~**Unpersisted numbers.**~~ Resolved: every quantitative claim in this draft is now backed by
+  a persisted JSON under exp/tdmpc_glass/mechcheck/ (value_probe R²=0.9994; ve-checkpoint probes
+  0.9728/0.9505/0.9773 at R²=0.9998–1.0; attention-graph NO-GO gaps; SimNorm SE gap 53.1%/47.2%;
+  jumpy anchor aggregation with n=5 CIs).
 
 ---
 

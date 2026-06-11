@@ -1,0 +1,15 @@
+{
+  "npz": "exp/tdmpc_glass/se_dump/cheetah_jumpy_k4.npz",
+  "env": "CheetahRun",
+  "jumpy_k": 4,
+  "n_latents": 12000,
+  "latent_dim": 512,
+  "n_nodes": 128,
+  "sub": 8000,
+  "seed": 0,
+  "best_gap_kstep_transition": 0.531329158743815,
+  "best_gap_knn_centroids": 0.47224307421880823,
+  "tier2_verdict_best_gap": 0.531329158743815,
+  "pass_threshold": 0.15,
+  "note": "Persisted re-run of se_precheck.analyze_real on the original dump; backs the SimNorm tier-2 SE-gap figures in the redundancy paper."
+}
