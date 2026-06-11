@@ -109,3 +109,13 @@ because it's ALREADY value-sufficient. Triple confirmation of the null (mechanis
 - Jumpy generalization (the anchor) firming, @≥450k: Pick jum 2645/2319 vs van 1925/1238 (n=2, +87% final);
   Ori jum 2474/2357 vs van 2370/982 (n=2, +140% final); Cab jum 2167/1261 vs van 3097/596 (n=1, +112%
   final, van higher peak). Jumpy SUSTAINS final across the suite; peak ~tie/mixed. n→5 in progress.
+
+## ANCHOR FINALIZED + behavglass audit re-test (2026-06-11, read-from-disk, @≥450k)
+**Jumpy generalization (the paper's empirical anchor) — jum > van on FINAL across the whole Franka suite:**
+PandaPickCube +101% (2319 n=2 vs van 1154 n=4), Orientation +75% (2323 vs 1329 n=3-4),
+OpenCabinet +74% (jum 1311 n=4 vs van 754 n=5). PEAK mixed (van often higher peak; jum sustains final).
+Robust direction; jumpy is prior art (Farebrother 2026). This is the campaign's one positive empirical result.
+**behavglass (audit re-test of null #2, ALGO=tdmpc-glass GLASS_LAMBDA_BEHAV=0.5, PandaPickCube n=4):**
+final 1221 ≈ vanilla 1154 (+6%) and ≪ jumpy 2319 → NULL. Helps-weak-baseline-at-best mirage; does not
+approach the strong jumpy config. The DMC-killed lever stays dead on Panda too. Audit fully closed:
+all 15 nulls hold; the 2 weak Panda re-tests (#2 behavglass run = null; #8 community-skills = not run, needs reach-eval build).
