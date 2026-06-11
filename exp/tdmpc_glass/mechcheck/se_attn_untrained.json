@@ -1,0 +1,244 @@
+{
+  "source_npz": "/tmp/attn_un.npz",
+  "meta": {
+    "source": "untrained",
+    "task": "PandaPickCube",
+    "T": 32,
+    "B": 1,
+    "n_windows": 8,
+    "n_layers": 4,
+    "trained": false,
+    "tcfg": {
+      "embed_dim": 256,
+      "d_model": 256,
+      "n_layers": 4,
+      "n_heads": 4,
+      "context_len": 32,
+      "mlp_ratio": 4,
+      "pos_encoding": "learned"
+    }
+  },
+  "sparsification": {
+    "thresholds": [
+      0.5,
+      0.8,
+      0.9
+    ],
+    "knn_k": 4
+  },
+  "per_layer": [
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.451942,
+          "se_2d_optimal": 3.818706,
+          "compression_2d": 0.1422,
+          "num_communities": 11,
+          "null_compression_2d": 0.1801,
+          "null_num_communities": 5,
+          "gap_over_null": -0.0379
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.830505,
+          "se_2d_optimal": 3.245251,
+          "compression_2d": 0.1528,
+          "num_communities": 20,
+          "null_compression_2d": 0.2656,
+          "null_num_communities": 9,
+          "gap_over_null": -0.1128
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.373672,
+          "se_2d_optimal": 2.831696,
+          "compression_2d": 0.1606,
+          "num_communities": 23,
+          "null_compression_2d": 0.368,
+          "null_num_communities": 9,
+          "gap_over_null": -0.2074
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.430077,
+          "se_2d_optimal": 3.391316,
+          "compression_2d": 0.2345,
+          "num_communities": 4,
+          "null_compression_2d": 0.2702,
+          "null_num_communities": 8,
+          "gap_over_null": -0.0357
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.2345,
+      "layer": 0
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.443702,
+          "se_2d_optimal": 3.808201,
+          "compression_2d": 0.143,
+          "num_communities": 12,
+          "null_compression_2d": 0.1856,
+          "null_num_communities": 5,
+          "gap_over_null": -0.0426
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.833224,
+          "se_2d_optimal": 3.238197,
+          "compression_2d": 0.1552,
+          "num_communities": 20,
+          "null_compression_2d": 0.2625,
+          "null_num_communities": 9,
+          "gap_over_null": -0.1073
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.378501,
+          "se_2d_optimal": 2.831193,
+          "compression_2d": 0.162,
+          "num_communities": 24,
+          "null_compression_2d": 0.3689,
+          "null_num_communities": 9,
+          "gap_over_null": -0.2069
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.568793,
+          "se_2d_optimal": 3.256479,
+          "compression_2d": 0.2872,
+          "num_communities": 4,
+          "null_compression_2d": 0.2808,
+          "null_num_communities": 9,
+          "gap_over_null": 0.0064
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.2872,
+      "layer": 1
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.437063,
+          "se_2d_optimal": 3.819349,
+          "compression_2d": 0.1392,
+          "num_communities": 12,
+          "null_compression_2d": 0.1777,
+          "null_num_communities": 5,
+          "gap_over_null": -0.0385
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.823948,
+          "se_2d_optimal": 3.261803,
+          "compression_2d": 0.147,
+          "num_communities": 20,
+          "null_compression_2d": 0.2771,
+          "null_num_communities": 8,
+          "gap_over_null": -0.1301
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.367494,
+          "se_2d_optimal": 2.83104,
+          "compression_2d": 0.1593,
+          "num_communities": 24,
+          "null_compression_2d": 0.3671,
+          "null_num_communities": 9,
+          "gap_over_null": -0.2078
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.081577,
+          "se_2d_optimal": 3.521631,
+          "compression_2d": 0.1372,
+          "num_communities": 3,
+          "null_compression_2d": 0.2824,
+          "null_num_communities": 8,
+          "gap_over_null": -0.1452
+        }
+      },
+      "best_variant": "thr0.9",
+      "best_gap": 0.1593,
+      "layer": 2
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.442328,
+          "se_2d_optimal": 3.815473,
+          "compression_2d": 0.1411,
+          "num_communities": 12,
+          "null_compression_2d": 0.1792,
+          "null_num_communities": 5,
+          "gap_over_null": -0.0381
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.829133,
+          "se_2d_optimal": 3.257214,
+          "compression_2d": 0.1494,
+          "num_communities": 20,
+          "null_compression_2d": 0.2695,
+          "null_num_communities": 8,
+          "gap_over_null": -0.1201
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.376095,
+          "se_2d_optimal": 2.834685,
+          "compression_2d": 0.1604,
+          "num_communities": 24,
+          "null_compression_2d": 0.372,
+          "null_num_communities": 8,
+          "gap_over_null": -0.2116
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.446603,
+          "se_2d_optimal": 3.326499,
+          "compression_2d": 0.2519,
+          "num_communities": 4,
+          "null_compression_2d": 0.2826,
+          "null_num_communities": 9,
+          "gap_over_null": -0.0307
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.2519,
+      "layer": 3
+    }
+  ],
+  "verdict": {
+    "best_layer": 1,
+    "best_gap": 0.2872,
+    "best_gap_over_null": 0.0064,
+    "go_gap_threshold": 0.1,
+    "go_margin_threshold": 0.05,
+    "has_exploitable_community_structure": false,
+    "verdict": "NO-GO -- attention graph gap is at/below the degree-preserving null; structureless blob, direction is dead."
+  }
+}

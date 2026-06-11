@@ -119,3 +119,18 @@ Robust direction; jumpy is prior art (Farebrother 2026). This is the campaign's 
 final 1221 ≈ vanilla 1154 (+6%) and ≪ jumpy 2319 → NULL. Helps-weak-baseline-at-best mirage; does not
 approach the strong jumpy config. The DMC-killed lever stays dead on Panda too. Audit fully closed:
 all 15 nulls hold; the 2 weak Panda re-tests (#2 behavglass run = null; #8 community-skills = not run, needs reach-eval build).
+
+## NORTH-STAR SE-ATTENTION-GRAPH VERDICT (2026-06-11): NO-GO
+Ran se_attention_graph on a trained transformer-WM (PandaPickCube, ~16k steps, eval~345) vs an untrained baseline.
+Per-layer best SE gap vs a degree-preserving null:
+  TRAINED:   L0 0.250(+0.033) L1 0.166(-0.122) L2 0.170(-0.099) L3 0.157(-0.211)  → best over-null +0.033
+  UNTRAINED: L0 0.235(+0.036) L1 0.287(+0.006) L2 0.159(-0.208) L3 0.252(-0.031)  → best over-null +0.006
+VERDICT: NO-GO. The attention graph's SE gap is at/below its degree-preserving null (raw gaps are a
+sparsification artifact; only the over-null margin counts, and it is ~0). TRAINED ≈ UNTRAINED — training
+induces NO exploitable community structure in the attention graph. SE-as-a-loss has nothing to shape here.
+The cheap mechanism-check (se_jax + se_attention_graph) saved an SE-loss build on a structureless substrate.
+CAVEAT/SCOPE: this is the transformer ATTENTION graph of a SMALL, modestly-trained WM on SINGLE-object
+manipulation (weak relational structure). It does NOT close a TRUE entity-node graph/GNN world model on a
+genuinely RELATIONAL domain (multi-object/multi-agent) — that's the version the graph-WM deep-research should
+scope. But the attention-graph proxy for graph-WM+SE is dead. Consistent with the campaign thesis: SE finds
+either no structure (here) or control-irrelevant structure (SimNorm's 53% gap) — never a control-useful lever.

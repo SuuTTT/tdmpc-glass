@@ -1,0 +1,244 @@
+{
+  "source_npz": "/tmp/attn_tr.npz",
+  "meta": {
+    "source": "ckpt:exp/tdmpc_glass/PandaPickCube_twm_PandaPickCube_i29twm2/seed_0/checkpoints/latest.pkl",
+    "task": "PandaPickCube",
+    "T": 32,
+    "B": 1,
+    "n_windows": 8,
+    "n_layers": 4,
+    "trained": true,
+    "tcfg": {
+      "embed_dim": 256,
+      "d_model": 256,
+      "n_layers": 4,
+      "n_heads": 4,
+      "context_len": 32,
+      "mlp_ratio": 4,
+      "pos_encoding": "learned"
+    }
+  },
+  "sparsification": {
+    "thresholds": [
+      0.5,
+      0.8,
+      0.9
+    ],
+    "knn_k": 4
+  },
+  "per_layer": [
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.470181,
+          "se_2d_optimal": 3.826231,
+          "compression_2d": 0.1441,
+          "num_communities": 10,
+          "null_compression_2d": 0.1731,
+          "null_num_communities": 6,
+          "gap_over_null": -0.029
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.833789,
+          "se_2d_optimal": 3.249105,
+          "compression_2d": 0.1525,
+          "num_communities": 20,
+          "null_compression_2d": 0.2671,
+          "null_num_communities": 8,
+          "gap_over_null": -0.1146
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.377425,
+          "se_2d_optimal": 2.827823,
+          "compression_2d": 0.1627,
+          "num_communities": 24,
+          "null_compression_2d": 0.3662,
+          "null_num_communities": 9,
+          "gap_over_null": -0.2035
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.463253,
+          "se_2d_optimal": 3.345964,
+          "compression_2d": 0.2503,
+          "num_communities": 5,
+          "null_compression_2d": 0.2837,
+          "null_num_communities": 10,
+          "gap_over_null": -0.0334
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.2503,
+      "layer": 0
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.443859,
+          "se_2d_optimal": 3.820694,
+          "compression_2d": 0.1402,
+          "num_communities": 11,
+          "null_compression_2d": 0.1732,
+          "null_num_communities": 5,
+          "gap_over_null": -0.033
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.821355,
+          "se_2d_optimal": 3.2471,
+          "compression_2d": 0.1503,
+          "num_communities": 20,
+          "null_compression_2d": 0.2753,
+          "null_num_communities": 7,
+          "gap_over_null": -0.125
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.37412,
+          "se_2d_optimal": 2.846059,
+          "compression_2d": 0.1565,
+          "num_communities": 24,
+          "null_compression_2d": 0.375,
+          "null_num_communities": 8,
+          "gap_over_null": -0.2185
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.180769,
+          "se_2d_optimal": 3.487857,
+          "compression_2d": 0.1657,
+          "num_communities": 3,
+          "null_compression_2d": 0.2874,
+          "null_num_communities": 10,
+          "gap_over_null": -0.1217
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.1657,
+      "layer": 1
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.44015,
+          "se_2d_optimal": 3.815964,
+          "compression_2d": 0.1406,
+          "num_communities": 12,
+          "null_compression_2d": 0.1775,
+          "null_num_communities": 5,
+          "gap_over_null": -0.0369
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.826816,
+          "se_2d_optimal": 3.257247,
+          "compression_2d": 0.1488,
+          "num_communities": 20,
+          "null_compression_2d": 0.2774,
+          "null_num_communities": 7,
+          "gap_over_null": -0.1286
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.36919,
+          "se_2d_optimal": 2.846829,
+          "compression_2d": 0.155,
+          "num_communities": 24,
+          "null_compression_2d": 0.3671,
+          "null_num_communities": 9,
+          "gap_over_null": -0.2121
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.17316,
+          "se_2d_optimal": 3.4625,
+          "compression_2d": 0.1703,
+          "num_communities": 3,
+          "null_compression_2d": 0.269,
+          "null_num_communities": 9,
+          "gap_over_null": -0.0987
+        }
+      },
+      "best_variant": "knn4",
+      "best_gap": 0.1703,
+      "layer": 2
+    },
+    {
+      "variants": {
+        "thr0.5": {
+          "n": 32,
+          "m": 248,
+          "se_1d": 4.444808,
+          "se_2d_optimal": 3.819959,
+          "compression_2d": 0.1406,
+          "num_communities": 11,
+          "null_compression_2d": 0.1818,
+          "null_num_communities": 4,
+          "gap_over_null": -0.0412
+        },
+        "thr0.8": {
+          "n": 32,
+          "m": 100,
+          "se_1d": 3.820585,
+          "se_2d_optimal": 3.251961,
+          "compression_2d": 0.1488,
+          "num_communities": 20,
+          "null_compression_2d": 0.275,
+          "null_num_communities": 7,
+          "gap_over_null": -0.1262
+        },
+        "thr0.9": {
+          "n": 32,
+          "m": 50,
+          "se_1d": 3.363876,
+          "se_2d_optimal": 2.834693,
+          "compression_2d": 0.1573,
+          "num_communities": 23,
+          "null_compression_2d": 0.3678,
+          "null_num_communities": 10,
+          "gap_over_null": -0.2105
+        },
+        "knn4": {
+          "n": 32,
+          "m": 118,
+          "se_1d": 4.020814,
+          "se_2d_optimal": 3.542355,
+          "compression_2d": 0.119,
+          "num_communities": 2,
+          "null_compression_2d": 0.2654,
+          "null_num_communities": 8,
+          "gap_over_null": -0.1464
+        }
+      },
+      "best_variant": "thr0.9",
+      "best_gap": 0.1573,
+      "layer": 3
+    }
+  ],
+  "verdict": {
+    "best_layer": 0,
+    "best_gap": 0.2503,
+    "best_gap_over_null": -0.0334,
+    "go_gap_threshold": 0.1,
+    "go_margin_threshold": 0.05,
+    "has_exploitable_community_structure": false,
+    "verdict": "NO-GO -- attention graph gap is at/below the degree-preserving null; structureless blob, direction is dead."
+  }
+}
