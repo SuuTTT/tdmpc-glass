@@ -414,6 +414,25 @@ def train_dreamer4(
             sps = int(env_steps / max(time.time() - t0, 1))
             wm_loss = float(last_metrics.get("wm/total", 0.0))
             print(f"  es={env_steps:>9,}  sps={sps}  eval={ret:7.1f}  wm_loss={wm_loss:.3f}", flush=True)
+            # iter-29: persist a checkpoint so se_attention_graph.py can analyze the trained
+            # transformer-WM's attention graph (run_dreamer4 previously saved nothing).
+            try:
+                import pickle as _pk
+                from pathlib import Path as _P
+                _twm = state["wm"]
+                _ckdir = _P(ev_csv).parent / f"seed_{seed}" / "checkpoints"
+                _ckdir.mkdir(parents=True, exist_ok=True)
+                _cfg = {k: getattr(_twm, k) for k in (
+                    "embed_dim", "action_dim", "d_model", "n_layers", "n_heads",
+                    "context_len", "mlp_ratio", "activation", "pos_encoding", "max_seq_len")
+                    if hasattr(_twm, k)}
+                _pk.dump({"wm_params": jax.device_get(state["wm_params"]),
+                          "actor_params": jax.device_get(state["actor_params"]),
+                          "transformer_config": _cfg, "obs_dim": obs_dim, "act_dim": act_dim,
+                          "env_id": env_id, "seed": seed, "step": env_steps},
+                         open(_ckdir / "latest.pkl", "wb"))
+            except Exception as _e:
+                print(f"  [dreamer4] ckpt save failed: {_e}", flush=True)
             next_eval += eval_interval
 
     print(f"  [dreamer4] done {env_id} seed={seed} at {env_steps:,} env-steps "
