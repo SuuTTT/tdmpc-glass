@@ -121,8 +121,8 @@ the 1-step model many times — a **jumpy (k-step) world model**:
 $$ d_k(z_t, a_{t:t+k}) \;\to\; z_{t+k}, \qquad
    \mathcal{L}_{\text{HC}} = \big\lVert d(z,a,2k) - d(d(z,a,k),a,k)\big\rVert^2 $$
 
-plus a macro-reward head and a macro-MPPI that plans \(n_{\text{macro}}\) jumpy steps (effective
-horizon \(k\cdot n_{\text{macro}}\)) with only a few model applies.
+plus a macro-reward head and a macro-MPPI that plans $n_{\text{macro}}$ jumpy steps (effective
+horizon $k\cdot n_{\text{macro}}$) with only a few model applies.
 
 We did the thing the earlier iterations skipped: **confirmed the mechanism before spending compute.**
 The k-step head is measurably more accurate than iterating the 1-step model k times, and the edge
@@ -191,7 +191,7 @@ Here's the part that closes the loop with Part 1. We treated the (validated, but
 as a **substrate** and asked for a mechanism that beats *it*. Internal + three external deep-research
 passes converged on a structural-entropy lever, right back where Glass started: build a directed
 **structural-entropy encoding tree over the jumpy model's latent transition graph**, and use entropy
-minimization to pick the jump length \(k\) — long jumps inside a coherent "motion-phase" community,
+minimization to pick the jump length $k$ — long jumps inside a coherent "motion-phase" community,
 short jumps at community boundaries (contacts, turning points), where a long jump should be least
 accurate. The SE line (SIDM, SISA, SI2E, SIHD) is all model-free or diffusion-based; nobody had used
 structural entropy to set temporal abstraction for an MPPI planner over a learned world model. A real gap.
@@ -205,15 +205,15 @@ abstraction exists. Green light to the real test.
 
 **Pre-check 2 (the kill-test) — does that structure track where the model is actually wrong?** This is
 the load-bearing question, and the answer was **no**. The community-boundary score does not correlate
-with the jumpy model's k-step prediction error (Spearman \(+0.09\) on Panda, \(-0.18\) on Cartpole).
+with the jumpy model's k-step prediction error (Spearman $+0.09$ on Panda, $-0.18$ on Cartpole).
 Digging in, the reason is decisive: **the k-step error is small and nearly uniform** — there are no
 "hard regions." We even tried to salvage it as an uncertainty-gated horizon: an ensemble-free
 disagreement signal (jumpy-prediction vs iterated-one-step) turned out to be a *great* error proxy
-(Spearman \(+0.72\)) — but under MPPI-scale action perturbations the error barely moves (inflation
-\(1.06\times\)). The jumpy model is **uniformly accurate**, in-distribution and out. Which is exactly
-*why* fixed-\(k\) jumpy already works — and why adaptive jump-length has nothing to adapt to.
+(Spearman $+0.72$) — but under MPPI-scale action perturbations the error barely moves (inflation
+$1.06\times$). The jumpy model is **uniformly accurate**, in-distribution and out. Which is exactly
+*why* fixed-$k$ jumpy already works — and why adaptive jump-length has nothing to adapt to.
 
-So the structural-entropy lever, and the whole adaptive-\(k\) family with it, goes in the mirage table
+So the structural-entropy lever, and the whole adaptive-$k$ family with it, goes in the mirage table
 next to its ancestors. The difference from Part 1: this time the negative cost an **afternoon of latent
 dumps**, not a multi-week seed campaign. Mechanism-check first, fan-out second — that's the discipline
 the whole project is really about. (Silver lining: that jumpy-vs-iterated-one-step disagreement is a
@@ -243,12 +243,12 @@ Stepping back over the whole campaign, here is the honest accounting.
 
 **What's PROMISING (untested, not killed by the uniform-error finding):**
 - **Hermite-spline action bottleneck** — parametrize macro-actions as smooth cubic splines (target
-  joint pos/vel) + a PD tracker; shrinks the MPPI search space (\(k\cdot d \to 2d\)) with no learned
+  joint pos/vel) + a PD tracker; shrinks the MPPI search space ($k\cdot d \to 2d$) with no learned
   codec (so no online representation drift). Doesn't depend on error-variance, so this verdict doesn't
   touch it.
-- **Value-equivalent macro head** — train \(d_k\) to be *return*-equivalent over k steps (predict the
-  same macro-\(Q\)) rather than state-faithful, so the abstraction keeps only what matters for control.
-- **The disagreement signal we found** (jumpy vs iterated-one-step, Spearman \(0.72\) vs true error)
+- **Value-equivalent macro head** — train $d_k$ to be *return*-equivalent over k steps (predict the
+  same macro-$Q$) rather than state-faithful, so the abstraction keeps only what matters for control.
+- **The disagreement signal we found** (jumpy vs iterated-one-step, Spearman $0.72$ vs true error)
   — reusable for exploration bonuses or safe/abstained planning, just not horizon-gating.
 - **High-DoF, done right** — our Humanoid probe floored at 500k (it needs millions of steps); a proper
   high-DoF run is the place the literature says abstraction headroom actually lives.
@@ -273,11 +273,11 @@ Every lever got a cheap mechanism-check before any multi-seed spend. The scorebo
 
 | iter | lever | mechanism-check | verdict |
 |---|---|---|---|
-| 23 | **SE-k**: structural-entropy adaptive jump-length | boundary score vs k-step error: Spearman \(+0.09\)/\(-0.18\) | **null** — boundaries don't mark where the model errs |
-| 23 | **F**: uncertainty-gated horizon | disagreement tracks error (Spearman \(0.72\)) **but** error is uniform under MPPI perturbation (inflation \(1.06\times\)) | **null** — nothing to gate; jumpy is uniformly accurate |
+| 23 | **SE-k**: structural-entropy adaptive jump-length | boundary score vs k-step error: Spearman $+0.09$/$-0.18$ | **null** — boundaries don't mark where the model errs |
+| 23 | **F**: uncertainty-gated horizon | disagreement tracks error (Spearman $0.72$) **but** error is uniform under MPPI perturbation (inflation $1.06\times$) | **null** — nothing to gate; jumpy is uniformly accurate |
 | 24 | **SI2E / VCSE + `wmsi2e`** (SE-exploration over the world-model latent) | full sparse-task gate, 75 runs | **null/negative** — no rescue; at coef 1.0 the bonus *hurts* (collapses even on the easy task); the WM-latent novelty adds nothing |
 | 25 | **Hermite-spline action bottleneck** | spline fit to action windows: needs K=4 for R²≈0.8 (only 2× compression) | **lean-negative, low-EV** — the open-loop proxy is invalid for a closed-loop planner; premise (big search cut) fails |
-| 26 | **value-equivalent macro head** (train \(d_k\) to preserve *value*, not state) | trains clean; gate (distractor tasks) **running** | TBD |
+| 26 | **value-equivalent macro head** (train $d_k$ to preserve *value*, not state) | trains clean; gate (distractor tasks) **running** | TBD |
 
 The unifying empirical fact: **the jumpy model is already uniformly accurate over the states a good
 policy visits**, and **TD-MPC2's MPPI is already policy-prior-warm-started** — so adaptive-k, smarter
@@ -384,10 +384,10 @@ settings. That said, it's cheap to falsify and worth one clean A/B — see §12.
 **Q3 — Jumpy world model: motivation, our implementation, Meta's, and the difference?**
 *Motivation:* a longer planning horizon helps when reward is beyond a short planner's reach, but rolling
 the 1-step model deep **compounds error** (vanilla H9 collapses on Panda). A k-step head predicts
-\(z_{t+k}\) in one shot → long *effective* horizon (\(k\cdot n_{\text{macro}}\)) with few model applies.
-*Ours:* a **deterministic** k-step latent head \(d_k(z_t,a_{t:t+k})\to z_{t+k}\) (an MLP on the
+$z_{t+k}$ in one shot → long *effective* horizon ($k\cdot n_{\text{macro}}$) with few model applies.
+*Ours:* a **deterministic** k-step latent head $d_k(z_t,a_{t:t+k})\to z_{t+k}$ (an MLP on the
 concatenation, SimNorm output), trained with k-step consistency + a horizon-consistency term
-\(\lVert d(z,a,2k)-d(d(z,a,k),a,k)\rVert^2\) + a macro-reward head; planned by **macro-MPPI** inside online
+$\lVert d(z,a,2k)-d(d(z,a,k),a,k)\rVert^2$ + a macro-reward head; planned by **macro-MPPI** inside online
 TD-MPC2. *Meta's (Farebrother et al., 2026):* jumpy models on **Temporal-Difference Flows** — they learn the
 **discounted occupancy / successor measure** at multiple timescales (a distribution, not a point latent),
 with a cross-timescale consistency objective, and use it for **zero-shot composition of pre-trained
@@ -420,7 +420,7 @@ The useful axis is **reward/value-equivalence (π\*-bisimulation)**: aggregate s
 because they describe *what the dynamics do*, not *what to do*. You **find** such an abstraction by training
 it to **preserve a control-relevant quantity** (Q, return, or the optimal action) and validating that it
 *predicts value better* — not that it clusters states. That is exactly our **value-equivalent macro head**
-(probe #2): train \(d_k\) so the predicted latent preserves \(V=\min\text{-}Q(z,\pi(z))\), not the full
+(probe #2): train $d_k$ so the predicted latent preserves $V=\min\text{-}Q(z,\pi(z))$, not the full
 state. The honest catch: TD-MPC2's value loss already does this *implicitly*, so the open question is
 whether an **explicit** value-equivalence objective helps where the implicit one is capacity-limited —
 **distractors** and **transfer**. (The other genuinely-useful family is **reusable action/temporal

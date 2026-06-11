@@ -11,7 +11,7 @@ description: "Thirteen abstraction levers, all null; the one method that beat va
 > campaign was really asking — **not "did abstraction help?" (it didn't) but "why didn't it?"** We stopped
 > bolting things onto TD-MPC2 and instead ran a cheap probe on a trained checkpoint. The answer is clean
 > and a little humbling: **a trained TD-MPC2 latent is already a sufficient, value-aligned abstraction.**
-> Value is linearly decodable from it at \(R^2 \approx 1.0\); the structure an explicit abstraction would
+> Value is linearly decodable from it at $R^2 \approx 1.0$; the structure an explicit abstraction would
 > impose is already there. The negative result and the methodology are the contribution — and we think
 > they're worth writing down honestly.
 
@@ -34,7 +34,7 @@ no procedure tricks. The protocol was the product. And under it:
 - **One thing genuinely beat vanilla** — a **jumpy (k-step) world model** on PandaPickCube manipulation:
   peak **+966 (+44%)**, 95% CI **[714, 1248]**; final **+1266 (+88%)**, CI **[877, 1642]**, both
   CI-separated, mechanism pre-confirmed (the k-step head's error vs iterating the 1-step model drops
-  \(0.99 \to 0.82\) as k grows). But the jumpy world model with cross-timescale consistency is **published
+  $0.99 \to 0.82$ as k grows). But the jumpy world model with cross-timescale consistency is **published
   prior art** ([Farebrother et al., 2026](https://arxiv.org/abs/2602.19634)). It's a fair-protocol
   reproduction-and-evaluation win, **not our invention**.
 
@@ -70,8 +70,8 @@ This is the iteration-28 mechanism-check, and it's the spine of the whole post.
 
 ## 2. Probe 1 — the latent is already value-sufficient
 
-The lever this gates is the **value-equivalent macro head**: train the k-step dynamics \(d_k\) to be
-*return*-equivalent (predict the same macro-\(Q\)) rather than state-faithful, on the theory that an
+The lever this gates is the **value-equivalent macro head**: train the k-step dynamics $d_k$ to be
+*return*-equivalent (predict the same macro-$Q$) rather than state-faithful, on the theory that an
 abstraction organized around value keeps only what control needs and discards the rest.
 
 For that to help, value has to be *hard* to recover from the current latent — there has to be headroom. So
@@ -80,7 +80,7 @@ we fit the simplest possible probe: a **linear** decode of the value function fr
 
 $$ \texttt{linear\_V\_decode\_r2} = 0.9994 $$
 
-Value is **already linearly decodable from the latent at \(R^2 \approx 1.0\)**. Not after a deep nonlinear
+Value is **already linearly decodable from the latent at $R^2 \approx 1.0$**. Not after a deep nonlinear
 head — a *linear* readout recovers it almost perfectly. There is essentially nothing for a value-equivalence
 objective to *add*, because the self-predictive latent has already arranged itself so that value is a
 trivial linear function of it.
@@ -142,13 +142,13 @@ build and bolt on. The probes say the opposite. A trained TD-MPC2 latent is **al
   output is V parallel soft codebooks *by construction*;
 - temporally coherent — the self-predictive consistency loss shapes transitions to be smooth and
   predictable;
-- and **value-aligned** — value is linearly decodable at \(R^2 \approx 1.0\), criticality is near-uniform,
+- and **value-aligned** — value is linearly decodable at $R^2 \approx 1.0$, criticality is near-uniform,
   the value subspace is low-dimensional and cleanly exposed.
 
 This is precisely what [Ni et al. (2024)](https://arxiv.org/abs/2401.08898) predict in theory: a
 self-predictive objective learns a **sufficient** abstraction. We didn't set out to confirm their theorem;
 we set out to beat it, failed thirteen times, and then *measured it on our own checkpoints*. The
-\(R^2 = 0.9994\) is what "sufficient abstraction" looks like when you put a ruler on it.
+$R^2 = 0.9994$ is what "sufficient abstraction" looks like when you put a ruler on it.
 
 Which reframes every null in the ledger. They aren't thirteen unrelated failures — they're **one finding,
 thirteen times**: explicit abstraction is **redundant** with what a strong self-predictive world model
@@ -198,7 +198,7 @@ checkpoint in an afternoon:
 
 | lever | the assumption it needs | cheap kill-test | result |
 |---|---|---|---|
-| value-equivalent macro head | value is hard to recover from the latent | linear V-decode \(R^2\) | **0.9994** → no headroom |
+| value-equivalent macro head | value is hard to recover from the latent | linear V-decode $R^2$ | **0.9994** → no headroom |
 | value-critical horizon | criticality varies across states | criticality CV | **0.36** → near-uniform, nothing to gate |
 | SE adaptive jump-length | boundaries mark where the model errs | boundary-vs-error Spearman | **+0.09 / −0.18** → uncorrelated |
 | uncertainty-gated horizon | error varies under planning perturbations | error inflation under MPPI noise | **1.06×** → uniform, nothing to gate |
@@ -225,14 +225,14 @@ This is a negative result with a measured mechanism, not a closed book. The plac
   capacity to discard** — i.e. **high-DoF** control (Humanoid, Dog, dexterous manipulation). Our one
   high-DoF attempt (Humanoid) floored at 500k steps because it needs millions; we couldn't test it honestly.
   The right move is the same one this post argues for: run a high-DoF `value_probe` *first* — if value is
-  *not* linearly decodable at \(R^2 \approx 1.0\) there, the headroom is real and worth a budget; if it is,
+  *not* linearly decodable at $R^2 \approx 1.0$ there, the headroom is real and worth a budget; if it is,
   the verdict extends and we've saved the budget.
 - **TD-MPC2-specific.** "Sufficient self-predictive abstraction" is a property of TD-MPC2's objective.
   DreamerV3 learns a *reconstruction*-based recurrent latent and trains its actor-critic purely in
   imagination — a reconstruction objective is **not** value-sufficient by construction, so there may be
   genuine abstraction headroom there that TD-MPC2 doesn't have. We haven't tested it. The redundancy claim
   is about strong *self-predictive* world models specifically.
-- **\(R^2\) is necessary, not sufficient, for "no headroom."** Value being linearly decodable on the
+- **$R^2$ is necessary, not sufficient, for "no headroom."** Value being linearly decodable on the
   *visited* state distribution doesn't prove it's decodable off-distribution (under distractors, transfer).
   The honest residual open question is whether an explicit value-equivalence objective helps where the
   *implicit* one is capacity-limited — distractors and transfer — even though it's redundant on-distribution.
@@ -267,7 +267,7 @@ uniform), but a real, validated uncertainty signal for exploration bonuses or sa
 
 We tried to beat TD-MPC2 with abstraction. We didn't. The one method that beats it isn't ours. And the
 reason — measured, not asserted — is that a trained self-predictive latent is **already** the abstraction we
-kept trying to add: value linearly decodable at \(R^2 = 0.9994\), criticality near-uniform at CV 0.36, the
+kept trying to add: value linearly decodable at $R^2 = 0.9994$, criticality near-uniform at CV 0.36, the
 control-relevant structure cleanly exposed in ~7 dimensions while 98% of the variance the model carries is
 value-irrelevant slack the value head already ignores. Ni et al.'s sufficient-abstraction theorem, as a
 number on our own checkpoints.

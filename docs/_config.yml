@@ -28,3 +28,7 @@ exclude:
   - REFACTOR_PLAN.md
   - README.md
   - "*.json"
+
+# Pass math through raw so MathJax handles it (kramdown's default wraps/escapes it)
+kramdown:
+  math_engine: null
