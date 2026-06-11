@@ -23,6 +23,10 @@ sync_box() {
         --include='*_phase*/' \
         --include='*_phase*/seed_*.csv' \
         --include='*_phase*/seed_*_diag.csv' \
+        --include='*_dgen_*/' \
+        --include='*_dgen_*/seed_*.csv' \
+        --include='*_dreamergen*/' \
+        --include='*_dreamergen*/seed_*.csv' \
         --exclude='*' \
         root@$host:/root/helios-rl/exp/tdmpc_glass/ \
         "$dest/" >/dev/null 2>&1
@@ -75,6 +79,7 @@ while true; do
   sync_box 39560 ssh8.vast.ai          $MIRROR/ssh8_a4000        &
   sync_box 29168 ssh4.vast.ai          $MIRROR/ssh4_a4000        &
   sync_box 10022 ssh4.vast.ai          $MIRROR/ssh4_a4000b       &
+  sync_box 17241 91.150.160.38         $MIRROR/ssh6_3060         &
   wait
 
   summarize_box "ssh1_2080ti " $MIRROR/ssh1_2080ti
