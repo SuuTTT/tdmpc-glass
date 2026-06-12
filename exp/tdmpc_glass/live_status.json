@@ -1,0 +1,48 @@
+{
+  "updated": "2026-06-12T12:55Z",
+  "experiment": "Scoring the temporal-abstraction predictor: 18 k-sweep runs (k=2/8 vs k=4 anchor) and the Pick n-boost (n=8/arm) are trained with finals deliberately UNREAD; pre-registered predictions (disc_err_gap: k2<k4 on all tasks) are committed and public (blog Part 6). A CheetahRun jumpy-vs-vanilla gate (6 runs) is training as the cross-DOMAIN out-of-sample test, and a Cartesian run provides the out-of-task test. The scoring event fires once the last checkpoint dumps land (~1h): harvest everything, score the predictor, publish the update.",
+  "dev": "The 5070 Ti dev box is grinding the final checkpoint mech-dumps (Cab k8 s2, then Cartesian + Cheetah signal dumps) under the shared-box memory cap (~5.6GB, Mahjong project untouched). Next dev items: seed-robustness dumps for the k4 reference signal, and the P2 exact-replay control that isolates reconstruction-error from open-loop chaos. After scoring: paper v2 (P1 outcome + P3 falsification into Sections 6-7) and the Part 6 blog update.",
+  "eta": "Current batch: scoring event ~14:30 UTC today (last ckpt dumps finishing now); CheetahRun cross-domain gate (6 runs, started 10:40-12:40) trains until ~17:30-18:00 UTC; Part 6 update + Part 7 publish as each lands.",
+  "history": [
+    {
+      "date": "2026-05-13",
+      "title": "Part 1: From scratch to Phase 2 on HopperHop (world-model tutorial)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/05/13/tdmpc-glass-part1-from-scratch-to-phase-2-on-hopperhop/"
+    },
+    {
+      "date": "2026-06-09",
+      "title": "Part 2: The mechanism-check that saved a campaign (8 mirages)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/09/tdmpc-glass-part2-mechanism-check-saved-a-campaign/"
+    },
+    {
+      "date": "2026-06-10",
+      "title": "Part 3: The latent was already the abstraction (value-sufficiency probe)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/10/tdmpc-glass-part3-the-latent-was-already-the-abstraction/"
+    },
+    {
+      "date": "2026-06-11",
+      "title": "Part 4: The redundancy criterion \u2014 the paper (3/3 latent classes measured)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/11/tdmpc-glass-part4-when-is-abstraction-redundant/"
+    },
+    {
+      "date": "2026-06-11",
+      "title": "Part 5: Using abstraction right \u2014 aim at planning axes (iter-30 plan)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/11/tdmpc-glass-part5-using-abstraction-right/"
+    },
+    {
+      "date": "2026-06-12",
+      "title": "Part 6: Pre-registered predictions, published before results",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part6-preregistered-predictions/"
+    },
+    {
+      "date": "PENDING",
+      "title": "Part 6 update: the scored predictor (ETA today ~14:30)",
+      "url": ""
+    },
+    {
+      "date": "PENDING",
+      "title": "Part 7: Does the predictor transfer domains? (ETA today/tomorrow)",
+      "url": ""
+    }
+  ]
+}

@@ -160,7 +160,10 @@ def _compute_queue_etas(tasks: list[dict]) -> tuple[list[dict], str | None, list
     box_free: dict[str, datetime] = {tag: now for tag in all_tags}
     box_task: dict[str, dict] = {}
     for t in tasks:
-        if t["status"] == "running" and t.get("box") and t.get("started_at"):
+        # Guard: only fleet boxes (current daemon BOXES list) participate in
+        # scheduling. A historical row whose box was destroyed/removed must not
+        # inject a phantom slot into the ETA heap.
+        if t["status"] == "running" and t.get("box") in box_free and t.get("started_at"):
             rem = est_remaining_s(t)
             box_free[t["box"]] = max(now + timedelta(seconds=rem), now)
             box_task[t["box"]] = t

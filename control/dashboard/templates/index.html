@@ -72,6 +72,30 @@
 
 <div class="container">
 
+  <section id="live-status-section"><h2>Live: Experiment / Dev
+    <button class="refresh-btn" onclick="loadLiveStatus()">&#x21bb; refresh</button>
+    <span class="small" id="live-updated" style="font-weight:normal;letter-spacing:0;text-transform:none"></span>
+  </h2>
+    <div class="summary-grid" style="grid-template-columns:1fr 1fr">
+      <div class="summary-card">
+        <div class="summary-title">🧪 Experiment (live)</div>
+        <div id="live-experiment" style="font-size:12px;line-height:1.55">loading…</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title">🔧 In dev (live)</div>
+        <div id="live-dev" style="font-size:12px;line-height:1.55">loading…</div>
+      </div>
+    </div>
+    <div class="summary-card" style="margin-top:8px">
+      <div class="summary-title">⏱ Batch ETA</div>
+      <div id="live-eta" style="font-size:12px;line-height:1.55">loading…</div>
+    </div>
+    <div class="summary-card" style="margin-top:8px">
+      <div class="summary-title">📜 Milestone history (blog)</div>
+      <div id="live-history" style="font-size:12px;line-height:1.7">loading…</div>
+    </div>
+  </section>
+
   <section><h2>Fleet Summary <button class="refresh-btn" onclick="loadQueue()">&#x21bb; refresh</button></h2>
     <div class="summary-grid">
       <div class="summary-card">
@@ -118,6 +142,7 @@
     <tr><th style="width:50px">Pri</th><th>Label</th><th style="width:80px">Status</th><th style="width:90px">Box</th><th style="width:170px">ETA / Progress</th><th style="width:90px">Actions</th></tr>
   </thead><tbody></tbody></table>
   <div id="queue-empty" class="small" style="display:none;padding:6px;color:var(--muted)">Queue is empty.</div>
+  <div id="queue-archived-summary" class="small" style="display:none;padding:6px;color:var(--muted)"></div>
   </section>
 
   <section id="run-inspector-section"><h2>Run Inspector
@@ -493,12 +518,46 @@ function loadQueue(){
         hdr.textContent = '';
       }
     }
-    const tbody = document.querySelector('#queue-table tbody');
-    const empty = document.getElementById('queue-empty');
-    tbody.innerHTML = '';
-    if (!j.tasks.length){ empty.style.display=''; return; }
-    empty.style.display='none';
-    j.tasks.forEach(t=>{
+    renderQueueRows();
+  });
+}
+
+// ── Queue archive view: done/superseded/old-failed rows hidden by default. ──
+// Toggle with the "show" link in the summary line, or load the page with ?all=1.
+const QUEUE_HIDE_STATUSES = new Set(['done','superseded','superseded_dup','superseded_oom','superseded_v2']);
+const RECENT_FAILURE_H = 48;   // failures younger than this stay visible
+let SHOW_ARCHIVED_QUEUE = new URLSearchParams(location.search).get('all') === '1';
+
+function isArchivedQueueRow(t){
+  if (t.status === 'running' || t.status === 'pending') return false;
+  if (QUEUE_HIDE_STATUSES.has(t.status)) return true;     // done/superseded: always archived
+  if (!t.ended_at) return false;                          // failed w/o timestamp: keep visible
+  return (Date.now() - new Date(t.ended_at).getTime()) > RECENT_FAILURE_H * 3600000;
+}
+
+function toggleArchivedQueue(){ SHOW_ARCHIVED_QUEUE = !SHOW_ARCHIVED_QUEUE; renderQueueRows(); }
+
+function renderQueueRows(){
+  const tasks = LAST_QUEUE_TASKS;
+  const tbody = document.querySelector('#queue-table tbody');
+  const empty = document.getElementById('queue-empty');
+  const summary = document.getElementById('queue-archived-summary');
+  tbody.innerHTML = '';
+  const archived = tasks.filter(isArchivedQueueRow);
+  const visible = SHOW_ARCHIVED_QUEUE ? tasks : tasks.filter(t => !isArchivedQueueRow(t));
+  empty.style.display = tasks.length ? 'none' : '';
+  if (summary){
+    if (archived.length){
+      const nDone = archived.filter(t=>t.status==='done').length;
+      const nSup  = archived.filter(t=>(t.status||'').startsWith('superseded')).length;
+      const nFail = archived.length - nDone - nSup;
+      summary.style.display = '';
+      summary.innerHTML = `${nDone} done${nSup?` · ${nSup} superseded`:''}${nFail?` · ${nFail} old-failed`:''} archived ` +
+        `<a href="#" onclick="toggleArchivedQueue();return false" style="color:var(--accent)">${SHOW_ARCHIVED_QUEUE ? 'hide' : 'show'}</a>` +
+        ` <span style="opacity:.55">(or ?all=1)</span>`;
+    } else { summary.style.display = 'none'; summary.innerHTML = ''; }
+  }
+  visible.forEach(t=>{
       const style = STATUS_STYLE[t.status] || '';
       const isPending = t.status === 'pending';
       const canRetry = t.status === 'running' || t.status === 'failed' || t.status === 'done';
@@ -536,6 +595,7 @@ function loadQueue(){
         etaCell = `<span class="small" style="opacity:.5">${fmtDur((e-s)/1000)}</span>`;
       }
       const tr = document.createElement('tr');
+      if (isArchivedQueueRow(t)) tr.style.opacity = '.55';
       tr.innerHTML = `
         <td class="mono" style="text-align:center">${t.priority}</td>
         <td><span title="${t.launcher}&#10;${t.env||''}">${t.label}</span>${envDisplay}</td>
@@ -545,7 +605,6 @@ function loadQueue(){
         <td style="white-space:nowrap">${actions}</td>
       `;
       tbody.appendChild(tr);
-    });
   });
 }
 function toggleAddTask(){
@@ -579,6 +638,33 @@ function movePriority(id, delta){
 }
 function retryTask(id){
   fetch('/api/queue/'+id+'/retry', {method:'POST'}).then(()=>loadQueue());
+}
+
+// ── Live: Experiment / Dev panel ──────────────────────────────────────────
+function loadLiveStatus(){
+  const setUnavailable = () => {
+    $('#live-experiment').textContent = 'status unavailable';
+    $('#live-dev').textContent = 'status unavailable';
+    $('#live-updated').textContent = '';
+  };
+  fetch('/api/live_status').then(r=>r.json()).then(j=>{
+    if (!j.ok){ setUnavailable(); return; }
+    $('#live-experiment').textContent = j.experiment || 'status unavailable';
+    $('#live-dev').textContent = j.dev || 'status unavailable';
+    $('#live-updated').textContent = j.updated ? `updated ${j.updated}` : '';
+    const etaEl = $('#live-eta');
+    if (etaEl) etaEl.textContent = j.eta || '—';
+    const histEl = $('#live-history');
+    if (histEl){
+      const rows = (j.history || []).map(h => {
+        const t = h.url
+          ? `<a href="${h.url}" target="_blank">${h.title}</a>`
+          : `<span style="opacity:.65">${h.title}</span>`;
+        return `<div><span class="small" style="display:inline-block;width:88px">${h.date}</span> ${t}</div>`;
+      });
+      histEl.innerHTML = rows.length ? rows.join('') : '—';
+    }
+  }).catch(setUnavailable);
 }
 
 // ── Run Inspector ─────────────────────────────────────────────────────────
@@ -792,7 +878,8 @@ function loadRILog(taskId) {
 }
 
 // initial + periodic refresh
-loadBoxes(); loadCurves(); loadQueue();
+loadLiveStatus(); loadBoxes(); loadCurves(); loadQueue();
+setInterval(loadLiveStatus, 60000);
 // Preload phase data for autocomplete + info bar
 fetch('/api/phases').then(r=>r.json()).then(j=>{
   PHASE_DATA=j.phases;

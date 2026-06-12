@@ -15,6 +15,7 @@ control/task_queue_daemon.py; see boxprobe.BOXES.
 """
 from __future__ import annotations
 
+import json
 import os
 import threading
 import time
@@ -46,6 +47,10 @@ from queue_api import queue_bp
 _BOXES_SNAPSHOT = {"payload": None, "ts": 0.0}
 _BOXES_SNAP_LOCK = threading.Lock()
 BOX_REFRESH_S = int(os.environ.get("BOX_REFRESH_S", "20"))
+
+# Hand-written "what's live right now" blurbs (experiment + dev), maintained by
+# the monitor loop. Missing/corrupt file → the panel shows "status unavailable".
+LIVE_STATUS_FILE = "/home/ubuntu/tdmpc-glass/exp/tdmpc_glass/live_status.json"
 
 
 def _build_boxes_payload():
@@ -193,6 +198,22 @@ def create_app() -> Flask:
         out = dict(payload)
         out["cache_age_s"] = round(time.time() - ts, 1)
         return jsonify(out)
+
+    @app.route("/api/live_status")
+    def api_live_status():
+        try:
+            with open(LIVE_STATUS_FILE) as f:
+                d = json.load(f)
+            return jsonify({
+                "ok": True,
+                "updated": d.get("updated"),
+                "experiment": d.get("experiment"),
+                "dev": d.get("dev"),
+                "eta": d.get("eta"),
+                "history": d.get("history", []),
+            })
+        except Exception as e:
+            return jsonify({"ok": False, "error": str(e)})
 
     @app.route("/api/curves")
     def api_curves():

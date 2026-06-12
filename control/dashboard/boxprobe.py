@@ -26,13 +26,12 @@ if _CONTROL_DIR not in sys.path:
 from task_queue_daemon import BOXES as _DAEMON_BOXES  # noqa: E402
 
 # Optional human-readable labels keyed by tag. Any box without an entry falls
-# back to a synthesized "host:port gpuN" label.
+# back to a synthesized "host:port gpuN" label. Labels for boxes NOT in the
+# daemon's BOXES list are inert (the panel renders only daemon-listed boxes);
+# entries for destroyed instances were pruned 2026-06-12.
 _BOX_LABELS = {
-    "ssh1_2080ti":   "ssh1:34217 2080 Ti (22GB)",
-    "ssh6_titanv":   "ssh6:31740 Titan V (12GB)",
-    "ssh1_a4000b":   "ssh1:16822 A4000 (16GB, rented)",
-    "ssh8_a4000":    "ssh8:39560 A4000 (16GB, rented)",
-    "ssh1_a4000":    "ssh1:24456 A4000 (16GB)",
+    "ssh1_2080ti":   "ssh1:34217 2080 Ti (22GB, destroy-pending)",
+    "ssh6_titanv":   "ssh6:31740 Titan V (12GB, destroy-pending)",
     "ssh9_a4000":    "ssh9:16690 A4000 (16GB)",
     "ssh4_a4000":    "ssh4:29168 A4000 (16GB, rented)",
     "ssh4_a4000b":   "ssh4:10022 A4000 (16GB, rented)",

@@ -89,3 +89,17 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - **Anchor narrowed at n=5**: Ori +90% CI-separated; Pick +32% not separated; Cabinet null (tie).
 - **Clustering-on-Panda complete**: geo + behav both null on manipulation.
 - **DreamerV3 generality**: far below TD-MPC2-class on Panda at matched modest budget.
+
+### ~13:10 — Control plane: dashboard cleanup + queue archiving (user request)
+- **Dev (EC2)**: dashboard restarted so the box panel follows the daemon's current BOXES (phantom
+  rows for destroyed ssh1_a4000b/ssh8_a4000 gone; ssh1_2080ti + ssh6_titanv labeled destroy-pending).
+  Queue panel now hides done/superseded/old-failed rows by default with an "N archived — show"
+  toggle (`?all=1` honored); new top panel "Live: Experiment / Dev" renders
+  `exp/tdmpc_glass/live_status.json` (new `/api/live_status`). ETA scheduler guarded against
+  queue rows whose box left the fleet. Files: `control/dashboard/{__init__.py,boxprobe.py,
+  queue_api.py,templates/index.html}`.
+- **New script** `scripts/archive_done_queue.py` (NOT wired into daemon/dashboard; for the monitor
+  loop): moves done/superseded_dup/superseded_oom rows with ended_at >48h from central_queue.json
+  to queues/archive_done_failed.jsonl under the daemon's fcntl-lock + tmp/rename pattern, with
+  .bak_archive_<epoch> backup. First run: 14 rows archived, 113 remain (105 done <48h kept).
+- Daemon + streamer untouched (one-master rule respected); no mirror data deleted.
