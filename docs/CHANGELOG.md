@@ -119,3 +119,12 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   calibration-selected temporal grain. Wave A (6× 100k probes, k∈{2,4,8} × Pick/Ori) queued —
   gate: short-budget disc_err_gap must reproduce the known full-budget ordering. GO -> Wave B
   positive-method gate (auto-k vs vanilla on unseen tasks). Cartesian OOS dropped (no ckpts saved).
+
+### 17:10 — composition is calibration-gated (the iter-32 thesis emerges)
+- Ori composition GO (rho 0.805, win 85%) vs **Cab composition NO-GO (rho 2.54, win 0.3%)**:
+  d4∘d4 compounds accuracy on a good+calibrated base model and compounds ERROR on a bad+overconfident
+  one. Pyramid viability is predicted by the calibration signal -> "compose only what is calibrated."
+  M1 (calibration fine-tune of the Cab model) running on ssh7; if it raises disc/err toward >=1 AND
+  the recomposed test flips toward GO, the full system claim writes itself.
+- Pick composition test lost to daemon double-booking on ssh9 (GPU contention); retry queued later.
+- Fleet: cheetah n-boost x3 running, Wave A k8 finishing, M1 on dev box.
