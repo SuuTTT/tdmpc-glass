@@ -1,0 +1,161 @@
+{
+  "probe": "P2 spline mechanism-check (abstraction-axes-plan \u00a7P2 / ledger NEXT PROBES #1)",
+  "config": {
+    "ckpt": "exp/tdmpc_glass/PandaPickCube_phasei26_vebase_PandaPickCube_i26a/seed_1/checkpoints/best_mppi.pkl",
+    "task": "PandaPickCube",
+    "n_ep": 8,
+    "knot_every": [
+      1
+    ],
+    "seed": 0,
+    "episode_length": 1000,
+    "latent_dim": 512,
+    "obs_dim": 66,
+    "act_dim": 8,
+    "spline": "cubic Hermite, knot values = recorded actions, Catmull-Rom finite-difference tangents, clipped to [-1,1]",
+    "control": "zero-order hold at the same knot spacing"
+  },
+  "episodes": [
+    {
+      "ep": 0,
+      "T": 1000,
+      "reference_return": 2220.6963,
+      "k1": {
+        "spline_return": 2220.6963,
+        "zoh_return": 2220.6929,
+        "spline_preservation": 1.0,
+        "zoh_preservation": 1.0,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 1,
+      "T": 1000,
+      "reference_return": 1914.5025,
+      "k1": {
+        "spline_return": 1914.5013,
+        "zoh_return": 1914.5032,
+        "spline_preservation": 1.0,
+        "zoh_preservation": 1.0,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 2,
+      "T": 1000,
+      "reference_return": 2831.1275,
+      "k1": {
+        "spline_return": 2820.843,
+        "zoh_return": 2820.8373,
+        "spline_preservation": 0.9964,
+        "zoh_preservation": 0.9964,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 3,
+      "T": 1000,
+      "reference_return": 2771.8057,
+      "k1": {
+        "spline_return": 2090.453,
+        "zoh_return": 986.8124,
+        "spline_preservation": 0.7542,
+        "zoh_preservation": 0.356,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 4,
+      "T": 1000,
+      "reference_return": 2897.1657,
+      "k1": {
+        "spline_return": 2356.8556,
+        "zoh_return": 2650.8433,
+        "spline_preservation": 0.8135,
+        "zoh_preservation": 0.915,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 5,
+      "T": 1000,
+      "reference_return": 2787.3416,
+      "k1": {
+        "spline_return": 2722.7686,
+        "zoh_return": 2736.2259,
+        "spline_preservation": 0.9768,
+        "zoh_preservation": 0.9817,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 6,
+      "T": 1000,
+      "reference_return": 1179.7644,
+      "k1": {
+        "spline_return": 1179.7644,
+        "zoh_return": 1179.7644,
+        "spline_preservation": 1.0,
+        "zoh_preservation": 1.0,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    },
+    {
+      "ep": 7,
+      "T": 1000,
+      "reference_return": 2301.8608,
+      "k1": {
+        "spline_return": 2301.8606,
+        "zoh_return": 2301.8608,
+        "spline_preservation": 1.0,
+        "zoh_preservation": 1.0,
+        "spline_steps": 1000,
+        "zoh_steps": 1000,
+        "spline_l2_per_step": 0.0,
+        "zoh_l2_per_step": 0.0
+      }
+    }
+  ],
+  "summary": {
+    "k1": {
+      "spline_preservation_mean": 0.9426,
+      "spline_preservation_min": 0.7542,
+      "zoh_preservation_mean": 0.9061,
+      "zoh_preservation_min": 0.356,
+      "spline_l2_mean": 0.0,
+      "zoh_l2_mean": 0.0,
+      "n_episodes_scored": 8
+    }
+  },
+  "verdict": {
+    "rule": "GO iff mean spline return-preservation >= 0.95 at knot_every=1 (pre-registered in abstraction-axes-plan.md \u00a7P2)",
+    "gate_knot_every": 1,
+    "spline_preservation_mean": 0.9426,
+    "zoh_preservation_mean": 0.9061,
+    "GO": false,
+    "spline_adds_over_zoh": true,
+    "zoh_note": "if ZOH preserves return as well as splines, the spline structure is unnecessary \u2014 the bottleneck could be even simpler"
+  },
+  "caveat": "Reference rollout is CLOSED-loop (policy reacts); spline/ZOH replays are OPEN-loop (fixed action sequence). This upper-bounds the return lost by the spline restriction on the expert trajectory, but UNDERSTATES what spline-MPPI could achieve since it replans every step. A PASS is meaningful; a marginal FAIL is not necessarily fatal."
+}

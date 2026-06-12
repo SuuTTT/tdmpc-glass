@@ -145,3 +145,8 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - ssh7: control fine-tune (calib_coef=0, +100k) running; then ctrl dump + ctrl composition.
 
 ### 20:50 — Part 8 published; ledger updated; Cab-600k pre-registered test queued (priority 2)
+
+### 22:00 — P2 exact-replay control: floor is 0.943, spline NO-GO stands
+- Replaying EXACT actions open-loop preserves 0.943 mean (min 0.754) — not 1.0 (contact amplifies
+  tiny divergence). Spline's 0.364 vs the 0.943 floor: reconstruction error dominates; the P2
+  NO-GO is confirmed with an honest denominator. Dev queue item closed.
