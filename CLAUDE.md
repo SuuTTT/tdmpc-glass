@@ -54,3 +54,9 @@ Do not add a local training slot, and do not run `run_benchmark.py` here.
 This repo is the origin of the research-os queue design and is registered as the
 `tdmpc_glass` research-os project. Keep conventions aligned (file-backed queues,
 worker registry, inspect-don't-daemon-by-default). The live queue stays here.
+
+## ssh7 dev box is SHARED (2026-06-12)
+The 5070 Ti dev box also runs the user's Mahjong RL project. Never interrupt
+non-tdmpc processes there; every tdmpc JAX job on ssh7 must set
+`XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_MEM_FRACTION=0.35`
+(spare ~10GB of 16GB). Light probes can use `JAX_PLATFORMS=cpu`.
