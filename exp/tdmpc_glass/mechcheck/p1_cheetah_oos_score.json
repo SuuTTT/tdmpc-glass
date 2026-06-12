@@ -1,0 +1,28 @@
+{
+  "task": "CheetahRun",
+  "prediction_committed": "weak-positive (gap 1.017, ambiguous zone 1.0-1.1)",
+  "jum": {
+    "n": 3,
+    "final_mean": 620.1666666666666,
+    "per_seed": {
+      "0": 756,
+      "1": 630,
+      "2": 475
+    }
+  },
+  "van": {
+    "n": 3,
+    "final_mean": 557.9888888888889,
+    "per_seed": {
+      "0": 654,
+      "1": 644,
+      "2": 377
+    }
+  },
+  "rel_gain": 0.11143192815468232,
+  "diff_ci95": [
+    -120.30666666666654,
+    247.95555555555546
+  ],
+  "ci_separated": false
+}
