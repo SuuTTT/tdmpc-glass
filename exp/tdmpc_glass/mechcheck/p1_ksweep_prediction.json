@@ -1,0 +1,79 @@
+{
+  "signal": "disc_err_gap = median(disagreement)/median(true k-step err)",
+  "cells": {
+    "Cab_k2": {
+      "disc_err_gap_mean": 0.6717228293418884,
+      "per_seed": [
+        0.84,
+        0.503
+      ],
+      "err_med_mean": 0.07082116231322289,
+      "n": 2
+    },
+    "Cab_k4": {
+      "disc_err_gap_mean": 0.9495181441307068,
+      "per_seed": [
+        0.95
+      ],
+      "err_med_mean": 0.6303691864013672,
+      "n": 1
+    },
+    "Ori_k2": {
+      "disc_err_gap_mean": 1.028476079305013,
+      "per_seed": [
+        1.099,
+        1.056,
+        0.931
+      ],
+      "err_med_mean": 0.1192567174633344,
+      "n": 3
+    },
+    "Ori_k4": {
+      "disc_err_gap_mean": 1.3319402933120728,
+      "per_seed": [
+        1.332
+      ],
+      "err_med_mean": 0.2155759036540985,
+      "n": 1
+    },
+    "Pick_k2": {
+      "disc_err_gap_mean": 0.968814472357432,
+      "per_seed": [
+        0.974,
+        0.885,
+        1.048
+      ],
+      "err_med_mean": 0.1417871912320455,
+      "n": 3
+    },
+    "Pick_k4": {
+      "disc_err_gap_mean": 1.1214784383773804,
+      "per_seed": [
+        1.121
+      ],
+      "err_med_mean": 0.21494708955287933,
+      "n": 1
+    }
+  },
+  "pre_registered_predictions_k2": {
+    "Pick": {
+      "k2_gap": 0.968814472357432,
+      "k4_gap": 1.121,
+      "k4_gain": 0.32,
+      "prediction": "k2 gain LOWER than k4 gain"
+    },
+    "Ori": {
+      "k2_gap": 1.028476079305013,
+      "k4_gap": 1.332,
+      "k4_gain": 0.9,
+      "prediction": "k2 gain LOWER than k4 gain"
+    },
+    "Cab": {
+      "k2_gap": 0.6717228293418884,
+      "k4_gap": 0.949,
+      "k4_gain": 0.0,
+      "prediction": "k2 gain LOWER than k4 gain"
+    }
+  },
+  "note": "Committed BEFORE harvesting any ti30 final. k8 cells pending (3 runs done, dumps queued)."
+}
