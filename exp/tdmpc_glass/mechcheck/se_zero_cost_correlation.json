@@ -1,0 +1,33 @@
+{
+  "per_task": {
+    "Pick": {
+      "se_gap": 0.6623717762659158,
+      "jumpy_gain": 0.45,
+      "disc_err_gap": 1.121
+    },
+    "Ori": {
+      "se_gap": 0.6083305135864606,
+      "jumpy_gain": 0.9,
+      "disc_err_gap": 1.332
+    },
+    "Cab": {
+      "se_gap": 0.5554423108353645,
+      "jumpy_gain": 0.0,
+      "disc_err_gap": 0.949
+    },
+    "Cheetah": {
+      "se_gap": 0.5609202176378879,
+      "jumpy_gain": 0.11,
+      "disc_err_gap": 1.017
+    }
+  },
+  "spearman_se_vs_jumpy_gain": [
+    0.7999999999999999,
+    0.2000000000000001
+  ],
+  "spearman_se_vs_disc_err_gap": [
+    0.7999999999999999,
+    0.2000000000000001
+  ],
+  "note": "Zero-cost SE correlation test (user-capped scope): SE gap of k-step transition graphs vs measured jumpy gains and the calibration signal. n=4 tasks \u2014 directional only."
+}
