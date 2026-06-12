@@ -110,3 +110,12 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   fixed k; NOT k-invariant (iteration-drift confound). **k=4 unimodal optimum on all 3 tasks.**
   **Pick anchor CI-separated at n=8 (+45%, CI [66,1153])** — jumpy: 2/3 CI-separated + 1 null.
   Ledger + Part 6 update + dashboard history updated. Cheetah OOS reports tonight (Part 7).
+
+### 15:40 — Part 7 published (cheetah OOS scored) + iter-31 auto-k Wave A queued
+- CheetahRun: jum 620 vs van 558 (+11%, CI [-120,248], not separated) = "weak-positive" exactly as
+  the committed gap-1.017 prediction said. Predictor final scoreboard: 8/8 ordering facts at fixed k,
+  0/3 cross-k upward. Part 7 live; p1_cheetah_oos_score.json persisted.
+- NEW DIRECTION (user standing order: beat TD-MPC2 with abstraction done right): auto-k =
+  calibration-selected temporal grain. Wave A (6× 100k probes, k∈{2,4,8} × Pick/Ori) queued —
+  gate: short-budget disc_err_gap must reproduce the known full-budget ordering. GO -> Wave B
+  positive-method gate (auto-k vs vanilla on unseen tasks). Cartesian OOS dropped (no ckpts saved).

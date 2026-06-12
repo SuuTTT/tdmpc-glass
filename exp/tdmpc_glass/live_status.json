@@ -1,8 +1,8 @@
 {
-  "updated": "2026-06-12T13:40Z",
-  "experiment": "SCORED: the pre-registered predictor went 4/4 on the k2 block (incl. cross-task ordering) and 0/3 on k8 \u2014 disc_err_gap is a real cross-task predictor at fixed k but not k-invariant (iteration-drift confound, documented). Dose-response is unimodal: k=4 optimal on all 3 tasks. Pick anchor now CI-separated at n=8 (+45%); remaining live experiment is the CheetahRun cross-domain gate (6 runs, finals ~17:30-18:00 UTC, prediction 'weak-positive' committed).",
-  "dev": "Next dev: Part 7 harvest+post when cheetah lands; paper v2 folding the scored predictor + P3 falsification into \u00a76-7 and pushing to the Overleaf repo; Cartesian signal dump retry (its ckpt search missed); P2 exact-replay control as gap-filler. Dashboard now carries this panel + milestone history; queue auto-archive active.",
-  "eta": "Cheetah gate finals ~17:30-18:00 UTC today -> Part 7. Paper v2 push this evening. Queue then empty: wind-down decision.",
+  "updated": "2026-06-12T15:40Z",
+  "experiment": "Iter-31 Wave A launched: calibration-selected temporal grain (auto-k). Six 100k-step probes (k=2/4/8 on Pick+Ori) test whether the SHORT-budget disc_err_gap predicts the known full-budget k-ordering; GO -> Wave B: auto-k TD-MPC2 vs vanilla on unseen tasks (the positive-method gate aimed at an ICLR-shaped result). CheetahRun OOS scored: +11% not separated = 'weak-positive' exactly as committed; predictor closes at 8/8 ordering facts at fixed k.",
+  "dev": "Part 7 published; paper v2 (11pp, compiles) pushed to the Overleaf repo with the scored predictor + GO-asymmetry + n=8 anchor. Dev box next: harvest Wave A ckpts (~1h runs) -> short-budget signals -> GO/NO-GO for Wave B. Cartesian OOS dropped (its run saved no ckpts); cheetah carried the OOS test instead.",
+  "eta": "Wave A probes ~1-1.5h each (6 runs, 5 workers) -> auto-k GO/NO-GO ~18:30 UTC; Wave B (if GO) queues tonight, finals tomorrow.",
   "history": [
     {
       "date": "2026-05-13",
@@ -40,9 +40,9 @@
       "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part6-preregistered-predictions/"
     },
     {
-      "date": "PENDING",
-      "title": "Part 7: Does the predictor transfer domains? (ETA today/tomorrow)",
-      "url": ""
+      "date": "2026-06-12",
+      "title": "Part 7: The predictor transfers domains (weakly, as predicted)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part7-domain-transfer/"
     }
   ]
 }
