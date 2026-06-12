@@ -1,0 +1,11 @@
+{
+  "committed": "2026-06-12T19:30Z",
+  "experiment": "M2: from-scratch calib-shaped jumpy (calib_coef 0.1 q 0.9) vs existing plain-jumpy baselines (phasei27_jum)",
+  "pre_registered_predictions": {
+    "Cab": "calib-jumpy final BEATS plain jumpy (1050, n=5) \u2014 the measured-miscalibration task; this is where the method must pay",
+    "Ori": "calib-jumpy within CI of plain jumpy (2145) \u2014 already calibrated (1.33), nothing to fix",
+    "Pick": "calib-jumpy within CI of plain jumpy (1969, n=8) \u2014 already calibrated (1.12)"
+  },
+  "falsification": "calib hurting Ori/Pick (pinball tax) OR failing to beat plain jumpy on Cab kills the method claim",
+  "note": "committed before any M2 run starts; baselines are historical and already public"
+}

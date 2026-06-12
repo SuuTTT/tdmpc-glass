@@ -1747,30 +1747,39 @@
     "label": "Ori n-boost jum s5 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_jum SEEDS=5 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh9_a4000",
+    "started_at": "2026-06-12T18:03:14Z",
+    "launched_git_sha": "d12149c"
   },
   {
     "id": "ti32_van_Ori5",
     "label": "Ori n-boost van s5 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_van SEEDS=5 ALGO=tdmpc2 TASK=PandaPickCubeOrientation MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh4_a4000",
+    "started_at": "2026-06-12T18:03:30Z",
+    "launched_git_sha": "d12149c"
   },
   {
     "id": "ti32_jum_Ori6",
     "label": "Ori n-boost jum s6 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_jum SEEDS=6 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh4_a4000b",
+    "started_at": "2026-06-12T18:03:52Z",
+    "launched_git_sha": "d12149c"
   },
   {
     "id": "ti32_van_Ori6",
@@ -1801,5 +1810,155 @@
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
     "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+  },
+  {
+    "id": "ti32_calib_Cab0",
+    "label": "M2 flagship: calib-shaped jumpy PandaOpenCabinet s0",
+    "env": "PROBE_ID=phasei32_calib SEEDS=0 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Cab1",
+    "label": "M2 flagship: calib-shaped jumpy PandaOpenCabinet s1",
+    "env": "PROBE_ID=phasei32_calib SEEDS=1 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Cab2",
+    "label": "M2 flagship: calib-shaped jumpy PandaOpenCabinet s2",
+    "env": "PROBE_ID=phasei32_calib SEEDS=2 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Cab3",
+    "label": "M2 flagship: calib-shaped jumpy PandaOpenCabinet s3",
+    "env": "PROBE_ID=phasei32_calib SEEDS=3 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Cab4",
+    "label": "M2 flagship: calib-shaped jumpy PandaOpenCabinet s4",
+    "env": "PROBE_ID=phasei32_calib SEEDS=4 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Ori0",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCubeOrientation s0",
+    "env": "PROBE_ID=phasei32_calib SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Ori1",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCubeOrientation s1",
+    "env": "PROBE_ID=phasei32_calib SEEDS=1 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Ori2",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCubeOrientation s2",
+    "env": "PROBE_ID=phasei32_calib SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Ori3",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCubeOrientation s3",
+    "env": "PROBE_ID=phasei32_calib SEEDS=3 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Ori4",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCubeOrientation s4",
+    "env": "PROBE_ID=phasei32_calib SEEDS=4 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Pick0",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCube s0",
+    "env": "PROBE_ID=phasei32_calib SEEDS=0 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Pick1",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCube s1",
+    "env": "PROBE_ID=phasei32_calib SEEDS=1 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Pick2",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCube s2",
+    "env": "PROBE_ID=phasei32_calib SEEDS=2 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Pick3",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCube s3",
+    "env": "PROBE_ID=phasei32_calib SEEDS=3 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_calib_Pick4",
+    "label": "M2 flagship: calib-shaped jumpy PandaPickCube s4",
+    "env": "PROBE_ID=phasei32_calib SEEDS=4 ALGO=tdmpc2 TASK=PandaPickCube JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CALIB_COEF=0.1 CALIB_Q=0.9 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 3,
+    "created_at": "2026-06-12T19:30:00Z",
+    "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
   }
 ]

@@ -128,3 +128,12 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   the recomposed test flips toward GO, the full system claim writes itself.
 - Pick composition test lost to daemon double-booking on ssh9 (GPU contention); retry queued later.
 - Fleet: cheetah n-boost x3 running, Wave A k8 finishing, M1 on dev box.
+
+### 19:30 — M1 GO + re-composition FLIP (pending control); M2 queued with committed prediction
+- **M1 GO**: calib fine-tune (100k) on Cab: disc/err 0.949→1.301, err_med 0.630→0.211 (3× better).
+- **Re-composition FLIPPED**: rho 2.54→0.692, win 0.3%→75.7% — "compose only what is calibrated"
+  confirmed on the failure task. CONFOUND CONTROL running (calib_coef=0 fine-tune, same +100k):
+  milestone blog held until it reports (~2h).
+- **M2 flagship queued** (15 calib-jumpy runs, 3 tasks × 5 seeds, priority behind Ori wave) with
+  pre-registered prediction committed first (m2_prediction.json): beats jumpy on Cab, ties Ori/Pick.
+- Dev queue: Pick composition retry → control chain on ssh7. Workers: Ori n-boost + last cheetahs.
