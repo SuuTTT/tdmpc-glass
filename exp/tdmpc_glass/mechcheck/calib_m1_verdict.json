@@ -1,0 +1,14 @@
+{
+  "task": "PandaOpenCabinet",
+  "baseline": {
+    "disc_err_gap": 0.949,
+    "err_med": 0.63
+  },
+  "calibrated": {
+    "disc_err_gap": 1.3009670972824097,
+    "err_med": 0.21077385544776917
+  },
+  "gate": "GO iff gap rises toward >=1 AND err not inflated (err_med <= ~1.15x baseline)",
+  "go": true,
+  "verdict": "GO"
+}

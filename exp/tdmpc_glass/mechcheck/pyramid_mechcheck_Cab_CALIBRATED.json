@@ -1,0 +1,197 @@
+{
+  "probe": "pyramid_mechcheck",
+  "question": "at 8-step latent prediction, is composing two 4-step jumps (d4\u2218d4, k4 ckpt) more accurate than one monolithic 8-step jump (d8, k8 ckpt), each judged in its own latent space, normalized by its own median 8-step displacement?",
+  "config": {
+    "ckpt_k4": "/root/helios-rl/exp/tdmpc_glass/PandaOpenCabinet_calib_m1_cab/seed_1/checkpoints/final.pkl",
+    "ckpt_k8": "ckpts_pyr/cab_k8.pkl",
+    "task": "PandaOpenCabinet",
+    "k4": 4,
+    "k8": 8,
+    "n_ep": 8,
+    "seed": 0,
+    "episode_length": 1000,
+    "latent_dim": 512,
+    "V": 8,
+    "dyn_arch_k4": "mlp",
+    "dyn_arch_k8": "mlp",
+    "obs_dim": 55,
+    "act_dim": 8,
+    "behavior_policy": "k4 ckpt deterministic tanh(mu); both models evaluated offline on the identical recorded (o_t, a_{t:t+8}, o_{t+8})",
+    "gates": {
+      "rho_max": 0.9,
+      "win_rate_min": 0.6
+    }
+  },
+  "n_tuples": 7936,
+  "ep_lens": [
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000
+  ],
+  "normalization": {
+    "rule": "err / median ||enc(o_{t+8}) - enc(o_t)|| in the model's OWN latent space",
+    "scale4_median_8step_disp_k4latent": 7e-05,
+    "scale8_median_8step_disp_k8latent": 6e-05,
+    "disp4_stats": {
+      "p5": 0.0,
+      "p25": 3e-05,
+      "p50": 7e-05,
+      "p75": 0.01107,
+      "p95": 0.59984,
+      "mean": 0.09526,
+      "n": 7936
+    },
+    "disp8_stats": {
+      "p5": 0.0,
+      "p25": 2e-05,
+      "p50": 6e-05,
+      "p75": 0.00841,
+      "p95": 0.64787,
+      "mean": 0.10851,
+      "n": 7936
+    },
+    "disp_rank_agreement_spearman_k4_vs_k8_latent": 0.8493
+  },
+  "unnormalized": {
+    "err4comp_composed_8step_k4latent": {
+      "p5": 0.2118,
+      "p25": 0.29061,
+      "p50": 0.35413,
+      "p75": 0.4781,
+      "p95": 0.63262,
+      "mean": 0.38986,
+      "n": 7936
+    },
+    "err8_monolithic_8step_k8latent": {
+      "p5": 0.37984,
+      "p25": 0.4246,
+      "p50": 0.43649,
+      "p75": 0.46075,
+      "p95": 0.52786,
+      "mean": 0.44552,
+      "n": 7936
+    },
+    "err4_leg1_4step_from_z_t_k4latent": {
+      "p5": 0.15488,
+      "p25": 0.20792,
+      "p50": 0.25467,
+      "p75": 0.34607,
+      "p95": 0.4748,
+      "mean": 0.27961,
+      "n": 7936
+    },
+    "err4_leg2_4step_from_true_midpoint_k4latent": {
+      "p5": 0.15894,
+      "p25": 0.20792,
+      "p50": 0.2549,
+      "p75": 0.34636,
+      "p95": 0.4748,
+      "mean": 0.28017,
+      "n": 7936
+    },
+    "err4_leg1_norm_by_median_4step_disp": {
+      "p5": 2174.77295,
+      "p25": 2919.54565,
+      "p50": 3576.00879,
+      "p75": 4859.39258,
+      "p95": 6666.92627,
+      "mean": 3926.23193,
+      "n": 7936
+    },
+    "k8_model_4step_error": "not computable: d8 takes a fixed 8*act_dim action block, it has no 4-step mode"
+  },
+  "comparison_overall": {
+    "subset": "all_states",
+    "n": 7936,
+    "err4comp_norm": {
+      "p5": 2839.30859,
+      "p25": 3895.77979,
+      "p50": 4747.37402,
+      "p75": 6409.26514,
+      "p95": 8480.69336,
+      "mean": 5226.35889,
+      "n": 7936
+    },
+    "err8_norm": {
+      "p5": 5969.71191,
+      "p25": 6673.24707,
+      "p50": 6860.08203,
+      "p75": 7241.44531,
+      "p95": 8296.2207,
+      "mean": 7002.04688,
+      "n": 7936
+    },
+    "rho_median_ratio": 0.692,
+    "mean_ratio": 0.7464,
+    "win_rate_composed_lt_monolithic": 0.7567
+  },
+  "comparison_top_quartile_8step_displacement": {
+    "by_k4_latent_disp": {
+      "subset": "top25pct_disp_k4latent",
+      "n": 1984,
+      "err4comp_norm": {
+        "p5": 1427.33533,
+        "p25": 3067.50635,
+        "p50": 3733.22998,
+        "p75": 5212.74902,
+        "p95": 8423.9082,
+        "mean": 4261.48389,
+        "n": 1984
+      },
+      "err8_norm": {
+        "p5": 2508.0603,
+        "p25": 6217.30566,
+        "p50": 6801.60645,
+        "p75": 7405.91357,
+        "p95": 9861.91504,
+        "mean": 6720.4458,
+        "n": 1984
+      },
+      "rho_median_ratio": 0.5489,
+      "mean_ratio": 0.6341,
+      "win_rate_composed_lt_monolithic": 0.8619
+    },
+    "by_k8_latent_disp": {
+      "subset": "top25pct_disp_k8latent",
+      "n": 1984,
+      "err4comp_norm": {
+        "p5": 1427.33533,
+        "p25": 3067.50635,
+        "p50": 3728.35596,
+        "p75": 5195.67871,
+        "p95": 8419.5332,
+        "mean": 4245.89111,
+        "n": 1984
+      },
+      "err8_norm": {
+        "p5": 2508.0603,
+        "p25": 6217.30566,
+        "p50": 6804.85938,
+        "p75": 7421.41113,
+        "p95": 9861.91504,
+        "mean": 6724.98779,
+        "n": 1984
+      },
+      "rho_median_ratio": 0.5479,
+      "mean_ratio": 0.6314,
+      "win_rate_composed_lt_monolithic": 0.8659
+    }
+  },
+  "rho": 0.692,
+  "win_rate": 0.7567,
+  "verdict": "GO",
+  "verdict_rule": "GO iff rho <= 0.9 (composition >= 10% more accurate at the median) AND win_rate >= 0.6; NO-GO otherwise \u2014 pyramid idea dies free",
+  "training_distribution_caveat": "ASYMMETRIC test: the two ckpts were trained with DIFFERENT k losses. d4\u2218d4 was NEVER trained for 8-step consistency (composition compounds two un-coordinated 4-step heads), while d8 was trained exactly on the 8-step objective. If composition wins anyway, a pyramid trained WITH cross-level consistency should do even better -> strong GO. If composition loses, cross-level training could still rescue it -> the NO-GO is softer than the gate suggests (it kills 'pyramid wins for free', not 'pyramid can never work').",
+  "caveats": [
+    "cross-latent-space comparison: each model judged in its own encoder's geometry; median-8-step-displacement normalization makes scales comparable but cannot remove all geometry differences (both are SimNorm V-simplex latents, which helps)",
+    "encoders trained separately -> targets enc4(o_{t+8}) and enc8(o_{t+8}) differ; neither is ground truth, each is only self-consistent",
+    "behavior stream from the k4 ckpt's deterministic policy: on-distribution for the k4 model, slightly off-distribution for the k8 model (shared stream was required for identical tuples; favors k4 \u2014 counted against GO honesty when rho is near gate)",
+    "single ckpt pair / single seed \u2014 no across-seed variance estimate",
+    "pi-policy distribution only; MPPI's planning distribution may stress the heads differently"
+  ]
+}
