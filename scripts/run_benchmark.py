@@ -577,6 +577,8 @@ def train_tdmpc2(
     jumpy_ve_coef: float = 0.0,
     jumpy_plan: bool = False,
     jumpy_n_macro: int = 3,
+    calib_coef: float = 0.0,
+    calib_q: float = 0.9,
 ) -> None:
     """Train TD-MPC2 or TD-MPC-Glass."""
     algo_name = "TD-MPC-Glass" if use_glass else "TD-MPC2"
@@ -753,6 +755,12 @@ def train_tdmpc2(
         params["jrew"] = jumpy_rew_net.init(jk2, dummy_z, _adummy)
         print(f"  iter-22 JUMPY k={_jumpy_k} coef={jumpy_coef} plan={_jumpy_plan} n_macro={_jumpy_n_macro}: "
               f"k-step dyn+reward heads + horizon-consistency (mechanism: jumpy_err vs iter1_err at eval)", flush=True)
+        if float(calib_coef) > 0.0:
+            print(f"  iter-30 CALIB coef={float(calib_coef)} q={float(calib_q)}: pinball-shape jumpy "
+                  f"disagreement d=||jdyn-iter1step|| to the q-quantile upper bound of true k-step err", flush=True)
+    elif float(calib_coef) > 0.0:
+        print(f"  WARNING: --calib_coef={float(calib_coef)} ignored — requires --jumpy_k>0 (vanilla tdmpc2 path)",
+              flush=True)
     tp    = params.copy()
     scale = jnp.array(1.0)
     glass_step = jnp.array(0, dtype=jnp.int32)
@@ -857,6 +865,8 @@ def train_tdmpc2(
                 jumpy_k=_jumpy_k,
                 jumpy_coef=float(jumpy_coef),
                 jumpy_ve_coef=float(jumpy_ve_coef),
+                calib_coef=float(calib_coef),
+                calib_q=float(calib_q),
             )
         return ms
 
@@ -1720,6 +1730,8 @@ def train_tdmpc2(
                     _ratio = _je / max(_ie, 1e-8)
                     _jmp_log = (f"  JUMPY k{_jumpy_k}: jumpy_err={_je:.3f} iter1_err={_ie:.3f} "
                                 f"ratio={_ratio:.3f}{' <1=WIN' if _ratio<1 else ''}")
+                    if float(calib_coef) > 0.0:
+                        _jmp_log += f"  calib={float(aux.get('calib', 0.0)):.4f}"
                 print(f"  es={env_steps:>9,}  sps={env_steps/max(elapsed,1):.0f}"
                       f"  loss={float(loss_val):.4f}  scale={float(scale):.2f}{_mpc_log}{_jmp_log}", flush=True)
 
@@ -2140,6 +2152,14 @@ def parse_args():
                          "writes 'jumpy' CSV rows). Requires --jumpy_k>0.")
     ap.add_argument("--jumpy_n_macro", type=int, default=3,
                     help="iter-22: number of macro-steps for jumpy-MPPI (effective horizon = k*n_macro).")
+    ap.add_argument("--calib_coef", type=float, default=0.0,
+                    help="iter-30: calibration-shaped jumpy disagreement weight (0=off). Pinball loss on "
+                         "(e-d) where e=||jdyn-sg(enc target)||, d=||jdyn-sg(iterated 1-step)|| per sample, "
+                         "so d learns to upper-bound e at quantile --calib_q (self-reported untrust). "
+                         "Requires --jumpy_k>0; vanilla tdmpc2 path only.")
+    ap.add_argument("--calib_q", type=float, default=0.9,
+                    help="iter-30: pinball quantile for the calib loss (default 0.9 = disc sits at the "
+                         "0.9-quantile of true k-step err).")
     ap.add_argument("--proto_novelty_coef", type=float, default=0.0,
                     help="iter-17: prototype-visit-count novelty bonus, training reward only: "
                          "coef * 1/sqrt(visits[argmax-prototype]). Exploration THROUGH the abstraction, "
@@ -2325,6 +2345,8 @@ def main():
                         jumpy_ve_coef=args.jumpy_ve_coef,
                         jumpy_plan=args.jumpy_plan,
                         jumpy_n_macro=args.jumpy_n_macro,
+                        calib_coef=args.calib_coef,
+                        calib_q=args.calib_q,
                     )
                 elif algo in ("tdmpc-glass", "tdmpc_glass"):
                     q_reset = None

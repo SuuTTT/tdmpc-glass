@@ -470,6 +470,8 @@ def make_update_fn(
     jumpy_k: int = 0,
     jumpy_coef: float = 1.0,
     jumpy_ve_coef: float = 0.0,   # iter-25 probe#2: value-equivalent macro head (0=off=state-faithful)
+    calib_coef: float = 0.0,      # iter-30: calibration-shaped jumpy disagreement (0=off; needs jumpy_k>0)
+    calib_q: float = 0.9,         # iter-30: pinball quantile — train disc to upper-bound err at this quantile
 ) -> tuple:
     """Build (single_step, multi_step) JIT-compiled update functions.
 
@@ -614,6 +616,7 @@ def make_update_fn(
         # z_{t+k} is stop-grad.
         jumpy_cons = jnp.array(0.0); jumpy_hc = jnp.array(0.0); jumpy_rew = jnp.array(0.0)
         jumpy_err = jnp.array(0.0); iter1_err = jnp.array(0.0); jumpy_ve = jnp.array(0.0)
+        calib_loss = jnp.array(0.0)
         if jumpy_k > 0:
             kk = int(jumpy_k); adim = act_b.shape[-1]
             a_k = act_b[:, :kk].reshape(B, kk * adim)
@@ -641,6 +644,21 @@ def make_update_fn(
             # mechanism diagnostic (no grad): RMS latent error, jumpy vs iterated-1-step at k
             jumpy_err = jnp.sqrt(jnp.mean(jnp.sum((jax.lax.stop_gradient(jpred) - z_k_tgt) ** 2, -1)))
             iter1_err = jnp.sqrt(jnp.mean(jnp.sum((zs[:, kk] - z_k_tgt) ** 2, -1)))
+            # ── iter-30 CALIBRATION-SHAPED disagreement (Python-guarded on the closed-over float
+            # calib_coef: when 0.0 (default) this block is not traced — graph identical to iter-22).
+            # Validated diagnostic: disc = ||jdyn − iterated-1-step|| tracks true k-step err
+            # (Spearman 0.72); ratio median(disc)/median(err) <1 = overconfident (Cab measured 0.95).
+            # Train d to sit at the calib_q-quantile UPPER BOUND of e via pinball loss on (e − d).
+            # Stop-grad BOTH the encoder target (z_k_tgt already sg via z_tgt) AND the iterated
+            # 1-step path (sg over zs[:, kk]) so the gradient shapes ONLY the JUMPY HEAD's
+            # disagreement geometry (jpred appears in both e and d) — not the 1-step model.
+            if calib_coef > 0.0:
+                z_iter1 = jax.lax.stop_gradient(zs[:, kk])
+                e_cal = jnp.sqrt(jnp.sum((jpred - z_k_tgt) ** 2, -1) + 1e-8)   # (B,) true k-step err
+                d_cal = jnp.sqrt(jnp.sum((jpred - z_iter1) ** 2, -1) + 1e-8)   # (B,) disagreement
+                u_cal = e_cal - d_cal
+                calib_loss = jnp.mean(jnp.maximum(calib_q * u_cal, (calib_q - 1.0) * u_cal))
+                total = total + calib_coef * calib_loss
             # horizon-consistency: composed 2k-jump must match actual z_{2k} (window permitting)
             if 2 * kk <= (T - 1):
                 a_k2 = act_b[:, kk:2 * kk].reshape(B, kk * adim)
@@ -661,6 +679,7 @@ def make_update_fn(
             "jumpy_rew": jumpy_rew,
             "jumpy_err": jumpy_err,
             "iter1_err": iter1_err,
+            "calib": calib_loss,
         }
         return total, aux
 

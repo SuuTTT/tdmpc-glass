@@ -38,6 +38,8 @@ JUMPY_VE_COEF=${JUMPY_VE_COEF:-0.0}    # iter-25 probe#2: value-equivalent macro
 JUMPY_PLAN=${JUMPY_PLAN:-0}            # iter-22: 1 = eval with jumpy-MPPI (writes 'jumpy' rows)
 JUMPY_NMACRO=${JUMPY_NMACRO:-3}        # iter-22: jumpy macro-steps (eff horizon = k*n_macro)
 JUMPY_PLAN_FLAG=""; [[ "$JUMPY_PLAN" == "1" ]] && JUMPY_PLAN_FLAG="--jumpy_plan"
+CALIB_COEF=${CALIB_COEF:-0}            # iter-30: calibration-shaped jumpy disagreement weight (0=off; needs JUMPY_K>0)
+CALIB_Q=${CALIB_Q:-0.9}                # iter-30: pinball quantile (disc upper-bounds err at this quantile)
 TOTAL_STEPS=${TOTAL_STEPS:-3000000}   # Stage-0 reproduction budget (sample-efficiency window)
 CODE_SHA=${CODE_SHA:-$(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || echo unknown)}
 TAG_SHA=${CODE_SHA//[^A-Za-z0-9_.-]/_}; TAG_PROBE=${PROBE_ID//[^A-Za-z0-9_.-]/_}; TAG_TASK=${TASK//[^A-Za-z0-9_.-]/_}
@@ -57,6 +59,7 @@ for seed in $SEEDS; do
     $RHO_FLAG \
     --intrinsic "$INTRINSIC" --intrinsic_coef "$INTRINSIC_COEF" \
     --jumpy_k "$JUMPY_K" --jumpy_coef "$JUMPY_COEF" --jumpy_ve_coef "$JUMPY_VE_COEF" --jumpy_n_macro "$JUMPY_NMACRO" $JUMPY_PLAN_FLAG \
+    --calib_coef "$CALIB_COEF" --calib_q "$CALIB_Q" \
     --bisim_coef "$BISIM_COEF" \
     --glass_lambda_behav "$GLASS_LAMBDA_BEHAV" --glass_lambda_se "$GLASS_LAMBDA_SE" \
     --distractor_dims "$DISTRACTOR_DIMS" \
