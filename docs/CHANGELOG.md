@@ -73,6 +73,15 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - Iter-30 now rides on P1 alone: disc_err_gap + k-sweep (4 more finals landed, 94 done) +
   Cartesian pre-registration (dump chained).
 
+## 2026-06-12
+
+### 02:30 — P1 pre-registered predictions committed (before any harvest)
+- All 8 k2 ckpt dumps processed (grinder needed two fixes: rsync nested-dir + ssh-eats-stdin-in-
+  while-read). `p1_ksweep_prediction.json` committed: **disc_err_gap k2 < k4 within every task →
+  predict k2 jumpy gain LOWER than k4 on Pick/Ori/Cab**; cross-task ordering Ori>Pick>Cab preserved
+  at k2 (1.03/0.97/0.67). No ti30 final has been read. Grinder pass 4 on the 3 finished k8 ckpts.
+- Fleet: k8 wave training (5 boxes); Pick n-boost + Cartesian queued behind.
+
 ### Verdicts (ledger/paper updated)
 - **Entity-graph NO-GO** (3rd redundancy data point, cleanest): value-coupling cross-Hessian recovers
   known-by-construction pairs at chance (AP 0.50, z −0.08) with near-perfect reward fit (0.0026);
