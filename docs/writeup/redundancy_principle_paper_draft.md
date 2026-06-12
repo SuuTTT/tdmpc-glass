@@ -28,7 +28,13 @@ shows no community structure beyond a degree-preserving null (best gap-over-null
 trained vs +0.0064 untrained) [exp/tdmpc_glass/mechcheck/se_attn_trained.json,
 se_attn_untrained.json]. For the *entity-graph* class we state the criterion as a prediction
 and describe the mechanism-check that would confirm or falsify it; we explicitly do **not**
-claim entity-graph results we do not have. The criterion is falsifiable: it predicts that a
+claim entity-graph results we do not have. We complement the redundancy direction with a
+*scored, pre-registered* positive one: a single checkpoint-computable signal (the ratio of the
+model's ensemble-free self-disagreement to its true k-step error) survived a 9-candidate screen
+of where *temporal* abstraction pays, and its committed-before-harvest predictions scored 4/4
+at k=2 and 0/3 at k=8 — establishing it as a cross-task predictor at fixed k while falsifying
+its k-invariance [exp/tdmpc_glass/mechcheck/p1_temporal_signals.json,
+p1_ksweep_prediction.json, p1_score.json]. The criterion is falsifiable: it predicts that a
 latent that is *not* value-decodable yet whose abstraction objective helps would be a positive
 counterexample, and it specifies exactly where to look (compositional / OOD regimes where
 linear decodability is not certified).
@@ -62,7 +68,9 @@ decide it. We instantiate the criterion across three latent classes (Section 4):
 SimNorm (both conditions measured), token-transformer attention graphs (a measured NO-GO), and
 entity-graph latents (stated as a prediction with a pre-specified mechanism-check). Section 5
 summarizes the 16-null campaign as systematic evidence; Section 6 states the predictions that
-would falsify the criterion; Section 7 is honest about its limits — chief among them that
+would falsify the criterion, reports a scored pre-registered test of the converse (positive)
+direction, and records an asymmetry in what mechanism-checks can and cannot predict; Section 7
+is honest about its limits — chief among them that
 linear value-decodability is a *training-distribution* property and does not certify OOD.
 
 ---
@@ -288,18 +296,24 @@ finding measurable and predictive.
 
 **The campaign's one positive result is consistent with the criterion — and narrower than our
 interim notes claimed.** The only lever that beat the baseline was the (prior-art) jumpy / k-step
-world model itself — *not* an abstraction objective. At full n=5 per arm (persisted aggregation,
-10k-resample bootstrap on seed means), the picture is task-dependent rather than suite-wide:
-PandaPickCubeOrientation is a clean CI-separated win (jumpy final 2145 vs vanilla 1129, +90%,
-difference CI95 [685, 1344]; every jumpy seed beats every vanilla seed); PandaPickCube is a
-positive trend that does not reach CI separation (1872 vs 1416, +32%, difference CI95
-[−267, 1169]); PandaOpenCabinet is null (1050 vs 1053, difference CI95 [−563, 685])
-[exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json, from scripts/aggregate_anchor.py].
-Earlier hand-aggregated interim numbers (+101%/+75%/+74% across all three tasks at n=2–4) settled
-to this as seeds completed — itself a demonstration of why we persist aggregations and report
-final-n CIs. Peak is mixed (vanilla often higher peak; jumpy sustains final where it wins). Jumpy
-is a temporal, not an abstraction, lever — consistent with the thesis that abstraction is the
-redundant axis on this substrate while temporal coarse-graining (on some tasks) is not.
+world model itself — *not* an abstraction objective. The picture is task-dependent rather than
+suite-wide (persisted aggregations, 10k-resample bootstrap on seed means):
+PandaPickCubeOrientation is a clean CI-separated win at n=5 per arm (jumpy final 2145 vs vanilla
+1129, +90%, difference CI95 [685, 1344]; every jumpy seed beats every vanilla seed);
+PandaPickCube, a positive trend that had not reached CI separation at n=5 (1872 vs 1416, +32%,
+difference CI95 [−267, 1169]), *resolved* once boosted to n=8 per arm: jumpy 1969 vs vanilla
+1355, +45%, difference CI95 [66, 1153] — now CI-separated; PandaOpenCabinet is null at n=5
+(1050 vs 1053, difference CI95 [−563, 685])
+[exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json (n=5 aggregation, from
+scripts/aggregate_anchor.py); exp/tdmpc_glass/mechcheck/p1_score.json "pick_anchor_n8" block,
+per-seed finals in p1_ksweep_harvest.json]. Jumpy's scoreboard is thus 2/3 tasks CI-separated
+(PickCube, Orientation) plus one null (OpenCabinet). Earlier hand-aggregated interim numbers
+(+101%/+75%/+74% across all three tasks at n=2–4) settled as seeds completed — itself a
+demonstration of why we persist aggregations and report final-n CIs. Peak is mixed (vanilla
+often higher peak; jumpy sustains final where it wins). Jumpy is a temporal, not an abstraction,
+lever — consistent with the thesis that abstraction is the redundant axis on this substrate
+while temporal coarse-graining (on some tasks) is not. Section 6.1 turns this task-dependence
+itself into a scored, pre-registered prediction.
 
 ---
 
@@ -333,6 +347,82 @@ null, for which a single-variable explicit-abstraction objective nonetheless pro
 CI-separated control gain on ≥3/4 tasks under the campaign's protocol. We did not observe one in
 16 levers; the criterion predicts it will not be observed wherever both conditions hold.
 
+### 6.1 A scored, pre-registered positive direction
+
+The redundancy criterion says where abstraction is redundant. The converse question — where does
+*temporal* abstraction pay? — we made predictive, and then scored. The campaign's one positive
+lever (the jumpy k-step model) has task-dependent gains (Section 5), which raises a testable
+question: is there a checkpoint-computable signal that predicts, per task, how much jumpy will
+gain? We screened nine candidate signals (error medians and dispersions, latent speeds,
+disagreement statistics, perturbation inflation), computed from a single trained k=4 checkpoint
+per task, against the measured jumpy final-return gains at the time of the screen (+90%
+Orientation / +32% PickCube / 0% OpenCabinet). Exactly one survived the ordering screen:
+
+> **disc_err_gap** = median(disagreement) / median(true k-step error)
+> — Ori 1.33 > Pick 1.12 > Cab 0.95
+
+where *disagreement* is the ensemble-free jumpy-vs-iterated-one-step prediction gap — computable
+from one checkpoint, no ground truth needed
+[exp/tdmpc_glass/mechcheck/p1_temporal_signals.json — 9 candidates, surviving_candidates =
+["disc_err_gap"]]. The reading: temporal abstraction pays where the macro-model is accurate
+*and* calibrated-conservative (disagreement ≥ error); it fails where the model is inaccurate and
+overconfident. An ordering match at n=3 tasks is hypothesis-generating only, so we pre-registered
+the test: fresh jumpy variants at k=2 and k=8 (effective planning horizon fixed, compute-matched)
+were trained on all three tasks, the signal was computed from their dumped checkpoints, and the
+predictions were committed to a public git history **before any final return was read** (k=2
+gaps 0.969/1.028/0.672 all below their k=4 values ⇒ predict lower gains at k=2; k=8 gaps
+1.521/1.736/1.681 all above ⇒ predict higher gains at k=8)
+[exp/tdmpc_glass/mechcheck/p1_ksweep_prediction.json; git history timestamps the commit order].
+The score, against finals read for the first time at harvest
+[exp/tdmpc_glass/mechcheck/p1_score.json, p1_ksweep_harvest.json — n=3 seeds per new cell]:
+
+| Block | Prediction | Outcome | Scored |
+|---|---|---|---|
+| Pick k2<k4 | lower gain at k=2 | 1616 vs 1969 | ✓ |
+| Ori k2<k4 | lower gain at k=2 | 1487 vs 2145 | ✓ |
+| Cab k2<k4 | lower gain at k=2 | 596 vs 1050 | ✓ |
+| k2 gain ordering | Ori > Pick > Cab | +358 > +261 > −457 | ✓ |
+| Pick k8>k4 | higher gain at k=8 | 1302 vs 1969 | ✗ |
+| Ori k8>k4 | higher gain at k=8 | 1469 vs 2145 | ✗ |
+| Cab k8>k4 | higher gain at k=8 | 694 vs 1050 | ✗ |
+
+**4/4 on the k=2 block; 0/3 on the k=8 block.** The honest reading: disc_err_gap is a real
+*cross-task* predictor at fixed k (7/7 ordering facts across two k values) but it is **not
+k-invariant** — iterating the 1-step model k times inflates disagreement mechanically with k, so
+*upward* cross-k comparisons are confounded; the committed k=8 predictions walked into that
+confound and died in public, exactly as pre-registration is supposed to work
+[exp/tdmpc_glass/mechcheck/p1_score.json "summary.interpretation"]. A bonus result from the same
+harvest: the dose–response is **unimodal, with k=4 optimal on all three tasks** (Pick
+1969 > 1616 > 1302; Ori 2145 > 1487 ≈ 1469; Cab 1050 > 694 > 596 for k=4 / k=2 / k=8
+respectively) — temporal abstraction has an optimal grain, neither too fine nor too coarse
+[exp/tdmpc_glass/mechcheck/p1_score.json, p1_ksweep_harvest.json].
+
+### 6.2 Mechanism-check asymmetry: NO-GOs kill reliably, GOs only license
+
+The same week produced two further mechanism-checks, and with them a finding about the method
+itself. The first, on a Hermite-spline action bottleneck (macro-action = spline knots, shrinking
+the planner's search dimension), died at its pre-registered gate: open-loop spline replay at
+knot spacing 4 preserved a mean **0.364** of expert return against a 0.95 gate (zero-order hold:
+0.305) — one dev-box run instead of a 30-run fan-out
+[exp/tdmpc_glass/mechcheck/spline_mechcheck_PandaPickCube.json; stated caveat in the evidence
+file: the replay is open-loop while the reference rollout is closed-loop, so a marginal fail
+would not be fatal — 0.364 vs 0.95 is not marginal].
+
+The second is the instructive one. A macro-Q error decomposition for a *value-equivalent macro
+head* (pre-registered gates: GO iff value-cost ratio ≥ 0.3 and Spearman ρ ≥ 0.4) said **GO on
+Orientation** (value-cost ratio 0.352, ρ=0.57 — the macro-model's latent errors systematically
+cost value) and **NO-GO on OpenCabinet** (ρ=0.23 — errors large but value-unstructured)
+[exp/tdmpc_glass/mechcheck/p3_macroq_ori.json, p3_macroq_cab.json]. Yet the archive already
+contained the experiment: a value-equivalence loss on the macro head scored a final return of
+**583** (n=3) versus jumpy's 2145 (n=5) on Orientation — catastrophic harm on exactly the task
+the mechanism-check green-lit [docs/CHANGELOG.md 2026-06-12 entry; per-seed finals 431/732/585
+read from the phasei27_ve PandaPickCubeOrientation worker CSVs (mean of MPPI evaluations from
+step 400k) in exp/tdmpc_glass/remote_mirror/]. The asymmetry we record: **mechanism-check NO-GOs
+kill reliably; GOs license a test but never predict success.** This is consistent with the
+redundancy criterion's own logic — C1/C2 are headroom (NO-GO-shaped) instruments: they can
+certify that an objective has nothing to gain, but passing them establishes only that a gain is
+not excluded.
+
 ---
 
 ## 7. Limitations
@@ -358,15 +448,30 @@ We are deliberately conservative about scope.
   single-agent CheetahRun for the SimNorm SE gap). Genuinely relational domains (multi-object,
   multi-agent) are exactly where the entity-graph class might break C1 OOD — untested here.
 
-- **Seed counts are modest.** The jumpy anchor is now n=5 per arm with persisted CIs
-  [exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json]; only 1 of 3 tasks is CI-separated.
-  Several ledger nulls are decisive in *direction* at small n but not all reach the full n=5 CI
-  gate [docs/iterations/RESEARCH_LEDGER.md].
+- **Seed counts are modest.** The jumpy anchor is n=5 per arm with persisted CIs (n=8 on
+  PandaPickCube after the boost) [exp/tdmpc_glass/mechcheck/anchor_jumpy_vs_vanilla.json;
+  p1_score.json "pick_anchor_n8"]; 2 of 3 tasks are CI-separated (PickCube at n=8, Orientation
+  at n=5), the third is null. Several ledger nulls are decisive in *direction* at small n but
+  not all reach the full n=5 CI gate [docs/iterations/RESEARCH_LEDGER.md].
+
+- **The scored predictor (Section 6.1) has its own caveats.** Each new k-sweep cell is n=3 seeds
+  (only the k=4 anchor arms have n=5–8) [exp/tdmpc_glass/mechcheck/p1_ksweep_harvest.json]; the
+  disc_err_gap reference values were computed from a *single* checkpoint per task at k=4, so
+  seed-robustness of the signal itself is unverified
+  [exp/tdmpc_glass/mechcheck/p1_temporal_signals.json]; and the mechanical-inflation confound
+  that explains the k=8 failure was identified *post hoc* — the prediction failure itself was
+  pre-registered, the explanation was not. A cross-domain out-of-sample test (CheetahRun,
+  predicted "weak-positive" from gap 1.017 in the pre-registered ambiguous zone) is committed
+  and pending; its outcome is deliberately **not** included here
+  [exp/tdmpc_glass/mechcheck/p1_ksweep_prediction.json "pre_registered_prediction_cheetah"].
 
 - ~~**Unpersisted numbers.**~~ Resolved: every quantitative claim in this draft is now backed by
   a persisted JSON under exp/tdmpc_glass/mechcheck/ (value_probe R²=0.9994; ve-checkpoint probes
   0.9728/0.9505/0.9773 at R²=0.9998–1.0; attention-graph NO-GO gaps; SimNorm SE gap 53.1%/47.2%;
-  jumpy anchor aggregation with n=5 CIs).
+  jumpy anchor aggregation with n=5 CIs plus the n=8 PickCube resolution; the k-sweep
+  prediction/score/harvest files and the spline and macro-Q mechanism-checks) — with the single
+  exception of the archival 583-vs-2145 value-equivalence final, which is read from the mirrored
+  worker CSVs and docs/CHANGELOG.md as noted in Section 6.2.
 
 ---
 
@@ -411,7 +516,11 @@ structure. We measured both conditions for the monolithic SimNorm class (R²=0.9
 transition-graph gap that is real but motion-phase / control-irrelevant), measured a clean C2
 NO-GO for the token-transformer class (attention-graph SE gap at/below a degree-preserving null,
 trained ≈ untrained), and stated the criterion as a falsifiable prediction for the entity-graph
-class together with the exact OOD probe that would confirm or break it. The criterion's value is
-that it is cheap to evaluate on any trained checkpoint and tells you, before a multi-week build,
-whether an abstraction objective has headroom — and where to look (a latent that is *not*
-value-decodable OOD) if you want to find a genuine positive case.
+class together with the exact OOD probe that would confirm or break it. On the converse,
+positive direction we scored a pre-registered predictor of where *temporal* abstraction pays:
+disc_err_gap went 4/4 on its committed k=2 predictions and 0/3 at k=8 — a real cross-task
+predictor at fixed k whose k-invariance is falsified — and the week's mechanism-checks
+crystallized an asymmetry worth stating: NO-GOs kill reliably, GOs only license a test. The
+criterion's value is that it is cheap to evaluate on any trained checkpoint and tells you,
+before a multi-week build, whether an abstraction objective has headroom — and where to look
+(a latent that is *not* value-decodable OOD) if you want to find a genuine positive case.
