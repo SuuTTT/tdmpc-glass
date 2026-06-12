@@ -137,3 +137,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - **M2 flagship queued** (15 calib-jumpy runs, 3 tasks × 5 seeds, priority behind Ori wave) with
   pre-registered prediction committed first (m2_prediction.json): beats jumpy on Cab, ties Ori/Pick.
 - Dev queue: Pick composition retry → control chain on ssh7. Workers: Ori n-boost + last cheetahs.
+
+### 20:00 — Pick composition deferred (ckpt loss), control chain running
+- All full-budget Pick k4 ckpts lost to worker disk self-heal during new waves; Pick composition
+  test deferred until M2's fresh Pick ckpts land (becomes the calibrated-composition test).
+  Non-gating: Cab flip + more-training control carry the thesis.
+- ssh7: control fine-tune (calib_coef=0, +100k) running; then ctrl dump + ctrl composition.
