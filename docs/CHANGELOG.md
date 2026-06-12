@@ -143,3 +143,5 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   test deferred until M2's fresh Pick ckpts land (becomes the calibrated-composition test).
   Non-gating: Cab flip + more-training control carry the thesis.
 - ssh7: control fine-tune (calib_coef=0, +100k) running; then ctrl dump + ctrl composition.
+
+### 20:50 — Part 8 published; ledger updated; Cab-600k pre-registered test queued (priority 2)

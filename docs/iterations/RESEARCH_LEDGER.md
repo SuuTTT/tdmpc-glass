@@ -47,6 +47,16 @@ already works, and why adaptive jump-length has nothing to adapt to.
 **Cross-cutting lesson:** a strong self-predictive world model (TD-MPC2 + SimNorm) is a high bar; most
 "abstraction" is redundant with what it already learns ([Ni et al. 2024] sufficient-abstraction theory).
 
+### 2026-06-12 — iter-32: calibration-loss flip DEBUNKED by control; Cab null = undertraining artifact (pre-reg test queued)
+M1 calib fine-tune (+100k, Cab): gap .949->1.301, err .630->.211, re-composition rho 2.54->0.692 (FLIP).
+**Control (calib=0, +100k): identical flip (rho .683, win 80%) with LOWER err (.060)** -> the calibration
+loss added nothing; the flip was continued training. Surviving findings: (1) Cab jumpy@500k was
+UNDERTRAINED — its null is likely budget-bound (pre-registered: jum/van@600k x3 queued; predict gap
+OPENS); (2) disc_err_gap = a free convergence diagnostic (flagged the bad model at 500k, healthy after
++100k); (3) composition/pyramid works on CONVERGED models (Ori@500k GO, Cab@600k-equiv GO). M2
+from-scratch calib test still queued (prediction committed; expectations low). [calib_m1_verdict.json,
+pyramid_mechcheck_Cab_{CALIBRATED,CONTROL}.json, calib_control_comparison.json; blog Part 8.]
+
 ### 2026-06-12 — P1 SCORED: disc_err_gap survives as a cross-task predictor; k-invariance falsified
 Pre-registered (public, Part 6) before any harvest. Score: **k2 block 4/4** (k2<k4 on Pick/Ori/Cab +
 k2 gain ordering Ori>Pick>Cab), **k8 block 0/3** (k8 predicted > k4 everywhere; actual k8 < k4

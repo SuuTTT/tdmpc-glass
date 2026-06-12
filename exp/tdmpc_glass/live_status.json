@@ -1,8 +1,8 @@
 {
-  "updated": "2026-06-12T15:40Z",
-  "experiment": "Iter-31 Wave A launched: calibration-selected temporal grain (auto-k). Six 100k-step probes (k=2/4/8 on Pick+Ori) test whether the SHORT-budget disc_err_gap predicts the known full-budget k-ordering; GO -> Wave B: auto-k TD-MPC2 vs vanilla on unseen tasks (the positive-method gate aimed at an ICLR-shaped result). CheetahRun OOS scored: +11% not separated = 'weak-positive' exactly as committed; predictor closes at 8/8 ordering facts at fixed k.",
-  "dev": "Part 7 published; paper v2 (11pp, compiles) pushed to the Overleaf repo with the scored predictor + GO-asymmetry + n=8 anchor. Dev box next: harvest Wave A ckpts (~1h runs) -> short-budget signals -> GO/NO-GO for Wave B. Cartesian OOS dropped (its run saved no ckpts); cheetah carried the OOS test instead.",
-  "eta": "Wave A probes ~1-1.5h each (6 runs, 5 workers) -> auto-k GO/NO-GO ~18:30 UTC; Wave B (if GO) queues tonight, finals tomorrow.",
+  "updated": "2026-06-12T20:50Z",
+  "experiment": "The control caught us: the composition flip on Cabinet was +100k training, not the calibration loss (identical flip at calib=0, err even lower). Real discovery: Cab's jumpy null was an undertraining artifact \u2014 pre-registered 600k jum/van test queued (does the null flip?). Fleet: Ori n-boost wave -> Cab-600k -> M2 from-scratch calib runs (prediction committed, expectations low).",
+  "dev": "Part 8 published (the autopsy + the surviving findings: disc_err_gap as a free convergence diagnostic; pyramid works on converged models). Next dev: harvest Ori n=8 -> anchor update; Cab-600k verdict; paper v3 folds the control story + possibly a flipped 3/3 anchor.",
+  "eta": "Ori wave finals ~23:00-01:00; Cab-600k finals ~tomorrow morning; M2 drains after.",
   "history": [
     {
       "date": "2026-05-13",
@@ -43,6 +43,11 @@
       "date": "2026-06-12",
       "title": "Part 7: The predictor transfers domains (weakly, as predicted)",
       "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part7-domain-transfer/"
+    },
+    {
+      "date": "2026-06-12",
+      "title": "Part 8: The control caught us \u2014 budget, not calibration; Cab null = undertraining",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part8-the-control-caught-us/"
     }
   ]
 }
