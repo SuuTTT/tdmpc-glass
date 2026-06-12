@@ -47,6 +47,18 @@ already works, and why adaptive jump-length has nothing to adapt to.
 **Cross-cutting lesson:** a strong self-predictive world model (TD-MPC2 + SimNorm) is a high bar; most
 "abstraction" is redundant with what it already learns ([Ni et al. 2024] sufficient-abstraction theory).
 
+### 2026-06-12 — P1 SCORED: disc_err_gap survives as a cross-task predictor; k-invariance falsified
+Pre-registered (public, Part 6) before any harvest. Score: **k2 block 4/4** (k2<k4 on Pick/Ori/Cab +
+k2 gain ordering Ori>Pick>Cab), **k8 block 0/3** (k8 predicted > k4 everywhere; actual k8 < k4
+everywhere). Verdict: disc_err_gap = median(disagreement)/median(true k-step err) is a REAL cross-task
+predictor at fixed k (7/7 ordering facts) but NOT k-invariant — iterating the 1-step model k times
+inflates disagreement mechanically, confounding upward cross-k comparisons (documented failure mode).
+Bonus 1: **dose-response unimodal, k=4 optimal on all 3 tasks** (Pick 1969>1616>1302; Ori
+2145>1487~1469; Cab 1050>694>596) — temporal abstraction has an optimal grain. Bonus 2: **Pick anchor
+CI-SEPARATED at n=8** (jum 1969 vs van 1355, +45%, diff CI95 [66,1153]) — jumpy now 2/3 CI-separated
+wins + 1 null. [exp/tdmpc_glass/mechcheck/p1_score.json, p1_ksweep_harvest.json,
+p1_ksweep_prediction.json]. CheetahRun OOS (gap 1.017, predicted weak-positive) pending tonight.
+
 ### 2026-06-11 — clustering-on-Panda matrix COMPLETE (nulls #1–#2 closed on manipulation)
 User asked whether the DMC-era nulls were ever tested on Panda. Audit: #2 behav, #14 ve, #15 arch
 already were; #1 geoglass was NOT (DMC/Humanoid only). Re-ran geoglass on PandaPickCube n=5

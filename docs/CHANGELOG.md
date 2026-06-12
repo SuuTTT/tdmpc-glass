@@ -103,3 +103,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   to queues/archive_done_failed.jsonl under the daemon's fcntl-lock + tmp/rename pattern, with
   .bak_archive_<epoch> backup. First run: 14 rows archived, 113 remain (105 done <48h kept).
 - Daemon + streamer untouched (one-master rule respected); no mirror data deleted.
+
+### 13:40 — SCORING EVENT (milestone: Part 6 update published)
+- Predictions finalized (k8 + cheetah committed pre-harvest), then ALL ti30 finals read for the
+  first time. **Score: k2 block 4/4, k8 block 0/3** → disc_err_gap = real cross-task predictor at
+  fixed k; NOT k-invariant (iteration-drift confound). **k=4 unimodal optimum on all 3 tasks.**
+  **Pick anchor CI-separated at n=8 (+45%, CI [66,1153])** — jumpy: 2/3 CI-separated + 1 null.
+  Ledger + Part 6 update + dashboard history updated. Cheetah OOS reports tonight (Part 7).
