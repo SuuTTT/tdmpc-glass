@@ -1,0 +1,69 @@
+{
+  "scored_at": "2026-06-12T13:25Z",
+  "k2_block": {
+    "Pick": {
+      "k2_final": 1615.6666666666667,
+      "k4_final": 1969,
+      "predicted": "k2<k4",
+      "correct": true
+    },
+    "Ori": {
+      "k2_final": 1487.211111111111,
+      "k4_final": 2145,
+      "predicted": "k2<k4",
+      "correct": true
+    },
+    "Cab": {
+      "k2_final": 596.4,
+      "k4_final": 1050,
+      "predicted": "k2<k4",
+      "correct": true
+    }
+  },
+  "k8_block": {
+    "Pick": {
+      "k8_final": 1302.3,
+      "k4_final": 1969,
+      "predicted": "k8>k4",
+      "correct": false
+    },
+    "Ori": {
+      "k8_final": 1468.9333333333334,
+      "k4_final": 2145,
+      "predicted": "k8>k4",
+      "correct": false
+    },
+    "Cab": {
+      "k8_final": 694.3666666666667,
+      "k4_final": 1050,
+      "predicted": "k8>k4",
+      "correct": false
+    }
+  },
+  "summary": {
+    "k2_predictions": "4/4 correct (3 per-task + ordering)",
+    "k8_predictions": "0/3 correct",
+    "interpretation": "disc_err_gap is a valid CROSS-TASK predictor at fixed k and predicts DOWNWARD k changes, but is NOT k-invariant: iterating the 1-step model k times inflates disagreement mechanically with k, so cross-k comparisons upward are confounded. Dose-response: k=4 is the sweet spot on all 3 tasks (Pick 1969>1616>1302; Ori 2145>1487~1469; Cab 1050>694>596).",
+    "bonus": "Pick anchor resolved at n=8: jumpy +45% and now CI-separated"
+  },
+  "k2_ordering": {
+    "gains_vs_van": {
+      "Pick": 261,
+      "Ori": 358,
+      "Cab": -457
+    },
+    "predicted": "Ori>Pick>Cab",
+    "correct": true
+  },
+  "pick_anchor_n8": {
+    "jum_final": 1968.625,
+    "van_final": 1354.875,
+    "rel_gain": 0.4529938186179537,
+    "diff_ci95": [
+      66.49375,
+      1152.6468749999997
+    ],
+    "ci_separated": true,
+    "n": 8
+  }
+}

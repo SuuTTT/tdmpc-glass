@@ -73,3 +73,33 @@ these and the predictor dies in public, in this post's update — and the paper 
 redundancy criterion plus an honest negative on the positive direction.
 
 *This post will be UPDATED with the scored table once the k-sweep finals are harvested.*
+
+---
+
+## UPDATE (13:30 UTC): The score
+
+The harvest happened. Scoring the committed predictions against finals read for the first time
+*(source: exp/tdmpc_glass/mechcheck/p1_score.json, p1_ksweep_harvest.json)*:
+
+| Block | Prediction | Result |
+|---|---|---|
+| Pick $k2<k4$ | 1616 vs 1969 | ✅ |
+| Ori $k2<k4$ | 1487 vs 2145 | ✅ |
+| Cab $k2<k4$ | 596 vs 1050 | ✅ |
+| k2 gain ordering Ori>Pick>Cab | $+358 > +261 > -457$ | ✅ |
+| Pick $k8>k4$ | 1302 vs 1969 | ❌ |
+| Ori $k8>k4$ | 1469 vs 2145 | ❌ |
+| Cab $k8>k4$ | 694 vs 1050 | ❌ |
+
+**4/4 on the k2 block, 0/3 on the k8 block.** The honest reading: `disc_err_gap` is a real
+*cross-task* predictor at fixed $k$ (now 7/7 ordering facts across two k values) — but it is **not
+k-invariant**: iterating the 1-step model $k$ times inflates disagreement mechanically with $k$, so
+*upward* cross-k comparisons are confounded. The committed k8 predictions walked straight into that
+confound and died in public, exactly as pre-registration is supposed to work.
+
+Two bonus results from the same harvest: **the dose–response is unimodal — $k{=}4$ beats both
+$k{=}2$ and $k{=}8$ on all three tasks** (temporal abstraction has an optimal grain, neither too
+fine nor too coarse); and **the Pick anchor resolved at $n{=}8$: jumpy $+45\%$, difference CI95
+$[66, 1153]$ — now CI-separated.** Jumpy's scoreboard is 2/3 tasks CI-separated (Pick, Orientation)
+and one null (Cabinet). The CheetahRun cross-domain test (predicted "weak-positive", gap 1.017,
+committed before any final exists) reports in Part 7 tonight.
