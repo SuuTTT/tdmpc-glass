@@ -75,5 +75,43 @@
       "prediction": "k2 gain LOWER than k4 gain"
     }
   },
-  "note": "Committed BEFORE harvesting any ti30 final. k8 cells pending (3 runs done, dumps queued)."
+  "note": "Committed BEFORE harvesting any ti30 final. k8 cells pending (3 runs done, dumps queued).",
+  "pre_registered_predictions_k8": {
+    "Cab": {
+      "k8_gap": 1.6808778444925945,
+      "per_seed": [
+        1.343,
+        1.329,
+        2.371
+      ],
+      "k4_gap": 0.949,
+      "prediction": "k8 gain HIGHER than k4"
+    },
+    "Ori": {
+      "k8_gap": 1.7362656990687053,
+      "per_seed": [
+        1.684,
+        1.529,
+        1.995
+      ],
+      "k4_gap": 1.332,
+      "prediction": "k8 gain HIGHER than k4"
+    },
+    "Pick": {
+      "k8_gap": 1.5206796725591023,
+      "per_seed": [
+        1.588,
+        1.441,
+        1.533
+      ],
+      "k4_gap": 1.121,
+      "prediction": "k8 gain HIGHER than k4"
+    }
+  },
+  "pre_registered_prediction_cheetah": {
+    "disc_err_gap": 1.0166456699371338,
+    "rule": "gap>~1.1 -> predict jumpy beats vanilla (like Ori/Pick); gap<~1.0 -> predict null (like Cab)",
+    "prediction": "ambiguous zone (1.0-1.1): weak-positive"
+  },
+  "note_v2": "k8 + cheetah predictions committed BEFORE harvesting any ti30/cheetah final."
 }
