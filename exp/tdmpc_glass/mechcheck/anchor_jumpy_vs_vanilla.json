@@ -5,24 +5,27 @@
     "PandaPickCube": {
       "jum": {
         "probe_id": "phasei27_jum",
-        "n_seeds_total": 5,
-        "n_seeds_final": 5,
-        "peak_mean": 2449.7,
-        "final_mean": 1872.186666666667,
+        "n_seeds_total": 8,
+        "n_seeds_final": 8,
+        "peak_mean": 2521.175,
+        "final_mean": 1968.6208333333334,
         "final_per_seed": [
           778.9,
           1580.0,
+          1805.9,
           1886.9,
+          2006.8,
           2501.4,
+          2575.4,
           2613.8
         ],
         "final_ci95": [
-          1283.6266666666666,
-          2407.0333333333333
+          1552.1748958333333,
+          2343.7009375
         ],
         "peak_ci95": [
-          2050.4,
-          2841.64
+          2233.0625,
+          2783.9624999999996
         ],
         "seeds": [
           {
@@ -64,29 +67,56 @@
             "max_step": 500224,
             "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_jum_PandaPickCube_i27a/seed_4.csv",
             "seed": 4
+          },
+          {
+            "rows": 10,
+            "peak": 2553.9,
+            "final": 1805.8666666666668,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaPickCube_phasei27_jum_PandaPickCube_i30/seed_5.csv",
+            "seed": 5
+          },
+          {
+            "rows": 10,
+            "peak": 2953.0,
+            "final": 2575.4,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCube_phasei27_jum_PandaPickCube_i30/seed_6.csv",
+            "seed": 6
+          },
+          {
+            "rows": 10,
+            "peak": 2414.0,
+            "final": 2006.7666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_3060/PandaPickCube_phasei27_jum_PandaPickCube_i30/seed_7.csv",
+            "seed": 7
           }
         ]
       },
       "van": {
         "probe_id": "phasei27_van",
-        "n_seeds_total": 5,
-        "n_seeds_final": 5,
-        "peak_mean": 2232.8599999999997,
-        "final_mean": 1415.6933333333334,
+        "n_seeds_total": 8,
+        "n_seeds_final": 8,
+        "peak_mean": 2306.025,
+        "final_mean": 1354.9125,
         "final_per_seed": [
+          471.0,
           838.3,
           841.1,
+          1356.7,
           1693.7,
           1796.1,
-          1909.3
+          1909.3,
+          1933.1
         ],
         "final_ci95": [
-          1010.4933333333335,
-          1820.8933333333334
+          971.6416666666668,
+          1704.1404166666662
         ],
         "peak_ci95": [
-          1972.78,
-          2492.94
+          2117.4,
+          2484.9574999999995
         ],
         "seeds": [
           {
@@ -128,37 +158,64 @@
             "max_step": 500224,
             "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_van_PandaPickCube_i27a/seed_4.csv",
             "seed": 4
+          },
+          {
+            "rows": 10,
+            "peak": 2582.1,
+            "final": 1933.1000000000001,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCube_phasei27_van_PandaPickCube_i30/seed_5.csv",
+            "seed": 5
+          },
+          {
+            "rows": 10,
+            "peak": 2205.5,
+            "final": 1356.7333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh2_a4000/PandaPickCube_phasei27_van_PandaPickCube_i30/seed_6.csv",
+            "seed": 6
+          },
+          {
+            "rows": 10,
+            "peak": 2496.3,
+            "final": 471.0,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCube_phasei27_van_PandaPickCube_i30/seed_7.csv",
+            "seed": 7
           }
         ]
       },
-      "final_rel_gain_jum_over_van": 0.32245213181762544,
+      "final_rel_gain_jum_over_van": 0.4529505287856843,
       "final_diff_ci95": [
-        -266.7241666666669,
-        1168.7828333333323
+        56.98114583333307,
+        1157.2359375
       ],
-      "ci_separated_final": false
+      "ci_separated_final": true
     },
     "PandaPickCubeOrientation": {
       "jum": {
         "probe_id": "phasei27_jum",
-        "n_seeds_total": 5,
-        "n_seeds_final": 5,
-        "peak_mean": 2601.34,
-        "final_mean": 2144.9466666666667,
+        "n_seeds_total": 8,
+        "n_seeds_final": 8,
+        "peak_mean": 2493.625,
+        "final_mean": 1928.1333333333334,
         "final_per_seed": [
+          1128.2,
+          1255.8,
           1803.4,
           1896.5,
           2165.8,
           2309.3,
+          2316.3,
           2549.7
         ],
         "final_ci95": [
-          1913.1266666666666,
-          2376.766666666667
+          1586.6329166666667,
+          2245.5607291666665
         ],
         "peak_ci95": [
-          2417.3599999999997,
-          2737.66
+          2263.135625,
+          2679.2275
         ],
         "seeds": [
           {
@@ -200,29 +257,56 @@
             "max_step": 500224,
             "file": "exp/tdmpc_glass/remote_mirror/ssh3_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i27a/seed_4.csv",
             "seed": 4
+          },
+          {
+            "rows": 10,
+            "peak": 2420.4,
+            "final": 1255.8333333333333,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh9_a4000/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i32/seed_5.csv",
+            "seed": 5
+          },
+          {
+            "rows": 10,
+            "peak": 2716.9,
+            "final": 2316.3333333333335,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i32/seed_6.csv",
+            "seed": 6
+          },
+          {
+            "rows": 10,
+            "peak": 1805.0,
+            "final": 1128.1666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_3060/PandaPickCubeOrientation_phasei27_jum_PandaPickCubeOrientation_i32/seed_7.csv",
+            "seed": 7
           }
         ]
       },
       "van": {
         "probe_id": "phasei27_van",
-        "n_seeds_total": 5,
-        "n_seeds_final": 5,
-        "peak_mean": 2242.2200000000003,
-        "final_mean": 1129.26,
+        "n_seeds_total": 8,
+        "n_seeds_final": 8,
+        "peak_mean": 2298.0625,
+        "final_mean": 1248.7875,
         "final_per_seed": [
           767.4,
           903.7,
+          914.4,
           1180.7,
           1351.3,
-          1443.1
+          1405.9,
+          1443.1,
+          2023.8
         ],
         "final_ci95": [
-          904.5866666666667,
-          1353.9333333333334
+          1005.3708333333333,
+          1527.8386458333334
         ],
         "peak_ci95": [
-          1886.3,
-          2505.6
+          2037.1125,
+          2529.4625000000005
         ],
         "seeds": [
           {
@@ -264,13 +348,37 @@
             "max_step": 500224,
             "file": "exp/tdmpc_glass/remote_mirror/ssh8_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i27a/seed_4.csv",
             "seed": 4
+          },
+          {
+            "rows": 10,
+            "peak": 1962.7,
+            "final": 914.3666666666668,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i32/seed_5.csv",
+            "seed": 5
+          },
+          {
+            "rows": 10,
+            "peak": 2780.4,
+            "final": 2023.7666666666667,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh2_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i32/seed_6.csv",
+            "seed": 6
+          },
+          {
+            "rows": 10,
+            "peak": 2430.3,
+            "final": 1405.8666666666668,
+            "max_step": 500224,
+            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000/PandaPickCubeOrientation_phasei27_van_PandaPickCubeOrientation_i32/seed_7.csv",
+            "seed": 7
           }
         ]
       },
-      "final_rel_gain_jum_over_van": 0.8994267632490894,
+      "final_rel_gain_jum_over_van": 0.5440043508870273,
       "final_diff_ci95": [
-        685.4205000000001,
-        1344.3956666666663
+        250.4001041666668,
+        1082.6559375
       ],
       "ci_separated_final": true
     },
@@ -279,22 +387,22 @@
         "probe_id": "phasei27_jum",
         "n_seeds_total": 5,
         "n_seeds_final": 5,
-        "peak_mean": 1942.02,
-        "final_mean": 1050.4133333333334,
+        "peak_mean": 2147.8599999999997,
+        "final_mean": 1020.5133333333333,
         "final_per_seed": [
           455.9,
-          684.4,
+          534.9,
           913.7,
           937.1,
           2260.9
         ],
         "final_ci95": [
-          597.8533333333334,
-          1680.873333333333
+          567.9533333333334,
+          1650.973333333333
         ],
         "peak_ci95": [
-          1523.3,
-          2292.52
+          1523.8200000000002,
+          2757.84
         ],
         "seeds": [
           {
@@ -307,10 +415,10 @@
           },
           {
             "rows": 10,
-            "peak": 2141.0,
-            "final": 684.4333333333334,
+            "peak": 3170.2,
+            "final": 534.9333333333333,
             "max_step": 500224,
-            "file": "exp/tdmpc_glass/remote_mirror/ssh4_a4000b/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i29/seed_1.csv",
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_3060/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_1.csv",
             "seed": 1
           },
           {
@@ -343,30 +451,30 @@
         "probe_id": "phasei27_van",
         "n_seeds_total": 5,
         "n_seeds_final": 5,
-        "peak_mean": 2568.46,
-        "final_mean": 1053.1,
+        "peak_mean": 2910.88,
+        "final_mean": 1035.4733333333334,
         "final_per_seed": [
           550.8,
           846.3,
-          997.0,
+          908.9,
           1300.2,
           1571.3
         ],
         "final_ci95": [
-          758.2133333333334,
-          1372.0666666666668
+          740.5866666666667,
+          1367.1933333333334
         ],
         "peak_ci95": [
-          1959.5,
-          3181.98
+          2375.98,
+          3400.8599999999997
         ],
         "seeds": [
           {
             "rows": 10,
-            "peak": 1641.1,
-            "final": 997.0,
+            "peak": 3353.2,
+            "final": 908.8666666666667,
             "max_step": 500224,
-            "file": "exp/tdmpc_glass/remote_mirror/ssh1_2080ti/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i29/seed_0.csv",
+            "file": "exp/tdmpc_glass/remote_mirror/ssh6_3060/PandaOpenCabinet_phasei27_van_PandaOpenCabinet_i27a/seed_0.csv",
             "seed": 0
           },
           {
@@ -403,10 +511,10 @@
           }
         ]
       },
-      "final_rel_gain_jum_over_van": -0.002551198050200833,
+      "final_rel_gain_jum_over_van": -0.014447499050353817,
       "final_diff_ci95": [
-        -563.3558333333335,
-        684.7933333333322
+        -600.8200000000002,
+        704.1599999999996
       ],
       "ci_separated_final": false
     }

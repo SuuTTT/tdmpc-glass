@@ -150,3 +150,7 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - Replaying EXACT actions open-loop preserves 0.943 mean (min 0.754) — not 1.0 (contact amplifies
   tiny divergence). Spline's 0.364 vs the 0.943 floor: reconstruction error dominates; the P2
   NO-GO is confirmed with an honest denominator. Dev queue item closed.
+
+### 23:35 — Ori n=8 harvested: +54% CI-separated [250,1083] (settled from +90% at n=5)
+- Anchor now n=8/n=8 on Pick (+45% sep) and Ori (+54% sep); Cab null at 500k (600k test training).
+  Ordering Ori>Pick>Cab preserved (predictor consistent). Paper v3 updates batch with Cab-600k.
