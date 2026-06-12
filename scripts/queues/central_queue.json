@@ -1693,13 +1693,14 @@
     "label": "cheetah robustness jum s3 (n 3->5, firms Part 7)",
     "env": "PROBE_ID=phasei30_cheetah_jum SEEDS=3 ALGO=tdmpc2 TASK=CheetahRun JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 2,
     "created_at": "2026-06-12T16:45:00Z",
     "note": "n-boost for the OOS domain gate (+11% CI[-120,248] at n=3); n=5 resolves.",
     "box": "ssh2_a4000",
     "started_at": "2026-06-12T16:18:17Z",
-    "launched_git_sha": "95156bf"
+    "launched_git_sha": "95156bf",
+    "ended_at": "2026-06-12T19:34:51Z"
   },
   {
     "id": "ti30_cheetah_van3",
@@ -1720,13 +1721,14 @@
     "label": "cheetah robustness jum s4 (n 3->5, firms Part 7)",
     "env": "PROBE_ID=phasei30_cheetah_jum SEEDS=4 ALGO=tdmpc2 TASK=CheetahRun JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i30 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 2,
     "created_at": "2026-06-12T16:45:00Z",
     "note": "n-boost for the OOS domain gate (+11% CI[-120,248] at n=3); n=5 resolves.",
     "box": "ssh6_3060",
     "started_at": "2026-06-12T16:18:50Z",
-    "launched_git_sha": "95156bf"
+    "launched_git_sha": "95156bf",
+    "ended_at": "2026-06-12T19:47:11Z"
   },
   {
     "id": "ti30_cheetah_van4",
@@ -1760,13 +1762,14 @@
     "label": "Ori n-boost van s5 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_van SEEDS=5 ALGO=tdmpc2 TASK=PandaPickCubeOrientation MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "running",
+    "status": "done",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
     "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
     "box": "ssh4_a4000",
     "started_at": "2026-06-12T18:03:30Z",
-    "launched_git_sha": "d12149c"
+    "launched_git_sha": "d12149c",
+    "ended_at": "2026-06-12T20:07:25Z"
   },
   {
     "id": "ti32_jum_Ori6",
@@ -1786,30 +1789,39 @@
     "label": "Ori n-boost van s6 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_van SEEDS=6 ALGO=tdmpc2 TASK=PandaPickCubeOrientation MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh2_a4000",
+    "started_at": "2026-06-12T19:34:52Z",
+    "launched_git_sha": "7167cad"
   },
   {
     "id": "ti32_jum_Ori7",
     "label": "Ori n-boost jum s7 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_jum SEEDS=7 ALGO=tdmpc2 TASK=PandaPickCubeOrientation JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh6_3060",
+    "started_at": "2026-06-12T19:47:11Z",
+    "launched_git_sha": "7167cad"
   },
   {
     "id": "ti32_van_Ori7",
     "label": "Ori n-boost van s7 (n 5->8, bulletproof the +90% headline)",
     "env": "PROBE_ID=phasei27_van SEEDS=7 ALGO=tdmpc2 TASK=PandaPickCubeOrientation MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=500000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
     "launcher": "scripts/run_dmc_baseline.sh",
-    "status": "pending",
+    "status": "running",
     "priority": 1,
     "created_at": "2026-06-12T18:10:00Z",
-    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated."
+    "note": "Same PROBE_IDs as phasei27 so aggregate_anchor picks them up. Mirrors the Pick n-boost that converted +32% (CI crosses 0) into +45% CI-separated.",
+    "box": "ssh4_a4000",
+    "started_at": "2026-06-12T20:07:25Z",
+    "launched_git_sha": "51773e0"
   },
   {
     "id": "ti32_calib_Cab0",
@@ -1960,5 +1972,65 @@
     "priority": 3,
     "created_at": "2026-06-12T19:30:00Z",
     "note": "M2 gate vs historical plain-jumpy (phasei27_jum). Prediction committed in m2_prediction.json BEFORE launch: beats jumpy on Cab, ~ties Ori/Pick. Cab seeds first."
+  },
+  {
+    "id": "ti32_600k_jum_Cab0",
+    "label": "Cab 600k jum s0: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_jum600k SEEDS=0 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
+  },
+  {
+    "id": "ti32_600k_van_Cab0",
+    "label": "Cab 600k van s0: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_van600k SEEDS=0 ALGO=tdmpc2 TASK=PandaOpenCabinet MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
+  },
+  {
+    "id": "ti32_600k_jum_Cab1",
+    "label": "Cab 600k jum s1: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_jum600k SEEDS=1 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
+  },
+  {
+    "id": "ti32_600k_van_Cab1",
+    "label": "Cab 600k van s1: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_van600k SEEDS=1 ALGO=tdmpc2 TASK=PandaOpenCabinet MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
+  },
+  {
+    "id": "ti32_600k_jum_Cab2",
+    "label": "Cab 600k jum s2: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_jum600k SEEDS=2 ALGO=tdmpc2 TASK=PandaOpenCabinet JUMPY_K=4 JUMPY_PLAN=1 JUMPY_NMACRO=6 MPPI_H=8 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
+  },
+  {
+    "id": "ti32_600k_van_Cab2",
+    "label": "Cab 600k van s2: does the Cab null flip with budget?",
+    "env": "PROBE_ID=phasei32_van600k SEEDS=2 ALGO=tdmpc2 TASK=PandaOpenCabinet MPPI_H=3 MPPI_NS=512 K_UPDATE=128 EXPL_UNTIL=25000 TOTAL_STEPS=600000 CODE_SHA=i32 XLA_FLAGS=--xla_gpu_autotune_level=0 TMPDIR=/root/helios-rl/tmp",
+    "launcher": "scripts/run_dmc_baseline.sh",
+    "status": "pending",
+    "priority": 2,
+    "created_at": "2026-06-12T20:30:00Z",
+    "note": "Control revealed Cab jumpy@500k was undertrained (err .63->.06 with +100k). Pre-registered: jumpy-vs-van gap at 600k OPENS on Cab (jumpy null was budget-bound). Compute-matched arms."
   }
 ]

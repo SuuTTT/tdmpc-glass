@@ -1,0 +1,29 @@
+{
+  "control_calib0_plus100k": {
+    "disc_err_gap": 1.1966482400894165,
+    "err_med": 0.05950664356350899,
+    "composition": {
+      "rho": 0.6825,
+      "win_rate": 0.8,
+      "verdict": "GO"
+    }
+  },
+  "calibrated_plus100k": {
+    "disc_err_gap": 1.301,
+    "err_med": 0.211,
+    "composition": {
+      "rho": 0.692,
+      "win_rate": 0.757,
+      "verdict": "GO"
+    }
+  },
+  "baseline_500k": {
+    "disc_err_gap": 0.949,
+    "err_med": 0.63,
+    "composition": {
+      "rho": 2.541,
+      "win_rate": 0.003,
+      "verdict": "NO-GO"
+    }
+  }
+}
