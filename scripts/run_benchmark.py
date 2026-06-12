@@ -1689,6 +1689,12 @@ def train_tdmpc2(
                 )
 
             # Gradient updates (one vectorised sample + one H2D + lax.scan)
+            # aux/loss_val may be read by the log line below before the first
+            # update fires (resume with a fresh replay buffer) — safe defaults.
+            try:
+                aux
+            except NameError:
+                aux, loss_val = {}, 0.0
             samp_k = buf.sample_k(K_UPDATE, BS, rng_np)
             if samp_k is not None:
                 ob_k, ab_k, rb_k, db_k = [jnp.asarray(x) for x in samp_k]
