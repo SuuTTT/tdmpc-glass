@@ -1,8 +1,8 @@
 {
-  "updated": "2026-06-12T20:50Z",
-  "experiment": "The control caught us: the composition flip on Cabinet was +100k training, not the calibration loss (identical flip at calib=0, err even lower). Real discovery: Cab's jumpy null was an undertraining artifact \u2014 pre-registered 600k jum/van test queued (does the null flip?). Fleet: Ori n-boost wave -> Cab-600k -> M2 from-scratch calib runs (prediction committed, expectations low).",
-  "dev": "Part 8 published (the autopsy + the surviving findings: disc_err_gap as a free convergence diagnostic; pyramid works on converged models). Next dev: harvest Ori n=8 -> anchor update; Cab-600k verdict; paper v3 folds the control story + possibly a flipped 3/3 anchor.",
-  "eta": "Ori wave finals ~23:00-01:00; Cab-600k finals ~tomorrow morning; M2 drains after.",
+  "updated": "2026-06-13T11:25Z",
+  "experiment": "iter-32 CLOSED: calibration-shaped WM is null-to-harmful from scratch (Cab 0%, Ori -36%, Pick -57%); committed prediction missed. Temporal axis now exhausted alongside the state axis. No experiment running \u2014 queue empty.",
+  "dev": "Closing milestone (Part 9) published. Paper v3 (both-axes redundancy criterion + convergence predictor + figures) is the deliverable, pending venue call. Only open positive bet: high-DoF (Humanoid/Dog) at real budget \u2014 needs user cost approval. 5070 free for Mahjong.",
+  "eta": "No tdmpc compute queued. Next action is the user's: ship paper (venue) and/or approve the high-DoF bet.",
   "history": [
     {
       "date": "2026-05-13",
@@ -48,6 +48,11 @@
       "date": "2026-06-12",
       "title": "Part 8: The control caught us \u2014 budget, not calibration; Cab null = undertraining",
       "url": "https://suuttt.github.io/tdmpc-glass/2026/06/12/tdmpc-glass-part8-the-control-caught-us/"
+    },
+    {
+      "date": "2026-06-13",
+      "title": "Part 9: Calibration-shaped world models, closed (null-to-harmful)",
+      "url": "https://suuttt.github.io/tdmpc-glass/2026/06/13/tdmpc-glass-part9-calibration-closed/"
     }
   ]
 }
