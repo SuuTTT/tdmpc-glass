@@ -190,3 +190,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   Temporal axis exhausted. Queue EMPTY. Paper is the deliverable; high-DoF the only open bet (user cost call).
 
 ### 12:45 — M2 finalized at n=5: calibration harmful (Cab ~0%, Ori -36%, Pick -57%). Queue empty; campaign idle.
+
+### 12:55 — iter-33 high-DoF bet launched (user: keep GPU busy)
+- The ledger's last open headroom: jumpy vs vanilla on HumanoidRun + HumanoidWalk @1.5M steps (3x the
+  500k that floored), 2 seeds/arm, pre-registered (iter33_highdof_prereg.json), compute-matched. 8 runs
+  saturating all 5 workers ~1.5-2 days. Gate: jumpy beats vanilla CI-separated on >=1 humanoid task ->
+  high-DoF headroom real; else -> paper gets both-axes + high-DoF closure.

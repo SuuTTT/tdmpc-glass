@@ -1,0 +1,7 @@
+{
+  "committed": "2026-06-13T12:50Z",
+  "experiment": "iter-33 high-DoF: jumpy vs vanilla TD-MPC2 on HumanoidRun + HumanoidWalk at 1.5M steps (3x the 500k that floored)",
+  "motivation": "The only headroom the campaign never tested at adequate budget (RESEARCH_LEDGER WHATS PROMISING #4). Manipulation showed jumpy wins on 2/3; does temporal abstraction extend to high-DoF locomotion when given the budget high-DoF needs?",
+  "pre_registered": "OPEN/exploratory \u2014 no committed direction. Decision gate: jumpy beats vanilla final return with non-overlapping CI on >=1 humanoid task at 1.5M -> high-DoF headroom real, escalate seeds; else -> temporal abstraction does not rescue high-DoF either, paper gets its final both-axes+high-DoF closure.",
+  "arms": "jumpy(k=4,n_macro=6,mppi_h=8) vs vanilla(mppi_h=3), 1.5M steps, 2 seeds each, compute-matched"
+}
