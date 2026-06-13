@@ -196,3 +196,8 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   500k that floored), 2 seeds/arm, pre-registered (iter33_highdof_prereg.json), compute-matched. 8 runs
   saturating all 5 workers ~1.5-2 days. Gate: jumpy beats vanilla CI-separated on >=1 humanoid task ->
   high-DoF headroom real; else -> paper gets both-axes + high-DoF closure.
+
+### ~16:35 — iter-33: vanilla HumanoidRun FLOORED at 1.5M (final ~5, peak 9, n=2)
+- HumanoidRun too hard for vanilla TD-MPC2 even at 1.5M (matches ledger 'Humanoid floored'). Makes the
+  jumpy HumanoidRun arm the decisive cell: rescue-off-floor = striking win; also-floor = wash. Jumpy
+  arms ~400k (slow, ~1.5d to go). HumanoidWalk arms (jum+van) now running = the likely-informative task.
