@@ -32,6 +32,7 @@ Runs on a worker / ssh7 (/root/venv or the ssh7 venv); EC2 has no jax. Output = 
   python scripts/compounding_curve.py --ckpt <best_mppi.pkl> --task PandaPickCubeOrientation \
       --jumpy_k 4 --horizons "4,8,12,16,24,32,48,64" --n_ep 8 --out r.json
 """
+from functools import partial
 import argparse
 import json
 import os
@@ -122,7 +123,7 @@ def main():
 
     # ── COMPOSED path (A): apply jdyn floor(h/k) times over consecutive k-action chunks.
     #    a_win is (N, h, act); reshape each k-chunk to (N, k*act) and feed jdyn (line 1439 pattern).
-    @jax.jit
+    @partial(jax.jit, static_argnums=(2,))
     def compose_jdyn(z0, a_win, n_chunks):     # a_win (N,h,act); n_chunks = h//k -> (N,latent)
         def body(z, j):
             chunk = jax.lax.dynamic_slice_in_dim(a_win, j * k, k, axis=1)   # (N,k,act)
@@ -132,7 +133,7 @@ def main():
 
     # ── ITERATED-1-STEP path (B): roll dyn_net h times — the SE_DUMP `_iter1` helper
     #    (run_benchmark lines 1412-1416), generalised from kk to h single steps.
-    @jax.jit
+    @partial(jax.jit, static_argnums=(2,))
     def iter1(z0, a_win, n_steps):              # a_win (N,h,act); n_steps = h -> (N,latent)
         def body(z, j):
             a_j = jax.lax.dynamic_index_in_dim(a_win, j, axis=1, keepdims=False)  # (N,act)
