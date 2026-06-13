@@ -160,3 +160,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - jum 797 vs van 711 (n=3 each, +12%, CI [-147,318]). The Cab null OPENS directionally at 600k
   (was ~0% at 500k) — weakly supports "undertraining", but not confirmed at n=3. Anchor stays
   2/3 CI-separated (Pick +45%, Ori +54%); Cab = honest weak-trend, not a flip. M2 calib runs draining.
+
+### 06:45 — Pyramid lead: depth sweep on converged Ori = NO-GO (return flat over horizon)
+- plan_depth Ori: return flat across n_macro 3/6/9/12/16 (H 12-64): 2856/2808/2827/2679/2795, best
+  +1.7% (noise). Deeper compositional planning does NOT raise return on a converged model — composition
+  is ACCURATE (mechanism-check) but the converged model is already uniformly-accurate enough that
+  horizon depth is saturated. Pyramid-as-deeper-planning joins the null pile. Cab depth sweep running
+  (the under-converged case — the only place depth might still matter).
