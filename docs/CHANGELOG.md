@@ -167,3 +167,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   is ACCURATE (mechanism-check) but the converged model is already uniformly-accurate enough that
   horizon depth is saturated. Pyramid-as-deeper-planning joins the null pile. Cab depth sweep running
   (the under-converged case — the only place depth might still matter).
+
+### 07:40 — Cab depth NO-GO too; pyramid lead closed (both tasks). 5070 freed.
+- Cab depth flat (1774→1701, H 12-64), best depth 3. Pyramid: composition accurate, return-saturated
+  on converged models. Temporal axis now as exhausted as the state axis — both reduce to "converged
+  model already good enough." M2 calib 8/15 (last running experiment). Next dev: compounding-error-
+  vs-horizon curve (the paper figure explaining WHERE composition stays accurate vs return-saturates).
