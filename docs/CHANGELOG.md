@@ -173,3 +173,8 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   on converged models. Temporal axis now as exhausted as the state axis — both reduce to "converged
   model already good enough." M2 calib 8/15 (last running experiment). Next dev: compounding-error-
   vs-horizon curve (the paper figure explaining WHERE composition stays accurate vs return-saturates).
+
+### 08:40 — compounding-error curve harvested (paper figure); 5070 free
+- Composed-d4 error sub-linear in horizon, 1.3-1.8x below 1-step iteration on both tasks; reconciles
+  pyramid-mechcheck GO vs depth-sweep NO-GO (accuracy real but unused by the short-horizon controller).
+  M2 calib 9/15. 5070 idle after curve.

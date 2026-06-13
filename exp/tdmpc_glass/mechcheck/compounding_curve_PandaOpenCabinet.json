@@ -1,0 +1,287 @@
+{
+  "probe": "compounding_curve",
+  "config": {
+    "ckpt": "exp/tdmpc_glass/ckpt_rescue/PandaOpenCabinet_phasei27_jum_PandaOpenCabinet_i27a/seed_4/checkpoints/best_mppi.pkl",
+    "task": "PandaOpenCabinet",
+    "jumpy_k": 4,
+    "horizons": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64
+    ],
+    "n_ep": 8,
+    "seed": 4,
+    "episode_length": 1000,
+    "latent_dim": 512,
+    "num_bins": 101,
+    "V": 8,
+    "dyn_arch": "mlp",
+    "crossover_thresh": 0.5,
+    "obs_dim": 55,
+    "act_dim": 8
+  },
+  "ep_lens": [
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000,
+    1000
+  ],
+  "curves": [
+    {
+      "h": 4,
+      "n_samples": 7968,
+      "err_compose_norm": {
+        "median": 208.060684,
+        "mean": 208.770615
+      },
+      "err_iter_norm": {
+        "median": 333.463989,
+        "mean": 313.26358
+      },
+      "err_compose_raw": {
+        "median": 0.607048,
+        "mean": 0.609119
+      },
+      "err_iter_raw": {
+        "median": 0.97293,
+        "mean": 0.913993
+      },
+      "displacement_raw": {
+        "median": 0.002918,
+        "mean": 0.088252
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.533485,
+        "mean": 1.506872
+      }
+    },
+    {
+      "h": 8,
+      "n_samples": 7936,
+      "err_compose_norm": {
+        "median": 131.874619,
+        "mean": 133.682205
+      },
+      "err_iter_norm": {
+        "median": 203.370636,
+        "mean": 194.761185
+      },
+      "err_compose_raw": {
+        "median": 0.769403,
+        "mean": 0.779949
+      },
+      "err_iter_raw": {
+        "median": 1.186536,
+        "mean": 1.136306
+      },
+      "displacement_raw": {
+        "median": 0.005834,
+        "mean": 0.147077
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.463477,
+        "mean": 1.476496
+      }
+    },
+    {
+      "h": 12,
+      "n_samples": 7904,
+      "err_compose_norm": {
+        "median": 102.281158,
+        "mean": 107.011574
+      },
+      "err_iter_norm": {
+        "median": 159.557846,
+        "mean": 151.977539
+      },
+      "err_compose_raw": {
+        "median": 0.895066,
+        "mean": 0.936462
+      },
+      "err_iter_raw": {
+        "median": 1.396296,
+        "mean": 1.32996
+      },
+      "displacement_raw": {
+        "median": 0.008751,
+        "mean": 0.189578
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.384889,
+        "mean": 1.440764
+      }
+    },
+    {
+      "h": 16,
+      "n_samples": 7872,
+      "err_compose_norm": {
+        "median": 88.830299,
+        "mean": 91.271011
+      },
+      "err_iter_norm": {
+        "median": 131.887604,
+        "mean": 124.898376
+      },
+      "err_compose_raw": {
+        "median": 1.036431,
+        "mean": 1.064908
+      },
+      "err_iter_raw": {
+        "median": 1.538803,
+        "mean": 1.457256
+      },
+      "displacement_raw": {
+        "median": 0.011668,
+        "mean": 0.22669
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.374043,
+        "mean": 1.385714
+      }
+    },
+    {
+      "h": 24,
+      "n_samples": 7808,
+      "err_compose_norm": {
+        "median": 70.247589,
+        "mean": 70.516106
+      },
+      "err_iter_norm": {
+        "median": 90.784706,
+        "mean": 88.186234
+      },
+      "err_compose_raw": {
+        "median": 1.229382,
+        "mean": 1.234081
+      },
+      "err_iter_raw": {
+        "median": 1.588795,
+        "mean": 1.54332
+      },
+      "displacement_raw": {
+        "median": 0.017501,
+        "mean": 0.288337
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.292469,
+        "mean": 1.270037
+      }
+    },
+    {
+      "h": 32,
+      "n_samples": 7744,
+      "err_compose_norm": {
+        "median": 57.085331,
+        "mean": 57.039547
+      },
+      "err_iter_norm": {
+        "median": 69.861458,
+        "mean": 68.51609
+      },
+      "err_compose_raw": {
+        "median": 1.332017,
+        "mean": 1.330949
+      },
+      "err_iter_raw": {
+        "median": 1.630133,
+        "mean": 1.59874
+      },
+      "displacement_raw": {
+        "median": 0.023334,
+        "mean": 0.336275
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.227074,
+        "mean": 1.222962
+      }
+    },
+    {
+      "h": 48,
+      "n_samples": 7616,
+      "err_compose_norm": {
+        "median": 41.175339,
+        "mean": 41.552189
+      },
+      "err_iter_norm": {
+        "median": 52.595467,
+        "mean": 50.515007
+      },
+      "err_compose_raw": {
+        "median": 1.441126,
+        "mean": 1.454315
+      },
+      "err_iter_raw": {
+        "median": 1.840827,
+        "mean": 1.768012
+      },
+      "displacement_raw": {
+        "median": 0.035,
+        "mean": 0.41096
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.269373,
+        "mean": 1.239297
+      }
+    },
+    {
+      "h": 64,
+      "n_samples": 7488,
+      "err_compose_norm": {
+        "median": 32.299179,
+        "mean": 33.137741
+      },
+      "err_iter_norm": {
+        "median": 43.006729,
+        "mean": 40.728783
+      },
+      "err_compose_raw": {
+        "median": 1.507021,
+        "mean": 1.546147
+      },
+      "err_iter_raw": {
+        "median": 2.006616,
+        "mean": 1.900331
+      },
+      "displacement_raw": {
+        "median": 0.046658,
+        "mean": 0.466357
+      },
+      "advantage_ratio_iter_over_compose": {
+        "median": 1.267394,
+        "mean": 1.249999
+      }
+    }
+  ],
+  "summary": {
+    "crossover_horizon": 4,
+    "crossover_rule": "first h where median(err_compose_norm) > 0.5; None = composition stays below threshold across all measured horizons (error sub-linear / scale-free out to max horizon)",
+    "composition_advantage_ratio_iter_over_compose_by_h": {
+      "4": 1.533485,
+      "8": 1.463477,
+      "12": 1.384889,
+      "16": 1.374043,
+      "24": 1.292469,
+      "32": 1.227074,
+      "48": 1.269373,
+      "64": 1.267394
+    },
+    "advantage_note": "ratio > 1 means the iterated-1-step model accumulates MORE error than the composed jumpy model at that horizon (composition advantage); ratio trending toward 1 with h means the advantage shrinks as both saturate"
+  },
+  "interpretation": "err_compose_norm is the scale-free latent error of the k=4 jumpy head composed h/k times; err_iter_norm is the 1-step model rolled h times. Reconciles the pyramid result (composed-d4 beats dedicated d8 at h=8) with the flat return-vs-depth sweep: composition keeps error sub-linear out to the crossover horizon, but the controller's return saturates earlier because the policy does not need horizon beyond that.",
+  "caveats": [
+    "single checkpoint / single seed \u2014 no across-seed variance estimate",
+    "pi-policy state-action distribution only; MPPI's planning distribution (where the jumpy head is actually consumed) may stress the heads differently",
+    "deterministic pi (tanh(mu)) rollouts \u2014 no exploration-noise coverage",
+    "normaliser is the median h-step displacement on the SAME pi distribution; horizons with few long-episode samples have a noisier normaliser",
+    "composed path requires each horizon to be a multiple of jumpy_k=4; iterated path rolls the 1-step head h times so any error in dyn compounds fully"
+  ]
+}
