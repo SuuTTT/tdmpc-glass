@@ -154,3 +154,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 ### 23:35 — Ori n=8 harvested: +54% CI-separated [250,1083] (settled from +90% at n=5)
 - Anchor now n=8/n=8 on Pick (+45% sep) and Ori (+54% sep); Cab null at 500k (600k test training).
   Ordering Ori>Pick>Cab preserved (predictor consistent). Paper v3 updates batch with Cab-600k.
+
+## 2026-06-13
+### 02:00 — Cab anchor-flip test (600k): partial — directional +12%, not CI-separated
+- jum 797 vs van 711 (n=3 each, +12%, CI [-147,318]). The Cab null OPENS directionally at 600k
+  (was ~0% at 500k) — weakly supports "undertraining", but not confirmed at n=3. Anchor stays
+  2/3 CI-separated (Pick +45%, Ori +54%); Cab = honest weak-trend, not a flip. M2 calib runs draining.

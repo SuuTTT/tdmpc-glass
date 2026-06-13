@@ -1,0 +1,29 @@
+{
+  "task": "PandaOpenCabinet@600k",
+  "jum": {
+    "n": 3,
+    "mean": 797.0333333333333,
+    "seeds": {
+      "0": 638,
+      "1": 986,
+      "2": 768
+    }
+  },
+  "van": {
+    "n": 3,
+    "mean": 711.4333333333333,
+    "seeds": {
+      "0": 935,
+      "1": 585,
+      "2": 614
+    }
+  },
+  "diff_ci95": [
+    -147.07777777777767,
+    318.2777777777778
+  ],
+  "rel_gain": 0.12032047978259855,
+  "ci_separated": false,
+  "prediction": "gap OPENS at 600k (500k null was undertraining)",
+  "verdict": "trend"
+}
