@@ -178,3 +178,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - Composed-d4 error sub-linear in horizon, 1.3-1.8x below 1-step iteration on both tasks; reconciles
   pyramid-mechcheck GO vs depth-sweep NO-GO (accuracy real but unused by the short-horizon controller).
   M2 calib 9/15. 5070 idle after curve.
+
+### 09:05 — M2 partial (calib from-scratch): NULL-to-harmful, prediction missed (honest)
+- Cab calib 1053 (n=5) ≈ plain jumpy 1050 (TIE); Ori calib 1385 (n=4) < jumpy 2145 (WORSE).
+  Committed prediction "calib beats jumpy on Cab" = MISS. Confirms the control: calibration loss
+  adds nothing from-scratch either. iter-32 (calibration-shaped WM) = dead, both fine-tune & scratch.
+  Pick calib seeds finishing -> full score + closing milestone post then.
