@@ -1,0 +1,46 @@
+{
+  "experiment": "M2 calib-shaped jumpy from scratch vs plain-jumpy baselines",
+  "scored_at": "2026-06-13",
+  "arms": {
+    "Cab": {
+      "calib_mean": 1053.3400000000001,
+      "calib_n": 5,
+      "calib_seeds": [
+        391,
+        443,
+        1217,
+        1255,
+        1962
+      ],
+      "plain_jumpy_baseline": 1050,
+      "rel_vs_jumpy": 0.0031809523809525194,
+      "committed_prediction": "BEATS jumpy"
+    },
+    "Ori": {
+      "calib_mean": 1377.4466666666665,
+      "calib_n": 5,
+      "calib_seeds": [
+        998,
+        1099,
+        1347,
+        1497,
+        1946
+      ],
+      "plain_jumpy_baseline": 2145,
+      "rel_vs_jumpy": -0.3578337218337219,
+      "committed_prediction": "~ties"
+    },
+    "Pick": {
+      "calib_mean": 849.4,
+      "calib_n": 2,
+      "calib_seeds": [
+        754,
+        944
+      ],
+      "plain_jumpy_baseline": 1969,
+      "rel_vs_jumpy": -0.5686135093956323,
+      "committed_prediction": "~ties"
+    }
+  },
+  "verdict": "calibration loss is NULL-to-HARMFUL from scratch; committed Cab \"beats\" prediction MISSED. iter-32 closed: calibration-shaped WM does not beat plain jumpy."
+}
