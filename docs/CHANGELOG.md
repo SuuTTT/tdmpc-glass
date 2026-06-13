@@ -188,3 +188,5 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 ### 11:25 — iter-32 CLOSED (Part 9): calibration null-to-harmful from scratch
 - M2 full: Cab 1053=1050 (0%), Ori 1377 vs 2145 (-36%), Pick 849 vs 1969 (-57%, n2). Prediction missed.
   Temporal axis exhausted. Queue EMPTY. Paper is the deliverable; high-DoF the only open bet (user cost call).
+
+### 12:45 — M2 finalized at n=5: calibration harmful (Cab ~0%, Ori -36%, Pick -57%). Queue empty; campaign idle.

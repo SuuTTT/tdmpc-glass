@@ -31,16 +31,20 @@
       "committed_prediction": "~ties"
     },
     "Pick": {
-      "calib_mean": 849.4,
-      "calib_n": 2,
+      "calib_mean": 1083.74,
+      "calib_n": 5,
       "calib_seeds": [
+        648,
         754,
-        944
+        944,
+        1274,
+        1798
       ],
       "plain_jumpy_baseline": 1969,
-      "rel_vs_jumpy": -0.5686135093956323,
+      "rel_vs_jumpy": -0.449598781107161,
       "committed_prediction": "~ties"
     }
   },
-  "verdict": "calibration loss is NULL-to-HARMFUL from scratch; committed Cab \"beats\" prediction MISSED. iter-32 closed: calibration-shaped WM does not beat plain jumpy."
+  "verdict": "calibration loss is NULL-to-HARMFUL from scratch; committed Cab \"beats\" prediction MISSED. iter-32 closed: calibration-shaped WM does not beat plain jumpy.",
+  "final_n5": true
 }
