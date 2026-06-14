@@ -212,3 +212,7 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - Random-shooting MPC: graph ~= fair-mono ~= random floor at all N (graph-rand +-13, std ~110). OOD
   value-decode advantage does NOT convert to control. GWM closes like explicit abstraction; redundancy
   criterion now spans state+temporal+relational/graph. No ManiSkill escalation. Part 11 posted. Queue empty.
+
+### iter-33 high-DoF CLOSED: jumpy hurts on learnable cell (HumanoidStand van 167 >> jum 34)
+- Run both floor; Walk overlap; Stand (learnable) vanilla 5x jumpy. Temporal abstraction doesn't
+  extend to high-DoF, hurts where learnable. Both research directions now closed; paper is deliverable.
