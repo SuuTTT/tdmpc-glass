@@ -236,3 +236,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   compute. Moot anyway: no published GWM targets ManiSkill; SOLD's own Fetch suite is the real
   comparison platform (and SOLD is reproduced there). Decision: cite SOLD's published table vs
   reproduce SOLD-Distinct head-to-head (needs a bigger-disk box for the 15GB replay buffer).
+
+### 2026-06-14 — iter-33 fully closed (HumStand n=2) + 38768950 destroyed (user-instructed)
+- HumanoidStand FINAL n=2: jumpy [33.5, 15.3] mean 24.4 vs vanilla [162, 171] mean 166.6 — jumpy ~7x
+  WORSE on the learnable high-DoF task. iter-33 closed: temporal abstraction does not extend to high-DoF
+  and hurts where learnable. Data mirrored to EC2.
+- Destroyed 38768950 (ssh2_a4000) per user's explicit instruction after its run finished. tdmpc fleet
+  now = ssh4_a4000 (39109169, SOLD box) only. Queue empty/drained.
