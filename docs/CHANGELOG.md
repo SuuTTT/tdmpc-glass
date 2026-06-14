@@ -216,3 +216,16 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 ### iter-33 high-DoF CLOSED: jumpy hurts on learnable cell (HumanoidStand van 167 >> jum 34)
 - Run both floor; Walk overlap; Stand (learnable) vanilla 5x jumpy. Temporal abstraction doesn't
   extend to high-DoF, hurts where learnable. Both research directions now closed; paper is deliverable.
+
+## 2026-06-14 (later) — Real GWM comparison env stood up + SOLD reproduced
+- ManiSkill 3.0.1 isolated env on ssh4_a4000b (torch cu124); official PPO baseline TRAINING on
+  StackCube-v1 (relational), the monolithic anchor on a real benchmark. /root/ms_ppo.log.
+- **SOLD (official GWM, github.com/maltemosbach/sold) REPRODUCED** on ssh4_a4000 (isolated /root/sold_venv,
+  torch 2.5.1+cu124, mujoco-py built clean): provided reach_red ckpt eval = 100% success (30/30) vs
+  paper 97.9% — MATCHES. Fresh train run confirmed learning (dyn_loss 517->0.43), stopped on disk (15GB
+  replay memmap > box). Benchmark = custom multi-object Fetch (Reach/Push/Pick x Specific/Distinct),
+  metric = success rate.
+- **KEY for our paper:** SOLD Table 1 Reach-Specific: SOLD 97.9 ~= TD-MPC2 97.6 >> DreamerV3 87.4 — i.e.
+  monolithic TD-MPC2 TIES the graph WM on the non-relational variant; SOLD's wins are on Distinct/
+  relational variants. This is THIRD-PARTY published evidence for the redundancy criterion (graph helps
+  only where relational structure is essential). Slot-MPC code "coming soon", ObjectZero none.
