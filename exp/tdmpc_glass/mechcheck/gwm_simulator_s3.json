@@ -1,0 +1,195 @@
+{
+  "tag": "gwm_simulator_mechcheck",
+  "config": {
+    "n_train": 5,
+    "n_ood": [
+      7,
+      9
+    ],
+    "steps": 6000,
+    "episodes": 256,
+    "ep_len": 100,
+    "seed": 3,
+    "batch": 256,
+    "lr": 0.0003,
+    "d_model": 64,
+    "n_layers": 2,
+    "n_heads": 4,
+    "mono_layers": 2,
+    "out": "exp/tdmpc_glass/mechcheck/gwm_simulator_s3.json"
+  },
+  "ret_standardization": {
+    "mean": -122.37332916259766,
+    "std": 74.49022674560547
+  },
+  "param_counts": {
+    "graph_entity_wm": 117510,
+    "monolithic_wm": 118239,
+    "monolithic_hidden": 151,
+    "monolithic_target_at_init": 118239,
+    "match_ratio_mono_over_graph": 1.0062037273423539
+  },
+  "train_metrics": {
+    "graph": {
+      "loss": 0.07066208869218826,
+      "q_loss": 0.015638025477528572,
+      "reward_loss": 0.02250456064939499,
+      "self_loss": 0.03251950442790985
+    },
+    "monolithic": {
+      "loss": 0.8350867033004761,
+      "q_loss": 0.21705012023448944,
+      "reward_loss": 0.5822601318359375,
+      "self_loss": 0.03577646240592003
+    }
+  },
+  "per_n": {
+    "5": {
+      "n_samples": 25600,
+      "frac_contact_steps": 0.0581640625,
+      "value_decodability_r2": {
+        "graph": 0.49632714690327084,
+        "monolithic": 0.2592210911692233,
+        "raw_obs": 0.20568790511523816
+      },
+      "contact_conditioned_selfpred": {
+        "graph": {
+          "contact_step_error": 0.33232682943344116,
+          "noncontact_step_error": 0.028200823813676834,
+          "n_contact_steps": 1489,
+          "n_noncontact_steps": 24111,
+          "frac_contact_steps": 0.0581640625,
+          "overall_error": 0.04589002579450607
+        },
+        "monolithic": {
+          "contact_step_error": 0.32531115412712097,
+          "noncontact_step_error": 0.02377186343073845,
+          "n_contact_steps": 1489,
+          "n_noncontact_steps": 24111,
+          "frac_contact_steps": 0.0581640625,
+          "overall_error": 0.041310615837574005
+        }
+      },
+      "overall_selfpred_error": {
+        "graph": 0.04589002579450607,
+        "monolithic": 0.041310615837574005
+      },
+      "reward_r2": {
+        "graph": 0.9260799552493633,
+        "monolithic": 0.4835557533862349
+      },
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    },
+    "7": {
+      "n_samples": 25600,
+      "frac_contact_steps": 0.1069140625,
+      "value_decodability_r2": {
+        "graph": 0.5400262503063362,
+        "monolithic": 0.2128279637057272,
+        "raw_obs": 0.21703645809337968
+      },
+      "contact_conditioned_selfpred": {
+        "graph": {
+          "contact_step_error": 0.20522771775722504,
+          "noncontact_step_error": 0.023463381454348564,
+          "n_contact_steps": 2737,
+          "n_noncontact_steps": 22863,
+          "frac_contact_steps": 0.1069140625,
+          "overall_error": 0.04289654642343521
+        },
+        "monolithic": {
+          "contact_step_error": 0.20053847134113312,
+          "noncontact_step_error": 0.018495500087738037,
+          "n_contact_steps": 2737,
+          "n_noncontact_steps": 22863,
+          "frac_contact_steps": 0.1069140625,
+          "overall_error": 0.037958454340696335
+        }
+      },
+      "overall_selfpred_error": {
+        "graph": 0.04289654642343521,
+        "monolithic": 0.037958454340696335
+      },
+      "reward_r2": {
+        "graph": 0.788152055237153,
+        "monolithic": 0.3828961457148352
+      },
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    },
+    "9": {
+      "n_samples": 25600,
+      "frac_contact_steps": 0.1724609375,
+      "value_decodability_r2": {
+        "graph": 0.58347799462753,
+        "monolithic": 0.19374824945124347,
+        "raw_obs": 0.2547048038162576
+      },
+      "contact_conditioned_selfpred": {
+        "graph": {
+          "contact_step_error": 0.1501990109682083,
+          "noncontact_step_error": 0.02285296842455864,
+          "n_contact_steps": 4415,
+          "n_noncontact_steps": 21185,
+          "frac_contact_steps": 0.1724609375,
+          "overall_error": 0.04481518641114235
+        },
+        "monolithic": {
+          "contact_step_error": 0.1456938087940216,
+          "noncontact_step_error": 0.01793850213289261,
+          "n_contact_steps": 4415,
+          "n_noncontact_steps": 21185,
+          "frac_contact_steps": 0.1724609375,
+          "overall_error": 0.039971303194761276
+        }
+      },
+      "overall_selfpred_error": {
+        "graph": 0.04481518641114235,
+        "monolithic": 0.039971303194761276
+      },
+      "reward_r2": {
+        "graph": 0.6614314764714734,
+        "monolithic": 0.3455292130004678
+      },
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+  "verdict": {
+    "gwm_simulator_go": true,
+    "criteria_preregistered": "GO iff (monolithic OOD value-R2 drops >=0.15 below graph's) OR (graph contact-step error <=0.8x monolithic's). NO-GO otherwise -> graph latent redundant on contacts too.",
+    "criterion_A_value_decodability": {
+      "graph_ood_value_r2": 0.5617521224669331,
+      "monolithic_ood_value_r2": 0.20328810657848534,
+      "graph_minus_monolithic_gap": 0.35846401588844773,
+      "threshold": 0.15,
+      "passed": true,
+      "margin_over_threshold": 0.20846401588844773
+    },
+    "criterion_B_contact_prediction": {
+      "graph_contact_step_error": 0.33232682943344116,
+      "monolithic_contact_step_error": 0.32531115412712097,
+      "ratio_graph_over_mono": 1.0215660459757205,
+      "threshold": 0.8,
+      "passed": false,
+      "margin_under_threshold": -0.2215660459757205
+    },
+    "interpretation": "GO: entity/graph latent beats the param-matched monolithic control on compositional-OOD value-decodability and/or contact prediction -> the GWM-as-simulator bet has mechanism support. NO-GO: graph latent is redundant on contacts too -> consistent with the campaign."
+  },
+  "caveats": [
+    "Synthetic elastic disks are NOT real manipulation; controlled proxy only.",
+    "Single seed (seed=3); no multi-seed error bars.",
+    "Param-match is APPROXIMATE: monolithic flat layers grow with N, matched at N_train only; exact counts reported in param_counts."
+  ],
+  "wall_time_sec": 180.228529214859
+}

@@ -201,3 +201,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
 - HumanoidRun too hard for vanilla TD-MPC2 even at 1.5M (matches ledger 'Humanoid floored'). Makes the
   jumpy HumanoidRun arm the decisive cell: rescue-off-floor = striking win; also-floor = wash. Jumpy
   arms ~400k (slow, ~1.5d to go). HumanoidWalk arms (jum+van) now running = the likely-informative task.
+
+### 06:05 — iter-34 GWM FIRST GO survives fair control (Part 10)
+- Graph OOD value-R2 0.57 vs pooled-mono 0.21 (gap .35) AND vs fair pad-mono 0.40 (gap .18>.15). GO
+  survives pooling control across seeds; pooling inflated ~half. Win = compositional OOD generalization
+  NOT contacts (crit B failed); representation-level only. Part 10 posted. pad s2,s3 running.
+  NEXT GATE: control-benefit (return under planning at held-out N) before any ManiSkill escalation.

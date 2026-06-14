@@ -1,0 +1,17 @@
+{
+  "verdict": "ROBUST GO (narrowed by fair control)",
+  "pool_baseline": {
+    "n": 4,
+    "graph_ood_r2": 0.569,
+    "mono_ood_r2": 0.215,
+    "gap": 0.355
+  },
+  "pad_fair_baseline": {
+    "n": 2,
+    "graph_ood_r2": 0.573,
+    "mono_ood_r2": 0.397,
+    "gap": 0.176
+  },
+  "threshold": 0.15,
+  "reading": "Graph value-decodability generalizes to held-out object counts better than even a fair (zero-padded, per-entity) monolithic baseline. Pooling inflated the gap (0.35->0.17); residual permutation-equivariance advantage clears 0.15 across seeds. CAVEATS: representation-level only (linear value-probe, R2~0.56 modest); contact-prediction NOT better (criterion B failed); control-benefit (return under planning OOD) UNTESTED = the real next gate."
+}
