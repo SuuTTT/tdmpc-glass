@@ -61,13 +61,14 @@ BOXES = [
     # box (a 'forecast' python job uses the GPU but not via run_benchmark, so is_box_idle
     # would falsely see it idle and clobber it). Do NOT schedule tdmpc here.
     # ("ssh1_a4000",    24456,  "ssh1.vast.ai",   0),
-    ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),  # inst 38768950 — RELEASED from LTSF 2026-06-10 (user); A4000 16GB, env verified (jax 0.10.1+cuda, helios-rl + mjx_playground present)
-    ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),  # seed10 finished -> idle, ready for work
-    ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),
-    ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
-    # Released from ltsf 2026-06-09 (user); 3060 12GB, env bootstrapped + verified (jax 0.10.1+cuda,
-    # mujoco 3.8.0, mjx_playground OK). Proxy ssh6.vast.ai:11696 (distinct port from ssh6_titanv).
-    ("ssh6_3060",     17241,  "91.150.160.38",  0),  # inst 40121696 (proxy ssh6.vast.ai:11696 refuses; direct IP works)
+    # DESTROYED 2026-06-14 (campaign wind-down): ssh2_a4000 (38768950, user-instructed after last
+    # iter-33 seed), ssh9_a4000 (38766691), ssh4_a4000b (39120022/ManiSkill), ssh6_3060 (40121696) —
+    # all destroyed by user. Only ssh4_a4000 (39109169, SOLD env) survives.
+    # ("ssh2_a4000",    18950,  "ssh2.vast.ai",   0),
+    # ("ssh9_a4000",    16690,  "ssh9.vast.ai",   0),
+    ("ssh4_a4000",    29168,  "ssh4.vast.ai",   0),  # inst 39109169 — 25 CPU; SOLD env installed (GWM)
+    # ("ssh4_a4000b",   10022,  "ssh4.vast.ai",   0),
+    # ("ssh6_3060",     17241,  "91.150.160.38",  0),
     # RESERVED AS MAIN DEV PLATFORM 2026-06-10 (user): RTX 5070 Ti (Blackwell, 16GB), ~1.6x A4000.
     # Pulled from the scheduling pool for mechanism-checks + arm dev. In-flight ti27_jum_Cart20
     # finishes naturally (daemon no longer tracks ssh7 -> mark that task done manually + harvest).
