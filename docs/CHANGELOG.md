@@ -243,3 +243,11 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   and hurts where learnable. Data mirrored to EC2.
 - Destroyed 38768950 (ssh2_a4000) per user's explicit instruction after its run finished. tdmpc fleet
   now = ssh4_a4000 (39109169, SOLD box) only. Queue empty/drained.
+
+## 2026-06-14 (B) — SOLD Distinct training live but throughput-bound (~3wk/run)
+- SOLD installed+verified on ssh2:38955 (3090, reach_red eval ~98-100%); HF cache cleared (19G,
+  re-downloadable), SeSE untouched. Distinct (Odd) SOLD training RUNNING (step 4200, ep_return
+  0.17->1.29, losses healthy) but collection is single-core mujoco-py: ~2400 steps/hr -> ~500h (~3wk)
+  to the paper's 1.2M-step checkpoint. Authors ship only Reach-Specific ckpt (no Distinct shortcut).
+  DECISION SURFACED: full independent Distinct repro = multi-week/multi-box; A (cite reproduced SOLD +
+  Table 1 as redundancy evidence) is better value. Run left accumulating curve pending user call.
