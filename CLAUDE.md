@@ -55,8 +55,7 @@ This repo is the origin of the research-os queue design and is registered as the
 `tdmpc_glass` research-os project. Keep conventions aligned (file-backed queues,
 worker registry, inspect-don't-daemon-by-default). The live queue stays here.
 
-## ssh7 dev box is SHARED (2026-06-12)
-The 5070 Ti dev box also runs the user's Mahjong RL project. Never interrupt
-non-tdmpc processes there; every tdmpc JAX job on ssh7 must set
-`XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_MEM_FRACTION=0.35`
-(spare ~10GB of 16GB). Light probes can use `JAX_PLATFORMS=cpu`.
+## ssh7 dev box DESTROYED (2026-06-14)
+The 5070 Ti dev box (inst 40368384) was destroyed by the user. No dedicated dev
+box now — run mechanism-checks/probes on a worker when one frees from the queue
+(or rent a cheap box). Unique artifacts were rescued to EC2 before teardown.
