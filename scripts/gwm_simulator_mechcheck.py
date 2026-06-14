@@ -80,6 +80,7 @@ from helios.dynamics.monolithic_wm import (
 from helios.envs import contact_entities as ce
 
 REPO = Path(__file__).resolve().parents[1]
+DEFAULT_OUT = "exp/tdmpc_glass/mechcheck/gwm_simulator.json"
 
 
 # ---------------------------------------------------------------------------
@@ -153,6 +154,12 @@ def make_graph_model(args, n_entities):
     )
 
 
+def mono_max_entities(args):
+    """Fixed slot count for the 'pad' monolithic baseline. Matches the graph
+    model's max_entities so both support the same OOD N range."""
+    return max(64, max([args.n_train] + args.n_ood) + 1)
+
+
 def make_mono_model(args, n_entities, hidden):
     return MonolithicWM(
         entity_dim=ce.ENTITY_DIM,
@@ -160,6 +167,8 @@ def make_mono_model(args, n_entities, hidden):
         n_entities=n_entities,
         hidden=hidden,
         n_layers=args.mono_layers,
+        mode=args.mono_mode,
+        max_entities=mono_max_entities(args),
     )
 
 
@@ -334,10 +343,20 @@ def parse_args():
     p.add_argument("--n_heads", type=int, default=4)
     p.add_argument("--mono_layers", type=int, default=2,
                    help="trunk layers for the monolithic model")
-    p.add_argument("--out", type=str,
-                   default="exp/tdmpc_glass/mechcheck/gwm_simulator.json")
+    p.add_argument("--mono_mode", type=str, default="pool",
+                   choices=["pool", "pad"],
+                   help="monolithic encoder input: 'pool' (mean+max, N-invariant "
+                        "width, default) or 'pad' (zero-pad to max_entities, "
+                        "fixed per-entity slots — the fairness control)")
+    p.add_argument("--out", type=str, default=DEFAULT_OUT)
     args = p.parse_args()
     args.n_ood = [int(x) for x in str(args.n_ood).split(",") if x.strip()]
+    # If a non-default mono_mode is requested but the user kept the default --out,
+    # tag the filename with the mode suffix so pad/pool runs don't clobber each
+    # other. An explicit --out is respected as-is.
+    if args.mono_mode != "pool" and args.out == DEFAULT_OUT:
+        stem, ext = os.path.splitext(args.out)
+        args.out = f"{stem}_{args.mono_mode}{ext}"
     return args
 
 
@@ -370,7 +389,8 @@ def main():
 
     # --- size the MONOLITHIC model to match graph param count at N_train ---
     hidden, mono_target_nparams = matched_hidden(
-        g_nparams, ce.ENTITY_DIM, 2, args.n_train, n_layers=args.mono_layers
+        g_nparams, ce.ENTITY_DIM, 2, args.n_train, n_layers=args.mono_layers,
+        mode=args.mono_mode, max_entities=mono_max_entities(args),
     )
     mono_model = make_mono_model(args, args.n_train, hidden)
     mono_params, m_metrics, m_nparams = train_model(

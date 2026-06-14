@@ -84,22 +84,44 @@ class MonolithicWM(nn.Module):
     hidden: int = 128
     n_layers: int = 2
     activation: str = "gelu"
+    mode: str = "pool"
+    max_entities: int = 16
 
     # ------------------------------------------------------------------
     def encode(self, ent: jax.Array) -> jax.Array:
         """Flatten + MLP trunk -> a single monolithic latent (B, hidden).
 
-        To stay N-AGNOSTIC at apply time (so the SAME trained params can be
-        evaluated at OOD N, exactly like EntityWM), the flat input is built from
-        an N-invariant summary: concat of [mean over entities, max over entities]
-        of the per-entity states. This is the deliberately *unstructured*
-        counterpart to per-entity tokens — it mixes all entities into one vector
-        with no factorization, which is the whole point of the monolithic control.
+        Two ways to build the FIXED-WIDTH flat input from ``ent`` (B, N, d_in):
+
+        * ``mode="pool"`` (default; byte-identical to the original model): an
+          N-invariant summary = concat of [mean over entities, max over entities]
+          -> (B, 2*d_in). This is the deliberately *unstructured* counterpart to
+          per-entity tokens — it mixes all entities into one vector with no
+          factorization. The flat width (2*d_in) does NOT depend on N, but the
+          pooled summary degrades as N grows (more entities crushed into the same
+          2*d_in vector), which may be a pooling artifact rather than a real
+          graph advantage.
+
+        * ``mode="pad"`` (FAIRNESS CONTROL): zero-pad the per-entity states to a
+          FIXED ``max_entities`` slots and flatten -> (B, max_entities*d_in). The
+          per-entity slots are PRESERVED up to ``max_entities`` (the model sees
+          individual entities, it just lacks permutation-equivariance). The flat
+          input width is fixed at ``max_entities*d_in`` for EVERY N (requires
+          N <= max_entities at both train and eval), so the SAME trained params
+          run at OOD N without the pooling collapse — the fairest unstructured
+          baseline.
         """
-        # ent: (B, N, d_in). N-invariant pooled summary -> (B, 2*d_in).
-        mean = jnp.mean(ent, axis=1)
-        mx = jnp.max(ent, axis=1)
-        x = jnp.concatenate([mean, mx], axis=-1)               # (B, 2*d_in)
+        # ent: (B, N, d_in).
+        if self.mode == "pad":
+            B, N, d_in = ent.shape
+            pad = self.max_entities - N
+            padded = jnp.pad(ent, ((0, 0), (0, pad), (0, 0)))  # (B,max_ent,d_in)
+            x = padded.reshape(B, self.max_entities * d_in)    # (B, max_ent*d_in)
+        else:
+            # mode == "pool": N-invariant pooled summary -> (B, 2*d_in).
+            mean = jnp.mean(ent, axis=1)
+            mx = jnp.max(ent, axis=1)
+            x = jnp.concatenate([mean, mx], axis=-1)           # (B, 2*d_in)
         for i in range(self.n_layers):
             x = nn.Dense(self.hidden, name=f"trunk_{i}")(x)
             x = getattr(nn, self.activation)(x)
@@ -208,6 +230,8 @@ def matched_hidden(
     *,
     n_layers: int = 2,
     activation: str = "gelu",
+    mode: str = "pool",
+    max_entities: int = 16,
     lo: int = 16,
     hi: int = 2048,
 ) -> tuple[int, int]:
@@ -231,6 +255,8 @@ def matched_hidden(
             hidden=int(hidden),
             n_layers=n_layers,
             activation=activation,
+            mode=mode,
+            max_entities=max_entities,
         )
         params = model.init(key, dummy_ent, dummy_act)["params"]
         return _count_params(params)
