@@ -1,0 +1,380 @@
+{
+  "tag": "gwm_control_benefit",
+  "config": {
+    "n_train": 5,
+    "n_ood": [
+      7,
+      9
+    ],
+    "steps": 6000,
+    "episodes": 256,
+    "ep_len": 100,
+    "seed": 3,
+    "batch": 256,
+    "lr": 0.0003,
+    "d_model": 64,
+    "n_layers": 2,
+    "n_heads": 4,
+    "mono_layers": 2,
+    "mono_mode": "pad",
+    "mpc_samples": 512,
+    "mpc_horizon": 8,
+    "mpc_gamma": 0.99,
+    "eval_episodes": 20,
+    "eval_ep_len": 100,
+    "rel_margin": 0.15,
+    "out": "exp/tdmpc_glass/mechcheck/gwm_control_benefit_s3.json"
+  },
+  "ret_standardization": {
+    "mean": -122.37332916259766,
+    "std": 74.49022674560547
+  },
+  "param_counts": {
+    "graph_entity_wm": 117510,
+    "monolithic_wm": 117254,
+    "monolithic_hidden": 128,
+    "monolithic_target_at_init": 117254,
+    "match_ratio_mono_over_graph": 0.9978214620032337
+  },
+  "train_metrics": {
+    "graph": {
+      "loss": 0.07069788128137589,
+      "q_loss": 0.01558312401175499,
+      "reward_loss": 0.02260066568851471,
+      "self_loss": 0.032514091581106186
+    },
+    "monolithic_pad": {
+      "loss": 0.129591703414917,
+      "q_loss": 0.0729932188987732,
+      "reward_loss": 0.019597280770540237,
+      "self_loss": 0.03700120002031326
+    }
+  },
+  "mpc": {
+    "planner": "random-shooting MPC (receding horizon); SAME planner over both WMs (queries only next_ent + reward heads).",
+    "n_samples": 512,
+    "horizon": 8,
+    "gamma": 0.99,
+    "plan_reward": "MODEL reward (WM as simulator)",
+    "scored_reward": "TRUE-env reward"
+  },
+  "per_n": {
+    "5": {
+      "is_ood": false,
+      "graph": {
+        "return_mean": -363.94170713722707,
+        "return_std": 127.3905102977011,
+        "return_per_seed": [
+          -371.15926492214203,
+          -339.3410723209381,
+          -340.9398670196533,
+          -628.4437475204468,
+          -278.3284273147583,
+          -345.254598736763,
+          -400.56240820884705,
+          -353.8583176136017,
+          -481.7023129463196,
+          -130.7626331448555,
+          -452.7378625869751,
+          -421.95720505714417,
+          -213.48509526252747,
+          -389.70799827575684,
+          -571.8301777839661,
+          -369.8964364528656,
+          -325.6725404262543,
+          -395.95999813079834,
+          -57.84155821800232,
+          -409.39262080192566
+        ],
+        "n_episodes": 20
+      },
+      "monolithic_pad": {
+        "return_mean": -367.4287518233061,
+        "return_std": 124.10376592832606,
+        "return_per_seed": [
+          -379.1366728544235,
+          -300.6926443576813,
+          -338.269154548645,
+          -642.8212218284607,
+          -285.55829405784607,
+          -366.2620631456375,
+          -445.2048759460449,
+          -296.9882677793503,
+          -478.8112955093384,
+          -152.88892364501953,
+          -431.676992893219,
+          -489.2771363258362,
+          -218.58017599582672,
+          -388.27844858169556,
+          -560.443253993988,
+          -371.29518461227417,
+          -326.30287647247314,
+          -352.54054737091064,
+          -107.61415928602219,
+          -415.93284726142883
+        ],
+        "n_episodes": 20
+      },
+      "random_floor": {
+        "return_mean": -353.8174303799868,
+        "return_std": 130.53241392409774,
+        "return_per_seed": [
+          -355.73568987846375,
+          -303.36841225624084,
+          -340.3650805950165,
+          -597.3964276313782,
+          -305.900269985199,
+          -312.6421949863434,
+          -472.3911738395691,
+          -259.23768043518066,
+          -489.58419466018677,
+          -95.20107531547546,
+          -431.7680232524872,
+          -455.06396317481995,
+          -226.67113852500916,
+          -435.4157030582428,
+          -561.7417061328888,
+          -333.4806616306305,
+          -325.62407517433167,
+          -261.05330550670624,
+          -90.41984552145004,
+          -423.28798604011536
+        ],
+        "n_episodes": 20
+      },
+      "ood_return_gap_graph_minus_mono": 3.4870446860790025,
+      "graph_minus_random": -10.124276757240295,
+      "mono_minus_random": -13.611321443319298,
+      "relative_gain_graph_over_mono": 0.25618707930746226,
+      "relative_gain_mode": "floor_anchored",
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    },
+    "7": {
+      "is_ood": true,
+      "graph": {
+        "return_mean": -354.6951289832592,
+        "return_std": 112.06125068804504,
+        "return_per_seed": [
+          -340.6895172595978,
+          -318.4117329120636,
+          -396.89949464797974,
+          -558.9549219608307,
+          -370.34646248817444,
+          -447.64283299446106,
+          -395.52917754650116,
+          -378.74508583545685,
+          -358.04993748664856,
+          -306.9274480342865,
+          -318.4900268316269,
+          -509.15442514419556,
+          -401.4717855453491,
+          -380.56551122665405,
+          -305.39102149009705,
+          -389.2943205833435,
+          -149.68959081172943,
+          -41.58889925479889,
+          -260.90293169021606,
+          -465.1574559211731
+        ],
+        "n_episodes": 20
+      },
+      "monolithic_pad": {
+        "return_mean": -383.2173402965069,
+        "return_std": 89.43987752362878,
+        "return_per_seed": [
+          -412.276239156723,
+          -300.21577978134155,
+          -334.1293902397156,
+          -534.9245855808258,
+          -336.0530149936676,
+          -419.6248369216919,
+          -397.05916929244995,
+          -380.45830631256104,
+          -347.3753387928009,
+          -401.08988976478577,
+          -304.98847711086273,
+          -501.16606521606445,
+          -499.23116970062256,
+          -412.50076842308044,
+          -347.6290867328644,
+          -373.1307621002197,
+          -381.63716650009155,
+          -147.2871973514557,
+          -298.7965352535248,
+          -534.7730267047882
+        ],
+        "n_episodes": 20
+      },
+      "random_floor": {
+        "return_mean": -362.170278570056,
+        "return_std": 95.71145234739456,
+        "return_per_seed": [
+          -419.94725918769836,
+          -276.26721477508545,
+          -405.10421872138977,
+          -519.2924830913544,
+          -379.77460861206055,
+          -409.4164798259735,
+          -391.49985337257385,
+          -376.1967873573303,
+          -365.2960331439972,
+          -345.4266130924225,
+          -315.88536858558655,
+          -443.4022741317749,
+          -449.0323967933655,
+          -381.9567127227783,
+          -325.9790050983429,
+          -388.5816068649292,
+          -150.4547073841095,
+          -97.03255218267441,
+          -350.50188541412354,
+          -452.3575110435486
+        ],
+        "n_episodes": 20
+      },
+      "ood_return_gap_graph_minus_mono": 28.52221131324768,
+      "graph_minus_random": 7.475149586796761,
+      "mono_minus_random": -21.04706172645092,
+      "relative_gain_graph_over_mono": 1.3551635702860299,
+      "relative_gain_mode": "floor_anchored",
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    },
+    "9": {
+      "is_ood": true,
+      "graph": {
+        "return_mean": -375.7201259583235,
+        "return_std": 100.9070681959137,
+        "return_per_seed": [
+          -286.07620763778687,
+          -419.7689666748047,
+          -410.17905712127686,
+          -322.87634897232056,
+          -265.08891344070435,
+          -192.1893697977066,
+          -411.14688062667847,
+          -556.0614776611328,
+          -380.8316559791565,
+          -150.06727093458176,
+          -488.8329048156738,
+          -329.6021568775177,
+          -385.70536494255066,
+          -451.00164318084717,
+          -364.07398450374603,
+          -357.79303681850433,
+          -391.7995960712433,
+          -567.7554378509521,
+          -380.7031956911087,
+          -402.84904956817627
+        ],
+        "n_episodes": 20
+      },
+      "monolithic_pad": {
+        "return_mean": -387.20287768542767,
+        "return_std": 94.50936327866151,
+        "return_per_seed": [
+          -163.96174210309982,
+          -488.496178150177,
+          -407.95869851112366,
+          -440.63191175460815,
+          -272.509419798851,
+          -331.66779685020447,
+          -390.8192358016968,
+          -543.7850532531738,
+          -385.24441051483154,
+          -334.46632862091064,
+          -479.3143148422241,
+          -339.979932308197,
+          -387.48311138153076,
+          -481.51456212997437,
+          -358.1070156097412,
+          -358.0010702610016,
+          -238.17851269245148,
+          -554.8446893692017,
+          -392.5262053012848,
+          -394.5673644542694
+        ],
+        "n_episodes": 20
+      },
+      "random_floor": {
+        "return_mean": -369.6531330227852,
+        "return_std": 76.93068186127444,
+        "return_per_seed": [
+          -239.32906651496887,
+          -431.38537883758545,
+          -397.5634214878082,
+          -388.0820014476776,
+          -258.2062165737152,
+          -365.92882680892944,
+          -319.1299933195114,
+          -447.1530315876007,
+          -271.59100317955017,
+          -265.1985704898834,
+          -502.08445501327515,
+          -311.5204236507416,
+          -396.83978176116943,
+          -392.8852391242981,
+          -294.0136088132858,
+          -400.9148905277252,
+          -445.27323818206787,
+          -507.92057371139526,
+          -401.67040181159973,
+          -356.37253761291504
+        ],
+        "n_episodes": 20
+      },
+      "ood_return_gap_graph_minus_mono": 11.482751727104187,
+      "graph_minus_random": -6.066992935538281,
+      "mono_minus_random": -17.549744662642468,
+      "relative_gain_graph_over_mono": 0.6542973671603964,
+      "relative_gain_mode": "floor_anchored",
+      "value_relevant_entities": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+  "verdict": {
+    "control_go": true,
+    "criteria_preregistered": "CONTROL-GO iff (graph mean TRUE-env return exceeds pad-monolithic by >=15% RELATIVE at >=1 held-out N) AND (graph >= mono in-distribution [no in-dist regression]). NO-GO otherwise -> the OOD value-decode advantage does NOT convert to control (representation-only; the redundancy story holds at the controller).",
+    "criterion_1_ood_control_margin": {
+      "rel_margin_threshold": 0.15,
+      "ood_N_passing": [
+        7,
+        9
+      ],
+      "passed": true,
+      "per_ood_relative_gain": {
+        "7": 1.3551635702860299,
+        "9": 0.6542973671603964
+      }
+    },
+    "criterion_2_no_indist_regression": {
+      "n_train": 5,
+      "graph_indist_return": -363.94170713722707,
+      "mono_indist_return": -367.4287518233061,
+      "passed": true
+    },
+    "uninformative_test_flag": {
+      "flagged": false,
+      "note": "True iff NEITHER model's mean return separates from the random floor at ANY N (separation threshold 1e-03). When flagged, the MPC/WM is too weak to convert ANY representation edge to control -> the test cannot speak; tune --mpc_horizon / --mpc_samples (see module docstring)."
+    },
+    "interpretation": "CONTROL-GO: the graph WM's OOD value-decodability edge DOES convert to better MPC control return at held-out object counts -> the GWM result matters for an agent. NO-GO: representation-only; the edge does not reach the controller (redundancy story holds), the campaign's core lesson once more."
+  },
+  "caveats": [
+    "Random-shooting MPC is a WEAK planner (no CEM refinement / no policy prior); a coarse WM-quality->control transducer, not a strong controller.",
+    "The planner uses MODEL reward to plan (the WM is the simulator); only the reported return uses TRUE-env reward. A poor reward head can cause a NO-GO independent of the latent \u2014 check reward-head R^2 in the mechcheck.",
+    "Synthetic elastic disks are NOT real manipulation; controlled proxy only.",
+    "Single training seed (seed=3); no multi-seed error bars on training. Eval episodes ARE paired across models (same eval seeds).",
+    "Models have MODEST R^2; short-horizon plans can be dominated by compounding model error. If returns hug the random floor for BOTH models at ALL N, the test is uninformative (see uninformative_test_flag)."
+  ],
+  "wall_time_sec": 219.01715183258057
+}

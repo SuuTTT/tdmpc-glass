@@ -207,3 +207,8 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   survives pooling control across seeds; pooling inflated ~half. Win = compositional OOD generalization
   NOT contacts (crit B failed); representation-level only. Part 10 posted. pad s2,s3 running.
   NEXT GATE: control-benefit (return under planning at held-out N) before any ManiSkill escalation.
+
+### iter-34 GWM CLOSED (Part 11): control-benefit NO-GO
+- Random-shooting MPC: graph ~= fair-mono ~= random floor at all N (graph-rand +-13, std ~110). OOD
+  value-decode advantage does NOT convert to control. GWM closes like explicit abstraction; redundancy
+  criterion now spans state+temporal+relational/graph. No ManiSkill escalation. Part 11 posted. Queue empty.
