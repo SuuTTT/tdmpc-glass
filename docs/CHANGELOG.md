@@ -229,3 +229,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   monolithic TD-MPC2 TIES the graph WM on the non-relational variant; SOLD's wins are on Distinct/
   relational variants. This is THIRD-PARTY published evidence for the redundancy criterion (graph helps
   only where relational structure is essential). Slot-MPC code "coming soon", ObjectZero none.
+
+### ManiSkill PPO anchor: StackCube too hard (0% success @10M) — not a useful anchor
+- StackCube-v1 state-PPO floored at 0% success (return ~25) at 10M — StackCube is hard for PPO at this
+  budget. A useful ManiSkill monolithic anchor would need an easier task (PickCube/PushCube) or more
+  compute. Moot anyway: no published GWM targets ManiSkill; SOLD's own Fetch suite is the real
+  comparison platform (and SOLD is reproduced there). Decision: cite SOLD's published table vs
+  reproduce SOLD-Distinct head-to-head (needs a bigger-disk box for the 15GB replay buffer).
