@@ -269,3 +269,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   faster sim (would abandon SOLD's Fetch benchmark = our iter-34). Recommendation: BANK A — we already
   reproduced reach_red (98-100%) and can cite SOLD Table 1 (TD-MPC2 97.6 ~= SOLD 97.9 non-relational)
   as third-party redundancy evidence. SOLD code/.bak edits preserved on box for later if desired.
+
+## 2026-06-15 — iter-36 compositional-OOD control INCONCLUSIVE (testbed too low-SNR); program at hardware edge
+- Real Dreamer-style learner, graph vs mono on GPU-vectorized contact_entities (5070 Ti, ~64M steps/s).
+  No controller beats random floor (graph==mono byte-identical) -> env control-signal ceiling ~10%
+  (within noise) + BPTT-NaN -> UNINFORMATIVE, not a null. Compositional-OOD control remains untested
+  (needs higher-SNR real env + compute; SOLD/ManiSkill blocked by iter-35 walls). BANK A.
+- User: deleted SOLD on 3090 (re-installable, repro result safe), took 3090 for LLM. 5070 Ti idle.
