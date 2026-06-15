@@ -258,3 +258,14 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   setup; 3090 stuck at 1-3% util (GPU-starved by single-env collection). B is INFEASIBLE here without
   parallelizing collection (SOLD/mujoco-py = single-env, hard). STRONG recommendation: kill + bank A
   (we already reproduced reach_red + can cite SOLD Table 1 as redundancy evidence). Holding for user.
+
+## 2026-06-15 — B (SOLD reproduction) PAUSED: infeasible on available hardware; box relieved
+- Parallelized SOLD collection (SubprocVecEnv N=4) — but only 1.5x (collection isn't the bottleneck;
+  per-step SAVi GPU encode + tiny batches are, GPU starved by design). ~13 days to 1.2M still.
+- Box reality: 7.68-CPU cgroup quota (not 32). N=16 wedged it; even N=4 + box services pushed load to
+  10.3 -> SeSE box appeared "unreachable" on the dashboard (saturated, not down).
+- KILLED the SOLD run to restore the user's SeSE box (load 10.3->6.7, GPU 17G->2G freed). B is NOT
+  viable on this hardware without changing training math (bigger/more-frequent grad updates) or a
+  faster sim (would abandon SOLD's Fetch benchmark = our iter-34). Recommendation: BANK A — we already
+  reproduced reach_red (98-100%) and can cite SOLD Table 1 (TD-MPC2 97.6 ~= SOLD 97.9 non-relational)
+  as third-party redundancy evidence. SOLD code/.bak edits preserved on box for later if desired.
