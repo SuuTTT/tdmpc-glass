@@ -251,3 +251,10 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   to the paper's 1.2M-step checkpoint. Authors ship only Reach-Specific ckpt (no Distinct shortcut).
   DECISION SURFACED: full independent Distinct repro = multi-week/multi-box; A (cite reproduced SOLD +
   Table 1 as redundancy evidence) is better value. Run left accumulating curve pending user call.
+
+## 2026-06-15 — SOLD Distinct throughput collapses in training phase (~200 steps/hr → months)
+- Step 13,075->13,225 in ~45min = ~200 steps/hr once gradient training engaged (10x slower than the
+  early collection-only ~2300/hr). 1.2M-step paper ckpt now ~months away on this single-core mujoco-py
+  setup; 3090 stuck at 1-3% util (GPU-starved by single-env collection). B is INFEASIBLE here without
+  parallelizing collection (SOLD/mujoco-py = single-env, hard). STRONG recommendation: kill + bank A
+  (we already reproduced reach_red + can cite SOLD Table 1 as redundancy evidence). Holding for user.
