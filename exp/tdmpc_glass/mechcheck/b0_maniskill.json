@@ -1,0 +1,64 @@
+{
+  "run": "B0 \u2014 go/no-go gate for Paper B (compositional-OOD WM abstraction)",
+  "date": "2026-06-15",
+  "box": "vast.ai ssh9 RTX 5070 Ti 16GB Blackwell sm_120, driver 580.95.05",
+  "blackwell_torch": {
+    "wheel": "torch==2.11.0+cu128 (pip index https://download.pytorch.org/whl/cu128)",
+    "cuda_capability_detected": "(12, 0) = sm_120",
+    "gpu_matmul_verified": true,
+    "note": "cu128 wheel imports + runs GPU matmul on Blackwell with no 'no kernel image' error. mani-skill 3.0.1, sapien 3.0.3 work on it."
+  },
+  "task": {
+    "id": "PushCubeMulti-v1 (custom subclass of ManiSkill PushCube-v1)",
+    "object_count_knob": "env kwarg num_cubes (int>=1); adds num_cubes-1 inert distractor cubes to the STATE obs",
+    "obs_dim_by_N": {
+      "1": 35,
+      "2": 45,
+      "3": 55,
+      "4": 65,
+      "6": 85
+    },
+    "per_distractor_dims": 10,
+    "act_dim": 8,
+    "train_object_count": 2,
+    "why": "PickCubeMulti (pick+lift to floating goal) was NOT learnable in budget (grasp 91% but place ~0%, succ ~0 even at N=1). Switched to PushCube core which is learnable."
+  },
+  "precondition_1_beats_random": {
+    "method": "official ManiSkill PPO (ppo.py, state obs), PushCubeMulti N=2, 4M steps, num_envs=1024",
+    "random_success_once": 0.0,
+    "random_return": 3.11,
+    "ppo_success_once": 1.0,
+    "ppo_return": 35.7,
+    "verdict": "PASS \u2014 PPO clearly beats random (1.0 vs 0.0 success; 35.7 vs 3.1 return)",
+    "caveat": "My from-scratch PPO was buggy (PushCube floored at 0 succ); official ppo.py solves it -> used official."
+  },
+  "precondition_2_value_decode_collapse": {
+    "method": "linear ridge probe: flat state -> discounted return-to-go (gamma=0.8); 25600 samples; 80/20 CV, 3 seeds",
+    "trained_policy": {
+      "N2_train_r2": 0.487,
+      "N4_ood_r2": 0.513,
+      "r2_collapse_N2_to_N4": -0.026,
+      "N6_ood_r2": 0.463,
+      "r2_collapse_N2_to_N6": 0.025,
+      "ood_success_still_high": {
+        "N4": 0.99,
+        "N6": 0.97
+      }
+    },
+    "random_policy_control": {
+      "N2_r2": 0.521,
+      "N4_r2": 0.49,
+      "r2_collapse": 0.031
+    },
+    "verdict": "FAIL \u2014 value-decodability is essentially FLAT (~0.46-0.52) across object counts. No collapse: changes (~0.03) are within-noise and same magnitude for random vs trained policy. Inert distractors create no compositional value interaction."
+  },
+  "VERDICT": "NO-GO",
+  "verdict_reasoning": "Precondition 1 (control signal) PASSES strongly. Precondition 2 (compositional headroom) FAILS: passive distractor objects do not change the target task's value structure, so a linear probe decodes value equally well at held-out object counts, and the policy keeps solving the task OOD. Per pre-registration (GO iff BOTH), this is NO-GO. Honest read: this multi-object construction has no compositional-OOD headroom; a task where objects INTERACT with the value (must-avoid / count-dependent goal / relational objective) would be needed before a WM build. Designing such a task to force the signal risks the same procedure-trick critique as the TD-MPC-Glass pivot.",
+  "disk_after": "24G used / 32G total, 8.3G free (75% used)",
+  "caveats": [
+    "Distractors are physically inert and spatially separated -> by design they do not affect the push reward; this is exactly why no headroom appeared.",
+    "Probe uses return-to-go as the value target (model-free); a learned WM latent value could differ, but the linear-decodability-of-return result is the standard headroom proxy and it is flat.",
+    "OOD rollouts feed the N=2 policy its first 45 (target-relevant) obs dims; the policy is dim-agnostic to extra distractors by construction, hence OOD success stays ~0.99.",
+    "Did NOT touch /root/SIDM, /root/coods, /root/jax_venv. Work isolated in /root/ms_venv + /root/coods_b0. No commits."
+  ]
+}

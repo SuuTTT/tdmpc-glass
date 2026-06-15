@@ -276,3 +276,9 @@ verdicts: `docs/iterations/RESEARCH_LEDGER.md`.*
   (within noise) + BPTT-NaN -> UNINFORMATIVE, not a null. Compositional-OOD control remains untested
   (needs higher-SNR real env + compute; SOLD/ManiSkill blocked by iter-35 walls). BANK A.
 - User: deleted SOLD on 3090 (re-installable, repro result safe), took 3090 for LLM. 5070 Ti idle.
+
+## 2026-06-15 — Paper-B B0 NO-GO (real ManiSkill benchmark): no compositional headroom; program closed
+- ManiSkill PushCubeMulti (GPU-sim, Blackwell torch cu128): PPO 100% vs random 0% (control signal PASS)
+  but value-decode flat N2->6 + policy solves OOD (headroom FAIL). Passive distractors -> monolithic
+  generalizes. Paper B fails its gate on an honest benchmark; folds into A as capstone negative.
+  Redundancy criterion now spans real-benchmark compositional axis too. No more GPU; 5070 Ti -> user.
