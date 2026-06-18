@@ -10,3 +10,11 @@ central_queue.lock
 
 # never upload pickled caches/checkpoints
 *.pkl
+
+# GHM repro: keep our infom fork; upstream clones + data re-fetchable
+ghm_repro/ogbench/
+ghm_repro/value-flows/
+ghm_repro/infom/exp/
+ghm_repro/infom/exp_test/
+ghm_repro/**/*.npz
+ghm_repro/**/*.pkl

@@ -46,6 +46,26 @@ honesty note. NOTE: InFOM `-ft-` finetuning datasets are NOT on the OGBench serv
 4. Plan-over-policies eval; compare success to paper Table 1 (cube-1 row). Then antmaze-medium.
 5. Gate: if a single base+GHM run reproduces the cube-1 lift (e.g. ~0.3 -> ~0.8) → scale to antmaze.
 
+## Progress log
+- 2026-06-18 **ANTMAZE UNBLOCKED.** The blocker was twofold: (i) InFOM loads a `-ft-` finetuning
+  dataset that is not on the OGBench server for antmaze (generator covers cube/scene/puzzle only),
+  and (ii) eval only runs during the finetuning phase (`main.py` gates eval on `i > pretraining_steps`).
+  Solution (additive, chosen option = (b)+(c) minimal main.py flag): added `--ft_dataset_fallback`
+  to `infom/main.py`, AUTO-enabled for any `antmaze` env. It loads the finetuning dataset from the
+  non-ft singletask dataset (auto-downloads; OGBench relabels singletask rewards unconditionally), so
+  finetuning + eval (`episode.success`) run end-to-end. Verified on g3: `finetuning_eval.csv` written
+  with `evaluation/episode.success` (0.0 at 10k+5k tiny budget — pipeline-verified, NOT a paper repro).
+  Synced `main.py` to both boxes; appended antmaze envs to `exp/tdmpc_glass/ghm/envs.txt` (keep-busy
+  loop folds them in). The loop's launch path (`launch_infom.sh ... --agent=agents/ghm.py`) works
+  unchanged because the auto-enable triggers on the env name.
+- 2026-06-18 **PLANNER IMPLEMENTED (gap c).** `infom/planning/compplan_planner.py` (`CompPlanPlanner`)
+  + `infom/planning/smoke_planner.py`. Beam search over base-policy sequences using GHM jumps
+  (`compute_fwd_flow_goals`), -L2-to-goal / reward-head scoring, receding-horizon. Smoke passes with a
+  real cube checkpoint (clean one-step plan). NOT yet wired into OGBench eval (next).
+- NEXT: wire the planner into an OGBench eval loop (planner-driven `evaluate`) and run on a trained
+  GHM checkpoint to get planner success rates; plug a real goal-conditioned base-policy library
+  (currently only the GHM's own actor is used as the single base policy).
+
 ## Honesty note
 Full reproduction of CompPlan numbers is a multi-day effort (no code, 3M-step flow model, base-policy
 pretraining, two benchmarks). In an 8h unattended window the realistic deliverable is: scaffolds
