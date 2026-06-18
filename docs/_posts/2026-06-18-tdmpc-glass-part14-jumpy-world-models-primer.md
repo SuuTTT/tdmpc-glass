@@ -183,6 +183,42 @@ success. The work in flight is the **GHM extension**: adding §7's horizon-condi
 policy-conditioning, and the plan-over-policies loop on top of InFOM to reach a CompPlan-style jumpy
 planner. That build is the next post.
 
+## 10. The benchmark: OGBench tasks, and how to read the numbers
+
+All of this is evaluated on **OGBench**, a standard offline-RL / goal-reaching benchmark. Two task
+families matter for the jumpy-model story:
+
+- **cube-single** — *robot-arm manipulation.* A Franka-style arm must move **one cube** into a target
+  configuration. Observation 28-D (arm + cube state), action 5-D (arm control), **short-to-medium
+  horizon** (~100–200 steps). `cube-double/triple/quadruple` add more cubes (harder, longer). `play` =
+  the offline dataset was collected by a scripted "play" policy; `singletask-taskN` = a fixed goal.
+- **antmaze-medium** — *quadruped navigation.* A 4-legged "ant" walks through a **maze** to a goal
+  location. Observation 29-D, action 8-D (leg torques), **long horizon** (hundreds of steps, many
+  turns). This is the regime jumpy/compositional planning is built for — and where CompPlan's headline
+  ~+200% gains mostly come from.
+
+**How to read an eval** (each eval runs ~50 episodes):
+
+- **success rate** — `episode.success` $\in [0,1]$, the **fraction of episodes that reached the goal**.
+  This is *the* headline metric (what OGBench and CompPlan's Table 1 report). `0.60` = solved 60% of
+  the test episodes.
+- **return** — cumulative reward per episode. These tasks are sparse/negative: reward $\approx -1$ each
+  step until the goal, then the episode ends. So $\text{return}\approx -(\text{steps taken})$ — closer
+  to $0$ means *faster*, and e.g. $\text{return}=-200,\ \text{length}=200$ means it hit the 200-step
+  cap and **never reached the goal** (a failure).
+- **length** — average steps until success or the 200-step timeout.
+
+A practical caveat we keep hitting: report **peak** success, not final. The online-finetuning phase is
+unstable at the very end, so final-step success collapses for the InFOM baseline and our GHM alike;
+the peak over training is the meaningful number.
+
+**Reproduction status (honest):** we have run **cube-single only** — enough to *validate the pipeline*
+(the horizon-conditioned GHM trains end-to-end and lands cube-single peak success inside the InFOM
+range). We have **not run antmaze yet**: InFOM's training script needs a locally-generated `-ft-`
+fine-tuning dataset, and its generator covers cube/scene/puzzle but **not antmaze**. Since antmaze is
+the *long-horizon* test that actually probes the jumpy hypothesis, unblocking that dataset path is the
+priority before reading too much into short-horizon cube numbers.
+
 ### Pointers (verify before citing)
 - γ-models / GHM: Janner et al., NeurIPS 2020, arXiv 2010.14496.
 - TD-Flow: Farebrother et al., ICML 2025, arXiv 2503.09817.
