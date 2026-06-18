@@ -1,7 +1,11 @@
 # GHM / CompPlan reproduction plan — "Compositional Planning with Jumpy World Models"
 
-Status: 2026-06-17. Scaffolds cloned to `ghm_repro/`. Training NOT yet started (GPUs are on
-the Paper-A discrimination matrix). This is a multi-DAY reproduction, not an 8h one — see honesty note.
+Status: 2026-06-17. Scaffolds cloned to `ghm_repro/`. **Pipeline stood up on g3 (2x4090) + g3090
+(2x3090)**: isolated venv `/root/ghm/.venv` per box, jax[cuda12] sees both GPUs, OGBench datasets
+smoke-tested (cube-single + antmaze-medium), cube-single `-ft-` dataset generated locally, and 4 InFOM
+cube-single pretraining runs launched (~400 it/s). This is a multi-DAY reproduction, not an 8h one — see
+honesty note. NOTE: InFOM `-ft-` finetuning datasets are NOT on the OGBench server; generate locally via
+`infom/data_gen_scripts/generate_ogbench_manispace.py` (cube/scene/puzzle only — NOT antmaze).
 
 ## What the paper is
 - Farebrother, Pirotta, Tirinzoni, Munos, Lazaric, Touati. arXiv **2602.19634**, ICLR-2026
