@@ -1,0 +1,332 @@
+{
+  "antmaze": {
+    "env_name": "antmaze-medium-navigate-singletask-task1-v0",
+    "obs_dim": 29,
+    "action_dim": 8,
+    "gamma_min_cfg": 0.95,
+    "gamma_max_cfg": 0.999,
+    "horizon_conditioning_active": true,
+    "obs_xy_min": [
+      -1.7426656484603882,
+      -1.650870680809021
+    ],
+    "obs_xy_max": [
+      21.38884735107422,
+      21.773754119873047
+    ],
+    "starts": [
+      [
+        -0.055970050394535065,
+        0.21614263951778412
+      ],
+      [
+        0.6698307394981384,
+        0.05148480832576752
+      ],
+      [
+        0.6505017876625061,
+        -0.2847491502761841
+      ],
+      [
+        -0.5809914469718933,
+        -0.8820347189903259
+      ],
+      [
+        -0.6021509766578674,
+        -0.3213219940662384
+      ]
+    ],
+    "per_gamma": {
+      "0.95": [
+        {
+          "mean_dist": 0.09490308165550232,
+          "max_dist": 0.3361252248287201,
+          "std_x": 0.07490628212690353,
+          "std_y": 0.07608580589294434,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.036058519035577774,
+            0.20489390194416046
+          ],
+          "start_xy": [
+            -0.055970050394535065,
+            0.21614263951778412
+          ]
+        },
+        {
+          "mean_dist": 0.10792756080627441,
+          "max_dist": 0.4537758231163025,
+          "std_x": 0.08020997047424316,
+          "std_y": 0.07751305401325226,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.7249914407730103,
+            0.03790048882365227
+          ],
+          "start_xy": [
+            0.6698307394981384,
+            0.05148480832576752
+          ]
+        },
+        {
+          "mean_dist": 0.09916594624519348,
+          "max_dist": 0.3277584910392761,
+          "std_x": 0.07317763566970825,
+          "std_y": 0.07085958123207092,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.694210946559906,
+            -0.2675195336341858
+          ],
+          "start_xy": [
+            0.6505017876625061,
+            -0.2847491502761841
+          ]
+        },
+        {
+          "mean_dist": 0.10504832863807678,
+          "max_dist": 0.48276636004447937,
+          "std_x": 0.0874779149889946,
+          "std_y": 0.07963159680366516,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.5390928387641907,
+            -0.8712837100028992
+          ],
+          "start_xy": [
+            -0.5809914469718933,
+            -0.8820347189903259
+          ]
+        },
+        {
+          "mean_dist": 0.1017938181757927,
+          "max_dist": 0.42427051067352295,
+          "std_x": 0.08396994322538376,
+          "std_y": 0.08217774331569672,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.6198360919952393,
+            -0.31760716438293457
+          ],
+          "start_xy": [
+            -0.6021509766578674,
+            -0.3213219940662384
+          ]
+        }
+      ],
+      "0.99": [
+        {
+          "mean_dist": 0.10670259594917297,
+          "max_dist": 0.41645437479019165,
+          "std_x": 0.0821104422211647,
+          "std_y": 0.08987510949373245,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.03564003109931946,
+            0.20863981544971466
+          ],
+          "start_xy": [
+            -0.055970050394535065,
+            0.21614263951778412
+          ]
+        },
+        {
+          "mean_dist": 0.11009273678064346,
+          "max_dist": 0.2971859574317932,
+          "std_x": 0.08109401166439056,
+          "std_y": 0.08257783949375153,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.7075228691101074,
+            0.030107971280813217
+          ],
+          "start_xy": [
+            0.6698307394981384,
+            0.05148480832576752
+          ]
+        },
+        {
+          "mean_dist": 0.11042966693639755,
+          "max_dist": 0.29635724425315857,
+          "std_x": 0.08822198212146759,
+          "std_y": 0.08211309462785721,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.6807771921157837,
+            -0.26149535179138184
+          ],
+          "start_xy": [
+            0.6505017876625061,
+            -0.2847491502761841
+          ]
+        },
+        {
+          "mean_dist": 0.11189723014831543,
+          "max_dist": 0.3675309717655182,
+          "std_x": 0.08681567758321762,
+          "std_y": 0.08566910028457642,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.5430798530578613,
+            -0.8687278032302856
+          ],
+          "start_xy": [
+            -0.5809914469718933,
+            -0.8820347189903259
+          ]
+        },
+        {
+          "mean_dist": 0.10778192430734634,
+          "max_dist": 0.32905644178390503,
+          "std_x": 0.08762577921152115,
+          "std_y": 0.08097397536039352,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.6293480396270752,
+            -0.3170355558395386
+          ],
+          "start_xy": [
+            -0.6021509766578674,
+            -0.3213219940662384
+          ]
+        }
+      ],
+      "0.999": [
+        {
+          "mean_dist": 0.10078199207782745,
+          "max_dist": 0.3315945863723755,
+          "std_x": 0.08077353984117508,
+          "std_y": 0.07993590831756592,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.038983214646577835,
+            0.21366584300994873
+          ],
+          "start_xy": [
+            -0.055970050394535065,
+            0.21614263951778412
+          ]
+        },
+        {
+          "mean_dist": 0.10940240323543549,
+          "max_dist": 0.3771788477897644,
+          "std_x": 0.08187070488929749,
+          "std_y": 0.08141720294952393,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.7081805467605591,
+            0.023083366453647614
+          ],
+          "start_xy": [
+            0.6698307394981384,
+            0.05148480832576752
+          ]
+        },
+        {
+          "mean_dist": 0.10553811490535736,
+          "max_dist": 0.466362863779068,
+          "std_x": 0.07694066315889359,
+          "std_y": 0.08711810410022736,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            0.6822052001953125,
+            -0.25572770833969116
+          ],
+          "start_xy": [
+            0.6505017876625061,
+            -0.2847491502761841
+          ]
+        },
+        {
+          "mean_dist": 0.1198011040687561,
+          "max_dist": 0.41238921880722046,
+          "std_x": 0.08816960453987122,
+          "std_y": 0.09259217232465744,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.5325216054916382,
+            -0.8797537088394165
+          ],
+          "start_xy": [
+            -0.5809914469718933,
+            -0.8820347189903259
+          ]
+        },
+        {
+          "mean_dist": 0.1057978942990303,
+          "max_dist": 0.41125473380088806,
+          "std_x": 0.08887092024087906,
+          "std_y": 0.07972289621829987,
+          "frac_gt2": 0.0,
+          "frac_gt5": 0.0,
+          "mean_xy": [
+            -0.6174680590629578,
+            -0.3084787130355835
+          ],
+          "start_xy": [
+            -0.6021509766578674,
+            -0.3213219940662384
+          ]
+        }
+      ]
+    },
+    "agg": {
+      "0.95": {
+        "mean_dist": 0.10176774710416794,
+        "max_dist": 0.48276636004447937,
+        "mean_std": 0.07860095277428628,
+        "frac_gt2": 0.0,
+        "frac_gt5": 0.0
+      },
+      "0.99": {
+        "mean_dist": 0.10938083082437515,
+        "max_dist": 0.41645437479019165,
+        "mean_std": 0.08470770120620727,
+        "frac_gt2": 0.0,
+        "frac_gt5": 0.0
+      },
+      "0.999": {
+        "mean_dist": 0.10826430171728134,
+        "max_dist": 0.466362863779068,
+        "mean_std": 0.0837411716580391,
+        "frac_gt2": 0.0,
+        "frac_gt5": 0.0
+      }
+    },
+    "loss_tail": {
+      "pretrain": {
+        "step": 1000000.0,
+        "flow_matching_loss": 0.014826342,
+        "future_flow_matching_loss": 0.06632459,
+        "current_flow_matching_loss": 0.43849528,
+        "kl_loss": 0.046361595,
+        "gamma_h_mean": 0.9864802
+      },
+      "finetune": {
+        "step": 1500000.0,
+        "flow_matching_loss": 0.014635118,
+        "future_flow_matching_loss": 0.075752884,
+        "current_flow_matching_loss": 0.37161243,
+        "kl_loss": 0.048461284,
+        "gamma_h_mean": 0.9873364
+      }
+    }
+  },
+  "cube": {
+    "error": "Traceback (most recent call last):\n  File \"/root/ghm/infom/planning/occupancy_probe.py\", line 224, in main\n    result['cube'] = probe_ghm('cube', CUBE_ENV, CUBE_GHM_DIR, CUBE_GHM_EPOCH)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/planning/occupancy_probe.py\", line 156, in probe_ghm\n    fut = ghm_jump(obs, action, g, jr)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/planning/occupancy_probe.py\", line 128, in ghm_jump\n    fut = ghm.compute_fwd_flow_goals(\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/agents/ghm.py\", line 364, in compute_fwd_flow_goals\n    (noisy_goals,), _ = jax.lax.scan(\n                        ^^^^^^^^^^^^^\n  File \"/root/ghm/infom/agents/ghm.py\", line 354, in body_fn\n    vf = self.network.select(module_name)(\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/utils/flax_utils.py\", line 114, in __call__\n    return self.apply_fn(variables, *args, method=method_name, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/utils/flax_utils.py\", line 50, in __call__\n    return self.modules[name](*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/utils/networks.py\", line 394, in __call__\n    vf = self.vector_field_net(inputs)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/infom/utils/networks.py\", line 53, in __call__\n    x = nn.Dense(size, kernel_init=self.kernel_init)(x)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/ghm/.venv/lib/python3.12/site-packages/flax/linen/linear.py\", line 263, in __call__\n    kernel = self.param(\n             ^^^^^^^^^^^\nflax.errors.ScopeParamShapeError: For parameter \"kernel\" in \"/modules_critic_vf/vector_field_net/Dense_0\", the given initializer is expected to generate shape (575, 512), but the existing parameter it received has shape (574, 512). (https://flax.readthedocs.io/en/latest/api_reference/flax.errors.html#flax.errors.ScopeParamShapeError)\n--------------------\nFor simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.\n"
+  }
+}
