@@ -32,11 +32,11 @@ The PandaPickCube per-step reward (`mujoco_playground`):
 r = 4.0·gripper_box  +  8.0·box_target·reached_box  +  0.25·no_floor  +  0.3·robot_qpos
 ```
 
-Each base term is a `1 − tanh(·)` shaping signal in [0,1]. So **max ≈ 12.55/step**, and the env's
-episode is **150 steps** → max ≈ **1882 per episode**. But the *training/eval* return you see logged
-(1500–2500) is **not one episode**: the evaluator rolls out a flat **1000 steps**, and the 150-step
-env **auto-resets ~6.7×** inside that window, summing the dense reward across all of them. So the
-logged-return ceiling is ~**12,550**, and:
+Each base term is a `1 − tanh(·)` shaping signal in [0,1]. So **max ≈ 12.55/step**. The training/eval
+return is summed over a **single continuous 1000-step episode**: the evaluator wraps the env with brax
+`EpisodeWrapper(episode_length=1000)`, and the inner env has no step-counter termination, so `done`
+stays 0 until step 1000 (verified — there is *no* auto-reset inside the rollout; the agent gets one
+long grasp→lift→place→hold attempt). So the logged-return ceiling is ~**12,550** (12.55 × 1000), and:
 
 | what | logged return | `box_target_max` | real success |
 |---|---|---|---|
@@ -60,12 +60,15 @@ Is the reward just wrong? No — it's **well-ordered**. Scripting the three regi
 | grasp, no place | 674 | 0.48 | 461 | 174 |
 | **full success** | **965** | 0.91 | 478 | 445 |
 
-A real success earns **3.1× the hover's return** — the ordering is correct, success genuinely pays
-most. The problem is **shaping**: the hover banks **89% of its return from the dense `gripper_box`
-proximity term just by floating near the cube**, while the big `box_target` reward is **gated behind
-`reached_box`** (gripper must first close to <1.2cm) and only pays after grasp+lift+place. So a gradient
-learner climbs the smooth, ungated proximity hill into a **hover local optimum** and never explores far
-enough to discover the gated jackpot. **Mis-shaping, not mis-ordering, drives the hack.**
+Over a 150-step episode, a real success earns **3.1× the hover's return** — at that horizon the
+ordering is correct. The problem is **shaping**, and it **gets worse with horizon**: the hover banks
+**89% of its return from the dense `gripper_box` proximity term just by floating near the cube**, while
+the big `box_target` reward is **gated behind `reached_box`** (gripper must first close to <1.2cm) and
+only pays after grasp+lift+place. So a gradient learner climbs the smooth, ungated proximity hill into a
+**hover local optimum**. And at the actual **1000-step** training/eval horizon the pathology inverts the
+ordering entirely — §4a shows return becoming *anti-correlated* with success, because dwelling near the
+cube for 1000 steps out-scores spending those steps actually moving it to the target. **Mis-shaping, not
+mis-ordering, drives the hack.**
 
 ## 4. The task *is* solvable — a heuristic controller proves it
 
@@ -83,13 +86,45 @@ per-phase success, videos). The result (`controller v9+`):
 So PandaPickCube is solvable; **gradient TD-MPC2 just reward-hacks it.** Success videos:
 `HL_v9_SUCCESS_env6.mp4`, `env21.mp4`.
 
-### 4a. The heuristic learning curve — in RL units  *(live; updating over this session)*
+### 4a. The heuristic learning curve — in RL units
 
-A fair question: a programmatic controller doesn't "train," so how do you compare it to TD-MPC2's
-learning curve? We evaluate **every controller iteration under the exact 1000-step eval protocol**
-TD-MPC2 uses, so its return is on the same axis. Plotting **return vs HL-iteration** gives a genuine
-"learning curve" for heuristic learning — and we overlay TD-MPC2's ~2,500 hover plateau as a reference.
-*(Curve + table inline here once the sweep lands.)*
+A programmatic controller doesn't "train," so to compare it to TD-MPC2 we evaluate **every controller
+iteration under the exact 1000-step `eval_pi` protocol** TD-MPC2 is scored on (one continuous 1000-step
+rollout, dense reward summed, n=64 episodes). That puts the heuristic's "return" on the same axis:
+
+| iter | version | return (1000-step) | real success | grasped |
+|---|---|---|---|---|
+| 1 | v1 — hover-grasp, no level-IK | **4403** | 0% | 0.89 |
+| 4 | v4 | 4488 | 0% | 0.84 |
+| 7 | v7 — dead-end 6DOF orient | **4549** | 0% | 0.84 |
+| 8 | v8 — analytic level-IK (cracks the 0% wall) | 3069 | 1.6% | 0.81 |
+| 9 | v9 | 2880 | 6.3% | 0.81 |
+| 10 | **v9_rhold (BEST)** | 3406 | 6.3% | 0.83 |
+| 11 | v11 — xy-servo | 3522 | 3.1% | 0.97 |
+| — | *TD-MPC2 vanilla @1.5M* | *~2500* | **0%** | *~0* |
+
+![Heuristic-learning curve in RL units: 1000-step eval return and real success rate vs HL iteration, with TD-MPC2's ~2500 hover plateau as a reference line. Early high-return versions have 0% success; success only appears once return drops.]({{ '/images/hl_learning_curve.png' | relative_url }})
+
+**The striking finding: at the eval/training horizon, return is *anti-correlated* with real success.**
+The highest-return controllers (4400–4550) score **0% success** — they grasp the cube and hold it low,
+banking the ungated `gripper_box` term plus `robot_target_qpos` (arm near home) for all 1000 steps
+without ever lifting it to the elevated target. When the controller learns to actually lift-and-place
+(v8→v10), return *drops* to ~2,900–3,400 — moving the cube to target sacrifices that steady dwell
+reward — but it earns **real success**. TD-MPC2's ~2,500 hover sits **below even the real-success HL
+versions**, at 0% success. So in this reward, **maximizing 1000-step return actively works against the
+task** — the cleanest possible picture of why gradient RL reward-hacks here. The HL line's value is not
+a number above 2,500; it's that it **converts cheap dwell-return into actual picks.** Curve:
+`demo_videos/hl_learning_curve.{png,csv}` + `HL_CURVE_README.md`.
+
+### 4b. Pushing success higher: the wall is cube *orientation*, not grasp precision
+
+Continued iteration set an honest ceiling: **best = 0.094 real success** (v9_rhold, 4-seed mean at
+n=256; peak ~0.10). The instructive part is *what didn't work*: iter-11 broke the long-standing
+grasp-precision cap (`reached_box` 0.78 → 0.97 via a live-xy descent servo) — yet success **fell**,
+proving `reached_box` was **not** the binding constraint. **`rot_err` is**: the cube rotates between the
+parallel fingers during close/lift (~7–10° tilt), capping `box_target` below 0.9. An exact level-frame
+target (iter-12) tied baseline — confirming the tilt is grasp *dynamics*, not the commanded pose. The
+remaining untried lever (logged for resume): a physical regrasp/de-tilt settle on the table before lift.
 
 ## 5. What we're doing about it: reward engineering to actually solve it  *(live)*
 
@@ -105,7 +140,23 @@ original `box_target ≥ 0.9` task** (a fair test) — including:
    so it can't introduce new hacks).
 
 The bar: **real success rises above 0** for vanilla and/or jumpy TD-MPC2, on the true metric.
-*(Results table + curves inline as runs complete.)*
+
+**Results so far (vanilla TD-MPC2, seed 1, runs in flight to 1M, eval/50k — honest interim):**
+
+| variant | grasp (`reached`) | `box_target` | success |
+|---|---|---|---|
+| V1 — down-weight `gripper_box` only | 0 (through 200k) | 0 | 0 |
+| **V2 — + ungated lift bonus** | **0.60 @150k → 0 by 500k** | 0.056 → 0 | 0 |
+| V3 — + grasp bonus | 0 (through 500k) | 0 | 0 |
+
+Two honest readings. (1) The ungated lift bonus (V2) produced the **first grasping any gradient policy
+has shown on this task** — `reached`=0.60 at 150k, where the original reward never grasps before ~1.45M —
+direct confirmation that *the gating, not the ordering, is the trap.* (2) But it **did not persist**:
+V2 regressed to 0 grasps by 500k, and reweighting alone (V1) and lift+grasp (V3) never grasped. So the
+ungated lift gradient can *perturb* the policy out of the hover basin **transiently**, but none of these
+three variants is a **stable solve** yet. Next: stronger/annealed lift weight, HP tuning, and the
+potential-based staging (item 4), plus the jumpy variant on whatever variant grasps stably. Final 1M
+numbers + verdict to follow — reported honestly either way. *(This section updates as runs complete.)*
 
 ## 6. The lesson
 

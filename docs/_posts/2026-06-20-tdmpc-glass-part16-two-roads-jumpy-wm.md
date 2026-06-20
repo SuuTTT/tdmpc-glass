@@ -19,8 +19,8 @@ description: "Our goal is an abstract world model that beats flat TD-MPC2. 'Jump
 > "+60%" is *one hover out-scoring another hover*, **not** a task-capability gain. Concretely:
 >
 > - The reward is `4·gripper_box + 8·box_target·reached_box + 0.25·no_floor + 0.3·robot_qpos` (max
->   12.55/step). The eval **return is summed over a 1000-step rollout** (the 150-step env auto-resets
->   ~6.7×), so its ceiling is ~12,550. Vanilla plateaus at **~2,500 with `box_target_max = 0.0000`** —
+>   12.55/step). The eval **return is summed over a single continuous 1000-step episode** (no
+>   auto-reset inside the rollout), so its ceiling is ~12,550. Vanilla plateaus at **~2,500 with `box_target_max = 0.0000`** —
 >   leaving ~10,000 on the table by **never picking**. That gap *is* the hack, quantified.
 > - A hand-iterated **heuristic controller** (the "learning beyond gradients" route) *does* solve it —
 >   real grasp→lift→place, ~9% video-verified success, 99% grasp — cracking the cube-**orientation**

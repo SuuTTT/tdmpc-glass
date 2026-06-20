@@ -11,7 +11,7 @@ description: "A fresh-from-scratch reproduction of the jumpy (k-step macro) worl
 > later showed that return is reward-hacked: TD-MPC2 — **vanilla *and* jumpy** — achieves **0% real
 > pick success** (`box_target ≥ 0.9` never fires; the cube is never lifted to target). The agent hovers
 > the gripper near the cube to bank the dense `gripper_box` term without grasping. The eval return is
-> summed over a **1000-step rollout** (the 150-step env auto-resets ~6.7×, ceiling ~12,550); vanilla
+> summed over a **single continuous 1000-step episode** (ceiling ~12,550); vanilla
 > plateaus at **~2,500 with `box_target_max = 0.0000`**, i.e. it leaves ~10,000 reward on the table by
 > never picking. So "jumpy +60%" means *jumpy hovers better than vanilla*, **not** that it solves the
 > task. A hand-iterated **heuristic controller** *does* solve PandaPickCube (~9% video-verified real
