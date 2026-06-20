@@ -177,9 +177,13 @@ grasp** — and grasp reliability is the binding wall. That lines up exactly wit
 and cube-orientation dynamics. The cube is small and the grasp is unstable; that's a *dynamics/precision*
 problem, not a reward-shape problem.
 
-*(Two consolidation variants are in flight — V7: gripper_box=1, lift=8, bt=15; V8: gripper_box=1,
-lift=12 — testing whether a stronger lift/hold incentive on the good V2 base makes the grasp stick. If
-they also fade, the verdict above is final. Updated as they complete.)*
+**Final consolidation test (V7/V8, to 1M): stronger lift also fails.** Adding more lift weight on the
+good V2 base did not make the grasp stick — V8 (lift=12) peaked `pi_reached`=0.40 then **faded to 0** by
+900k (the same transient pattern), and V7 (lift=8, bt=15) **never grasped at all**. So across **8
+reward variants up to 1M steps, real success stayed exactly 0** — the no-solve verdict is final, and the
+bottleneck is grasp *stability*, not exploration or reward shape. One last probe is running: the **jumpy
+(temporal-abstraction) world model** on the V2 reward config — if planning over macro-steps can't
+consolidate the grasp either, that closes the question for this task. *(Result appended when it lands.)*
 
 ![Reward-engineering sweep: per-variant grasp rate (reached_box) and real success vs training step for the 6 reward variants. The ungated lift bonus (V2) spikes grasping to 0.60 then fades; all variants stay at 0 real success.]({{ '/images/reward_eng_curves.png' | relative_url }})
 
