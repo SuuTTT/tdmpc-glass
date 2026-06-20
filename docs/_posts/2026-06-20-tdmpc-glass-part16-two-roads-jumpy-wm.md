@@ -2,13 +2,35 @@
 layout: post
 title: "TD-MPC-Glass, Part 16: Two Roads to a Jumpy World Model — Our Skip-TD-MPC2 vs CompPlan/GHM on Cube Manipulation"
 date: 2026-06-20
-description: "Our goal is an abstract world model that beats flat TD-MPC2. 'Jumpy' (temporal-abstraction) world models are the lever that actually worked — and there are two roads to one. Road 1 (ours): online macro-action MBRL — a k-step jumpy TD-MPC2 that plans over macro-steps; it delivers genuine, CI-separated gains on contact manipulation (PickCube +60%, Pick-Orient +161% vs vanilla). Road 2 (the SOTA baseline): CompPlan/GHM — offline flow-occupancy planning over policies; we reproduced its InFOM scaffold (match/exceed on cube-single) but found the CompPlan planner does NOT reproduce out-of-box, and localized exactly why in three layers, ending at an action-agnostic occupancy that needs a faithful action-conditional TD-Flow. This post puts the two roads side by side (honestly — they're different paradigms), and reports the CompPlan diagnosis as a baseline."
+description: "Our goal is an abstract world model that beats flat TD-MPC2. 'Jumpy' (temporal-abstraction) world models are the lever we explored — two roads to one. Road 1 (ours): online macro-action MBRL — a k-step jumpy TD-MPC2 that plans over macro-steps; it delivers CI-separated gains in the dense *shaping return* on contact manipulation (PickCube +60%, Pick-Orient +161%) — but ⚠️ CORRECTION: video eval proved that return is reward-hacked (0% real picks for vanilla AND jumpy); a heuristic controller does solve the task. Road 2 (the SOTA baseline): CompPlan/GHM — offline flow-occupancy planning over policies; we reproduced its InFOM scaffold (match/exceed on cube-single) but found the CompPlan planner does NOT reproduce out-of-box, and localized exactly why in three layers, ending at an action-agnostic occupancy that needs a faithful action-conditional TD-Flow. This post puts the two roads side by side (honestly — they're different paradigms), reports the CompPlan diagnosis as a baseline, and carries the reward-hacking correction."
 ---
 
 > The project's one robust win over flat TD-MPC2 is **temporal abstraction** — predicting the future
 > in jumps. This post compares the two ways to build a jumpy world model: our online macro-action
 > route, and the SOTA offline flow-occupancy route (CompPlan/GHM). One works on contact manipulation
 > today; the other is a promising direction we reproduced and diagnosed down to the exact missing piece.
+
+> ## ⚠️ Correction (2026-06-20): the Road-1 "wins" are on a reward-hacked metric
+>
+> **The PandaPickCube/Pick-Orient "+60%/+161%" numbers below are on the dense *shaping return*, and
+> video evaluation later proved that return is reward-hacked: TD-MPC2 — vanilla *and* jumpy — achieves
+> 0% real pick success (`box_target ≥ 0.9` never fires; the cube is never lifted to target). The agent
+> hovers the gripper near the cube to bank the dense `gripper_box` term without ever grasping.** So the
+> "+60%" is *one hover out-scoring another hover*, **not** a task-capability gain. Concretely:
+>
+> - The reward is `4·gripper_box + 8·box_target·reached_box + 0.25·no_floor + 0.3·robot_qpos` (max
+>   12.55/step). The eval **return is summed over a 1000-step rollout** (the 150-step env auto-resets
+>   ~6.7×), so its ceiling is ~12,550. Vanilla plateaus at **~2,500 with `box_target_max = 0.0000`** —
+>   leaving ~10,000 on the table by **never picking**. That gap *is* the hack, quantified.
+> - A hand-iterated **heuristic controller** (the "learning beyond gradients" route) *does* solve it —
+>   real grasp→lift→place, ~9% video-verified success, 99% grasp — cracking the cube-**orientation**
+>   wall with analytic level-gripper IK. So the task is solvable; **gradient RL just reward-hacks it.**
+> - The reward is well-*ordered* (real success = 965 vs hover 315 per 150-step episode, 3.1×) but
+>   badly-*shaped*: the hover banks ~89% of its return from the dense proximity term, a local optimum
+>   the learner never escapes.
+>
+> The two-roads landscape below still stands as written; treat the Road-1 return deltas as *shaping-return*
+> deltas, not success. Full write-up: Part 17.
 
 ## Two roads to "jumpy"
 
@@ -28,15 +50,18 @@ other's setting; see the end). With that caveat stated up front, here's where ea
 A k=8 macro-dynamics head + macro-MPPI (effective horizon k·n_macro = 24), single-variable vs vanilla
 TD-MPC2, 5 seeds × 500k steps (Part 12). Measured gains (CI-separated on peak *and* final, every seed):
 
-| task | jumpy vs vanilla |
+| task | jumpy vs vanilla (⚠️ *shaping return*, 1000-step eval — **not** real success) |
 |---|---|
-| PandaPickCube | **+60%** (1854 → 2967 return) |
-| PandaPickCubeOrientation | **+161%** (1008 → 2636) |
+| PandaPickCube | **+60%** (1854 → 2967 return) — *both 0% real picks* |
+| PandaPickCubeOrientation | **+161%** (1008 → 2636) — *both 0% real picks* |
 | PandaOpenCabinet | late-training **stability only** (no peak gain) |
 | locomotion / sparse | neutral-to-harmful |
 
-So our abstract WM delivers a real, honest lift **exactly where the dynamics are contact-structured**.
-That's the positive result and the core of our direction.
+These are genuine, CI-separated differences **on the dense shaping return** — but, per the correction
+above, that return is reward-hacked (0% real picks for both arms). So jumpy improves *hover quality*,
+not task success; this is **not** evidence that the abstract WM solves contact manipulation. The honest
+positive result is narrower: jumpy changes the dense-return optimization landscape; whether it helps
+*real* success is answered by the in-flight 1.5M real-success campaign (scored on `box_target ≥ 0.9`).
 
 ## Road 2 — CompPlan / GHM (the SOTA baseline): reproduced, then diagnosed
 
@@ -67,7 +92,9 @@ it needs.
 
 ## So: which road for our goal (beat flat TD-MPC2 with abstraction)?
 
-- **Road 1 already delivers** on contact manipulation (online macro-action planning, +60/+161%).
+- **Road 1 moves the dense-return landscape** on contact manipulation (+60/+161% shaping return) —
+  but ⚠️ that return is reward-hacked (0% real picks), so it does **not** yet deliver real task success.
+  The honest contact-manipulation win to date is the **heuristic controller**, not the abstract WM.
 - **Road 2 (CompPlan/GHM) is the latest promising direction**, but the offline flow-occupancy route
   needs the action-conditional TD-Flow piece to actually plan to arbitrary goals — we reproduced the
   scaffold and diagnosed the gap precisely, so it's a well-scoped (multi-day) build if we pursue it.

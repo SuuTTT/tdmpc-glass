@@ -5,6 +5,19 @@ date: 2026-06-16
 description: "A fresh-from-scratch reproduction of the jumpy (k-step macro) world model vs vanilla TD-MPC2 across six tasks × five seeds × 500k steps. The clean result: temporal abstraction delivers genuine capability gains on contact manipulation (Pick +60%, Pick-Orient +161%, CI-separated on BOTH peak and final), provides only late-training stability on Open-Cabinet, and is neutral-to-harmful on locomotion and sparse. The peak-vs-final split caught a near-miss — a final-only read inflated the manipulation story into a clean 3/3 sweep that the peak metric does not support. And the project's recurring lesson holds: the macro-model predicts better on every task, yet that only converts to control where the dynamics are contact-structured."
 ---
 
+> ## ⚠️ Correction (2026-06-20): "Pick +60% / Pick-Orient +161%" are reward-hacked, not real success
+>
+> The manipulation gains reported in this post are on the **dense shaping return**. Video evaluation
+> later showed that return is reward-hacked: TD-MPC2 — **vanilla *and* jumpy** — achieves **0% real
+> pick success** (`box_target ≥ 0.9` never fires; the cube is never lifted to target). The agent hovers
+> the gripper near the cube to bank the dense `gripper_box` term without grasping. The eval return is
+> summed over a **1000-step rollout** (the 150-step env auto-resets ~6.7×, ceiling ~12,550); vanilla
+> plateaus at **~2,500 with `box_target_max = 0.0000`**, i.e. it leaves ~10,000 reward on the table by
+> never picking. So "jumpy +60%" means *jumpy hovers better than vanilla*, **not** that it solves the
+> task. A hand-iterated **heuristic controller** *does* solve PandaPickCube (~9% video-verified real
+> success), proving the task is solvable and gradient RL reward-hacks it. **Read every "+%" below as a
+> shaping-return delta, not a capability gain.** Full analysis: Part 16 correction + Part 17.
+
 > After the redundancy criterion closed explicit *representation* abstraction across four axes
 > (state, temporal, relational, compositional), the question shifted from "does abstraction help?"
 > to "where does the one technique that *did* win — the jumpy k-step world model — actually help, and
