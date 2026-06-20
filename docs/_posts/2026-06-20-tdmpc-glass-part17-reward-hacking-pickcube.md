@@ -141,22 +141,47 @@ original `box_target ≥ 0.9` task** (a fair test) — including:
 
 The bar: **real success rises above 0** for vanilla and/or jumpy TD-MPC2, on the true metric.
 
-**Results so far (vanilla TD-MPC2, seed 1, runs in flight to 1M, eval/50k — honest interim):**
+**Results (vanilla TD-MPC2, seed 1, eval/50k; all numbers read from `*_realsuccess.csv`):**
 
-| variant | grasp (`reached`) | `box_target` | success |
-|---|---|---|---|
-| V1 — down-weight `gripper_box` only | 0 (through 200k) | 0 | 0 |
-| **V2 — + ungated lift bonus** | **0.60 @150k → 0 by 500k** | 0.056 → 0 | 0 |
-| V3 — + grasp bonus | 0 (through 500k) | 0 | 0 |
+| variant | config (weights) | peak grasp (`reached`) | peak `box_target` | success |
+|---|---|---|---|---|
+| baseline | original reward | ~0 (flickers @1.4M+) | 0.085 | **0** |
+| V1 | reweight only: gripper_box 4→1, bt 12 | 0.00 | 0.00 | 0 |
+| **V2** | **+ ungated lift=4 (gripper_box 1)** | **0.60 @150k → 0.20 final** | 0.056 | 0 |
+| V3 | V2 + grasp bonus 2 | 0.00 | 0.00 | 0 |
+| V4 | lift=8, gripper_box=2 | 0.40 → faded | 0.014 | 0 |
+| V5 | lift=10, grasp=4, **gripper_box=0.5** | 0.00 | 0.00 | 0 |
+| V6 | lift=6, grasp=6, **gripper_box=0.5** | 0.00 | 0.00 | 0 |
 
-Two honest readings. (1) The ungated lift bonus (V2) produced the **first grasping any gradient policy
-has shown on this task** — `reached`=0.60 at 150k, where the original reward never grasps before ~1.45M —
-direct confirmation that *the gating, not the ordering, is the trap.* (2) But it **did not persist**:
-V2 regressed to 0 grasps by 500k, and reweighting alone (V1) and lift+grasp (V3) never grasped. So the
-ungated lift gradient can *perturb* the policy out of the hover basin **transiently**, but none of these
-three variants is a **stable solve** yet. Next: stronger/annealed lift weight, HP tuning, and the
-potential-based staging (item 4), plus the jumpy variant on whatever variant grasps stably. Final 1M
-numbers + verdict to follow — reported honestly either way. *(This section updates as runs complete.)*
+**Verdict: reward engineering broke the hover trap but did *not* make TD-MPC2 solve the task.** No
+variant reached real success > 0. But the sweep is informative:
+
+1. **The ungated lift bonus is the one lever that works behaviorally.** With a moderate proximity term
+   kept (V2: `gripper_box`=1, ungated `lift`=4), TD-MPC2 starts **grasping in 60% of eval episodes by
+   150k** — versus the original reward, where it never grasps before ~1.4M. Returns also dropped from
+   ~2,500 (hover) to ~300–650, confirming the hover gravy-train was removed. *The gating, not the
+   ordering, is the trap* — confirmed.
+2. **But grasping never consolidates.** It's intermittent and **fades as the policy converges** (V2 →
+   0.20, V4 → 0), never completing a lift→place, so `box_target` never approaches 0.9.
+3. **Two dead ends, both informative.** Cutting `gripper_box` to 0.5 (V5/V6) gives **zero grasping** —
+   the reach gradient is *needed* to get near the cube. And a discrete **grasp bonus hurts** (V3 → 0
+   grasps): it becomes its own little hack target rather than a bridge.
+
+So **reward shaping can knock the policy out of the hover basin, but it can't manufacture a *reliable*
+grasp** — and grasp reliability is the binding wall. That lines up exactly with the heuristic track
+(§4b): even a hand-coded controller with analytic level-IK tops out at ~9% because of grasp precision
+and cube-orientation dynamics. The cube is small and the grasp is unstable; that's a *dynamics/precision*
+problem, not a reward-shape problem.
+
+*(Two consolidation variants are in flight — V7: gripper_box=1, lift=8, bt=15; V8: gripper_box=1,
+lift=12 — testing whether a stronger lift/hold incentive on the good V2 base makes the grasp stick. If
+they also fade, the verdict above is final. Updated as they complete.)*
+
+![Reward-engineering sweep: per-variant grasp rate (reached_box) and real success vs training step for the 6 reward variants. The ungated lift bonus (V2) spikes grasping to 0.60 then fades; all variants stay at 0 real success.]({{ '/images/reward_eng_curves.png' | relative_url }})
+
+Honesty note: the `box_target` success metric was left untouched (raw + gated) throughout, so success
+is measured on the true task; only the *training* reward was engineered. Curves:
+`demo_videos/reward_eng_curves.png`, `RESULTS.json`.
 
 ## 6. The lesson
 
