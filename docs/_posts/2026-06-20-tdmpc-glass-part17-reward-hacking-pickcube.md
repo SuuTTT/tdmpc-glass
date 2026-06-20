@@ -143,15 +143,18 @@ The bar: **real success rises above 0** for vanilla and/or jumpy TD-MPC2, on the
 
 **Results (vanilla TD-MPC2, seed 1, eval/50k; all numbers read from `*_realsuccess.csv`):**
 
-| variant | config (weights) | peak grasp (`reached`) | peak `box_target` | success |
+Grasp rate is shown for both the bare **policy** and the **planner** (MPPI), since the planner can
+stumble into a grasp by search even when the policy can't reproduce it:
+
+| variant | config (weights) | grasp: policy / planner | peak `box_target` | success |
 |---|---|---|---|---|
-| baseline | original reward | ~0 (flickers @1.4M+) | 0.085 | **0** |
-| V1 | reweight only: gripper_box 4→1, bt 12 | 0.00 | 0.00 | 0 |
-| **V2** | **+ ungated lift=4 (gripper_box 1)** | **0.60 @150k → 0.20 final** | 0.056 | 0 |
-| V3 | V2 + grasp bonus 2 | 0.00 | 0.00 | 0 |
-| V4 | lift=8, gripper_box=2 | 0.40 → faded | 0.014 | 0 |
-| V5 | lift=10, grasp=4, **gripper_box=0.5** | 0.00 | 0.00 | 0 |
-| V6 | lift=6, grasp=6, **gripper_box=0.5** | 0.00 | 0.00 | 0 |
+| baseline | original reward | ~0 / ~0 (flickers @1.4M+) | 0.085 | **0** |
+| V1 | reweight only: gripper_box 4→1, bt 12 | 0.00 / 0.00 | 0.00 | 0 |
+| **V2** | **+ ungated lift=4 (gripper_box=1)** | **0.60** / 0.33 @150k → faded | 0.056 | 0 |
+| V3 | V2 + grasp bonus 2 | 0.00 / 0.00 | 0.00 | 0 |
+| V4 | lift=8, gripper_box=2 (full 1M) | 0.40 / 0.33 → 0 by 1M | 0.014 | 0 |
+| V5 | lift=10, grasp=4, **gripper_box=0.5** | **0.00** / 0.33 | 0.028 | 0 |
+| V6 | lift=6, grasp=6, **gripper_box=0.5** | 0.00 / 0.00 | 0.00 | 0 |
 
 **Verdict: reward engineering broke the hover trap but did *not* make TD-MPC2 solve the task.** No
 variant reached real success > 0. But the sweep is informative:
@@ -163,9 +166,10 @@ variant reached real success > 0. But the sweep is informative:
    ordering, is the trap* — confirmed.
 2. **But grasping never consolidates.** It's intermittent and **fades as the policy converges** (V2 →
    0.20, V4 → 0), never completing a lift→place, so `box_target` never approaches 0.9.
-3. **Two dead ends, both informative.** Cutting `gripper_box` to 0.5 (V5/V6) gives **zero grasping** —
-   the reach gradient is *needed* to get near the cube. And a discrete **grasp bonus hurts** (V3 → 0
-   grasps): it becomes its own little hack target rather than a bridge.
+3. **Two dead ends, both informative.** Cutting `gripper_box` to 0.5 (V5/V6) leaves the **bare policy
+   never grasping** (the planner brushes it — V5 `mppi_reached`=0.33 — but the policy can't reproduce
+   it), so the reach gradient is *needed* to get near the cube. And a discrete **grasp bonus hurts**
+   (V3 → 0 grasps): it becomes its own little hack target rather than a bridge.
 
 So **reward shaping can knock the policy out of the hover basin, but it can't manufacture a *reliable*
 grasp** — and grasp reliability is the binding wall. That lines up exactly with the heuristic track
@@ -180,7 +184,9 @@ they also fade, the verdict above is final. Updated as they complete.)*
 ![Reward-engineering sweep: per-variant grasp rate (reached_box) and real success vs training step for the 6 reward variants. The ungated lift bonus (V2) spikes grasping to 0.60 then fades; all variants stay at 0 real success.]({{ '/images/reward_eng_curves.png' | relative_url }})
 
 Honesty note: the `box_target` success metric was left untouched (raw + gated) throughout, so success
-is measured on the true task; only the *training* reward was engineered. Curves:
+is measured on the true task; only the *training* reward was engineered. All grasp numbers are read from
+the `*_realsuccess.csv` sidecars — both the policy (`pi_reached`) and planner (`mppi_reached`) columns,
+distinguished above (an earlier draft conflated the two for V5). Curves:
 `demo_videos/reward_eng_curves.png`, `RESULTS.json`.
 
 ## 6. The lesson
