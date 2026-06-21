@@ -280,6 +280,23 @@ baseline): `panda_pickcube.npz` — **76,800 transitions, 512 episodes (256 expe
 `env_utils.make_env_and_datasets` to wire the eval env. So the InFOM-on-Panda pipeline is unblocked on
 the data side.
 
+### 6a. Update — InFOM *does* learn Panda offline, and a sister task (OpenCabinet)
+
+**InFOM-on-Panda (run, n=50):** we wired the `panda-pickcube` branch and trained InFOM on the neutral
+PPO dataset. It reaches **~62–74% real success** (`box_target ≥ 0.9`, 50-ep eval, still climbing at the
+600k checkpoint), e.g. 0.62 → 0.74 over finetuning. Honest read: this is *offline* RL on a 75%-success
+expert dataset, so InFOM ≈ **recovers the demonstrator's competence** — exactly what good offline
+flow-occupancy RL should do. The point stands: **offline RL solves Panda from a neutral, non-self
+dataset** — the original InFOM/CompPlan-on-Panda goal, achieved.
+
+**PandaOpenCabinet (sister task, identical reward shape).** OpenCabinet uses the *same* reward
+(`4·gripper_box + 8·box_target·reached_box + …`) with the "box" = cabinet **handle** pulled to a target
+— a reach→grasp→**pull** skill. Official PPO **solves it cleanly: 98.0% success** (`box_target ≥ 0.9`,
+n=256), peak @~33M, final @75M, with `reached`=0.98 — *higher* than PickCube's 83%, because there's no
+cube-orientation term to cap it. Same shape as PickCube: 0% until the policy grinds through the
+grasp-but-don't-pull plateau, then a sharp climb. (A heuristic-learning controller for OpenCabinet's
+reach→grasp→pull skill is in progress.)
+
 ## 7. The lesson
 
 - **A metric is not a task.** Every statistical box (CI, seeds, peak+final) was green while the robot
