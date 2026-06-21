@@ -247,6 +247,16 @@ What still stands: the "+60% jumpy" headline was meaningless (both 0% real succe
 metric-vs-task lesson holds (return looked great while the robot did nothing); and reward engineering at
 1M genuinely didn't rescue TD-MPC2 — but the reason is **budget**, not an unfixable reward.
 
+**Literature note (provenance of the "100%" claim).** The MuJoCo Playground paper's headline "robustly
+grasps and lifts, 100% in real-world trials" is for the **vision / Cartesian** pick-cube variant (Madrona
+rendering + domain randomization + a stochastic gripping delay) — *not* the state-based `PandaPickCube`
+we use. For the state task the official recipe tracks only **dense `episode_reward`** (the manipulation
+notebook plots no strict success rate or `box_target` threshold). That is precisely why the
+reward-hacking went unnoticed upstream too: with no task-true success metric, a high-return hover *looks*
+like progress. Our run is, as far as we can tell, the first to score state-`PandaPickCube` PPO on a
+strict `box_target ≥ 0.9` metric — and it does solve it (66%), just much later than the dense reward
+would suggest.
+
 ![Official PPO on PandaPickCube: real success and grasp rate vs env steps; success stays 0 until ~28M then jumps to 66% by 33M.]({{ '/images/ppo_pickcube_curve.png' | relative_url }})
 
 **SAC (unofficial config) gets *stuck* where PPO escaped.** Our SAC reached **grasp 99.6% but 0% real
