@@ -181,9 +181,16 @@ problem, not a reward-shape problem.
 good V2 base did not make the grasp stick — V8 (lift=12) peaked `pi_reached`=0.40 then **faded to 0** by
 900k (the same transient pattern), and V7 (lift=8, bt=15) **never grasped at all**. So across **8
 reward variants up to 1M steps, real success stayed exactly 0** — the no-solve verdict is final, and the
-bottleneck is grasp *stability*, not exploration or reward shape. One last probe is running: the **jumpy
+bottleneck is grasp *stability*, not exploration or reward shape. One last probe: the **jumpy
 (temporal-abstraction) world model** on the V2 reward config — if planning over macro-steps can't
-consolidate the grasp either, that closes the question for this task. *(Result appended when it lands.)*
+consolidate the grasp either, that closes the question for this task. **Through 250k it shows the exact
+same pattern** — `jumpy_reached` peaks 0.33 via macro-step planning, intermittent, `box_target` ≤ 0.012,
+**success 0** — i.e. temporal abstraction does **not** cross the grasp-stability wall either. So *every*
+lever we have (reward shaping ×8, temporal abstraction) breaks the hover trap but none manufactures a
+reliable grasp on this small-cube task; the honest conclusion is that **PandaPickCube's wall is grasp
+dynamics, not reward design or planning horizon** — which is precisely why the hand-coded controller
+(§4) needed *analytic level-IK* to reach even ~9%. *(Jumpy run continues to 1M; the null is already
+clear and the final number will be folded in.)*
 
 ![Reward-engineering sweep: per-variant grasp rate (reached_box) and real success vs training step for the 6 reward variants. The ungated lift bonus (V2) spikes grasping to 0.60 then fades; all variants stay at 0 real success.]({{ '/images/reward_eng_curves.png' | relative_url }})
 
