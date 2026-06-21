@@ -282,11 +282,12 @@ the data side.
 
 ### 6a. Update — InFOM *does* learn Panda offline, and a sister task (OpenCabinet)
 
-**InFOM-on-Panda (run, n=50):** we wired the `panda-pickcube` branch and trained InFOM on the neutral
-PPO dataset. It reaches **~62–74% real success** (`box_target ≥ 0.9`, 50-ep eval, still climbing at the
-600k checkpoint), e.g. 0.62 → 0.74 over finetuning. Honest read: this is *offline* RL on a 75%-success
-expert dataset, so InFOM ≈ **recovers the demonstrator's competence** — exactly what good offline
-flow-occupancy RL should do. The point stands: **offline RL solves Panda from a neutral, non-self
+**InFOM-on-Panda (run complete, n=50):** we wired the `panda-pickcube` branch and trained InFOM on the
+neutral PPO dataset (500k pretrain + 250k finetune). Real success peaks at **0.74 @600k**, then settles
+to ~0.62–0.66 (final 0.62 @750k — a slight late-finetuning decline), with `box_target` ~0.75–0.82 and
+`reached` ~0.82–0.92 throughout. Honest read: this is *offline* RL on a 75%-success expert dataset, so
+InFOM ≈ **recovers the demonstrator's competence** (~0.75 data → ~0.74 peak policy) — exactly what good
+offline flow-occupancy RL should do. The point stands: **offline RL solves Panda from a neutral, non-self
 dataset** — the original InFOM/CompPlan-on-Panda goal, achieved.
 
 **PandaOpenCabinet (sister task, identical reward shape).** OpenCabinet uses the *same* reward
