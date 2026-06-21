@@ -249,7 +249,13 @@ metric-vs-task lesson holds (return looked great while the robot did nothing); a
 
 ![Official PPO on PandaPickCube: real success and grasp rate vs env steps; success stays 0 until ~28M then jumps to 66% by 33M.]({{ '/images/ppo_pickcube_curve.png' | relative_url }})
 
-*(SAC, unofficial config, still training — folded in when done.)*
+**SAC (unofficial config) gets *stuck* where PPO escaped.** Our SAC reached **grasp 99.6% but 0% real
+success** through 20M — `box_target` capped at 0.276, i.e. it learns to grasp but **never places**, never
+escaping the grasp-but-don't-place plateau that PPO broke out of at ~29M. (Caveat: this is *not* an
+official tuned manipulation SAC config — mujoco_playground ships PPO for manipulation — so read it as
+"a standard off-policy baseline at this budget," not a definitive SAC verdict.) A longer **PPO run (80M,
+24 evals)** is in flight to see whether PPO climbs from 66% toward ~100% (its curve was still rising
+steeply at 33M). *(Folded in when done.)*
 
 ## 7. The lesson
 
