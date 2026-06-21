@@ -292,10 +292,23 @@ dataset** — the original InFOM/CompPlan-on-Panda goal, achieved.
 **PandaOpenCabinet (sister task, identical reward shape).** OpenCabinet uses the *same* reward
 (`4·gripper_box + 8·box_target·reached_box + …`) with the "box" = cabinet **handle** pulled to a target
 — a reach→grasp→**pull** skill. Official PPO **solves it cleanly: 98.0% success** (`box_target ≥ 0.9`,
-n=256), peak @~33M, final @75M, with `reached`=0.98 — *higher* than PickCube's 83%, because there's no
-cube-orientation term to cap it. Same shape as PickCube: 0% until the policy grinds through the
-grasp-but-don't-pull plateau, then a sharp climb. (A heuristic-learning controller for OpenCabinet's
-reach→grasp→pull skill is in progress.)
+n=256): 0% until ~13M → 84% @16M → 97% @26M → plateau **98.05%** (peak @33M, final @75M), `reached`=0.98
+— *higher* than PickCube's 83% (no cube-orientation term to cap it) and success-onset *earlier*
+(~13–16M vs ~29M).
+
+**But the HL loop *fails* OpenCabinet (0% success) — where it solved PickCube (9%).** A
+heuristic-learning controller (reach → grasp the vertical bar → pull along its slide-joint to target →
+hold) reached **grasp_ok 95% but `reached_box` only 7.4%, success 0%**, across 12+ diagnosed iterations.
+The binding wall is **closed-loop**: the handle sits at the Panda's forward-reach *frontier*, where (1)
+open-loop static-IK stalls ~10cm short (joint-5 saturates under position control — a *joint-space
+overshoot* lever lifted grasp 28%→95% but couldn't close the reach gap), and (2) the grasp site drifts
+~1.5–2cm off the bar center during the pull, never holding the <1.2cm `reached_box` threshold *and* the
+target simultaneously. PPO succeeds precisely because it learns **closed-loop frontier reaching +
+centered contact** that an open-loop heuristic cannot reproduce. This is the cleanest demonstration of
+the HL loop's **honest ceiling**: it cracked PickCube's grasp-orientation wall (open-loop-fixable → 9%)
+but cannot cross OpenCabinet's closed-loop-control wall (→ 0%). HL is a fast solver and diagnostic;
+crossing a closed-loop wall needs learned control. (Details: `hl_opencabinet/KNOWLEDGE.md`,
+`demo_videos/OPENCABINET.md`.)
 
 ## 7. The lesson
 
