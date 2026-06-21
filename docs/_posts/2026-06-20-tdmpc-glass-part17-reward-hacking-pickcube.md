@@ -263,9 +263,22 @@ would suggest.
 success** through 20M — `box_target` capped at 0.276, i.e. it learns to grasp but **never places**, never
 escaping the grasp-but-don't-place plateau that PPO broke out of at ~29M. (Caveat: this is *not* an
 official tuned manipulation SAC config — mujoco_playground ships PPO for manipulation — so read it as
-"a standard off-policy baseline at this budget," not a definitive SAC verdict.) A longer **PPO run (80M,
-24 evals)** is in flight to see whether PPO climbs from 66% toward ~100% (its curve was still rising
-steeply at 33M). *(Folded in when done.)*
+"a standard off-policy baseline at this budget," not a definitive SAC verdict.) A longer **PPO run (80M-target, ~113M
+brax steps, 24 evals)** answers whether PPO reaches 100%: **it does not — it plateaus at ~80–83%.**
+Success crosses the threshold at ~20M (48%), reaches ~82% by ~25M, then stays **flat at 80–83% for the
+next ~85M steps** (peak **83.2%** @108M, grasp 100%, mean max box_target 0.948; final dips to 71.9%
+@113M). So the longer run both crosses earlier and ceilings higher than the 20M-config run (66%@33M),
+but the residual **~17% is a hard-instance / placement-precision tail, not a budget shortfall** — even
+a tuned on-policy PPO doesn't fully solve every cube pose. Useful calibration for what "solved" means
+here: ~83% is the practical ceiling for this reward+observation at scale.
+
+**Neutral offline dataset for InFOM (built).** Since the original goal is to run InFOM/CompPlan on Panda
+and TD-MPC2 rollouts would be unfair, we generated the dataset from the **PPO** policy (a standard
+baseline): `panda_pickcube.npz` — **76,800 transitions, 512 episodes (256 expert + 256 exploratory),
+75% success**, OGBench layout. It **ingests cleanly** through `ogbench.utils.load_dataset` + InFOM's
+`Dataset.create/.sample` (smoke-tested); a full InFOM run just needs a small `panda-pickcube` branch in
+`env_utils.make_env_and_datasets` to wire the eval env. So the InFOM-on-Panda pipeline is unblocked on
+the data side.
 
 ## 7. The lesson
 
