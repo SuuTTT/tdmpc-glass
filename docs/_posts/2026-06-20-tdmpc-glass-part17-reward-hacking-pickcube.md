@@ -22,7 +22,10 @@ MPPI/jumpy variants), the answer was unambiguous: **0% real picks.** The cube wa
 threshold. The gripper just hovered.
 
 This is textbook **reward-hacking**: optimizing a proxy (dense return) to the detriment of the true
-objective (pick the cube), because the proxy and the objective came apart.
+objective (pick the cube), because the proxy and the objective came apart. *(Important caveat, fully
+developed in §6: this was measured at 1–1.5M steps. A stock PPO at full budget — ~30M steps — actually
+solves the task at 66%, and is itself 0% until ~28M. So the hover is as much an **under-training**
+symptom as a reward flaw; the reward is solvable, just slow. Read on.)*
 
 ## 2. How the dense return is actually computed (the scale that hid it)
 
@@ -201,15 +204,68 @@ the `*_realsuccess.csv` sidecars — both the policy (`pi_reached`) and planner 
 distinguished above (an earlier draft conflated the two for V5). Curves:
 `demo_videos/reward_eng_curves.png`, `RESULTS.json`.
 
-## 6. The lesson
+> **Revised by §6 (important):** the official PPO baseline below shows grasp reliability *is* achievable
+> (99.6%) and the task *is* solvable (~66%) at ~18× this budget. So the §5 reading — "the wall is grasp
+> dynamics, not reward/budget" — was **too strong**. The reward-engineering null is real *at 1M steps*,
+> but the true limiter at that budget is **budget + algorithm**, not an unfixable reward or an intrinsic
+> grasp-dynamics wall. Read §5 as "no reward tweak rescued TD-MPC2 *at 1M*," not "the task is unsolvable."
+
+## 6. The decisive baseline: official PPO *solves* it — at ~18× the budget
+
+Everything above used **TD-MPC2 at 1–1.5M steps**. The missing control: can the *official*
+mujoco_playground recipe solve PandaPickCube at all? We ran stock **brax PPO** (its tuned PandaPickCube
+config — 2048 envs, target 20M steps, policy 32×4) on the **unmodified** reward, scored with the **same**
+`box_target ≥ 0.9` metric (n=256, 1000-step eval). It does — but late, and only at full budget:
+
+| env steps | success | grasp (`reached`) | mean max `box_target` |
+|---|---|---|---|
+| 8.2M | 0.00 | 0.24 | 0.013 |
+| 13.1M | 0.00 | 0.85 | 0.073 |
+| 18.0M | 0.00 | **0.996** | 0.105 |
+| 27.9M | 0.00 | 0.996 | 0.250 |
+| 29.5M | 0.074 | 0.996 | 0.638 |
+| 31.1M | 0.527 | 0.996 | 0.852 |
+| **32.8M (final)** | **0.660** | 0.996 | 0.887 |
+
+(brax overshoots the 20M target to ~33M in its step accounting.) **PPO reaches 66% real success**, and
+the trajectory is telling: it learns **reach → grasp (99.6% by 18M) → place (only ~29M+)**, grinding
+through the very same grasp-but-don't-place plateau that traps low-budget agents.
+
+**Three honest corrections to this post:**
+
+1. **The reward is not "broken."** Standard tuned PPO climbs the dense reward all the way to real picks.
+   The shaping is *suboptimal* (it parks the policy in a no-place plateau for ~28M steps) but *solvable*.
+2. **TD-MPC2/jumpy's 0% was mostly a *budget* failure.** PPO is **also 0%** real success until ~28M —
+   **>18× the 1.5M we gave TD-MPC2.** At 1.5M *nothing* solves this task; what we read as a "reward-hack"
+   is largely "nowhere near converged." (TD-MPC2 is usually far more sample-efficient per step, so it's
+   not settled it *couldn't* solve this at a matched ~30M budget — we never ran it that far.)
+3. **Grasp reliability is *not* an intrinsic wall.** PPO grasps **99.6%**; the heuristic's ~0.78-grasp /
+   9%-success ceiling (§4) was an *open-loop-controller* limitation (it can't react to the cube tilting),
+   not a property of the task.
+
+What still stands: the "+60% jumpy" headline was meaningless (both 0% real success at 500k); the
+metric-vs-task lesson holds (return looked great while the robot did nothing); and reward engineering at
+1M genuinely didn't rescue TD-MPC2 — but the reason is **budget**, not an unfixable reward.
+
+![Official PPO on PandaPickCube: real success and grasp rate vs env steps; success stays 0 until ~28M then jumps to 66% by 33M.]({{ '/images/ppo_pickcube_curve.png' | relative_url }})
+
+*(SAC, unofficial config, still training — folded in when done.)*
+
+## 7. The lesson
 
 - **A metric is not a task.** Every statistical box (CI, seeds, peak+final) was green while the robot
   did nothing. Only a *behavioral* check (the video) and a *task-true* metric (`box_target ≥ 0.9`)
   caught it. We've now wired real-success logging into the eval so this can't hide again.
-- **Dense shaping + a gated sparse jackpot = a hover trap.** The reward was well-ordered but its
-  ungated dense term offered a local optimum worth 89% of the real return.
-- **"Learning beyond gradients" earned its keep here** — a programmatic policy solved what gradient RL
-  reward-hacked, and it's the honest contact-manipulation result to date.
+- **But "reward-hacking" can be a budget artifact in disguise.** The most important correction in this
+  post: a stock PPO at full budget (§6) *solves* the task, and is itself 0% until ~28M — so what looked
+  like a fundamentally-hacked reward at 1–1.5M was largely **under-training**. Always run a strong,
+  full-budget baseline before concluding "the reward/task is broken." We almost didn't.
+- **Dense shaping + a gated sparse jackpot = a long plateau, not a dead end.** The ungated proximity term
+  parks low-budget policies in a grasp-but-don't-place plateau worth most of the return; PPO escapes it
+  given ~30M steps. Suboptimal shaping, not a fatal one.
+- **"Learning beyond gradients" still earned its keep as a *fast* solver** — a programmatic policy got
+  real picks in hours of iteration vs PPO's 33M-step grind — but its ~9% ceiling is an open-loop limit,
+  not the task's: closed-loop PPO reaches 66%.
 
 ### Pointers
 Correction banners on Parts 12 & 16. Reward source: `mujoco_playground .../franka_emika_panda/pick.py`.
