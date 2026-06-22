@@ -39,7 +39,7 @@ The real training-speed levers follow directly from "the grad block dominates":
 | lever | speed-up (train sps) | cost |
 |---|---|---|
 | smaller model (`tiny`, 0.72M) | **1.6×** (437 vs 272 sps) | ~89% of paper return |
-| `K_UPDATE` 64→32 | ~1.9× (predicted; validating) | fewer updates/step (sample-eff) |
+| `K_UPDATE` 64→32 | **~1.9× (confirmed: 881 vs 462 predicted sps)** | return 502 vs 614 (−18%) |
 | `K_UPDATE` 64→16 | ~3.5× | larger sample-eff hit |
 | `N_ENVS` 256→1024 | ~3.8× | lower replay ratio → sample-eff cost |
 | cheap planning (NS↓) | 1.08× train / **2.1× deploy** | none (return ↑) |
@@ -72,8 +72,10 @@ genuine tension; you pick your constraint (sample budget vs wall-clock), and the
 both against the other family. **SAC is a surprise: it's *off* the frontier here** — with 32 envs it peaks
 at only 154 on CheetahRun in 1M steps (vs TD-MPC2's 646 and PPO's 928), dominated on *both* axes. Its
 canonical "sample-efficient" reputation doesn't show at this budget/config; its only edge is raw
-throughput (~948 sps). (K_UPDATE=32 frontier point — a predicted ~1.9× speed-up at modest sample-eff
-cost — is validating and learns normally; appended when it finishes.)
+throughput (~948 sps). **K_UPDATE=32 is now confirmed:** CheetahRun peak **502** (vs default 614, −18%) at
+a predicted **881 sps (~1.9× default's 462)** — the cleanest single train-speed lever, halving the gradient
+block for an 18% return cost. It validates the bottleneck model exactly: cut the grad block in half →
+throughput ~doubles → return degrades only modestly.
 
 ## Takeaways
 1. **TD-MPC2's training cost is its gradient updates, not its planner** — optimize `K_UPDATE`/model/envs,
