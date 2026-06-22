@@ -77,6 +77,8 @@ simulator, wall-clock is the binding constraint, and that's PPO's axis.
   TD-MPC2 diverges) is settled.
 
 ### Pointers
+**See Part 22** for the full budgets table (steps *and* wall-clock per task), the mechanistic *why* behind
+every pro/con here, and the design rules for planning + abstraction that follow.
 Raw: `exp/tdmpc_glass/dmc_ppo_vs_tdmpc2/{RESULTS.json,logs/}`; 5-seed d2 curves
 `exp/tdmpc_glass/{CheetahRun_d2_van_*,HopperHop_d2_van_*}/seed_*.csv`. Baseline corroboration: MuJoCo
 Playground (arXiv 2502.08844), PPO/SAC on DMC. Glass≈TD-MPC2 null: Part 2.
