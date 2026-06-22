@@ -311,6 +311,26 @@ but cannot cross OpenCabinet's closed-loop-control wall (→ 0%). HL is a fast s
 crossing a closed-loop wall needs learned control. (Details: `hl_opencabinet/KNOWLEDGE.md`,
 `demo_videos/OPENCABINET.md`.)
 
+### 6b. TD-MPC2 at scale on PickCube — grasp-onset comparable to PPO, success-onset hardware-limited
+
+We ran TD-MPC2 itself far past the 1.5M "reward-hack" budget — 6 seeds (3× vanilla latent-512, 3× small
+latent-256) toward 30M on free 3060s. Read from the `*_realsuccess.csv` (peak):
+
+- **Vanilla (latent-512) consolidates grasp like PPO:** `reached` climbs to **1.0 by ~13–15M** (vs PPO's
+  0.85@13M / 0.996@16M) — grasp-onset is *comparable*, not behind. The earlier "0% reward-hack" was
+  purely a budget artifact.
+- **But `box_target` stays flat ~0.04 across 5M→21M, 0% success** — TD-MPC2 sits in the same
+  grasp-but-don't-place plateau PPO occupied *pre-29M*. PPO escaped it at ~29M (→83%); **TD-MPC2 can't
+  reach 29M on a 3060 in budget** (vanilla ~245 steps/s → 29M ≈ 33h), so whether it would convert is
+  **unresolved (hardware-limited)**.
+- **Small (latent-256) lags:** `reached` stalls 0.4–0.6, never consolidates — the speed-shrink (≈40%
+  faster) costs grasp reliability.
+
+So on PickCube the TD-MPC2-vs-PPO sample-efficiency question is **inconclusive**: grasp-onset comparable,
+success-onset un-budgeted for vanilla, small fails to consolidate. PickCube is a poor arbiter (dense
+reward, long success-onset, 3060-bound). The clean test of "does TD-MPC2 actually beat PPO?" belongs on
+**DMC** (TD-MPC2's home turf), measured on *both* env-steps and wall-clock — that's the next post.
+
 ## 7. The lesson
 
 - **A metric is not a task.** Every statistical box (CI, seeds, peak+final) was green while the robot
