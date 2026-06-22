@@ -63,12 +63,17 @@ Playground paper) compare PPO/SAC but **omit model-based TD-MPC2**. Placing it o
 | TD-MPC2 small | 650k | 1590 s | 533 |
 | TD-MPC2 tiny | 900k | 2060 s | 512 |
 | **PPO** | **39.3M** | **269 s** | 928 |
+| SAC (32 env) | never (peak 154 @1M) | — | 154 — **off-frontier** |
 
 **The Pareto is a clean diagonal:** PPO bottom-right (**~87× more env-steps, ~6× faster wall-clock**),
 TD-MPC2 top-left (**50–100× fewer env-steps, slower wall-clock**). Within TD-MPC2, the **knee is
 cheap-planning** — fewest env-steps *and* fastest wall-clock *and* highest return. The two axes are in
 genuine tension; you pick your constraint (sample budget vs wall-clock), and there's no config that wins
-both against the other family.
+both against the other family. **SAC is a surprise: it's *off* the frontier here** — with 32 envs it peaks
+at only 154 on CheetahRun in 1M steps (vs TD-MPC2's 646 and PPO's 928), dominated on *both* axes. Its
+canonical "sample-efficient" reputation doesn't show at this budget/config; its only edge is raw
+throughput (~948 sps). (K_UPDATE=32 frontier point — a predicted ~1.9× speed-up at modest sample-eff
+cost — is validating and learns normally; appended when it finishes.)
 
 ## Takeaways
 1. **TD-MPC2's training cost is its gradient updates, not its planner** — optimize `K_UPDATE`/model/envs,
