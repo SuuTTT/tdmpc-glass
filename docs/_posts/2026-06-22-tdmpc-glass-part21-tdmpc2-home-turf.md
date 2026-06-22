@@ -29,20 +29,23 @@ home turf *minus its best rooms*. Read this as "the home-turf tasks we can actua
 |---|---|---|---|---|---|
 | **HopperHop** | hard-expl | **283** | 1.7 — *fails* | 33 | **TD-MPC2** (8.6× PPO) |
 | **AcrobotSwingup** | hard-expl | **420** | 334 — *hurts* | 268 | **TD-MPC2** (1.6× PPO) |
-| **FingerTurnHard** | hard-expl | **975** | — | *(pending)* | TD-MPC2 solves |
+| **FingerTurnHard** | hard-expl | 975 | — | 968 | **tie** (both solve) |
 | **HumanoidRun** | high-dim | **9** — *fails* | — | ≥159, climbing | **PPO** |
-| **HumanoidWalk** | high-dim | **NaN — diverged** | — | *(pending)* | **PPO** (TD-MPC2 breaks) |
+| **HumanoidWalk** | high-dim | **NaN — diverged** | — | 33 @39M, climbing | **PPO** (TD-MPC2 breaks) |
 
 (PPO = official MuJoCo-Playground `brax_ppo_config`, 50–285M steps, same RTX 3060; HopperHop/Acrobot/HumanoidRun
-PPO from Part 18. FingerTurnHard/HumanoidWalk PPO baselines are queued for the next free GPU.)
+PPO from Part 18; FingerTurnHard (60M steps, peak 968) and HumanoidWalk (still training, 33 @39M and climbing)
+run on the same box. **Note FingerTurnHard is a *tie* — PPO 968 ≈ TD-MPC2 975 — not a TD-MPC2 win.**)
 
 ## What it says
 
-**1. On hard exploration, TD-MPC2 wins — and it's the real thing.** HopperHop is the cleanest case: PPO
+**1. On *hard* exploration, TD-MPC2 wins — and it's the real thing.** HopperHop is the cleanest case: PPO
 *flatlines at 33* (it never finds the hop gait) while TD-MPC2 reaches **283** — an 8.6× gap that is exactly
 the "model-based planning solves exploration that on-policy sampling can't" story the paper tells.
-AcrobotSwingup (420 vs 268) and FingerTurnHard (975, saturated) corroborate it. This is TD-MPC2's earned
-reputation, reproduced.
+AcrobotSwingup (420 vs 268) corroborates it. **But not every "hard" task differentiates:** on
+**FingerTurnHard, PPO ties TD-MPC2** (968 vs 975 — both solve it), because at PPO's 60M-step budget the task
+isn't actually exploration-limited. So the genuine TD-MPC2 wins are the *exploration-bottlenecked* tasks
+(HopperHop, Acrobot) — where on-policy sampling stalls — not "hard tasks" in general.
 
 **2. But our default-config TD-MPC2 *fails* the high-dim turf.** This is the honest, uncomfortable finding:
 
@@ -104,8 +107,9 @@ dimension out-of-box, and gains nothing from the temporal-abstraction trick.
   peak+final.
 - HumanoidRun/Walk used the **DMC default** config; the paper's high-dim config (larger latent/width) would
   likely fix the divergence — we report default-config behavior, not a capability ceiling.
-- FingerTurnHard and HumanoidWalk **PPO** baselines are queued (next free GPU); the TD-MPC2/jumpy cells and
-  the HopperHop/Acrobot/HumanoidRun PPO cells are complete.
+- FingerTurnHard **PPO** is complete (968, a tie); HumanoidWalk **PPO** was still training at writing (33
+  @39M and climbing — already far above TD-MPC2's NaN, so the "PPO learns it, TD-MPC2 diverges" verdict is
+  settled; final asymptote will be higher). All other cells are complete.
 
 ### Pointers
 `exp/benchmark/tdmpc2_{HopperHop,AcrobotSwingup,FingerTurnHard,HumanoidRun,HumanoidWalk}_*.csv`;
