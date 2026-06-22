@@ -31,11 +31,11 @@ home turf *minus its best rooms*. Read this as "the home-turf tasks we can actua
 | **AcrobotSwingup** | hard-expl | **420** | 334 — *hurts* | 268 | **TD-MPC2** (1.6× PPO) |
 | **FingerTurnHard** | hard-expl | 975 | — | 968 | **tie** (both solve) |
 | **HumanoidRun** | high-dim | **9** — *fails* | — | ≥159, climbing | **PPO** |
-| **HumanoidWalk** | high-dim | **NaN — diverged** | — | 33 @39M, climbing | **PPO** (TD-MPC2 breaks) |
+| **HumanoidWalk** | high-dim | **NaN — diverged** | — | **285** | **PPO** (TD-MPC2 breaks) |
 
 (PPO = official MuJoCo-Playground `brax_ppo_config`, 50–285M steps, same RTX 3060; HopperHop/Acrobot/HumanoidRun
-PPO from Part 18; FingerTurnHard (60M steps, peak 968) and HumanoidWalk (still training, 33 @39M and climbing)
-run on the same box. **Note FingerTurnHard is a *tie* — PPO 968 ≈ TD-MPC2 975 — not a TD-MPC2 win.**)
+PPO from Part 18; FingerTurnHard (60M steps, peak 968) and HumanoidWalk (88M steps, peak 285) run on the same
+box. **Note FingerTurnHard is a *tie* — PPO 968 ≈ TD-MPC2 975 — not a TD-MPC2 win.**)
 
 ## What it says
 
@@ -107,9 +107,8 @@ dimension out-of-box, and gains nothing from the temporal-abstraction trick.
   peak+final.
 - HumanoidRun/Walk used the **DMC default** config; the paper's high-dim config (larger latent/width) would
   likely fix the divergence — we report default-config behavior, not a capability ceiling.
-- FingerTurnHard **PPO** is complete (968, a tie); HumanoidWalk **PPO** was still training at writing (33
-  @39M and climbing — already far above TD-MPC2's NaN, so the "PPO learns it, TD-MPC2 diverges" verdict is
-  settled; final asymptote will be higher). All other cells are complete.
+- FingerTurnHard **PPO** is complete (968, a tie); HumanoidWalk **PPO** is complete too (peak **285** at 88M
+  steps — far above TD-MPC2's NaN, so "PPO learns it, TD-MPC2 diverges" is settled). All cells are now filled.
 
 ### Pointers
 `exp/benchmark/tdmpc2_{HopperHop,AcrobotSwingup,FingerTurnHard,HumanoidRun,HumanoidWalk}_*.csv`;
