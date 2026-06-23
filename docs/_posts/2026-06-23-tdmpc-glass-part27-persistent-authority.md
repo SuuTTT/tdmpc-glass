@@ -58,21 +58,44 @@ instability (peak 0.781 @26M → final 0.69), whereas α=0.7 is steadier (peak 0
 peak-vs-stability trade: α≈0.8–0.9 (or early-stopping α=1.0 near its 26M peak) is likely the practical sweet
 spot — high ceiling without the late decline.
 
+## Multi-seed confirmation (#5c)
+
+We re-ran α=1.0 (2nd seed) and α=0.85 (×3 seeds) to pin the near-tie and test whether α≈0.85 is the stable
+sweet-spot we hypothesized. Real success, same protocol:
+
+| arm | peak (mean ± sd) | final | crosses 0.66 |
+|---|---|---|---|
+| **α = 1.0** (2 seeds: 0.781, 0.797) | **0.79 ± 0.01** | 0.69 / **0.80** | 19.7M / 26.2M |
+| α = 0.85 (3 seeds: 0.699, 0.684, 0.688) | 0.69 ± 0.01 | 0.66 / 0.62 / 0.53 | 22.9M (all) |
+
+Two corrections to the single-seed read:
+- **α=1.0 is robust, not a fluke:** two seeds give 0.781 and 0.797 (**~0.79**), and the 2nd seed stayed
+  *stable* at 0.797 final — so the late decline seen in the first α=1.0 seed was **seed-specific**, not an
+  inherent full-authority instability.
+- **α=0.85 is *not* a better sweet-spot — it's simply lower** (0.69 ± 0.01, tight across 3 seeds) and *also*
+  decays late (one seed 0.53 final). So **higher authority wins on peak**; throttling to 0.85 costs ~0.10
+  success and doesn't buy stability. The hypothesis (α≈0.85 = stable sweet-spot) is **falsified**.
+- **No seed clears 0.82** — the best is α=1.0 at 0.797. So the strict ≥0.82 bar stands un-met; the result is a
+  robust **~0.79 near-tie** with PPO's 0.81, not a peak beat.
+
 ## Verdict — the beat-PPO question, answered
 
-Across #1–#5b, the honest standing answer flips: **keeping the abstraction in the loop with full persistent
-authority is genuinely competitive with PPO** — it matches PPO's ceiling within single-seed noise (0.78 vs
-0.81) and reaches competence **~1.7× faster** (19.7M vs 32.8M env-steps). On the sample-efficiency axis that
-matters for expensive-interaction settings, the abstraction-in-loop *beats* end-to-end PPO; on raw asymptotic
-peak it's a near-tie just below. The losers along the way sharpened the design: distillation fails (non-Markov,
-Part 25), annealing authority backfires (Part 26), and a learned authority-gate underperforms uniform full
-authority (this part). The winner is the simplest in-loop form: **live analytic controller + Markov-conditioned
-residual at full standing authority.**
+Across #1–#5c, the honest standing answer flips: **keeping the abstraction in the loop with full persistent
+authority is genuinely competitive with PPO** — across 2 seeds α=1.0 reaches **0.79 ± 0.01 (vs PPO 0.81)**, a
+robust near-tie, and crosses the 0.66 competence threshold at **~20–26M env-steps vs PPO's 32.8M (~1.3–1.7×
+fewer interactions)**. On the sample-efficiency axis that matters for expensive-interaction settings, the
+abstraction-in-loop *beats* end-to-end PPO; on raw asymptotic peak it's a **near-tie just below (0.79 vs 0.81),
+and no seed clears 0.82** — so it is not a strict peak beat. The losers along the way sharpened the design:
+distillation fails (non-Markov, Part 25), annealing authority backfires (Part 26), a learned authority-gate
+underperforms uniform authority (Part 27), and throttling to α=0.85 only lowers the peak (~0.69) without buying
+stability (#5c). The winner is the simplest in-loop form: **live analytic controller + Markov-conditioned
+residual at full standing authority (α=1.0)** — ~0.79 success, sample-efficiency beating PPO.
 
 ### Caveats (kept honest)
-Single seed per arm (the ladder trend across 0.5/0.7/1.0 is the robust signal; absolute peaks are single-seed);
-α=1.0's 0.78 vs PPO's 0.81 is a near-tie, not a strict beat, and α=1.0 declines after its 26M peak (report
-peak *and* final). Real success read from `exp/tdmpc_glass/hl_subgoal_b/curve_b_*.json` (n=256, 1000-step,
-training-matched α; gate uses its learned α). PPO baseline reproduced under the same protocol (0.81 @32.8M to
-0.66). Next: a 0.8–0.9 fixed-α confirmation with ≥3 seeds + early-stop, to pin whether the near-tie becomes a
-clean peak-match. Prior: Parts 24 (0.24 cap), 25 (distillation fails), 26 (anneal backfires).
+α=1.0 confirmed across 2 seeds (0.781, 0.797 → 0.79 ± 0.01); α=0.85 across 3 seeds (0.69 ± 0.01); the
+0.5→0.7→1.0 authority ladder is the robust trend. **0.79 vs PPO 0.81 is a near-tie, not a strict beat, and no
+seed reached the 0.82 bar.** One α=1.0 seed declined after its peak (0.69 final) while the other stayed stable
+(0.80) — late-training stability is seed-dependent; report peak *and* final. Real success read from
+`exp/tdmpc_glass/hl_subgoal_{b,c}/curve_*.json` (n=256, 1000-step, training-matched α). PPO baseline reproduced
+under the same protocol (0.81, crosses 0.66 @32.8M). Prior: Parts 24 (0.24 cap), 25 (distillation fails), 26
+(anneal backfires).
