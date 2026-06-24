@@ -588,3 +588,16 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
 - **Reprioritized fleet:** InFOM queue-refill cron PAUSED (#PAUSED-FOR-ORIENT) on b3060 so freed GPUs go to
   the orientation run first; 4 running InFOM jobs untouched (still producing repro numbers). Heartbeat
   re-enables InFOM cron once orientation's 3 jobs start.
+
+## 2026-06-24 (cont.2) — Disk incident fixed + Part 31 (generalization = LOSS)
+- **Disk:** b3060b filled by whyhopper --save_full_state (3.96G latest_full.pkl). Deleted, killed job, installed
+  disk_guard cron (*/5, always rm *full*.pkl, prune <5G). Orientation jobs had crashed → relaunched clean.
+  Rule: NEVER --save_full_state. /tmp on b3060b is mahjong — untouched.
+- **Part 31 (live): abstraction does NOT generalize.** On PandaPickCubeOrientation (random target yaw):
+  PPO peak 0.805/0.836 vs abstraction residual 0.320/0.344 — a ~0.5 LOSS. Cause: fixed top-down/fixed-yaw
+  grasp is the wrong prior for random yaw; residual can't fix a wrong primitive (reached~1.0, box_target~0.83,
+  misses orient bar). Nuance: residual leads early (prior=head-start) but caps ceiling. Reusability (#39):
+  abstraction reusable only within its prior's regime. Ties orientation thread (Part 30 kinematic tail vs
+  Part 31 wrong-prior whole-task). Open follow-up: orientation-AWARE controller (feed target yaw).
+- **Fleet:** b3060b 4 GPUs → whyhopper TD-MPC2 (PandaPickCube + HopperHop, 2 seeds, NO full_state) for #40
+  k-step leg. b3060 InFOM cron RE-ENABLED (orientation done on b3060b). ssh3 still down.
