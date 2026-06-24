@@ -601,3 +601,11 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   Part 31 wrong-prior whole-task). Open follow-up: orientation-AWARE controller (feed target yaw).
 - **Fleet:** b3060b 4 GPUs → whyhopper TD-MPC2 (PandaPickCube + HopperHop, 2 seeds, NO full_state) for #40
   k-step leg. b3060 InFOM cron RE-ENABLED (orientation done on b3060b). ssh3 still down.
+
+## 2026-06-24 (cont.3) — InFOM cube reproduction lands; Part 31 live (200)
+- **InFOM reproduction (cube-single-play-task1), original mission #34:** 3 seeds — s0 best 0.96 (latest 0.92),
+  s2 best 0.94, s1 best 0.16 (unstable outlier seed). 2/3 seeds cleanly reproduce ~0.95, matching/exceeding
+  the 0.86 reference; flag the 0.16 seed honestly (training instability). Antmaze cells still pre-eval; 6 queue
+  cells remain. Defer the InFOM repro NOTE until antmaze lands (need the cross-task table).
+- whyhopper TD-MPC2 (b3060b, 4 jobs Panda+Hopper 2 seeds) still training; k-step model-error leg next.
+- Disk: b3060b 9.4G free (whyhopper ckpts), disk_guard OK; b3060 29G. All 8 GPUs busy.
