@@ -1,5 +1,20 @@
 # CHANGELOG — dev & training log
 
+## 2026-06-24 (cont.5) — Part 34 LAUNCHED: fuller-parametrization ori-aware residual (does it close to PPO 0.82?)
+- **Dev (b3060b, RTX 3060 x4):** built env-gated v2 levers on top of Part 33. New switches default to P33:
+  `RES_ROT_FROM` in {APPROACH,DESCEND,GRASP} (apply R_target rotation EARLIER so gripper pre-aligns) in
+  `param_controller_oriaware_v2.py`; `RES_ROTERR_OBS=1` appends so(3) cube->target rot-error (3) to obs in
+  `residual_env_oriaware_v2.py` (imports the _v2 controller). Plus _v2 patch/run/eval/launch scripts. Smoke
+  test passed (obs 84, step finite). Original Part 33 files untouched (reproducibility preserved).
+- **Train (4 variants, 1 seed each, 1 GPU each, NT=35M nominal, eval n=256 box_target>=0.9, NO --save_full_state):**
+  GPU0 earlyD (ROT_FROM=DESCEND, obs81); GPU1 roterr (ROTERR_OBS, obs84, ROT_FROM=GRASP); GPU2 combo
+  (DESCEND+roterr, obs84); GPU3 cap (DESCEND+roterr + policy/value 128x4). All alpha=1.0. Launch script
+  trains then evals -> v2_eval_<tag>_s1.json. Verdict rule: any peak>=0.78 -> parametrization closes to PPO
+  0.82; all ~0.67-0.72 -> ~0.7 is the analytic-prior+residual class ceiling.
+- **Verdicts:** pending run completion (~25-30 min). Baselines (verified from JSON): PPO 0.805/0.836;
+  P33 ori-aware 0.621/0.695/0.688 (~0.67); fixed-prior 0.33.
+- **Shared-box safety:** mahjong (tmux moyuHarv, /root/mahjong) untouched; only own v2 pids; disk 9.8G free.
+
 ## 2026-06-24 (cont.4) — Part 32: why TD-MPC2 wins HopperHop, fails PandaPickCube (#40 mechanism-check)
 - **Three-leg mechanism-check, all numbers read from files (no fabrication):**
   - EXEC: HopperHop tdmpc2 366.8 vs PPO 33.5 (dmc_ppo_vs_tdmpc2/RESULTS.json); planner helps Hopper
@@ -640,3 +655,13 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   bonus: ori-aware barely drops peak->final (~0.04) vs fixed PickCube residual collapse → right prior also
   stabilizes. Controller-alone 0.023 (residual does heavy lifting once prior points right).
 - InFOM cube: s0/s2=0.96/0.98 best, s1=0.16 outlier; antmaze still pre-eval. b3060b 4 GPUs now free.
+
+## 2026-06-24 (cont.5) — Part 34: ~0.7 is the analytic-prior+residual ceiling
+- **Part 34 (ori-aware v2):** fuller parametrization does NOT close the gap to PPO. Variants roterr 0.684,
+  earlyD 0.668, cap 0.637, combo 0.629 (combo HURTS — stacking levers over-complicates the residual). ~0.68 =
+  ceiling of analytic-controller+Markov-residual class on PandaPickCubeOrientation, ~0.15 below PPO 0.82.
+  Closes the orientation-aware thread: parametrize=recovers ~70% (Part 33), fuller=no further (Part 34); last
+  gap needs LEARNING the skill not correcting one. Orientation-aware arc: ties(PickCube)→loses(Orientation
+  fixed 0.33)→recovers(parametrized 0.67)→plateaus(0.68 ceiling).
+- b3060b GPU experiments for this direction EXHAUSTED → idle OK (idle>filler). b3060 InFOM antmaze still
+  pre-eval (#34 gated). Remaining: #34 (antmaze), #39 synthesis (CPU).
