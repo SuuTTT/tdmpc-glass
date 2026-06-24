@@ -630,3 +630,13 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   cells remain. Defer the InFOM repro NOTE until antmaze lands (need the cross-task table).
 - whyhopper TD-MPC2 (b3060b, 4 jobs Panda+Hopper 2 seeds) still training; k-step model-error leg next.
 - Disk: b3060b 9.4G free (whyhopper ckpts), disk_guard OK; b3060 29G. All 8 GPUs busy.
+
+## 2026-06-24 (cont.4) — Part 33: orientation-aware (parametrized) prior recovers most of the gap
+- **#41 done, Part 33 live.** Parametrizing the abstraction's prior by target yaw (R_des=R_target@R_home from
+  grasp + target quat in obs 77->81, alpha=1.0): ori-aware residual peak 0.621/0.695/0.688 (mean ~0.67), final
+  ~0.64 vs Part 31 fixed-prior 0.33 and PPO 0.82. DOUBLES fixed-prior, recovers ~70% of gap to PPO. Verdict:
+  prior-FIXEDNESS was the dominant limiter; parametrized priors = route to reusable abstractions — but
+  honest-positive (still trails PPO ~0.15; analytic-prior+residual class ceiling < end-to-end RL). Stability
+  bonus: ori-aware barely drops peak->final (~0.04) vs fixed PickCube residual collapse → right prior also
+  stabilizes. Controller-alone 0.023 (residual does heavy lifting once prior points right).
+- InFOM cube: s0/s2=0.96/0.98 best, s1=0.16 outlier; antmaze still pre-eval. b3060b 4 GPUs now free.
