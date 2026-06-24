@@ -1,5 +1,26 @@
 # CHANGELOG — dev & training log
 
+## 2026-06-24 (cont.4) — Part 32: why TD-MPC2 wins HopperHop, fails PandaPickCube (#40 mechanism-check)
+- **Three-leg mechanism-check, all numbers read from files (no fabrication):**
+  - EXEC: HopperHop tdmpc2 366.8 vs PPO 33.5 (dmc_ppo_vs_tdmpc2/RESULTS.json); planner helps Hopper
+    (mppi≥pi, ~+8% converged), HURTS Panda (1.5M pi 2519.7 / mppi 700.9, vanilla_s1 phase.csv) — over a
+    reward-hack hover.
+  - DISCOVERY (decisive): TD-MPC2 real success 0.0 on PandaPickCube across vanilla(3 seeds)+6 reward-eng
+    variants (reward_eng/RESULTS.json) vs PPO 0.83 plateau (PPO_100_RESULT.json/md, peak 0.832@108M); SAC 0.0.
+    Primary failure = LEARNING-time exploration (never discovers grasp→place; converges to hover).
+  - MODEL-QUALITY (NEW k-step leg, GPU run on b3060b GPU2+GPU0): added env-gated WHYHOPPER_KSTEP=1 path to
+    run_benchmark.py; iterated k-step (k=4) latent error of trained 1-step dyn, 12 pi-rollouts, phase-binned
+    (foot-touch for Hopper; gripper-box proximity for Panda). Result: HopperHop contact/free err ratio 0.70
+    (contact is EASIER, smooth model); PandaPickCube ratio 1.13 (~+13% spike at contact/grasp, +0.10 corr).
+    => H1 contact-model-error is a REAL but SECONDARY contributing factor; a 1.13× bump can't explain 0.83→0.0.
+    JSONs: tdmpc_whyhopper/kstep_{HopperHop,PandaPickCube}_s1.json on b3060b.
+- **Verdict:** model-based planning helps at EXECUTION only when LEARNING discovered the real objective. Dense
+  reward + smooth dynamics (Hopper) → learning succeeds → planning helps. Sparse/long-horizon (Panda) →
+  learning reward-hacks a hover → planning has nothing good to plan over and even hurts; contact-model bump
+  mildly compounds. Framed as "exploration in learning vs execution, in what circumstance."
+- **Part 32 published.** SHARED-BOX SAFETY honored: mahjong (tmux moyuHarv, /tmp, /root/mahjong) untouched;
+  killed only my own pids; b3060b 9.2G free (no --save_full_state). All 4 GPUs idle after.
+
 ## 2026-06-22 — Part 18: "Does TD-MPC2 actually beat PPO?" two-axis DMC comparison
 Dev: built EC2 analysis pipeline exp/tdmpc_glass/dmc_ppo_vs_tdmpc2/build_results_ec2.py
 (d2 5-seed TD-MPC2 sample-eff@500k for Cheetah/Hopper; fresh 1-seed for the 3 hard tasks;
