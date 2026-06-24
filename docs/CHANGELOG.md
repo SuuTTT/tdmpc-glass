@@ -665,3 +665,12 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   fixed 0.33)→recovers(parametrized 0.67)→plateaus(0.68 ceiling).
 - b3060b GPU experiments for this direction EXHAUSTED → idle OK (idle>filler). b3060 InFOM antmaze still
   pre-eval (#34 gated). Remaining: #34 (antmaze), #39 synthesis (CPU).
+
+## 2026-06-24 (cont.6) — Part 35: #39 capstone (what abstraction is good for)
+- **Part 35 (#39 done):** synthesis along interpretable/reusable/stable. Success-rate is the wrong scoreboard
+  (abstraction ties PPO on PickCube, physical ceiling, trails on Orientation). REUSABILITY: conditional on
+  PARAMETRIZED prior (fixed 0.33 < param 0.67). STABILITY: matched prior → small stable correction (ori-aware
+  peak=final 0.68) vs fixed PickCube fragile collapse from 0.79; InFOM 0.16-outlier = seed-variance face.
+  INTERPRETABILITY: legible phase machine + phase-attributable failures + residual-magnitude diagnostic (used
+  Parts 28-30) vs PPO black box. Honest takeaway: abstraction doesn't beat RL on asymptotic success; value =
+  sample-eff + stability + reusability-when-parametrized + interpretability.
