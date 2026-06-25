@@ -680,3 +680,11 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   antmaze-medium best 0.18 (s6 complete) / 0.20 / 0.08, far below CRL 0.49/CompPlan 0.85 = DOES NOT reproduce,
   cause = ft_dataset_fallback (-ft- datasets 404 on OGBench server; hurts antmaze). Reproduced base NOT CompPlan
   planner (multi-day, deferred). #34 done → ALL TODOS DONE.
+
+## 2026-06-25 (cont) — #22: Part 36 CORRECTION (antmaze is OUT of InFOM's benchmark)
+- Dataset investigation (antmaze_dataset_FINDINGS.md): InFOM -ft- datasets are GENERATED locally for 8
+  MANIPULATION envs only (cube/scene/puzzle); antmaze absent from InFOM repo + paper (arXiv 2506.08902 reports
+  NO antmaze). The 0.49/0.85 are CompPlan/CRL figures (different method), NOT InFOM targets. So our antmaze
+  ~0.18 is an OUT-OF-BENCHMARK extension on a fallback dataset, not a reproduction failure. No "proper" antmaze
+  dataset exists to fetch (earlier 404/data-availability framing was WRONG). Part 36 revised: cube REPRODUCES
+  (~0.97, InFOM's actual benchmark); antmaze dropped/relabeled OOD. #22 done.
