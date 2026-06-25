@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 47: The Analytic Prior BACKFIRES on AcrobotSwingup"
 date: 2026-06-25
-description: "Part 45 showed an analytic energy-shaping prior + in-loop residual ties-to-beats TD-MPC2 on PendulumSwingup. The obvious next test is AcrobotSwingup — the task with the LARGEST planning advantage (+39%, Part 38), the hardest underactuated swing-up. We built the Spong collocated-PFL energy-shaping controller (verified: it pumps the two-link chain to upright energy in ~80% of episodes given enough time, but the +-2 N*m elbow torque CANNOT fully swing up + settle in the standard 1000-step episode, so controller-alone return is only 16.7). Then the same in-loop residual recipe (executed = clip(a_ctrl + residual), reward unchanged, phase exposed, zero-residual reproduces controller-alone to 0.0000). The result inverts the pendulum story: the residual-on-prior (peak ~68, 3 seeds, n=256) LEARNS SLOWER than vanilla PPO (~212) and plateaus far below it; both are crushed by TD-MPC2 mppi (420). The weak analytic prior is not a head start here — it is an anchor PPO must fight (residual loses to plain PPO by ~3x). Honest negative: the abstraction does NOT generalize to the harder swing-up; on Acrobot a bad prior hurts."
+description: "Part 45 showed an analytic energy-shaping prior + in-loop residual ties-to-beats TD-MPC2 on PendulumSwingup. The obvious next test is AcrobotSwingup — the task with the LARGEST planning advantage (+39%, Part 38), the hardest underactuated swing-up. We built the Spong collocated-PFL energy-shaping controller (verified: it pumps the two-link chain to upright energy in ~80% of episodes given enough time, but the +-2 N*m elbow torque CANNOT fully swing up + settle in the standard 1000-step episode, so controller-alone return is only 16.7). Then the same in-loop residual recipe (executed = clip(a_ctrl + residual), reward unchanged, phase exposed, zero-residual reproduces controller-alone to 0.0000). The result inverts the pendulum story: the residual-on-prior (peak ~68, 3 seeds, n=256) LEARNS SLOWER than vanilla PPO (~212) and plateaus far below it; both are crushed by TD-MPC2 mppi (420). The weak analytic prior is not a head start here — it is an anchor PPO must fight (residual loses to plain PPO by ~3x). An α-authority sweep (α=0.25/0.5/1.0, 3 seeds each) confirms it: partial authority is the WORST (~20), full authority ~77, only removing the prior (vanilla PPO) recovers ~226 — there is no α at which wiring this prior into the loop helps. Honest negative: the abstraction does NOT generalize to the harder swing-up; on Acrobot a bad prior hurts."
 ---
 
 > Part 45: on PendulumSwingup the analytic energy-shaping prior + learned residual ties-to-beats TD-MPC2 on
@@ -83,6 +83,26 @@ prior (the executed action is re-clipped to ±1), yet PPO's exploration is ancho
 behavior and learns the good swing-up far slower than it does with no prior at all. On pendulum the analytic
 prior alone already scored ~823 and the residual polished it to ~835; here the prior alone scores **16.7** and
 the residual cannot dig out of it.
+
+## Does dialing DOWN the prior's authority help? (α sweep)
+
+If the prior is an anchor, lowering its in-loop authority α (executed = `clip(a_ctrl + α·residual)`) toward 0
+should recover vanilla PPO's behavior. We ran α ∈ {0.25, 0.5, 1.0}, 3 seeds each, identical budget
+(`SWEEP_VERDICT.json`, every number from disk):
+
+| α (prior authority) | residual peak | residual final |
+|---|---|---|
+| 0.25 | 19.2 ± 1.3 | 16.3 ± 1.1 |
+| 0.5 | 23.3 ± 2.2 | 20.8 ± 4.3 |
+| 1.0 | 76.7 ± 14.9 | 61.2 ± 4.5 |
+| 0 (vanilla PPO) | **226.0** | **220.9** |
+
+The result is **non-monotone and damning for the recipe**: the partial-authority residuals (α=0.25, 0.5) are
+the *worst* of all — they receive the phase-augmented obs and a fractional analytic pump that biases every
+rollout, but commit to neither the (weak) pump nor a freely-learned policy, and get trapped lowest (~20).
+Full authority (α=1.0) at least executes the pump consistently and lands higher (~77). Removing the prior
+entirely (α=0, vanilla PPO) is by far the best of the family (~226) — yet still ~2× below TD-MPC2's 420.
+**There is no α at which wiring this analytic prior into the loop helps; the only good move is not to play it.**
 
 ## Why pendulum generalized and Acrobot did not
 
