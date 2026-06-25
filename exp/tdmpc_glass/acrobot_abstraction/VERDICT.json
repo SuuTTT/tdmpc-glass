@@ -1,0 +1,464 @@
+{
+  "task": "AcrobotSwingup",
+  "protocol": "A (n>=128, 1000-step, true reward)",
+  "controller_alone": {
+    "rets": [
+      14.150547981262207,
+      17.185012817382812,
+      18.63311195373535
+    ],
+    "ups": [
+      0.008855469524860382,
+      0.012015625834465027,
+      0.01333593763411045
+    ],
+    "mins": [
+      0.06145569309592247,
+      0.049858834594488144,
+      0.041071511805057526
+    ],
+    "mean": 16.656224250793457,
+    "up_frac": 0.011402344331145287,
+    "swingup_fail": 751,
+    "total": 768,
+    "n_per_seed": 256
+  },
+  "tdmpc2_part38": {
+    "source": "/root/tdmpc_glass/helios-rl/exp/tdmpc_glass/AcrobotSwingup_p38_AcrobotSwingup/seed_1_phase.csv",
+    "n_seeds": 1,
+    "max_step": 1000192,
+    "pi_final": 301.3,
+    "pi_peak": 364.0,
+    "mppi_final": 419.7,
+    "mppi_peak": 419.7,
+    "mppi_steps_to_300": 450048,
+    "mppi_steps_to_400": 500224,
+    "pi_steps_to_300": 450048
+  },
+  "residual_alpha1": {
+    "runs": [
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s1/eval_curve.json",
+        "peak": 65.7,
+        "final": 55.1,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 8.5
+          },
+          {
+            "true_step": 9830400,
+            "return": 13.3
+          },
+          {
+            "true_step": 19660800,
+            "return": 16.6
+          },
+          {
+            "true_step": 29491200,
+            "return": 24.3
+          },
+          {
+            "true_step": 39321600,
+            "return": 31.2
+          },
+          {
+            "true_step": 49152000,
+            "return": 29.8
+          },
+          {
+            "true_step": 58982400,
+            "return": 29.8
+          },
+          {
+            "true_step": 68812800,
+            "return": 39.1
+          },
+          {
+            "true_step": 78643200,
+            "return": 36.5
+          },
+          {
+            "true_step": 88473600,
+            "return": 42.0
+          },
+          {
+            "true_step": 98304000,
+            "return": 56.7
+          },
+          {
+            "true_step": 108134400,
+            "return": 39.7
+          },
+          {
+            "true_step": 117964800,
+            "return": 32.4
+          },
+          {
+            "true_step": 127795200,
+            "return": 53.7
+          },
+          {
+            "true_step": 137625600,
+            "return": 52.9
+          },
+          {
+            "true_step": 147456000,
+            "return": 41.5
+          },
+          {
+            "true_step": 157286400,
+            "return": 36.4
+          },
+          {
+            "true_step": 167116800,
+            "return": 58.7
+          },
+          {
+            "true_step": 176947200,
+            "return": 53.4
+          },
+          {
+            "true_step": 186777600,
+            "return": 54.1
+          },
+          {
+            "true_step": 196608000,
+            "return": 58.9
+          },
+          {
+            "true_step": 206438400,
+            "return": 65.7
+          },
+          {
+            "true_step": 216268800,
+            "return": 54.8
+          },
+          {
+            "true_step": 226099200,
+            "return": 52.3
+          },
+          {
+            "true_step": 235929600,
+            "return": 55.1
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s2/eval_curve.json",
+        "peak": 82.4,
+        "final": 75.2,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 11.8
+          },
+          {
+            "true_step": 9830400,
+            "return": 14.8
+          },
+          {
+            "true_step": 19660800,
+            "return": 22.3
+          },
+          {
+            "true_step": 29491200,
+            "return": 31.6
+          },
+          {
+            "true_step": 39321600,
+            "return": 34.9
+          },
+          {
+            "true_step": 49152000,
+            "return": 34.9
+          },
+          {
+            "true_step": 58982400,
+            "return": 37.5
+          },
+          {
+            "true_step": 68812800,
+            "return": 34.7
+          },
+          {
+            "true_step": 78643200,
+            "return": 44.5
+          },
+          {
+            "true_step": 88473600,
+            "return": 42.6
+          },
+          {
+            "true_step": 98304000,
+            "return": 41.0
+          },
+          {
+            "true_step": 108134400,
+            "return": 52.7
+          },
+          {
+            "true_step": 117964800,
+            "return": 63.0
+          },
+          {
+            "true_step": 127795200,
+            "return": 67.3
+          },
+          {
+            "true_step": 137625600,
+            "return": 60.7
+          },
+          {
+            "true_step": 147456000,
+            "return": 67.6
+          },
+          {
+            "true_step": 157286400,
+            "return": 73.2
+          },
+          {
+            "true_step": 167116800,
+            "return": 68.5
+          },
+          {
+            "true_step": 176947200,
+            "return": 79.8
+          },
+          {
+            "true_step": 186777600,
+            "return": 82.4
+          },
+          {
+            "true_step": 196608000,
+            "return": 75.2
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s3/eval_curve.json",
+        "peak": 63.4,
+        "final": 63.4,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 9.3
+          },
+          {
+            "true_step": 9830400,
+            "return": 11.1
+          },
+          {
+            "true_step": 19660800,
+            "return": 24.1
+          },
+          {
+            "true_step": 29491200,
+            "return": 24.5
+          },
+          {
+            "true_step": 39321600,
+            "return": 24.6
+          },
+          {
+            "true_step": 49152000,
+            "return": 32.3
+          },
+          {
+            "true_step": 58982400,
+            "return": 26.1
+          },
+          {
+            "true_step": 68812800,
+            "return": 29.3
+          },
+          {
+            "true_step": 78643200,
+            "return": 37.4
+          },
+          {
+            "true_step": 88473600,
+            "return": 36.5
+          },
+          {
+            "true_step": 98304000,
+            "return": 41.6
+          },
+          {
+            "true_step": 108134400,
+            "return": 45.4
+          },
+          {
+            "true_step": 117964800,
+            "return": 53.5
+          },
+          {
+            "true_step": 127795200,
+            "return": 46.1
+          },
+          {
+            "true_step": 137625600,
+            "return": 60.1
+          },
+          {
+            "true_step": 147456000,
+            "return": 50.2
+          },
+          {
+            "true_step": 157286400,
+            "return": 56.4
+          },
+          {
+            "true_step": 167116800,
+            "return": 54.3
+          },
+          {
+            "true_step": 176947200,
+            "return": 58.4
+          },
+          {
+            "true_step": 186777600,
+            "return": 63.4
+          }
+        ]
+      }
+    ],
+    "peak": {
+      "mean": 70.5,
+      "std": 8.5,
+      "vals": [
+        65.7,
+        82.4,
+        63.4
+      ],
+      "n": 3
+    },
+    "final": {
+      "mean": 64.6,
+      "std": 8.2,
+      "vals": [
+        55.1,
+        75.2,
+        63.4
+      ],
+      "n": 3
+    },
+    "steps_to_300": null,
+    "steps_to_400": null
+  },
+  "ppo_vanilla": {
+    "runs": [
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/ppo_vanilla_s1/eval_curve.json",
+        "peak": 216.2,
+        "final": 186.9,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 5.0
+          },
+          {
+            "true_step": 9830400,
+            "return": 8.8
+          },
+          {
+            "true_step": 19660800,
+            "return": 18.3
+          },
+          {
+            "true_step": 29491200,
+            "return": 48.3
+          },
+          {
+            "true_step": 39321600,
+            "return": 69.2
+          },
+          {
+            "true_step": 49152000,
+            "return": 102.0
+          },
+          {
+            "true_step": 58982400,
+            "return": 108.3
+          },
+          {
+            "true_step": 68812800,
+            "return": 117.9
+          },
+          {
+            "true_step": 78643200,
+            "return": 133.5
+          },
+          {
+            "true_step": 88473600,
+            "return": 133.7
+          },
+          {
+            "true_step": 98304000,
+            "return": 169.9
+          },
+          {
+            "true_step": 108134400,
+            "return": 166.9
+          },
+          {
+            "true_step": 117964800,
+            "return": 167.2
+          },
+          {
+            "true_step": 127795200,
+            "return": 193.9
+          },
+          {
+            "true_step": 137625600,
+            "return": 176.4
+          },
+          {
+            "true_step": 147456000,
+            "return": 176.0
+          },
+          {
+            "true_step": 157286400,
+            "return": 194.5
+          },
+          {
+            "true_step": 167116800,
+            "return": 216.2
+          },
+          {
+            "true_step": 176947200,
+            "return": 200.5
+          },
+          {
+            "true_step": 186777600,
+            "return": 186.9
+          }
+        ]
+      }
+    ],
+    "peak": {
+      "mean": 216.2,
+      "std": 0.0,
+      "vals": [
+        216.2
+      ],
+      "n": 1
+    },
+    "final": {
+      "mean": 186.9,
+      "std": 0.0,
+      "vals": [
+        186.9
+      ],
+      "n": 1
+    }
+  }
+}
