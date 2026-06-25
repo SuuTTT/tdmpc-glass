@@ -1,5 +1,29 @@
 # CHANGELOG — dev & training log
 
+## 2026-06-25 — Part 37 DONE: workspace-constrained PandaPickCube hits 1.0 (confirms far-reach orientation IS the ceiling)
+- **Dev (b3060b, RTX 3060 x4; used ONLY GPU0+GPU1):** added env-var-gated workspace constraint to mujoco
+  `pick.py` reset (`pick.py.bak` saved; default OFF = bit-identical to original). `PICKCUBE_MAX_REACH=R`
+  clamps the **3D distance** of box AND target from the robot base via radial XY projection (keeps Z) —
+  does NOT touch the success metric. Verified on env: default box-3D max 0.92m / tgt 1.01m; constraint caps
+  both exactly at R. Measured spawn dist: keyframe `home` puts box base at [0.7,0,0.03] so box x in [0.5,0.9];
+  **17.6% of box spawns >0.84m** = the ~17% failure tail (matches Part 30 reach gate). Smoke test passed.
+- **Train (2 arms, 1 seed, 35M steps, NO --save_full_state):** GPU0 constrained (PICKCUBE_MAX_REACH=0.84),
+  GPU1 control (full range). Both PPO via run_ppo.py --impl jax. Reward diverged early (constrained 1355 vs
+  control 736 @13M) — easier distribution learns faster.
+- **Eval (eval_ckpts.py, n=256, steps=1000, seed=1000, success=max box_target>=0.9; numbers READ FROM JSON):**
+  - constrained-train / constrained-eval: **peak 1.000 / final 1.000** (reached 1.0) @32.8-36M
+  - constrained-train / full-eval (tradeoff): peak/final **0.758** (reached 0.96) — never learned far configs
+  - control full/full @35M (matched budget): **0.766** (still RISING, mean_bt 0.92) — undertrained vs
+    established long-PPO **0.832** @108M (PPO_100_RESULT.json)
+- **VERDICT (CONFIRMED, >=0.95):** removing reach>0.84m configs lifts PandaPickCube from ~0.77-0.83 to **1.0**
+  -> far-reach orientation is exactly the ceiling (converse of Part 30's IK-infeasibility proof). Honest
+  caveat: solves an EASIER task (deletes hard configs), not full PandaPickCube; constrained policy on full
+  range = 0.758. Root-cause confirmation + practical lever (bounded workspace -> ~1.0).
+- **Bug fixed mid-run:** first eval script used `${mr:+VAR=val}` as a bare word (bash "command not found");
+  rewrote with `env VAR=val` prefix; reran clean. EVAL1 with the bug had run un-constrained — discarded+rerun.
+- **Safety:** mahjong untouched; only own p37 pids; disk 29G free; videos cleaned; GPUs 2/3 (other agents)
+  never touched. Data: `exp/tdmpc_glass/baselines_ppo_sac/part37/{PART37_RESULTS,eval_*}.json`.
+
 ## 2026-06-24 (cont.5) — Part 34 LAUNCHED: fuller-parametrization ori-aware residual (does it close to PPO 0.82?)
 - **Dev (b3060b, RTX 3060 x4):** built env-gated v2 levers on top of Part 33. New switches default to P33:
   `RES_ROT_FROM` in {APPROACH,DESCEND,GRASP} (apply R_target rotation EARLIER so gripper pre-aligns) in
