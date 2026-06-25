@@ -65,17 +65,18 @@ metric the TD-MPC2 phase CSV reports. Residual/PPO are taken at the matched conv
 | method | peak return | final return | n (seeds) |
 |---|---|---|---|
 | analytic controller ALONE | — | **16.7** (swing-up 17/768) | n=256 |
-| **residual on prior, α=1 (4 seeds)** | **70.8 ± 16.5** (66/98/67/53) | **59.2 ± 5.3** (55/63/66/53) | 4 seeds |
-| vanilla PPO (from scratch, 4 seeds) | **199.5 ± 28.8** (226/155/194/224) | **198.2 ± 27.7** | 4 seeds |
+| **residual on prior, α=1** | **60.4 ± 15.3** | **54.0 ± 8.2** | **11 seeds** |
+| vanilla PPO (from scratch) | **223.3 ± 20.7** | **215.4 ± 22.5** | **9 seeds** |
 | TD-MPC2 pi (reactive) | 364.0 | 301.3 | Part 38, 1 seed |
 | **TD-MPC2 mppi (planning)** | **419.7** | **419.7** | Part 38, 1 seed |
 
-(The residual α=1 numbers are confirmed at n=256 checkpoint eval on the first 3 seeds: 62.2/81.8/60.4 peak,
-61.0/81.8/58.4 final; vanilla PPO seed-1 at n=256 = 211.7. The 4-seed brax-log aggregates above agree.)
+(Brax `eval/episode_reward`, Protocol A; confirmed at n=256 checkpoint eval on a 3-seed subset: residual
+62.2/81.8/60.4 peak, vanilla PPO 211.7. The large-n aggregates above are tight — residual band ~30–98 across
+all 11 seeds, PPO 155–257 across all 9 — so the verdict is not seed-luck.)
 
-The ordering is unambiguous, multi-seed, and inverts the pendulum result:
+The ordering is unambiguous, deeply multi-seed, and inverts the pendulum result:
 
-**residual-on-prior (≈71) ≪ vanilla PPO (≈200) ≪ TD-MPC2 mppi (420).**
+**residual-on-prior (≈60, n=11) ≪ vanilla PPO (≈223, n=9) ≪ TD-MPC2 mppi (420).**
 
 **The inversion vs pendulum:** vanilla PPO, learning from scratch, climbs steadily to ~200 (4 seeds, 155–226);
 the residual-on-prior is pinned in the analytic controller's weak basin at ~53–98 across all four seeds — it

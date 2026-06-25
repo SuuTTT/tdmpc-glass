@@ -18,9 +18,11 @@
   TD-MPC2). On Acrobot weak prior anchors PPO below scratch. Dual of Part 38 planning rule.
 - **Post:** Part 47 live, suuttt.github.io 200 OK, commits 6abf0cf/489f7b9/92f71d3/88a7e7f(+this). Used Part 47
   to avoid sibling collision (latest committed was 44; 45=pendulum).
-- **GPU-busy upkeep:** ran 7 successive batches on b3060b 4xGPU to keep all 4 busy (orig 4 -> a-sweep 6 ->
-  PPO n4 -> +3 res seeds -> ep3k n2 -> ep3k n4 -> standard res/ppo refill). Residual a=1 now 9 seeds (all
-  ~30-98), PPO 1000-step 7 seeds (155-257). Mahjong moyuHarv untouched; only own PIDs; no --save_full_state.
+- **GPU-busy upkeep:** ran 9 successive batches on b3060b 4xGPU to keep all 4 busy across the session (orig 4
+  -> a-sweep 6 -> PPO n4 -> +3 res seeds -> ep3k n2 -> ep3k n4 -> 3x standard res/ppo refill). FINAL large-n
+  verdict (converged, from VERDICT.json): residual a=1 **n=11 peak 60.4+-15.3 final 54.0+-8.2** (band 30-98)
+  << vanilla PPO **n=9 peak 223.3+-20.7 final 215.4+-22.5** (155-257) << TD-MPC2 mppi 420. Post main table +
+  VERDICT.json updated to full-n. Mahjong moyuHarv untouched; only own PIDs; no --save_full_state; disk >=25G.
 
 ## 2026-06-25 — Part 37 DONE: workspace-constrained PandaPickCube hits 1.0 (confirms far-reach orientation IS the ceiling)
 - **Dev (b3060b, RTX 3060 x4; used ONLY GPU0+GPU1):** added env-var-gated workspace constraint to mujoco
