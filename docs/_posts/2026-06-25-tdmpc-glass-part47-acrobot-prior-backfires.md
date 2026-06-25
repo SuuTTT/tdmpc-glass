@@ -109,15 +109,15 @@ entirely (α=0, vanilla PPO) is by far the best of the family (~226) — yet sti
 
 A natural objection: the controller-alone fails only because ±2 N·m can't finish the swing-up in 1000 steps;
 give it a longer horizon — where the analytic pump *can* reach the top (~80% at 3000 steps) — and the prior
-should finally help. We trained both at **episode_length = 3000** (2 seeds each, brax-log peak; return scale is
+should finally help. We trained both at **episode_length = 3000** (4 seeds each, brax-log peak; return scale is
 ~3× the 1000-step task):
 
-| episode_length = 3000 | peak return | seeds |
+| episode_length = 3000 | peak return | n |
 |---|---|---|
-| residual on prior, α=1 | **289.9 ± 9.2** | 299 / 281 |
-| vanilla PPO (from scratch) | **937.8 ± 126.5** | 811 / 1064 |
+| residual on prior, α=1 | **344.0 ± 5.4** | 4 seeds |
+| vanilla PPO (from scratch) | **1077.9 ± 47.5** | 4 seeds |
 
-The gap **widens** to ~3.2× — vanilla PPO crushes the residual even harder when the horizon removes the
+The gap **widens** to ~3.1× — vanilla PPO crushes the residual even harder when the horizon removes the
 torque-budget excuse. So the prior-backfires effect is **not** a 1000-step artifact: it is a *behavioral
 anchor*. The phase-augmented residual is biased toward the analytic pumping policy and PPO cannot cheaply
 unlearn it, regardless of whether the horizon allows the pump to succeed. More time to swing up does not rescue

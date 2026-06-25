@@ -1,0 +1,46 @@
+{
+  "source_log": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_ep3k_s4.log",
+  "metric": "brax eval/episode_reward (Protocol A n=128, 1000-step)",
+  "curve": [
+    {
+      "step": 0,
+      "return": 14.494
+    },
+    {
+      "step": 19660800,
+      "return": 127.312
+    },
+    {
+      "step": 39321600,
+      "return": 209.631
+    },
+    {
+      "step": 58982400,
+      "return": 240.611
+    },
+    {
+      "step": 78643200,
+      "return": 271.631
+    },
+    {
+      "step": 98304000,
+      "return": 287.5
+    },
+    {
+      "step": 117964800,
+      "return": 316.493
+    },
+    {
+      "step": 137625600,
+      "return": 327.502
+    },
+    {
+      "step": 157286400,
+      "return": 339.772
+    },
+    {
+      "step": 176947200,
+      "return": 334.762
+    }
+  ]
+}

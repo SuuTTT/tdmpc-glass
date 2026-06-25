@@ -12,12 +12,15 @@
   70.8+-16.5 (4 seeds; 7 total all ~30-98) << vanilla PPO 199.5+-28.8 (4 seeds; 5 total 155-257) << TD-MPC2
   mppi 419.7 / pi 301.3 (Part 38 1-seed phase csv, cited). a-authority sweep: a=0.25~19, a=0.5~23, a=1~71,
   a=0(PPO)~226 — partial authority WORST, no a helps. eplen=3000 test (where prior CAN finish swing-up):
-  residual 289.9+-9.2 vs PPO 937.8+-126.5 — gap WIDENS to ~3.2x => prior is a behavioral ANCHOR, not a
-  torque-wall artifact.
+  residual 344.0+-5.4 vs PPO 1077.9+-47.5 (n=4 each) — gap WIDENS to ~3.1x => prior is a behavioral ANCHOR,
+  not a torque-wall artifact.
 - **Mechanism:** lever is prior QUALITY not task family. Inverts pendulum (prior alone 823 -> residual ties
   TD-MPC2). On Acrobot weak prior anchors PPO below scratch. Dual of Part 38 planning rule.
-- **Post:** Part 47 live, suuttt.github.io 200 OK, commits 6abf0cf/489f7b9/92f71d3(+this). Used Part 47 to
-  avoid sibling collision (latest committed was 44; 45=pendulum). GPUs kept busy 5 successive batches.
+- **Post:** Part 47 live, suuttt.github.io 200 OK, commits 6abf0cf/489f7b9/92f71d3/88a7e7f(+this). Used Part 47
+  to avoid sibling collision (latest committed was 44; 45=pendulum).
+- **GPU-busy upkeep:** ran 7 successive batches on b3060b 4xGPU to keep all 4 busy (orig 4 -> a-sweep 6 ->
+  PPO n4 -> +3 res seeds -> ep3k n2 -> ep3k n4 -> standard res/ppo refill). Residual a=1 now 9 seeds (all
+  ~30-98), PPO 1000-step 7 seeds (155-257). Mahjong moyuHarv untouched; only own PIDs; no --save_full_state.
 
 ## 2026-06-25 — Part 37 DONE: workspace-constrained PandaPickCube hits 1.0 (confirms far-reach orientation IS the ceiling)
 - **Dev (b3060b, RTX 3060 x4; used ONLY GPU0+GPU1):** added env-var-gated workspace constraint to mujoco
