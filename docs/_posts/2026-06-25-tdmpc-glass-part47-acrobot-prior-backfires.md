@@ -62,22 +62,23 @@ All numbers below are read from disk (`VERDICT.json` + per-run `eval_curve.json`
 metric the TD-MPC2 phase CSV reports. Residual/PPO are taken at the matched converged region (all runs
 ≥ 196M env-steps; the runs were left training and continue past this snapshot).
 
-| method | peak return | final return | n |
+| method | peak return | final return | n (seeds) |
 |---|---|---|---|
 | analytic controller ALONE | — | **16.7** (swing-up 17/768) | n=256 |
-| **residual on prior, α=1 (3 seeds)** | **68.1** (62.2 / 81.8 / 60.4) | **66.7** (61.0 / 81.8 / 58.4) | n=256, 3 seeds |
-| vanilla PPO (from scratch) | **211.7** | **210.9** | n=256 |
+| **residual on prior, α=1 (4 seeds)** | **70.8 ± 16.5** (66/98/67/53) | **59.2 ± 5.3** (55/63/66/53) | 4 seeds |
+| vanilla PPO (from scratch, 4 seeds) | **199.5 ± 28.8** (226/155/194/224) | **198.2 ± 27.7** | 4 seeds |
 | TD-MPC2 pi (reactive) | 364.0 | 301.3 | Part 38, 1 seed |
 | **TD-MPC2 mppi (planning)** | **419.7** | **419.7** | Part 38, 1 seed |
 
-(n=128 brax-log curves agree with the n=256 checkpoint eval: residual 65.7/82.4/63.4 peak, vanilla 216.2 peak.)
+(The residual α=1 numbers are confirmed at n=256 checkpoint eval on the first 3 seeds: 62.2/81.8/60.4 peak,
+61.0/81.8/58.4 final; vanilla PPO seed-1 at n=256 = 211.7. The 4-seed brax-log aggregates above agree.)
 
-The ordering is unambiguous and inverts the pendulum result:
+The ordering is unambiguous, multi-seed, and inverts the pendulum result:
 
-**residual-on-prior (≈68) ≪ vanilla PPO (≈212) ≪ TD-MPC2 mppi (420).**
+**residual-on-prior (≈71) ≪ vanilla PPO (≈200) ≪ TD-MPC2 mppi (420).**
 
-**The inversion vs pendulum:** vanilla PPO, learning from scratch, climbs steadily to ~212 and keeps inching up;
-the residual-on-prior is pinned in the analytic controller's weak basin at ~60–80 across all three seeds — it
+**The inversion vs pendulum:** vanilla PPO, learning from scratch, climbs steadily to ~200 (4 seeds, 155–226);
+the residual-on-prior is pinned in the analytic controller's weak basin at ~53–98 across all four seeds — it
 loses to **vanilla PPO by ~3×** and to **TD-MPC2 by ~6×**. With α=1.0 the residual *can* fully override the
 prior (the executed action is re-clipped to ±1), yet PPO's exploration is anchored to the controller's pumping
 behavior and learns the good swing-up far slower than it does with no prior at all. On pendulum the analytic

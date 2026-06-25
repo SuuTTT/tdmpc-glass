@@ -61,7 +61,7 @@ def main():
     cdj = os.path.join(ROOT, "controller_default.json")
     if os.path.exists(cdj): ctrl = json.load(open(cdj))
     tdmpc2 = load_tdmpc2()
-    res = collect("logs/res_a*_s*/eval_curve.json")
+    res = collect("logs/res_a1.0_s*/eval_curve.json")
     ppo = collect("logs/ppo_vanilla_s*/eval_curve.json")
     verdict = {"task": "AcrobotSwingup", "protocol": "A (n>=128, 1000-step, true reward)",
         "controller_alone": ctrl, "tdmpc2_part38": tdmpc2,

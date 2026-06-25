@@ -148,8 +148,8 @@
       },
       {
         "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s2/eval_curve.json",
-        "peak": 82.4,
-        "final": 75.2,
+        "peak": 97.7,
+        "final": 62.7,
         "steps_to_300": null,
         "steps_to_400": null,
         "curve": [
@@ -236,13 +236,29 @@
           {
             "true_step": 196608000,
             "return": 75.2
+          },
+          {
+            "true_step": 206438400,
+            "return": 85.7
+          },
+          {
+            "true_step": 216268800,
+            "return": 97.7
+          },
+          {
+            "true_step": 226099200,
+            "return": 84.0
+          },
+          {
+            "true_step": 235929600,
+            "return": 62.7
           }
         ]
       },
       {
         "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s3/eval_curve.json",
-        "peak": 63.4,
-        "final": 63.4,
+        "peak": 66.6,
+        "final": 65.8,
         "steps_to_300": null,
         "steps_to_400": null,
         "curve": [
@@ -325,29 +341,84 @@
           {
             "true_step": 186777600,
             "return": 63.4
+          },
+          {
+            "true_step": 196608000,
+            "return": 54.2
+          },
+          {
+            "true_step": 206438400,
+            "return": 52.8
+          },
+          {
+            "true_step": 216268800,
+            "return": 66.6
+          },
+          {
+            "true_step": 226099200,
+            "return": 56.9
+          },
+          {
+            "true_step": 235929600,
+            "return": 65.8
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/res_a1.0_s4/eval_curve.json",
+        "peak": 53.0,
+        "final": 53.0,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 5.4
+          },
+          {
+            "true_step": 19660800,
+            "return": 25.7
+          },
+          {
+            "true_step": 39321600,
+            "return": 31.6
+          },
+          {
+            "true_step": 58982400,
+            "return": 36.6
+          },
+          {
+            "true_step": 78643200,
+            "return": 37.6
+          },
+          {
+            "true_step": 98304000,
+            "return": 53.0
           }
         ]
       }
     ],
     "peak": {
-      "mean": 70.5,
-      "std": 8.5,
+      "mean": 70.8,
+      "std": 16.5,
       "vals": [
         65.7,
-        82.4,
-        63.4
+        97.7,
+        66.6,
+        53.0
       ],
-      "n": 3
+      "n": 4
     },
     "final": {
-      "mean": 64.6,
-      "std": 8.2,
+      "mean": 59.2,
+      "std": 5.3,
       "vals": [
         55.1,
-        75.2,
-        63.4
+        62.7,
+        65.8,
+        53.0
       ],
-      "n": 3
+      "n": 4
     },
     "steps_to_300": null,
     "steps_to_400": null
@@ -356,8 +427,8 @@
     "runs": [
       {
         "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/ppo_vanilla_s1/eval_curve.json",
-        "peak": 216.2,
-        "final": 186.9,
+        "peak": 226.0,
+        "final": 220.9,
         "steps_to_300": null,
         "steps_to_400": null,
         "curve": [
@@ -440,25 +511,158 @@
           {
             "true_step": 186777600,
             "return": 186.9
+          },
+          {
+            "true_step": 196608000,
+            "return": 203.7
+          },
+          {
+            "true_step": 206438400,
+            "return": 213.0
+          },
+          {
+            "true_step": 216268800,
+            "return": 221.6
+          },
+          {
+            "true_step": 226099200,
+            "return": 226.0
+          },
+          {
+            "true_step": 235929600,
+            "return": 220.9
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/ppo_vanilla_s2/eval_curve.json",
+        "peak": 154.9,
+        "final": 154.9,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 5.3
+          },
+          {
+            "true_step": 19660800,
+            "return": 28.9
+          },
+          {
+            "true_step": 39321600,
+            "return": 79.8
+          },
+          {
+            "true_step": 58982400,
+            "return": 119.9
+          },
+          {
+            "true_step": 78643200,
+            "return": 131.2
+          },
+          {
+            "true_step": 98304000,
+            "return": 146.1
+          },
+          {
+            "true_step": 117964800,
+            "return": 154.9
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/ppo_vanilla_s3/eval_curve.json",
+        "peak": 193.5,
+        "final": 193.5,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 3.8
+          },
+          {
+            "true_step": 19660800,
+            "return": 16.8
+          },
+          {
+            "true_step": 39321600,
+            "return": 47.6
+          },
+          {
+            "true_step": 58982400,
+            "return": 83.4
+          },
+          {
+            "true_step": 78643200,
+            "return": 139.2
+          },
+          {
+            "true_step": 98304000,
+            "return": 171.2
+          },
+          {
+            "true_step": 117964800,
+            "return": 193.5
+          }
+        ]
+      },
+      {
+        "json": "/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/logs/ppo_vanilla_s4/eval_curve.json",
+        "peak": 223.7,
+        "final": 223.7,
+        "steps_to_300": null,
+        "steps_to_400": null,
+        "curve": [
+          {
+            "true_step": 0,
+            "return": 3.2
+          },
+          {
+            "true_step": 19660800,
+            "return": 26.5
+          },
+          {
+            "true_step": 39321600,
+            "return": 82.9
+          },
+          {
+            "true_step": 58982400,
+            "return": 117.0
+          },
+          {
+            "true_step": 78643200,
+            "return": 159.4
+          },
+          {
+            "true_step": 98304000,
+            "return": 223.7
           }
         ]
       }
     ],
     "peak": {
-      "mean": 216.2,
-      "std": 0.0,
+      "mean": 199.5,
+      "std": 28.8,
       "vals": [
-        216.2
+        226.0,
+        154.9,
+        193.5,
+        223.7
       ],
-      "n": 1
+      "n": 4
     },
     "final": {
-      "mean": 186.9,
-      "std": 0.0,
+      "mean": 198.2,
+      "std": 27.7,
       "vals": [
-        186.9
+        220.9,
+        154.9,
+        193.5,
+        223.7
       ],
-      "n": 1
+      "n": 4
     }
   }
 }
