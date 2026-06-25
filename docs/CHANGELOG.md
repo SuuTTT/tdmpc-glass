@@ -712,3 +712,12 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   ~0.18 is an OUT-OF-BENCHMARK extension on a fallback dataset, not a reproduction failure. No "proper" antmaze
   dataset exists to fetch (earlier 404/data-availability framing was WRONG). Part 36 revised: cube REPRODUCES
   (~0.97, InFOM's actual benchmark); antmaze dropped/relabeled OOD. #22 done.
+
+## 2026-06-25 (cont) — Part 38: when planning helps (#43 done)
+- Planning advantage (mppi vs reactive pi) across 10 tasks: AcrobotSwingup +39%, PendulumSwingup +13%,
+  HopperHop +8%, CheetahRun +4%, Finger/Reacher +1%, BallInCup/Walker ~0, Cartpole -1.5%, PandaPickCube NEG.
+  Rule: planning helps on hard/long-horizon/underactuated tasks WITH headroom + a well-specified objective;
+  ~0 at ceiling; HURTS when value mis-specified (reward-hack). value_r2 does NOT predict advantage (non-result).
+  Greenlights #47: OpenCabinet is long-horizon → abstraction prior + selective planning should beat reactive PPO
+  if its reward is clean. k-step dynamics axis deferred (tool is Panda/Hopper-specific). #43 done.
+- b3060b idle GPUs → OpenCabinet PPO baseline seeds 2-5 (p46_opencab_s2..5) for robust #46/#47 baseline.
