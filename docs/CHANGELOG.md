@@ -738,3 +738,9 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   RIGIDITY not abstraction; curriculum (bootstrap→release) recovers full perf even on OpenCabinet. Honest: MATCHES
   PPO on success (not yet sample-eff beat — bootstrap 62M + release ~10M > PPO 29.5M; leaner bootstrap = follow-up
   for clean total-step beat; 1/4 late-collapse instability caveat). #50 done. Part 41 live.
+
+## 2026-06-25 — Part 42: CLEAN BEAT — curriculum beats PPO on OpenCabinet (2.5x sample-eff) (#51)
+- Lean curriculum: 6.5M skillD bootstrap + released free fine-tune (LR 5e-4) → all 4 seeds sustained 0.98-1.0
+  in ~8-15M TOTAL (mean ~11M) vs PPO 29.5M = ~2.5x sample-eff BEAT at matched/better success (s1=1.0). LR fix
+  resolved Part 41's 1/4 late-collapse (all 4 sustained). #51 done. BEAT-PPO ACHIEVED on the hard task.
+- #48 TAMP: motion-planned reach + IK-push = ~0.83 success analytically (reached 0.84) vs hand-coded 0% — Part 43 pending.
