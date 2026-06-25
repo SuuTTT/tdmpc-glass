@@ -730,3 +730,11 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   structure helps where prior fits (PickCube tie+1.7x sample-eff) but constrains below RL where task needs
   flexible coordination (OpenCabinet). STOP OpenCabinet grind (3rd/most-learned lever). #47 done = definitive
   negative. Pivot to #49 paper. Beat-PPO win = PickCube sample-eff; OpenCabinet = honest scope boundary.
+
+## 2026-06-25 (cont) — Part 41: abstraction-as-curriculum UNCAPS to PPO parity on OpenCabinet (#50)
+- Warm-start free policy from skillD peak ckpt → RELEASE all hand-offs → continue PPO. VERIFIED (EVALRELEASE):
+  s1 1.0/1.0, s2 0.981/0.981, s3 0.996/0.0(late-collapse), s4 0.981/0.981; 13-17/20 ckpts>=0.9. 3/4 sustain
+  0.98-1.0 = MATCHES/slightly-exceeds PPO 0.9883, UNCAPS skillD's 0.77. Lesson confirmed: cap was structure
+  RIGIDITY not abstraction; curriculum (bootstrap→release) recovers full perf even on OpenCabinet. Honest: MATCHES
+  PPO on success (not yet sample-eff beat — bootstrap 62M + release ~10M > PPO 29.5M; leaner bootstrap = follow-up
+  for clean total-step beat; 1/4 late-collapse instability caveat). #50 done. Part 41 live.
