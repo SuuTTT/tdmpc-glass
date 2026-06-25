@@ -674,3 +674,9 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   INTERPRETABILITY: legible phase machine + phase-attributable failures + residual-magnitude diagnostic (used
   Parts 28-30) vs PPO black box. Honest takeaway: abstraction doesn't beat RL on asymptotic success; value =
   sample-eff + stability + reusability-when-parametrized + interpretability.
+
+## 2026-06-25 — Part 36: InFOM reproduction (cube yes, antmaze no) — #34 DONE
+- InFOM BASE repro: cube-single 0.96/0.98 (2/3 seeds, +0.16 outlier) matches CompPlan 0.86 ≫ CRL 0.28 = REPRODUCES;
+  antmaze-medium best 0.18 (s6 complete) / 0.20 / 0.08, far below CRL 0.49/CompPlan 0.85 = DOES NOT reproduce,
+  cause = ft_dataset_fallback (-ft- datasets 404 on OGBench server; hurts antmaze). Reproduced base NOT CompPlan
+  planner (multi-day, deferred). #34 done → ALL TODOS DONE.
