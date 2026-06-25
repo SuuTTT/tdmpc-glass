@@ -721,3 +721,12 @@ pre-empted -> no method-novelty win; the honest deliverable is the redundancy cr
   Greenlights #47: OpenCabinet is long-horizon → abstraction prior + selective planning should beat reactive PPO
   if its reward is clean. k-step dynamics axis deferred (tool is Panda/Hopper-specific). #43 done.
 - b3060b idle GPUs → OpenCabinet PPO baseline seeds 2-5 (p46_opencab_s2..5) for robust #46/#47 baseline.
+
+## 2026-06-25 (cont) — Part 40: OpenCabinet ladder — abstraction does NOT beat PPO (definitive)
+- Beat-PPO on OpenCabinet (PPO 0.98): ladder = hand-coded controller 0% (reach wall) → learned-reach 0.40
+  (reach fixed 0.98 reached, faster than PPO; frozen grasp+pull cap) → learned reach+grasp+pull skillD peak
+  0.51/0.77/0.59/0.51 (best 0.77, mean ~0.61, none reaches 0.9) → PPO 0.98. Each learned phase removes prev
+  bottleneck (0→0.40→0.61) but phase-machine STRUCTURE caps below free end-to-end PPO. NEGATIVE BOUNDARY:
+  structure helps where prior fits (PickCube tie+1.7x sample-eff) but constrains below RL where task needs
+  flexible coordination (OpenCabinet). STOP OpenCabinet grind (3rd/most-learned lever). #47 done = definitive
+  negative. Pivot to #49 paper. Beat-PPO win = PickCube sample-eff; OpenCabinet = honest scope boundary.
