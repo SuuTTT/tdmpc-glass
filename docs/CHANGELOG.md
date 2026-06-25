@@ -1,5 +1,24 @@
 # CHANGELOG — dev & training log
 
+## 2026-06-25 — Part 47 DONE: analytic prior BACKFIRES on AcrobotSwingup (sibling to pendulum Part 45)
+- **Dev (b3060b, RTX 3060 x4; shared politely w/ mahjong moyuHarv tmux — untouched throughout, killed only own
+  PIDs, mem-frac 0.18-0.22):** built Spong collocated-PFL energy-shaping AcrobotSwingup controller +
+  in-loop residual env under `/root/tdmpc_glass/exp/tdmpc_glass/acrobot_abstraction/` (sources mirrored to
+  repo `exp/tdmpc_glass/acrobot_abstraction/`). Sign/obs/energy measured empirically first (diag_acrobot.py).
+- **Controller-alone (validate_acrobot.py, n=256):** return 16.7, swing-up success 17/768. Pumps to top-energy
+  ~80% of episodes given 3000 steps but +-2 N*m elbow CAN'T fully swing up+settle in 1000 steps. Plumbing exact:
+  zero-residual reproduces controller to 0.0000 (smoke_match.py).
+- **Verdict (Protocol A, n=256 confirmed; all from VERDICT.json/SWEEP_VERDICT.json):** residual a=1 peak
+  70.8+-16.5 (4 seeds; 7 total all ~30-98) << vanilla PPO 199.5+-28.8 (4 seeds; 5 total 155-257) << TD-MPC2
+  mppi 419.7 / pi 301.3 (Part 38 1-seed phase csv, cited). a-authority sweep: a=0.25~19, a=0.5~23, a=1~71,
+  a=0(PPO)~226 — partial authority WORST, no a helps. eplen=3000 test (where prior CAN finish swing-up):
+  residual 289.9+-9.2 vs PPO 937.8+-126.5 — gap WIDENS to ~3.2x => prior is a behavioral ANCHOR, not a
+  torque-wall artifact.
+- **Mechanism:** lever is prior QUALITY not task family. Inverts pendulum (prior alone 823 -> residual ties
+  TD-MPC2). On Acrobot weak prior anchors PPO below scratch. Dual of Part 38 planning rule.
+- **Post:** Part 47 live, suuttt.github.io 200 OK, commits 6abf0cf/489f7b9/92f71d3(+this). Used Part 47 to
+  avoid sibling collision (latest committed was 44; 45=pendulum). GPUs kept busy 5 successive batches.
+
 ## 2026-06-25 — Part 37 DONE: workspace-constrained PandaPickCube hits 1.0 (confirms far-reach orientation IS the ceiling)
 - **Dev (b3060b, RTX 3060 x4; used ONLY GPU0+GPU1):** added env-var-gated workspace constraint to mujoco
   `pick.py` reset (`pick.py.bak` saved; default OFF = bit-identical to original). `PICKCUBE_MAX_REACH=R`

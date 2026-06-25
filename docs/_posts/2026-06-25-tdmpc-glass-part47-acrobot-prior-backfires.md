@@ -105,6 +105,24 @@ Full authority (α=1.0) at least executes the pump consistently and lands higher
 entirely (α=0, vanilla PPO) is by far the best of the family (~226) — yet still ~2× below TD-MPC2's 420.
 **There is no α at which wiring this analytic prior into the loop helps; the only good move is not to play it.**
 
+## Is it just the 1000-step torque wall? (3000-step horizon test)
+
+A natural objection: the controller-alone fails only because ±2 N·m can't finish the swing-up in 1000 steps;
+give it a longer horizon — where the analytic pump *can* reach the top (~80% at 3000 steps) — and the prior
+should finally help. We trained both at **episode_length = 3000** (2 seeds each, brax-log peak; return scale is
+~3× the 1000-step task):
+
+| episode_length = 3000 | peak return | seeds |
+|---|---|---|
+| residual on prior, α=1 | **289.9 ± 9.2** | 299 / 281 |
+| vanilla PPO (from scratch) | **937.8 ± 126.5** | 811 / 1064 |
+
+The gap **widens** to ~3.2× — vanilla PPO crushes the residual even harder when the horizon removes the
+torque-budget excuse. So the prior-backfires effect is **not** a 1000-step artifact: it is a *behavioral
+anchor*. The phase-augmented residual is biased toward the analytic pumping policy and PPO cannot cheaply
+unlearn it, regardless of whether the horizon allows the pump to succeed. More time to swing up does not rescue
+the recipe; it lets unconstrained PPO pull further ahead.
+
 ## Why pendulum generalized and Acrobot did not
 
 The lever is **prior quality**, not task family:
