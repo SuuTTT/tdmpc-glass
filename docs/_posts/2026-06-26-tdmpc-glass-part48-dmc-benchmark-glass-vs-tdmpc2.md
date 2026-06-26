@@ -41,6 +41,25 @@ is used only to cross-check anomalies. `QuadrupedRun` is omitted (not present in
 seed variance, not a robust glass win. Read it as a tie. (Walker-trio TD-MPC2 still climbing at writeup;
 seed-2 TD-MPC2 = 651/972/975, and glass already sits at 665/976/959, so these are ties.)
 
+## ⚠️ UPDATE (seed-2 in → n=2; seed-3 running): the single-seed story was too harsh on glass
+
+The original table below was **seed-1 only**. A second seed substantially revises it — and the corrected story is
+about **stability, not a flat capability gap**:
+
+- **HopperHop glass: seed-1 0.17 → seed-2 405.6.** The "catastrophic failure" was a **single-seed collapse**, not
+  a consistent failure. (TD-MPC2 solves it both seeds: 234 / 350.)
+- **HopperStand glass: 355 / 14.7** — *another* collapsing seed. TD-MPC2 stays solid (872 / 858).
+- Several seed-1 "TD-MPC2 wins" **shrink to ~ties at n=2**: CheetahRun (glass 652/649 vs 706/605), FingerSpin
+  (963/968 vs 977/925), ReacherEasy (779/979 vs 983/975).
+- Robust TD-MPC2 advantages that **survive n=2**: FingerTurnHard (970 vs ~674), HopperStand (865 vs ~185, glass
+  collapse), AcrobotSwingup (378 vs ~263, glass also high-variance 312/285/191).
+
+**Revised verdict: tdmpc-glass is competitive-but-unstable** — high seed-variance with occasional hard collapses
+(HopperHop, HopperStand), whereas TD-MPC2 is consistent. Most apparent per-task gaps are driven by glass's
+*collapsing seeds*, not a uniform deficit. Pendulum's earlier 0.0 stays debunked (both tdmpc2 seeds 827 / 725).
+Live mean ± 95% CI (n filling to 3) + wall-clock + per-task curves: the results page (auto-updating). The
+seed-1 tables below are kept for provenance; trust the live page's multi-seed numbers over them.
+
 ## All methods, one table (PPO · TD-MPC2 · tdmpc-glass · abstraction · TAMP)
 
 Putting every method the campaign has on DMC into one place. **Coverage is uneven and that is the honest
