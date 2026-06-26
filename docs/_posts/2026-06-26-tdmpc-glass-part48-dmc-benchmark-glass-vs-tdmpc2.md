@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 48: The Full DMC Benchmark — tdmpc-glass vs TD-MPC2 Across 16 Tasks"
 date: 2026-06-26
-description: "A clean, same-seed head-to-head of tdmpc-glass (the project's graph/structural-entropy world-model variant) against vanilla TD-MPC2 across 16 DMControl tasks at 1M env-steps, both algos run on the same box with the same harness. The refined verdict: glass TIES TD-MPC2 on easy/saturated tasks (BallInCup, Cartpole, Reacher-hard, FingerSpin, Walker-stand) but TRAILS on the harder exploration/locomotion tasks (FingerTurnHard 586 vs 970, HopperStand 355 vs 872, ReacherEasy 779 vs 983, CheetahRun 652 vs 706, AcrobotSwingup 312 vs 383), and has one CATASTROPHIC failure mode — HopperHop, where glass collapses to 0.17 while TD-MPC2 reaches 234 (cross-seed confirmed). This sharpens the campaign's earlier 'glass ≈ TD-MPC2' claim, which held only because earlier comparisons used an easier task subset. Verification-discipline note: a seed-2 TD-MPC2 PendulumSwingup run logged 0.0; the seed-1 run reaching 827 proves that was a single-seed divergence, NOT a real failure — so it is reported as an outlier, not a finding."
+description: "One unified DMC table across all five methods the campaign has — PPO, TD-MPC2, tdmpc-glass, the analytic-controller+residual abstraction, and (cross-referenced) TAMP — plus a clean same-seed head-to-head of tdmpc-glass (the project's graph/structural-entropy world-model variant) against vanilla TD-MPC2 across 16 DMControl tasks at 1M env-steps, both algos run on the same box with the same harness. The refined verdict: glass TIES TD-MPC2 on easy/saturated tasks (BallInCup, Cartpole, Reacher-hard, FingerSpin, Walker-stand) but TRAILS on the harder exploration/locomotion tasks (FingerTurnHard 586 vs 970, HopperStand 355 vs 872, ReacherEasy 779 vs 983, CheetahRun 652 vs 706, AcrobotSwingup 312 vs 383), and has one CATASTROPHIC failure mode — HopperHop, where glass collapses to 0.17 while TD-MPC2 reaches 234 (cross-seed confirmed). This sharpens the campaign's earlier 'glass ≈ TD-MPC2' claim, which held only because earlier comparisons used an easier task subset. Verification-discipline note: a seed-2 TD-MPC2 PendulumSwingup run logged 0.0; the seed-1 run reaching 827 proves that was a single-seed divergence, NOT a real failure — so it is reported as an outlier, not a finding."
 ---
 
 > We ran **both** algorithms — `tdmpc-glass` and vanilla `tdmpc2` — across the full DMControl task suite at 1M
@@ -40,6 +40,52 @@ is used only to cross-check anomalies. `QuadrupedRun` is omitted (not present in
 *FingerTurnEasy: glass 977 vs TD-MPC2 seed-1 773 — but TD-MPC2 **seed-2 = 978**, so the seed-1 dip is
 seed variance, not a robust glass win. Read it as a tie. (Walker-trio TD-MPC2 still climbing at writeup;
 seed-2 TD-MPC2 = 651/972/975, and glass already sits at 665/976/959, so these are ties.)
+
+## All methods, one table (PPO · TD-MPC2 · tdmpc-glass · abstraction · TAMP)
+
+Putting every method the campaign has on DMC into one place. **Coverage is uneven and that is the honest
+point:** PPO was run only on the handful of DMC tasks the campaign needed (and at 50–285M steps, vs 1M for the
+world models — *not* sample-efficiency comparable, it's "PPO's best at a far larger budget"); the **abstraction**
+(analytic controller + in-loop residual) exists only for the two swing-ups where we hand-built a controller; and
+**TAMP is an OpenCabinet manipulation controller — there is no TAMP for DMC locomotion**, so that column is N/A
+by construction (it is not a DMC method).
+
+| task | PPO (50–285M) | TD-MPC2 (1M) | tdmpc-glass (1M) | abstraction (ctrl+residual) | TAMP |
+|---|---|---|---|---|---|
+| AcrobotSwingup | 268 | 383 | 312 | **71** (backfires, Part 47) | — |
+| BallInCup | — | 976 | 973 | — | — |
+| CartpoleBalance | — | 988 | 982 | — | — |
+| CartpoleSwingup | — | 852 | 857 | — | — |
+| CheetahRun | **928** | 706 | 652 | — | — |
+| FingerSpin | — | 977 | 963 | — | — |
+| FingerTurnEasy | — | 773/978† | 977 | — | — |
+| FingerTurnHard | 968 | 970 | 586 | — | — |
+| HopperHop | 33 | **234** | 0.17 | — | — |
+| HopperStand | — | 872 | 355 | — | — |
+| PendulumSwingup | — | 827 | 743 | **835** (ties/beats, Part 45) | — |
+| ReacherEasy | — | 983 | 779 | — | — |
+| ReacherHard | — | 971 | 973 | — | — |
+| WalkerRun | — | ~625 | 665 | — | — |
+| WalkerStand | — | ~943 | 976 | — | — |
+| WalkerWalk | 970 | ~975 | 959 | — | — |
+
+(†TD-MPC2 FingerTurnEasy: seed-1 773 / seed-2 978 — a seed dip, treat as ~tie. TAMP is reported on its own task
+in [Part 43](https://suuttt.github.io/tdmpc-glass/2026/06/26/tdmpc-glass-part43-residual-on-tamp-beats-ppo.html):
+residual-on-TAMP **0.98 success** on PandaOpenCabinet vs PPO 0.98 — a manipulation result, not a DMC return.)
+
+**What the unified view shows:**
+- **The abstraction is bimodal, exactly per its prior quality:** on PendulumSwingup it (835) *beats* both
+  TD-MPC2 (827) and is the best method on that task; on AcrobotSwingup it (71) is the *worst* — same recipe,
+  inverse outcome (Parts 45/47).
+- **HopperHop is hard for everyone except TD-MPC2:** PPO 33, glass 0.17, TD-MPC2 234. It is the exploration-
+  bottlenecked task where model-based planning earns its keep — and where glass's failure is most visible.
+- **Where PPO data exists, TD-MPC2 matches or beats it at ~100× fewer steps** (FingerTurnHard 970 vs 968,
+  WalkerWalk ~tie, Acrobot 383 vs 268) except CheetahRun (PPO 928 at 187M >> TD-MPC2 706 at 1M) — consistent
+  with the Part 18–21 finding that TD-MPC2 wins per-step sample-efficiency while PPO can win final return at a
+  huge budget.
+- **abstraction/TAMP are not general DMC learners** — they are *task-structured* methods that win exactly when
+  their prior fits (Pendulum, OpenCabinet) and are absent or harmful otherwise. That is the campaign's thesis in
+  one table.
 
 ## The refined verdict
 
