@@ -41,7 +41,7 @@ Instead of an open-loop place pose, we recompute the gripper orientation **every
 The full solve arc is now **0.0 → 0.117 → 0.289 → 0.367**. Two things are worth stating plainly:
 
 1. **Every gain came from a better *low-level primitive*** — competence, then warm-start, then grasp stability. Nothing came from changing the high-level planner. This keeps confirming Part 50's thesis: *the lever is the low-level primitive; the latent planner extracts exactly what the primitive allows.* At round 5 the H-JEPA solve (0.367) sits **at** the oracle (0.352, n=128 estimate) — the planner now **fully extracts** the analytic ceiling.
-2. **It reproduces.** A multi-seed CI is running as I write this; finalized seeds land at peak **0.347–0.371** (finals 0.31–0.32), clustered around the 0.367 headline. (The "final" eval-checkpoint is a touch below "peak" due to eval-point variance — a real, honest caveat.)
+2. **It reproduces.** The multi-seed CI is now complete (6 seeds + the headline run): **peak 0.364 ± 0.01**, final-checkpoint **0.320 ± 0.017** — tightly clustered around the 0.367 headline. (The "final" eval-checkpoint sits a touch below "peak" due to eval-point variance — a real, honest caveat.)
 
 ### The ceiling is now contact physics, not H-JEPA
 Round 5 also tells us *why* ~0.37 is a wall for this design. Righting the cube's orientation perturbs its *placement position* through the single compliant grip — and you cannot fit both inside the `0.9·pos + 0.1·rot ≤ 0.02` budget with one parallel-jaw contact. So the analytic-skill family caps at ~0.35–0.37 for a **tall cube in a two-finger gripper**. Closing to PPO's 0.66 needs a **different contact primitive** — a side grasp, a two-stage regrasp, or force-controlled fingers — *not* better high-level planning. That's a clean, falsifiable next step, and it's a *robotics* problem, not a *world-model* one.
@@ -91,7 +91,17 @@ Here's the part that ties Panda and nav together. The *same* uniformity loss tha
 | uniformity | 36.6 ± 24.8 | 0.33 ± 0.19 |
 | VICReg | 56.3 ± 6.4 | 0.48 ± 0.38 |
 
-Uniformity is **worst on both axes** — the *opposite* of its nav result. Mechanism: uniformity's pairwise spreading pushes apart states that should be **value-close**, destroying the value-sufficiency that control needs. (Honest caveat: high seed-variance, so this is a consistent directional confirm across n=1→n=3, not a CI separation; a 2nd-task generalization sweep is running now.)
+Uniformity is **worst on both axes** — the *opposite* of its nav result. Mechanism: uniformity's pairwise spreading pushes apart states that should be **value-close**, destroying the value-sufficiency that control needs.
+
+And it **generalizes**. We re-ran the same three arms on two more DMControl tasks (n=3 each). On the return axis — the thing you actually care about — **uniformity is the worst arm on all three tasks**:
+
+| task | default | uniformity | vicreg |
+|---|---:|---:|---:|
+| CheetahRun | 58.9 | **36.6** | 56.3 |
+| WalkerWalk | 293.8 ± 14.7 | **89.9 ± 2.3** | 172.3 |
+| FingerSpin | 249.4 | **171.8** | 289.7 |
+
+On WalkerWalk the gap is **CI-separated** (uniformity 89.9 ± 2.3 vs default 293.8 ± 14.7, non-overlapping). So the same one-line loss that *won* on geometric navigation (0.53 → 0.95) is the *worst* choice for value-based control across 3/3 tasks. That's the downstream-dependence, no longer a single-task hint.
 
 So the clean conclusion across all three regimes:
 
@@ -107,4 +117,4 @@ This mirrors the Panda SE NULL exactly: a structure that buckets a continuous ma
 - **SE is not the JEPA latent lever** — but ruling it out wasn't wasted: it forced the controls (random-graph, random-partition, strong-VICReg) that isolated **relational anti-collapse** and exposed its **downstream-dependence**. A one-line uniformity loss is a genuine, honest improvement *for the collapse-prone geometric regime* — and an honest *warning* for the value-control regime.
 - **The methodological spine held again:** oracles (what's the best possible over this design?), positive controls (does it work where it should?), and — the star of Thread 2 — **randomized-structure controls** (is the benefit really coming from the mechanism I claim?). Each one changed a conclusion here.
 
-*All numbers are deterministic, held-out, real-success / disk-backed measurements; code and result JSONs are in the repo. Multi-seed CIs (Panda n→7; DMControl 2nd-task generalization) are firming as of this writing and will be folded into the results ledger.*
+*All numbers are deterministic, held-out, real-success / disk-backed measurements; code and result JSONs are in the repo. Both multi-seed CIs are now complete: the Panda solve reproduces at peak 0.364 ± 0.01 (n=7), and the uniformity-hurts-value-control result holds across all 3 DMControl tasks (CI-separated on WalkerWalk).*
