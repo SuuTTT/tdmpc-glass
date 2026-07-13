@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+cd /root/helios_wmablate
+GPU=0 ABLATE=consistency TASK=CheetahRun SEED=50 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 LEAN_TAU=0.003 bash run_arm_lean.sh &
+GPU=0 ABLATE=consistency TASK=CheetahRun SEED=50 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 bash run_arm_lean.sh &
+GPU=1 ABLATE=consistency TASK=CheetahRun SEED=51 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 LEAN_TAU=0.003 bash run_arm_lean.sh &
+GPU=1 ABLATE=consistency TASK=CheetahRun SEED=51 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 bash run_arm_lean.sh &
+GPU=2 ABLATE=consistency TASK=CheetahRun SEED=52 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 LEAN_TAU=0.003 bash run_arm_lean.sh &
+GPU=2 ABLATE=consistency TASK=CheetahRun SEED=52 TOTAL_STEPS=5000000 XLA_PYTHON_CLIENT_MEM_FRACTION=0.35 bash run_arm_lean.sh &
+wait; echo DONE > /root/helios_wmablate/exp/LEANP_CHEETAH_DONE
