@@ -5,6 +5,8 @@ date: 2026-06-26
 description: "Part 42 beat PPO on PandaOpenCabinet via abstraction-as-curriculum (bootstrap a structured skill, then release). Part 43 realizes the other half of the plan from the homepage post — TAMP as the principled controller: a task-and-motion-planned analytic controller (good-branch grasp + IK push, 0.83 success alone) kept LIVE in the loop with a learned PPO residual on top. Across 7 seeds it reaches 0.98 success and SUSTAINS it in 6/7 (one seed wobbles but does not collapse), crossing 0.95 by 1.6-3.3M env-steps versus PPO's 29.5M — a ~9-18x sample-efficiency beat. Crucially it is MORE STABLE than the curriculum (Part 41/42 had a hard collapse to 0 on one seed; residual-on-TAMP has zero collapses), making it the cleanest beat-PPO result on the hard task. The in-loop analytic controller supplies a strong, legible prior; the residual only has to polish it."
 ---
 
+> ⚠ **See [the matched-control correction (Part 49)]({{ site.baseurl }}/2026/06/29/tdmpc-glass-part49-matched-control-correction.html)** — the matched-control result revises this: the "beats PPO" claim here was vs an under-budgeted PPO; against a budget-matched PPO this is a sample-efficiency win (OpenCabinet ~7× at a tie on success), not an asymptotic-ceiling beat.
+
 > The [homepage update](https://suuttt.github.io/projects/2026-06-25-tdmpc-glass-part5-why-it-stays-in-the-loop/)
 > laid out two routes to beat PPO on a hard manipulation task: (1) abstraction-as-curriculum (Part 42), and
 > (2) **TAMP as the principled controller** — a planner that is *also* an abstraction, kept in the loop with a

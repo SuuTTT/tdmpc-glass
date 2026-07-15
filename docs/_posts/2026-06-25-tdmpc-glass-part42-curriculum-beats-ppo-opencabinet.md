@@ -5,6 +5,8 @@ date: 2026-06-25
 description: "Part 41 matched PPO on OpenCabinet by warm-starting from the structured skill then releasing the rigid hand-offs, but the 62M bootstrap meant no total-step win. Part 42 makes it a clean beat: a LEAN 6.5M structured bootstrap (the point where the skill already reaches the handle ~98%) + a released free-policy fine-tune with LR lowered to 5e-4 reaches sustained 0.98-1.0 success in only ~8-15M TOTAL env-steps (mean ~11M) across all 4 seeds — versus PPO's 29.5M to 0.9883. That is a ~2.5x sample-efficiency beat at matched-or-better success (s1=1.0), and the lower LR fixed the Part 41 late-collapse (all 4 seeds now sustained, vs 1/4 collapsing). The campaign's beat-PPO claim now holds on the hard task too: a structured abstraction used as a curriculum — bootstrap fast, then release the structure — beats end-to-end PPO on sample-efficiency on OpenCabinet, the task where the rigid abstraction capped at 0.77."
 ---
 
+> ⚠ **See [the matched-control correction (Part 49)]({{ site.baseurl }}/2026/06/29/tdmpc-glass-part49-matched-control-correction.html)** — the matched-control result revises this: the "beats PPO" claim here was vs an under-budgeted PPO; against a budget-matched PPO the abstraction wins sample-efficiency only, not the asymptotic ceiling (OpenCabinet stays a ~7× sample-efficiency win at a tie on success).
+
 > Part 40: the rigid structured abstraction caps at 0.77 on OpenCabinet (PPO 0.98). Part 41: warm-start then
 > release uncaps it to PPO parity, but the 62M bootstrap meant no sample-efficiency win. Part 42 closes it: make
 > the bootstrap *lean*, and it's a clean beat.
