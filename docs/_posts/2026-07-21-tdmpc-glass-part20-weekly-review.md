@@ -36,6 +36,33 @@ worse, even slightly better — the world model is redundant. "Does a learned wo
 architecture-level answer; it is a **property of the task**. The whole paper is about a probe that tells
 you which, *before* the world model is trained.
 
+## The nine tasks, and why they land where they do
+
+Because the whole argument rests on *which* tasks need a world model and *why*, here is the cast in full —
+each is a standard DeepMind Control Suite task, and what matters is the pairing of its **reward structure**
+with its **dynamics**. (All returns are on the 0–1000 DMC scale.)
+
+| task | reward | dynamics | why the WM does / doesn't matter |
+|---|---|---|---|
+| **ball-in-cup** | **sparse**: 1 while the ball is inside the cup, else 0 | a ball on a string under an actuated cup; must be *swung* in | **essential** — the reward is a needle in a haystack; without imagined rollouts to practice the catch, the agent almost never generates a positive example to learn from |
+| **reacher-hard** | near-sparse: 1 inside a *small* target disc, else ~0 | 2-link arm | **essential** — the small target makes reward sparse; the model helps the agent find it |
+| **acrobot-swingup** | shaped by the tip's height toward the top | **underactuated** double pendulum (torque only at the middle joint), chaotic | **essential** — reaching *and stabilising* the top needs multi-step lookahead through unstable dynamics; a reactive policy has nothing to react to until it's already up |
+| **pendulum-swingup** | high only near upright; ~0 elsewhere | **underactuated** single pendulum; torque too weak to lift directly | **essential-but-exploratory** — must *pump energy* over several swings; the hard part is discovering the pump, not representing the value |
+| **cheetah-run** | **dense**: ramps with forward speed toward ~10 m/s | planar running, smooth | helps a little — dense feedback every step; a reactive policy already climbs, the model just sharpens it |
+| **cartpole-swingup** | dense: product of upright + centred | single cart-pole, benign | marginal — dense and low-dimensional; value learning alone nearly suffices |
+| **finger-spin** | dense: high while the spinner exceeds a target angular velocity | 2-DoF finger flicking a free spinner | **redundant** — continuous contact feedback; nothing to plan |
+| **walker-run** | dense: upright-torso × ramp-with-speed (~8 m/s) | planar biped, smooth | **redundant** — dense reward + stable gait cycle; a reactive value/policy is enough |
+| **quadruped-walk** | dense: upright × ramp-with-speed | 3-D quadruped | **redundant** — same story in 3-D |
+
+Read top-to-bottom this *is* the gradient of Result 1. The pattern is not about dimensionality or embodiment —
+quadruped is the highest-DoF task here and needs the model *least*. It is about **how far reward has to
+travel**. When reward is dense and the dynamics are stable, the value function can be learned directly from
+experience and a learned forward model adds nothing; when reward is sparse, delayed, or gated behind
+unstable/underactuated dynamics, the model earns its keep — either by supplying a value representation that a
+reactive learner can't (the *representational* channel, which VBN measures) or by generating the rewarding
+experience in the first place (the *exploratory* channel, which VBN cannot). Those two channels are the whole
+story of the next three results.
+
 ## Result 1 — the nine-task gradient and the cross-model law (H-COMPRESS, confirmed within scope)
 
 We ablate the world model per task (strip its forward-dynamics learning) and measure the change in
@@ -73,6 +100,32 @@ scope, not as hidden failures. This turns a limitation into a second contributio
 **value-limited vs. exploration-limited** split, grounded in a decomposition of world-model benefit into
 a representational channel (what VBN sees) and an exploratory channel (what it cannot).
 
+### Ball-in-cup is not an outlier — it is the exploration axis, caught in the act
+
+A reviewer's first objection to the correlation figure is the lone red point at top-right: **ball-in-cup**,
+where value is *maximally* compressible (a 16-dim bottleneck recovers ~100% of return) yet the world model is
+essential. If it were a mystery we would be nervous. It is not — we can watch the mechanism directly. Here are
+the raw Dreamer learning curves, vanilla vs. world-model-stripped, on the two sparse-reward tasks:
+
+![Bimodal collapse on sparse-reward tasks]({{ '/images/part20-bimodal.png' | relative_url }})
+
+Look at the left panel. Vanilla Dreamer (blue) catches the ball essentially every episode (~980). The stripped
+agent (red ×) is **bimodal**: it *does* occasionally catch — you can see the ~980 hits — but it can never
+*consolidate*, and most episodes score exactly 0. Without imagined rollouts, the single sparse catch signal is
+too rare to stabilise the policy; the agent keeps forgetting. This is precisely an **exploration/consolidation
+failure, not a value-representation failure** — and VBN, honestly, reports exactly that: the value *is* easy
+(maximally compressible), so the probe correctly says "no representational deficit here." The deficit is in
+generating the data, which a value probe on already-collected data cannot see.
+
+Three independent lines of evidence pin this down, which is why we now treat it as a **finding rather than an
+outlier**: (i) the bimodal curve above (the WM's job here is exploration, visibly); (ii) a tuned **SAC** — a
+model-free learner with no world model — *solves* ball-in-cup (984 vs 979 for TD-MPC2, below), so the task is
+not intrinsically model-requiring, it is *imagination*-requiring for on-policy Dreamer; and (iii) the
+correlation itself: including cup drops Spearman ρ from **−0.90 to −0.09**. A single point that collapses the
+fit is not noise to be hidden — it is a point living on a *different axis*. Ball-in-cup is the cleanest
+demonstration in the paper that world-model benefit has two separable channels, and that our probe measures one
+of them by design.
+
 ## Result 3 — the mistake we caught by replicating (pendulum)
 
 Pendulum-swingup was, for two days, the paper's most dramatic collapse point: a single seed showed
@@ -83,6 +136,27 @@ deficit. Pendulum is **bimodal**, exploration-limited — the seed-1 "collapse" 
 not a value signal. We removed it from the clean correlation (ρ moved −0.94→−0.90, but now on a *clean*
 value-limited set) and report the full seed range. The honest version is more defensible than the
 dramatic one, and the episode is a small advertisement for running the replication seed.
+
+**Why bimodal, mechanistically?** Pendulum swing-up is *underactuated*: the motor is deliberately too weak to
+lift the pole straight up against gravity. The only route to the top is to **pump energy** — swing back and
+forth, building amplitude over several oscillations, until one last swing carries the pole over and the
+controller catches it at the unstable upright equilibrium. That makes learning a discovery problem with two
+attractors, and essentially two outcomes per run:
+
+- **Discover the pump** (via exploration noise, early) → the near-upright reward reinforces the sequence and it
+  locks in → return ~800–1000.
+- **Miss it** → the agent settles into a low-energy local optimum (small oscillations at the bottom, or idle
+  spinning) that pays ~0 and provides *no gradient* pointing toward the pump → stuck at 0, permanently.
+
+With the world model, imagined rollouts let the agent rehearse the pump internally, so vanilla Dreamer finds it
+across seeds (high, if noisy — blue, right panel of the figure above). Strip the model and discovery becomes a
+per-seed coin flip: hence **0 / 727 / 0**. The seed-1 "collapse" was simply the losing side of that flip; the
+727 seed proves there is *no representational deficit* — a stripped agent that happens to discover the pump
+matches vanilla. The right panel shows one of the *recovering* seeds: it does climb, but noisily, with frequent
+dips back to 0 — the fingerprint of a policy sitting right on the boundary between the two basins. So pendulum
+is the same **exploration axis** as ball-in-cup, expressed as bimodality *across seeds* rather than *across
+episodes*. Both are exactly what a value probe is blind to, and exactly why we quarantine them from the
+value-limited correlation instead of letting them quietly degrade it.
 
 ## Result 4 — an independent cross-check we didn't have to run
 
@@ -128,6 +202,79 @@ is the **value-equivalent representation + off-policy value learning** — not t
 planner. This is the seed for a second paper: a lighter, task-adaptive learner that keeps the value
 pathway and pays for the world model only where a probe like VBN says it earns its keep.
 
+### "But that's just Hopper" — the objection, taken seriously
+
+Anyone who has read Voelcker, Hussing & Eaton's *[Can we hop in general?](https://arxiv.org/abs/2410.08870)*
+(2024) should be suspicious of a headline resting on the Hopper environment. Their case study shows that
+Hopper-family benchmarks are **unusually sensitive to benchmark and design choices** — the same algorithm can
+be judged strong or weak depending on which Hopper variant, action repeat, and protocol you pick, and those
+choices are almost never justified in the literature. We take that seriously. It is exactly why our claim is
+*not* a leaderboard statement of the fragile "method X beats Y on Hopper" kind. It is a **within-task
+decomposition** — which *internal component* of one fixed agent carries the win — cross-checked against two
+independent model-free learners (SAC, bimodal ~47/188; PPO, walled at ~40 even at 94× the budget). A
+decomposition is far more robust to benchmark-design wobble than a horse-race, because every arm runs on the
+identical task, protocol, and seeds.
+
+But the decisive answer to "is it just Hopper?" is not an argument — it is to run the *identical ladder on a
+task at the opposite end of the VBN gradient*, and to predict the outcome in advance.
+
+## Result 6 — the essential-task mirror (acrobot), predicted in advance
+
+HopperHop is a task VBN calls **WM-redundant** (compressible value, removable consistency loss). Its opposite
+is **acrobot-swingup**: VBN says its value is *not* compressible, and its Dreamer WM-dependence is −85%. If the
+value-pathway story were a Hopper artifact, the ladder there would look the same. The diagnostic predicts it
+will look **opposite** — and it does:
+
+![Acrobot vs HopperHop: the same ladder, mirrored]({{ '/images/part20-acrobot-ladder.png' | relative_url }})
+
+| rung | HopperHop (VBN: redundant) | AcrobotSwingup (VBN: essential) |
+|---|---|---|
+| SAC | 47 · 188 | 72 |
+| value pathway (strip + π) | **502** ≈ full | **335** (only ~86% of full) |
+| strip + planning (mppi) | 487 | **48** — *collapse* |
+| full TD-MPC2 (π / mppi) | 509 | 388 / 395 |
+
+Two things flip. First, the value pathway alone recovers only **~86%** of full on acrobot (vs a dead heat on
+Hopper) — the world model's *representation* is doing measurable work. Second, and more striking:
+**planning through the stripped latent collapses to ~48** (n=4 seeds: 7, 42, 61, 55), a fifth of full
+TD-MPC2's ~395. On a chaotic, underactuated double pendulum, once you remove the consistency loss the learned
+latent dynamics are no longer accurate enough to plan through — so MPPI, rolling out a broken model, produces
+garbage. *The consistency loss — the "world model" term — is exactly what makes the dynamics good enough for
+the planner.* On Hopper you could throw the model away; on acrobot the planner is helpless without it.
+
+This is the result that turns the value-pathway observation from an anecdote into a **law with a sign**: VBN
+tells you, before training, which regime a task is in. Where value is compressible, keep the value pathway and
+drop the world model and planner; where it isn't, the world model is load-bearing — and specifically, *the
+planner depends on it*. (These acrobot numbers are the harvested runs, n=4 strip / n=1 full; a fresh
+config-matched n=3 ladder is running on the 3060 box as this posts, to firm the full arm — I'll update the
+figure if the medians move, but the collapse is already robust at n=4.)
+
+## Does the diagnostic generalize? JEPA and DINO
+
+A natural question — and one worth heading off — is whether any of this is specific to the two world-model
+families we tested. It is not, and the reason is architectural. Our two families already span the main axis of
+world-model design:
+
+- **DreamerV3** is a *generative* world model: it reconstructs observations, and its imagined rollouts are
+  the exploratory engine we watched fail on ball-in-cup.
+- **TD-MPC2** is a *value-equivalent* model — and its **consistency loss is, precisely, a JEPA objective**:
+  predict the *next latent embedding*, with no decoder and no pixel reconstruction. That is exactly LeCun's
+  Joint-Embedding Predictive Architecture recipe. So our "strip-consistency" ablation *is* the ablation of a
+  JEPA-style latent-prediction term — and Result 6 shows that on an essential task, that JEPA term is what
+  keeps the planner alive.
+
+So the diagnostic already covers the JEPA family through TD-MPC2. What about **DINO / DINO-WM**? DINO is a
+vision self-supervised *encoder* (no dynamics, no reward); DINO-WM (Zhou et al., 2024) builds a latent
+dynamics model on **frozen DINOv2 features** — a JEPA-style world model in pixel space. Our state-based DMC
+setup does not use pixels, so a from-scratch DINO-WM run is out of scope for *this* paper, but the diagnostic
+transfers unchanged: run VBN on the value head of a DINO-WM agent, strip its latent-dynamics loss, and the
+prediction is identical — *compressible value ⇒ the frozen-feature dynamics is redundant; incompressible ⇒
+it's load-bearing.* As a concrete third, non-TD-MPC2 JEPA data point, our own **H-JEPA** agent (a faithful
+LeCun-style hierarchy, which already carries a value head) is the natural next probe target on DMC; it is
+queued behind the acrobot ladder on the 3060. The claim we are willing to commit to now: **the diagnostic is a
+property of the value geometry, not of the world-model implementation**, and JEPA-style models are already
+inside its tested scope via TD-MPC2's consistency loss.
+
 ## The nulls, reported loudly
 
 - **The gate does not help.** The prescriptive fix the diagnostic seems to suggest — a plan-time gate
@@ -150,9 +297,10 @@ pathway and pays for the world model only where a probe like VBN says it earns i
 
 ## Next
 
-- **Paper 2 (the value pathway).** Generalize the ladder beyond HopperHop (acrobot next), and turn the
-  decomposition into a task-adaptive recipe: keep the value pathway, add the world model only where a
-  VBN-style probe predicts it is load-bearing.
+- **Paper 2 (the value pathway).** The ladder now has its second, opposite-regime point (acrobot, Result 6) —
+  next is a *config-matched n=3* confirmation (running) and a third task, then turning the decomposition into a
+  task-adaptive recipe: keep the value pathway, add the world model only where a VBN-style probe predicts it is
+  load-bearing. The JEPA generalization (H-JEPA VBN + strip on DMC) is queued behind it.
 - **Broaden the diagnostic.** The correlation is n=5 value-limited tasks; extend it, and test the
   value-limited/exploration-limited taxonomy on manipulation (Meta-World) and navigation (sparse-goal),
   which is the natural home for the exploration axis we can currently only bound with two points.
