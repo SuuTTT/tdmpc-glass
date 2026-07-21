@@ -1,0 +1,4 @@
+step,reward,eval_type,seed
+50000,282.4,dreamer,0
+100000,290.4,dreamer,0
+150000,241.4,dreamer,0

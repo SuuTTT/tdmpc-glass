@@ -1,0 +1,15 @@
+{
+  "ckpt": "exp/tdmpc_glass/CheetahRun_paperA_distNB64_s0/seed_0/checkpoints/best_mppi.pkl",
+  "task": "CheetahRun",
+  "distractor_dims": 64,
+  "n_states": 6000,
+  "n_ep": 6,
+  "obs_dim": 81,
+  "mean_return": 0.8,
+  "r2_Vz_decode_heldout": 0.9843,
+  "r2_returntogo_decode_heldout": 0.9581,
+  "V_mean": 0.097,
+  "V_std": 0.058,
+  "rtg_mean": 0.041,
+  "rtg_std": 0.113
+}

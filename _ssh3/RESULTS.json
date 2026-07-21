@@ -1,0 +1,25 @@
+{
+  "experiment": "13_orientation_aware_grasp_plus_residual",
+  "goal": "break 0.79-0.81 ceiling on PandaPickCube by fixing the top-down-only grasp failure mode (far-reach tail)",
+  "status": "TRAINING_IN_FLIGHT_eval_pending",
+  "protocol": {"n": 256, "steps": 1000, "alpha": 1.0, "success_metric": "max box_target >= 0.9", "far_split_r0": 0.78},
+  "orientation_scheme": {
+    "type": "reach-dependent tilt: ang=clip(GAIN*(reach-R0),0,MAX), pitch R_home about -perp (mode1); relevel to top-down from TRANSPORT",
+    "TILT_GAIN": 2.0, "TILT_R0": 0.55, "TILT_MAX_rad": 0.9, "RELEVEL_FROM_phase": 4,
+    "ik_feasibility_far_topdown": 0.748, "ik_feasibility_far_orient": 0.934
+  },
+  "controller_alone_sanity": {
+    "metric": "real success box_target>=0.9, n=256, 1000-step, alpha=0 (residual off)",
+    "topdown":            {"overall": 0.066, "far": 0.0233, "near": 0.088, "reached_far": 0.674},
+    "orient_no_relevel":  {"overall": 0.012, "far": 0.0,    "near": 0.018, "reached_far": 0.884},
+    "orient_relevel4":    {"overall": 0.098, "far": 0.093,  "near": 0.100, "reached_far": 0.860},
+    "verdict": "PASS — orientation-aware controller raises FAR-reach controller-alone success 4x (0.0233 -> 0.093) vs top-down; tilt-only ruins placement, relevel-at-TRANSPORT recovers it"
+  },
+  "residual_runs": {
+    "note": "EVAL PENDING — filled by eval_all_13.sh after training",
+    "orient_a1_s1": null,
+    "orient_a1_s2": null,
+    "topdown_a1_s1": null
+  },
+  "verdict": "PENDING (controller-alone sanity PASSES; residual runs training)"
+}

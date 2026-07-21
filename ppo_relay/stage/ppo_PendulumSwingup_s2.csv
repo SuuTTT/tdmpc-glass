@@ -1,0 +1,13 @@
+task,seed,step,reward
+PendulumSwingup,2,4177920,1.2539
+PendulumSwingup,2,8355840,53.5664
+PendulumSwingup,2,12533760,2.0078
+PendulumSwingup,2,16711680,1.2715
+PendulumSwingup,2,20889600,0.5449
+PendulumSwingup,2,25067520,1.1504
+PendulumSwingup,2,29245440,1.1660
+PendulumSwingup,2,33423360,48.6797
+PendulumSwingup,2,37601280,42.8418
+PendulumSwingup,2,41779200,46.7832
+PendulumSwingup,2,45957120,68.1797
+PendulumSwingup,2,50135040,19.8848

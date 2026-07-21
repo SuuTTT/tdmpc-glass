@@ -1,0 +1,3 @@
+[CURR] curriculum ON: replay_p=0.5 K=64 succ_thresh=0.9; full_reset forced TRUE
+[CURR] loading CurriculumResidualPickCube (exp#8)
+[CURR] loading CurriculumResidualPickCube (exp#8)

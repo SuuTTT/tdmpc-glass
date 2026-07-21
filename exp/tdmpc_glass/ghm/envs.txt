@@ -1,0 +1,5 @@
+antmaze-medium-navigate-singletask-task1-v0
+antmaze-medium-navigate-singletask-task2-v0
+antmaze-medium-navigate-singletask-task3-v0
+antmaze-medium-navigate-singletask-task4-v0
+antmaze-medium-navigate-singletask-task5-v0

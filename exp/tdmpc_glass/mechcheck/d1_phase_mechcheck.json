@@ -1,0 +1,512 @@
+{
+  "Pick": [
+    {
+      "file": "ks_Pick_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "n_used": 10876,
+      "reset_jump_over_median": 39.95,
+      "raw_rho_err_churn": 0.3799,
+      "rho_shuffle_ci": [
+        -0.0174,
+        0.0004,
+        0.0171
+      ],
+      "L2_partial_rho_given_disp": -0.1806,
+      "L2_ci": [
+        -0.2971,
+        -0.1639,
+        -0.029
+      ],
+      "L3_partial_rho_given_disp_disc": -0.1369,
+      "L3_ci": [
+        -0.2819,
+        -0.1145,
+        0.0097
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.05550522815049497,
+          "shuffled_ci": [
+            3.144752820409611e-05,
+            0.0002240064932928049,
+            0.0009192000707653409
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.271450891362539,
+          "shuffled_ci": [
+            5.289068718405955e-05,
+            0.00039910619723727955,
+            0.001079559215406952
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.3242191051983379,
+          "shuffled_ci": [
+            0.00015988652150634682,
+            0.0006146090035821145,
+            0.0013559684487080474
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.267,
+      "mean_flip_per_step": 1.383
+    },
+    {
+      "file": "ks_Pick_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "n_used": 11820,
+      "reset_jump_over_median": 45.24,
+      "raw_rho_err_churn": 0.1208,
+      "rho_shuffle_ci": [
+        -0.0175,
+        0.0009,
+        0.0179
+      ],
+      "L2_partial_rho_given_disp": -0.089,
+      "L2_ci": [
+        -0.2646,
+        -0.0833,
+        0.0994
+      ],
+      "L3_partial_rho_given_disp_disc": -0.0714,
+      "L3_ci": [
+        -0.1961,
+        -0.0653,
+        0.0711
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.13992070557971617,
+          "shuffled_ci": [
+            2.6531836572408404e-05,
+            0.0002271980129457415,
+            0.000896641775152046
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.2971717373551566,
+          "shuffled_ci": [
+            7.285353356124498e-05,
+            0.0003802651055040534,
+            0.0012674121215167182
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.3330082480144475,
+          "shuffled_ci": [
+            0.00019046206591273295,
+            0.0005111536160531875,
+            0.001287174119623472
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.331,
+      "mean_flip_per_step": 1.257
+    },
+    {
+      "file": "ks_Pick_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "n_used": 11820,
+      "reset_jump_over_median": 46.81,
+      "raw_rho_err_churn": 0.3236,
+      "rho_shuffle_ci": [
+        -0.0148,
+        0.0005,
+        0.0185
+      ],
+      "L2_partial_rho_given_disp": -0.0651,
+      "L2_ci": [
+        -0.2608,
+        -0.0472,
+        0.1865
+      ],
+      "L3_partial_rho_given_disp_disc": -0.0965,
+      "L3_ci": [
+        -0.2319,
+        -0.0649,
+        0.1582
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.4637317049249053,
+          "shuffled_ci": [
+            1.0625831854444706e-05,
+            0.0001889856564566059,
+            0.0007283635210382428
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.4528714664901834,
+          "shuffled_ci": [
+            6.911544122441542e-05,
+            0.0003581049033314854,
+            0.0009931202264940094
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.47782155788508274,
+          "shuffled_ci": [
+            0.0001532884078327154,
+            0.0005475640411544518,
+            0.0013026831803925284
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.444,
+      "mean_flip_per_step": 1.269
+    }
+  ],
+  "Ori": [
+    {
+      "file": "ks_Ori_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "n_used": 11832,
+      "reset_jump_over_median": 656.71,
+      "raw_rho_err_churn": 0.1961,
+      "rho_shuffle_ci": [
+        -0.0176,
+        0.0003,
+        0.0193
+      ],
+      "L2_partial_rho_given_disp": -0.0627,
+      "L2_ci": [
+        -0.4758,
+        -0.0405,
+        0.3055
+      ],
+      "L3_partial_rho_given_disp_disc": 0.087,
+      "L3_ci": [
+        -0.2292,
+        0.1096,
+        0.3165
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.3156551390435321,
+          "shuffled_ci": [
+            1.660307084999859e-05,
+            0.0002514750211818639,
+            0.0009136688095848152
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.41675241817435305,
+          "shuffled_ci": [
+            9.018856686599074e-05,
+            0.00035570215172442366,
+            0.0012492196007636979
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.46612565683098,
+          "shuffled_ci": [
+            0.00010730143175385457,
+            0.0005431964985128327,
+            0.001431542742486816
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.137,
+      "mean_flip_per_step": 1.867
+    },
+    {
+      "file": "ks_Ori_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "n_used": 11832,
+      "reset_jump_over_median": 37.21,
+      "raw_rho_err_churn": 0.1604,
+      "rho_shuffle_ci": [
+        -0.0158,
+        0.0009,
+        0.0182
+      ],
+      "L2_partial_rho_given_disp": -0.2126,
+      "L2_ci": [
+        -0.6183,
+        -0.1603,
+        0.3392
+      ],
+      "L3_partial_rho_given_disp_disc": -0.2222,
+      "L3_ci": [
+        -0.6528,
+        -0.1777,
+        0.3241
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.8294158626153726,
+          "shuffled_ci": [
+            2.5848334883461118e-05,
+            0.00019784458225626027,
+            0.0007224844702998314
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.19278090541614248,
+          "shuffled_ci": [
+            7.047771092941634e-05,
+            0.00039505717957672153,
+            0.0011242140278135766
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.751248628505488,
+          "shuffled_ci": [
+            0.0001262369119022961,
+            0.0004965732900687745,
+            0.0013441753102202384
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.293,
+      "mean_flip_per_step": 1.803
+    },
+    {
+      "file": "ks_Ori_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "n_used": 11820,
+      "reset_jump_over_median": 79.36,
+      "raw_rho_err_churn": 0.0898,
+      "rho_shuffle_ci": [
+        -0.016,
+        0.0002,
+        0.0182
+      ],
+      "L2_partial_rho_given_disp": -0.0344,
+      "L2_ci": [
+        -0.3085,
+        -0.0498,
+        0.3056
+      ],
+      "L3_partial_rho_given_disp_disc": -0.2632,
+      "L3_ci": [
+        -0.4821,
+        -0.2201,
+        0.1427
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.3930906182544279,
+          "shuffled_ci": [
+            1.2462786544638846e-05,
+            0.00018219894475446423,
+            0.000683191744452881
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.47446742247530016,
+          "shuffled_ci": [
+            9.309535692963883e-05,
+            0.00041157765559360305,
+            0.000965663238944041
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.4979921982496012,
+          "shuffled_ci": [
+            0.00012789822286125334,
+            0.0005123585630703022,
+            0.0012941002700657498
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 0.992,
+      "mean_flip_per_step": 1.271
+    }
+  ],
+  "Cab": [
+    {
+      "file": "ks_Cab_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "n_used": 11820,
+      "reset_jump_over_median": 516.97,
+      "raw_rho_err_churn": 0.4058,
+      "rho_shuffle_ci": [
+        -0.0179,
+        0.0,
+        0.0144
+      ],
+      "L2_partial_rho_given_disp": -0.1233,
+      "L2_ci": [
+        -0.3368,
+        -0.13,
+        0.2338
+      ],
+      "L3_partial_rho_given_disp_disc": -0.1005,
+      "L3_ci": [
+        -0.3368,
+        -0.1103,
+        0.1881
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.6670762449951193,
+          "shuffled_ci": [
+            2.415172649897894e-05,
+            0.000207081978682972,
+            0.0007390950640624953
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.7036673737236246,
+          "shuffled_ci": [
+            5.330314367159271e-05,
+            0.00039173242480540244,
+            0.0012918115947199219
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.8006365528382372,
+          "shuffled_ci": [
+            0.00013037309921285468,
+            0.00053392021966988,
+            0.0014000144188243042
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 2.214,
+      "mean_flip_per_step": 1.266
+    },
+    {
+      "file": "ks_Cab_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "n_used": 11828,
+      "reset_jump_over_median": 2048.37,
+      "raw_rho_err_churn": -0.5401,
+      "rho_shuffle_ci": [
+        -0.0194,
+        -0.0001,
+        0.0181
+      ],
+      "L2_partial_rho_given_disp": -0.0368,
+      "L2_ci": [
+        -0.2934,
+        -0.0634,
+        0.0583
+      ],
+      "L3_partial_rho_given_disp_disc": -0.0715,
+      "L3_ci": [
+        -0.2945,
+        -0.104,
+        0.0277
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.5738635040692408,
+          "shuffled_ci": [
+            1.4928274627699686e-05,
+            0.00021209123012903825,
+            0.0007232611313351777
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.6258410933903666,
+          "shuffled_ci": [
+            5.0937014059468674e-05,
+            0.0003503180696004995,
+            0.0009566659715096238
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.7096770510669729,
+          "shuffled_ci": [
+            0.00018100897599466245,
+            0.0005349182159696392,
+            0.001392812102413373
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 0.559,
+      "mean_flip_per_step": 1.267
+    },
+    {
+      "file": "ks_Cab_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "n_used": 11820,
+      "reset_jump_over_median": 4928235.5,
+      "raw_rho_err_churn": 0.0807,
+      "rho_shuffle_ci": [
+        -0.0181,
+        -0.0006,
+        0.0188
+      ],
+      "L2_partial_rho_given_disp": 0.0893,
+      "L2_ci": [
+        -0.0513,
+        0.0869,
+        0.25
+      ],
+      "L3_partial_rho_given_disp_disc": 0.1261,
+      "L3_ci": [
+        -0.006,
+        0.127,
+        0.2538
+      ],
+      "L1_phase_stratified": {
+        "K4": {
+          "eta2": 0.9394626476824508,
+          "shuffled_ci": [
+            1.6951354041787238e-05,
+            0.00021994769813956237,
+            0.0006710219450712574
+          ],
+          "pass": true
+        },
+        "K6": {
+          "eta2": 0.9687502700808405,
+          "shuffled_ci": [
+            6.110069781878315e-05,
+            0.00038612151450107576,
+            0.0012061208490047473
+          ],
+          "pass": true
+        },
+        "K8": {
+          "eta2": 0.9802305872429065,
+          "shuffled_ci": [
+            0.00013414760519234843,
+            0.0005499383000598407,
+            0.001297596263289212
+          ],
+          "pass": true
+        }
+      },
+      "mag_ratio_hi_lo_churn_quintile": 1.0,
+      "mean_flip_per_step": 1.214
+    }
+  ]
+}

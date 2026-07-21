@@ -1,0 +1,138 @@
+{
+  "ckpt": "demo_ckpts/jumk8_seed0_best_mppi.pkl",
+  "mode": "mppi",
+  "tag": "jumk8seed0",
+  "planner": {
+    "mppi_H": 16
+  },
+  "n_episodes": 10,
+  "success_rate": 0.0,
+  "n_success": 0,
+  "n_reached_box": 0,
+  "return_mean": 322.614,
+  "return_max": 410.21,
+  "box_lift_cm_mean": 4.05,
+  "box_lift_cm_max": 5.44,
+  "episodes": [
+    {
+      "episode": 0,
+      "return": 410.21,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0437,
+      "box_lift_cm": 4.37,
+      "target_z": 0.2655
+    },
+    {
+      "episode": 1,
+      "return": 312.36,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0434,
+      "box_lift_cm": 4.34,
+      "target_z": 0.2646
+    },
+    {
+      "episode": 2,
+      "return": 374.76,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0544,
+      "box_lift_cm": 5.44,
+      "target_z": 0.4255
+    },
+    {
+      "episode": 3,
+      "return": 384.19,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.039,
+      "box_lift_cm": 3.9,
+      "target_z": 0.3646
+    },
+    {
+      "episode": 4,
+      "return": 306.95,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0341,
+      "box_lift_cm": 3.41,
+      "target_z": 0.2649
+    },
+    {
+      "episode": 5,
+      "return": 327.14,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.051,
+      "box_lift_cm": 5.1,
+      "target_z": 0.4136
+    },
+    {
+      "episode": 6,
+      "return": 402.55,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0318,
+      "box_lift_cm": 3.18,
+      "target_z": 0.3086
+    },
+    {
+      "episode": 7,
+      "return": 366.08,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0362,
+      "box_lift_cm": 3.62,
+      "target_z": 0.3854
+    },
+    {
+      "episode": 8,
+      "return": 233.04,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0415,
+      "box_lift_cm": 4.15,
+      "target_z": 0.2917
+    },
+    {
+      "episode": 9,
+      "return": 108.86,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0299,
+      "box_lift_cm": 2.99,
+      "target_z": 0.4228
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+[paperA_disc_distB64] start 2026-06-17T16:31:51Z algo=tdmpc2 task=CheetahRun seeds=0 sha=paperA tag=paperA_distB64_s0
+[paperA_disc_distB64] === CheetahRun seed=0 start 2026-06-17T16:31:51Z ===
+
+Benchmark: ['tdmpc2'] × ['CheetahRun']
+Steps: 500,000  Seed: 0
+Output: /root/helios-rl/exp/benchmark
+
+
+============================================================
+  TD-MPC2 | CheetahRun | seed=0 | steps=500,000
+============================================================
+  K_UPDATE override: 128 gradient updates per batch (default 64)
+  MPPI n_samples override: NS=2048 (DEFAULTS['NS']=512)
+  DISTRACTORS: +64 OU nuisance obs dims (scale=1.0, rho=0.95)
+  obs=81  act=6
+  Warming up JIT (may take 30-90s)...
+  JIT compiled in 33.1s
+  es=    5,120  sps=82  loss=0.7962  scale=1.00  mpc=0.0000
+  es=   10,240  sps=114  loss=0.7603  scale=1.00  mpc=0.0000
+  es=   15,360  sps=131  loss=0.6878  scale=1.00  mpc=0.0000
+  es=   20,480  sps=142  loss=0.7197  scale=1.00  mpc=0.0000
+  es=   25,600  sps=147  loss=0.6136  scale=1.00  mpc=0.0000
+  es=   30,720  sps=153  loss=0.6241  scale=1.00  mpc=0.0000
+  es=   35,840  sps=157  loss=0.6738  scale=1.52  mpc=0.0000
+  es=   40,960  sps=160  loss=0.5851  scale=2.48  mpc=0.0000
+  es=   46,080  sps=162  loss=0.6540  scale=2.76  mpc=0.0000
+  step=   50,176  pi_reward=    4.0  MPPI=   64.9  sps=84
+    diag pi:   full=0.00 stand=0.06  falls=1.8  ttf=1000.0
+    diag mppi: full=0.00 stand=0.64  falls=12.6  ttf=1000.0
+  es=   51,200  sps=85  loss=0.7558  scale=3.08  mpc=0.0000
+  es=   56,320  sps=89  loss=0.6834  scale=1.00  mpc=0.0000
+  es=   61,440  sps=93  loss=0.2560  scale=1.00  mpc=0.0000
+  es=   66,560  sps=97  loss=0.6786  scale=1.00  mpc=0.0000
+  es=   71,680  sps=100  loss=0.4713  scale=1.03  mpc=0.0000
+  es=   76,800  sps=104  loss=0.6199  scale=1.65  mpc=0.0000
+  es=   81,920  sps=106  loss=0.6812  scale=1.55  mpc=0.0000
+  es=   87,040  sps=109  loss=0.6330  scale=1.29  mpc=0.0000
+  es=   92,160  sps=112  loss=0.5443  scale=1.00  mpc=0.0000
+  es=   97,280  sps=114  loss=0.5396  scale=1.33  mpc=0.0000
+  step=  100,096  pi_reward=    4.0  MPPI=    3.5  sps=91
+    diag pi:   full=0.00 stand=0.07  falls=1.8  ttf=1000.0
+    diag mppi: full=0.00 stand=0.13  falls=11.2  ttf=1000.0
+  es=  102,400  sps=92  loss=0.4760  scale=2.97  mpc=0.0000
+  es=  107,520  sps=94  loss=0.6905  scale=3.30  mpc=0.0000
+  es=  112,640  sps=96  loss=0.7197  scale=3.74  mpc=0.0000
+  es=  117,760  sps=98  loss=0.2417  scale=1.00  mpc=0.0000
+  es=  122,880  sps=100  loss=0.4968  scale=1.71  mpc=0.0000
+  es=  128,000  sps=102  loss=0.3911  scale=2.61  mpc=0.0000
+  es=  133,120  sps=104  loss=0.6958  scale=3.42  mpc=0.0000
+  es=  138,240  sps=106  loss=0.6307  scale=4.00  mpc=0.0000
+  es=  143,360  sps=107  loss=0.6113  scale=4.00  mpc=0.0000
+  es=  148,480  sps=109  loss=0.7617  scale=3.99  mpc=0.0000
+  step=  150,016  pi_reward=   14.7  MPPI=   46.8  sps=93
+    diag pi:   full=0.00 stand=0.53  falls=25.8  ttf=1000.0
+    diag mppi: full=0.00 stand=0.56  falls=8.4  ttf=1000.0
+  es=  153,600  sps=94  loss=0.4804  scale=1.39  mpc=0.0000
+  es=  158,720  sps=96  loss=0.6583  scale=2.90  mpc=0.0000
+  es=  163,840  sps=97  loss=0.7461  scale=3.07  mpc=0.0000
+  es=  168,960  sps=98  loss=0.8059  scale=3.25  mpc=0.0000
+  es=  174,080  sps=100  loss=0.7529  scale=3.75  mpc=0.0000
+  es=  179,200  sps=101  loss=0.6946  scale=3.09  mpc=0.0000
+  es=  184,320  sps=102  loss=0.8243  scale=4.00  mpc=0.0000
+  es=  189,440  sps=104  loss=0.6487  scale=4.00  mpc=0.0000
+  es=  194,560  sps=105  loss=0.5510  scale=1.56  mpc=0.0000
+  es=  199,680  sps=106  loss=0.6068  scale=2.33  mpc=0.0000
+  step=  200,192  pi_reward=    8.0  MPPI=   41.2  sps=94
+    diag pi:   full=0.00 stand=0.35  falls=43.0  ttf=1000.0
+    diag mppi: full=0.00 stand=0.48  falls=21.8  ttf=1000.0
+  es=  204,800  sps=95  loss=0.6855  scale=3.37  mpc=0.0000
+  es=  209,920  sps=96  loss=0.6552  scale=2.91  mpc=0.0000
+  es=  215,040  sps=97  loss=0.7111  scale=3.06  mpc=0.0000
+  es=  220,160  sps=98  loss=0.7515  scale=3.22  mpc=0.0000
+  es=  225,280  sps=99  loss=0.7708  scale=3.71  mpc=0.0000
+  es=  230,400  sps=100  loss=0.6823  scale=4.00  mpc=0.0000
+  es=  235,520  sps=101  loss=0.6240  scale=4.00  mpc=0.0000
+  es=  240,640  sps=102  loss=0.5406  scale=4.00  mpc=0.0000
+  es=  245,760  sps=103  loss=0.5593  scale=4.00  mpc=0.0000
+  step=  250,112  pi_reward=   67.3  MPPI=  110.5  sps=95
+    diag pi:   full=0.00 stand=0.55  falls=6.6  ttf=1000.0
+    diag mppi: full=0.00 stand=0.80  falls=7.6  ttf=1000.0
+  es=  250,880  sps=95  loss=0.5941  scale=4.00  mpc=0.0000
+  es=  256,000  sps=96  loss=0.7125  scale=4.00  mpc=0.0000
+  es=  261,120  sps=97  loss=0.6308  scale=3.39  mpc=0.0000
+  es=  266,240  sps=98  loss=0.6230  scale=4.00  mpc=0.0000
+  es=  271,360  sps=99  loss=0.6368  scale=4.00  mpc=0.0000
+  es=  276,480  sps=99  loss=0.5201  scale=4.00  mpc=0.0000
+  es=  281,600  sps=100  loss=0.6121  scale=4.00  mpc=0.0000
+  es=  286,720  sps=101  loss=0.5862  scale=4.00  mpc=0.0000
+  es=  291,840  sps=102  loss=0.5887  scale=4.00  mpc=0.0000
+  es=  296,960  sps=103  loss=0.6771  scale=3.99  mpc=0.0000
+  step=  300,032  pi_reward=   39.4  MPPI=   72.5  sps=95
+    diag pi:   full=0.00 stand=0.39  falls=17.8  ttf=1000.0
+    diag mppi: full=0.00 stand=0.60  falls=14.2  ttf=1000.0
+  es=  302,080  sps=96  loss=0.7003  scale=4.00  mpc=0.0000
+  es=  307,200  sps=96  loss=0.7212  scale=4.00  mpc=0.0000
+  es=  312,320  sps=97  loss=0.7144  scale=4.00  mpc=0.0000
+  es=  317,440  sps=98  loss=0.7658  scale=4.00  mpc=0.0000
+  es=  322,560  sps=99  loss=0.7560  scale=4.00  mpc=0.0000
+  es=  327,680  sps=99  loss=0.7498  scale=4.00  mpc=0.0000
+  es=  332,800  sps=100  loss=0.7546  scale=4.00  mpc=0.0000
+  es=  337,920  sps=101  loss=0.7100  scale=4.00  mpc=0.0000
+  es=  343,040  sps=101  loss=0.7269  scale=4.00  mpc=0.0000
+  es=  348,160  sps=102  loss=0.7330  scale=4.00  mpc=0.0000
+  step=  350,208  pi_reward=   59.3  MPPI=   82.9  sps=98
+    diag pi:   full=0.00 stand=0.60  falls=8.0  ttf=1000.0
+    diag mppi: full=0.00 stand=0.62  falls=9.2  ttf=1000.0
+  es=  353,280  sps=99  loss=0.7220  scale=4.00  mpc=0.0000
+  es=  358,400  sps=100  loss=0.7688  scale=4.00  mpc=0.0000
+  es=  363,520  sps=101  loss=0.7967  scale=4.00  mpc=0.0000
+  es=  368,640  sps=102  loss=0.7269  scale=4.00  mpc=0.0000
+  es=  373,760  sps=103  loss=0.7359  scale=4.00  mpc=0.0000
+  es=  378,880  sps=104  loss=0.7781  scale=4.00  mpc=0.0000
+  es=  384,000  sps=104  loss=0.7235  scale=4.00  mpc=0.0000
+  es=  389,120  sps=105  loss=0.7754  scale=4.00  mpc=0.0000
+  es=  394,240  sps=106  loss=0.7480  scale=4.00  mpc=0.0000
+  es=  399,360  sps=107  loss=0.7565  scale=4.00  mpc=0.0000
+  step=  400,128  pi_reward=   82.8  MPPI=   34.8  sps=102
+    diag pi:   full=0.00 stand=0.57  falls=6.6  ttf=1000.0
+    diag mppi: full=0.00 stand=0.57  falls=17.6  ttf=1000.0
+  es=  404,480  sps=102  loss=0.6841  scale=4.00  mpc=0.0000
+  es=  409,600  sps=103  loss=0.7265  scale=4.00  mpc=0.0000
+  es=  414,720  sps=103  loss=0.7386  scale=4.00  mpc=0.0000
+  es=  419,840  sps=104  loss=0.7213  scale=4.00  mpc=0.0000
+  es=  424,960  sps=104  loss=0.7208  scale=4.00  mpc=0.0000
+  es=  430,080  sps=105  loss=0.7215  scale=4.00  mpc=0.0000
+  es=  435,200  sps=106  loss=0.7534  scale=4.00  mpc=0.0000
+  es=  440,320  sps=106  loss=0.7667  scale=4.00  mpc=0.0000
+  es=  445,440  sps=107  loss=0.7694  scale=4.00  mpc=0.0000
+  step=  450,048  pi_reward=   87.7  MPPI=  131.4  sps=101
+    diag pi:   full=0.00 stand=0.55  falls=7.8  ttf=1000.0
+    diag mppi: full=0.00 stand=0.89  falls=4.8  ttf=1000.0
+  es=  450,560  sps=101  loss=0.7799  scale=4.00  mpc=0.0000
+  es=  455,680  sps=102  loss=0.7651  scale=4.00  mpc=0.0000
+  es=  460,800  sps=102  loss=0.8073  scale=4.00  mpc=0.0000
+  es=  465,920  sps=103  loss=0.7334  scale=4.00  mpc=0.0000
+  es=  471,040  sps=103  loss=0.7499  scale=4.00  mpc=0.0000
+  es=  476,160  sps=104  loss=0.7485  scale=4.00  mpc=0.0000
+  es=  481,280  sps=104  loss=0.7255  scale=4.00  mpc=0.0000
+  es=  486,400  sps=105  loss=0.7217  scale=4.00  mpc=0.0000
+  es=  491,520  sps=105  loss=0.7131  scale=4.00  mpc=0.0000
+  es=  496,640  sps=106  loss=0.6771  scale=4.00  mpc=0.0000
+  step=  500,224  pi_reward=  132.0  MPPI=   94.8  sps=101
+    diag pi:   full=0.00 stand=0.88  falls=8.2  ttf=1000.0
+    diag mppi: full=0.00 stand=0.73  falls=14.4  ttf=1000.0
+  TD-MPC2 CheetahRun done in 4949s
+
+============================================================
+All runs completed in 84.8 min
+CSVs saved to: /root/helios-rl/exp/benchmark
+[paperA_disc_distB64] === CheetahRun seed=0 done rc=0 2026-06-17T17:56:44Z ===
+[paperA_disc_distB64] all done status=0 at 2026-06-17T17:56:44Z

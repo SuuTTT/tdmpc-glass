@@ -1,0 +1,212 @@
+{
+  "paper_baseline": {
+    "CheetahRun": {
+      "at_1M": 575,
+      "asymptote_4M": 875,
+      "note": "steady climb"
+    },
+    "WalkerRun": {
+      "at_1M": 425,
+      "asymptote_4M": 800,
+      "note": "accelerates 1M-4M"
+    },
+    "AcrobotSwingup": {
+      "at_1M": 375,
+      "asymptote_4M": 420,
+      "note": "converges early, ~400-450"
+    },
+    "FingerSpin": {
+      "at_1M": 900,
+      "asymptote_4M": 975,
+      "note": "fast-converging, near-ceiling"
+    },
+    "HopperHop": {
+      "at_1M": 175,
+      "asymptote_4M": 300,
+      "note": "hard, slow"
+    },
+    "PendulumSwingup": {
+      "at_1M": 750,
+      "asymptote_4M": 800,
+      "note": "converges"
+    },
+    "FingerTurnHard": {
+      "at_1M": 450,
+      "asymptote_4M": 850,
+      "note": "hard exploration"
+    }
+  },
+  "budget_note": "Our runs: 1M env-steps, action_repeat=1. Paper DMControl single-task budget: 4M steps, action_repeat=2 (effective 2M). Returns out of 1000.",
+  "configs": {
+    "CheetahRun_default": {
+      "task": "CheetahRun",
+      "tag": "default",
+      "params": 3609915,
+      "params_M": 3.61,
+      "sps": 272,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 645.8,
+      "return_peak_step": 1000192,
+      "return_final": 645.8,
+      "return_final_step": 1000192,
+      "pi_peak": 614.1,
+      "pi_final": 611.6,
+      "n_evals": 20,
+      "speedup_vs_default": 1.0
+    },
+    "CheetahRun_small": {
+      "task": "CheetahRun",
+      "tag": "small",
+      "params": 953147,
+      "params_M": 0.953,
+      "sps": 409,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 519.3,
+      "return_peak_step": 750080,
+      "return_final": 465.8,
+      "return_final_step": 1000192,
+      "pi_peak": 532.7,
+      "pi_final": 488.8,
+      "n_evals": 20,
+      "speedup_vs_default": 1.5
+    },
+    "CheetahRun_tiny": {
+      "task": "CheetahRun",
+      "tag": "tiny",
+      "params": 723515,
+      "params_M": 0.724,
+      "sps": 437,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 512.1,
+      "return_peak_step": 900096,
+      "return_final": 509.5,
+      "return_final_step": 1000192,
+      "pi_peak": 511.2,
+      "pi_final": 497.4,
+      "n_evals": 20,
+      "speedup_vs_default": 1.61
+    },
+    "CheetahRun_cheapplan": {
+      "task": "CheetahRun",
+      "tag": "cheapplan",
+      "params": 3609915,
+      "params_M": 3.61,
+      "sps": 293,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 681.8,
+      "return_peak_step": 1000192,
+      "return_final": 681.8,
+      "return_final_step": 1000192,
+      "pi_peak": 654.3,
+      "pi_final": 654.3,
+      "n_evals": 20,
+      "speedup_vs_default": 1.08
+    },
+    "WalkerRun_default": {
+      "task": "WalkerRun",
+      "tag": "default",
+      "params": 3613499,
+      "params_M": 3.613,
+      "sps": 165,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 683.7,
+      "return_peak_step": 1000192,
+      "return_final": 683.7,
+      "return_final_step": 1000192,
+      "pi_peak": 669.1,
+      "pi_final": 668.8,
+      "n_evals": 20,
+      "speedup_vs_default": 1.0
+    },
+    "WalkerRun_small": {
+      "task": "WalkerRun",
+      "tag": "small",
+      "params": 954939,
+      "params_M": 0.955,
+      "sps": 205,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 655.7,
+      "return_peak_step": 950016,
+      "return_final": 634.6,
+      "return_final_step": 1000192,
+      "pi_peak": 644.2,
+      "pi_final": 631.6,
+      "n_evals": 20,
+      "speedup_vs_default": 1.24
+    },
+    "WalkerRun_tiny": {
+      "task": "WalkerRun",
+      "tag": "tiny",
+      "params": 725307,
+      "params_M": 0.725,
+      "sps": 155,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 645.4,
+      "return_peak_step": 750080,
+      "return_final": 641.4,
+      "return_final_step": 1000192,
+      "pi_peak": 606.9,
+      "pi_final": 590.2,
+      "n_evals": 20,
+      "speedup_vs_default": 0.94
+    },
+    "AcrobotSwingup_default": {
+      "task": "AcrobotSwingup",
+      "tag": "default",
+      "params": 3588913,
+      "params_M": 3.589,
+      "sps": 224,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 407.8,
+      "return_peak_step": 950016,
+      "return_final": 406.2,
+      "return_final_step": 1000192,
+      "pi_peak": 420.6,
+      "pi_final": 294.8,
+      "n_evals": 20,
+      "speedup_vs_default": 1.0
+    },
+    "AcrobotSwingup_small": {
+      "task": "AcrobotSwingup",
+      "tag": "small",
+      "params": 942641,
+      "params_M": 0.943,
+      "sps": 382,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 403.4,
+      "return_peak_step": 950016,
+      "return_final": 389.0,
+      "return_final_step": 1000192,
+      "pi_peak": 395.1,
+      "pi_final": 337.3,
+      "n_evals": 20,
+      "speedup_vs_default": 1.71
+    },
+    "AcrobotSwingup_tiny": {
+      "task": "AcrobotSwingup",
+      "tag": "tiny",
+      "params": 713009,
+      "params_M": 0.713,
+      "sps": 359,
+      "last_step": 1000192,
+      "primary_eval": "mppi",
+      "return_peak": 457.8,
+      "return_peak_step": 950016,
+      "return_final": 413.7,
+      "return_final_step": 1000192,
+      "pi_peak": 418.3,
+      "pi_final": 371.5,
+      "n_evals": 20,
+      "speedup_vs_default": 1.6
+    }
+  }
+}

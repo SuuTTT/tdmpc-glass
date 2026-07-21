@@ -1,0 +1,7 @@
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+AI agents: READ /etc/vast-agents-guide.md (also linked as ./AGENTS.md) before acting on or describing this instance: it is the operating guide. ('vast-capabilities' shows live state only, not the guide.)
+##### G0_fourier64  (/root/ghm/exp_fix/G0_fourier64/sd000_20260619_210844/) #####
+##### G1_disc997_frac025  (/root/ghm/exp_fix/G1_disc997_frac025/sd000_20260619_210844/) #####
+##### G2_disc999_frac05  (/root/ghm/exp_fix/G2_disc999_frac05/sd000_20260619_210844/) #####
+##### G3_combo  (/root/ghm/exp_fix/G3_combo/sd000_20260619_210844/) #####

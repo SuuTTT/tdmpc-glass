@@ -1,0 +1,89 @@
+{
+  "ckpt": "/root/helios-rl/exp/tdmpc_glass/PandaPickCube_realsucc_vanilla_s2/seed_2/checkpoints/best_mppi.pkl",
+  "knobs": {
+    "hover_height": 0.1,
+    "grasp_z_offset": 0.005,
+    "xy_tol": 0.005,
+    "descend_z_tol": 0.01,
+    "close_threshold": 0.03,
+    "grasp_width": 0.0,
+    "grasp_hold_steps": 18,
+    "grasp_close_rate": 0.04,
+    "lift_clear": 0.12,
+    "lift_done_z": 0.1,
+    "transport_xy_tol": 0.03,
+    "place_tol": 0.02,
+    "ik_gain": 1.0,
+    "ik_iters": 12,
+    "ori_w": 0.0,
+    "aik_from": 2,
+    "use_aik": 1,
+    "cart_step": 0.06,
+    "place_cart_step": 0.06,
+    "place_gain": 1.0,
+    "up_bias": 0.02,
+    "approach_max": 25,
+    "descend_max": 25,
+    "grasp_max": 28
+  },
+  "hover": {
+    "name": "REGIME1 reward-hack HOVER (TD-MPC2)",
+    "n": 12,
+    "return_mean": 314.9402181307475,
+    "return_min": 235.76613211631775,
+    "return_max": 437.65871000289917,
+    "maxbt_mean": 0.0,
+    "success_rate": 0.0,
+    "comp_weighted_mean": {
+      "gripper_box": 279.369785964489,
+      "box_target": 0.0,
+      "no_floor_collision": 28.1875,
+      "robot_target_qpos": 7.382931610941887
+    }
+  },
+  "grasp_no_place": {
+    "name": "REGIME2 scripted GRASP-NO-PLACE",
+    "n": 21,
+    "return_mean": 673.712663931506,
+    "return_min": 346.88233149051666,
+    "return_max": 1169.2340381741524,
+    "maxbt_mean": 0.48355958575294133,
+    "success_rate": 0.0,
+    "comp_weighted_mean": {
+      "gripper_box": 460.62721891630264,
+      "box_target": 174.1367027418954,
+      "no_floor_collision": 30.488095238095237,
+      "robot_target_qpos": 8.460645794016974
+    }
+  },
+  "success": {
+    "name": "REGIME3 scripted SUCCESS",
+    "n": 1,
+    "return_mean": 965.342709004879,
+    "return_min": 965.342709004879,
+    "return_max": 965.342709004879,
+    "maxbt_mean": 0.9105396270751953,
+    "success_rate": 1.0,
+    "comp_weighted_mean": {
+      "gripper_box": 478.0753104686737,
+      "box_target": 445.0673689842224,
+      "no_floor_collision": 32.75,
+      "robot_target_qpos": 9.45002714395523
+    }
+  },
+  "scripted_all": {
+    "name": "scripted ALL",
+    "n": 36,
+    "return_mean": 559.7576724357075,
+    "return_min": 269.4844274818897,
+    "return_max": 1169.2340381741524,
+    "maxbt_mean": 0.3241434560881721,
+    "success_rate": 0.027777777777777776,
+    "comp_weighted_mean": {
+      "gripper_box": 400.04721966054706,
+      "box_target": 121.98063708676233,
+      "no_floor_collision": 29.291666666666668,
+      "robot_target_qpos": 8.438148080309231
+    }
+  }
+}

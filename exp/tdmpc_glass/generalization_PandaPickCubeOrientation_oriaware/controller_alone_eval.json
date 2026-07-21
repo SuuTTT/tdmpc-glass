@@ -1,0 +1,16 @@
+{
+  "task": "PandaPickCubeOrientation",
+  "ori_aware": true,
+  "controller_alone": true,
+  "protocol_steps": 1000,
+  "result": {
+    "arm": "controller_alone_oriaware",
+    "alpha": 0.0,
+    "success_rate": 0.0234,
+    "reached_rate": 0.8281,
+    "mean_max_box_target": 0.3336,
+    "p90_max_box_target": 0.8459,
+    "n_eps": 256,
+    "eval_sec": 42.9
+  }
+}

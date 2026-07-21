@@ -18,6 +18,7 @@ Ref: Hansen et al. (2023) TD-MPC2 — https://arxiv.org/abs/2310.16828
 """
 from __future__ import annotations
 
+import os as _os
 import numpy as np
 import jax
 import jax.numpy as jnp
@@ -554,10 +555,14 @@ def make_update_fn(
             q_flat = q_pi2_vals.flatten()
             p5     = jnp.percentile(q_flat, 5)
             p95    = jnp.percentile(q_flat, 95)
+            # SCALE_MAX env overrides the v24 RunningScale cap (default 4.0). It saturates at 4.0
+            # the whole run on manipulation → value-scale can't track the IQR → advantages over-
+            # normalized → late-training oscillation. Raising the cap is the collapse-fix probe.
+            _smax = float(_os.environ.get("SCALE_MAX", str(scale_max)))
             new_s  = jnp.clip(
                 (1 - tau) * s + tau * jnp.maximum(p95 - p5, 1.0),
                 scale_min,
-                scale_max,
+                _smax,
             )
             pl = -w * jnp.mean(jnp.min(q_pi2_vals / new_s, -1))
 
@@ -714,6 +719,10 @@ def make_update_fn(
                 params, tp, ob, ab, rb, db, uk, scale,
                 mpc_obs_anchor, mpc_action_target, mpc_distill_coef,
             )
+            # FREEZE_DYN=1: zero the dynamics-net gradients → keep dyn at random init (H4 test:
+            # is the LEARNED dynamics redundant given a value-sufficient latent?). Captured at trace time.
+            if _os.environ.get("FREEZE_DYN", "") == "1" and "dyn" in grads:
+                grads = {**grads, "dyn": jax.tree_util.tree_map(jnp.zeros_like, grads["dyn"])}
             upds, nopt = tx.update(grads, opt, params)
             new_params = optax.apply_updates(params, upds)
             new_tp = jax.tree_util.tree_map(

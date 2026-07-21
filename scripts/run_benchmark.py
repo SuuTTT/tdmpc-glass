@@ -617,6 +617,13 @@ def train_tdmpc2(
         print(f"  K_UPDATE override: {K_UPDATE} gradient updates per batch (default {d['K_UPDATE']})", flush=True)
     BS         = d["BS"]           # 256
     N_ENVS     = d["N_ENVS"]       # 256
+    # ── Cross-benchmark bridge: OGBench source runs CPU gym envs (no MJX). We run
+    # a small vector of CPU envs in a python loop, so N_ENVS must be modest.
+    _ogbench_src = os.environ.get("TDMPC_ENV_SRC", "").strip()
+    _is_ogbench = _ogbench_src.startswith("ogbench:")
+    if _is_ogbench:
+        N_ENVS = int(os.environ.get("TDMPC_OGBENCH_NENVS", "8"))
+        print(f"  [ogbench-bridge] CPU env source; N_ENVS={N_ENVS}", flush=True)
     WARMUP     = d["WARMUP_ENV"]   # 25_000
     EXPL_NOISE = d["EXPL_NOISE"]   # 0.3
     EXPL_UNTIL = int(expl_until) if expl_until is not None else d["EXPL_UNTIL"]   # 25_000 default
@@ -660,10 +667,26 @@ def train_tdmpc2(
     episode_length = 1000
 
     # ── Environment
-    env      = registry.load(env_id)
-    env      = maybe_add_distractors(env, distractor_dims)  # iter-14 Stage-2a (no-op when 0)
-    env      = wrapper.wrap_for_brax_training(env, episode_length=episode_length,
-                                              action_repeat=1)
+    # MJPG_IMPL=jax forces the pure-JAX MJX backend (newer mujoco_playground defaults to the
+    # 'warp' backend, which mismatches mujoco-mjx 3.9's GraphMode → AttributeError). Opt-in.
+    _mjpg_impl = os.environ.get("MJPG_IMPL", "").strip()
+    if _is_ogbench:
+        # ── Cross-benchmark bridge: build the OGBench CPU adapter instead of the
+        # mujoco_playground registry. It already exposes a brax-style batched env
+        # (.reset/.step/.observation_size/.action_size with auto-reset), so we
+        # skip distractors + brax wrappers entirely.
+        from ogbench_adapter import make_ogbench_env
+        _og_name = _ogbench_src.split("ogbench:", 1)[1]
+        env = make_ogbench_env(_og_name, N_ENVS, seed=seed)
+        episode_length = env.max_episode_steps
+        eval_interval = int(os.environ.get("TDMPC_EVAL_INTERVAL", "50000"))
+        print(f"  [ogbench-bridge] env={_og_name} obs={env.observation_size} "
+              f"act={env.action_size} ep_len={episode_length}", flush=True)
+    else:
+        env      = registry.load(env_id, config_overrides={"impl": _mjpg_impl}) if _mjpg_impl else registry.load(env_id)
+        env      = maybe_add_distractors(env, distractor_dims)  # iter-14 Stage-2a (no-op when 0)
+        env      = wrapper.wrap_for_brax_training(env, episode_length=episode_length,
+                                                  action_repeat=1)
     obs_dim  = env.observation_size
     act_dim  = env.action_size
     al, ah   = -1.0, 1.0
@@ -953,9 +976,13 @@ def train_tdmpc2(
         np.random.set_state(resume_payload["np_random_state"])
 
     # ── Vectorised env reset/step
-    @jax.jit
-    def batch_step(state, acts):
-        return env.step(state, acts)
+    if _is_ogbench:
+        def batch_step(state, acts):
+            return env.step(state, np.asarray(acts))
+    else:
+        @jax.jit
+        def batch_step(state, acts):
+            return env.step(state, acts)
 
     # Path 5 / Phase-t — knee penalty fn. Computes per-env penalty based on
     # how far below threshold any non-foot geom z drops. Geom IDs (HopperHop):
@@ -1130,13 +1157,22 @@ def train_tdmpc2(
         q = q_net.apply(p["q"], z, jnp.tanh(mu))       # (N, 2, num_bins)
         return jnp.min(_thi(q, num_bins=num_bins), axis=-1)
 
-    @jax.jit
-    def single_env_step(state, act):
-        return env.step(state, act[None])
+    if _is_ogbench:
+        # CPU gym env cannot be jit-traced; use a 1-env adapter for single-env eval.
+        from ogbench_adapter import make_ogbench_env as _mk_og
+        _eval_env = _mk_og(_ogbench_src.split("ogbench:", 1)[1], 1, seed=seed + 777)
+        def single_env_step(state, act):
+            return _eval_env.step(state, np.asarray(act)[None])
+        def single_env_reset(key):
+            return _eval_env.reset()
+    else:
+        @jax.jit
+        def single_env_step(state, act):
+            return env.step(state, act[None])
 
-    @jax.jit
-    def single_env_reset(key):
-        return env.reset(jax.random.split(key, 1))
+        @jax.jit
+        def single_env_reset(key):
+            return env.reset(jax.random.split(key, 1))
 
     # Iter 6 §7.1 — episode diagnostics from per-step reward signal.
     # full_reward (>0.5)   = standing AND fast (~target speed met)
@@ -1162,26 +1198,81 @@ def train_tdmpc2(
     def eval_pi(n_eps: int = 5):
         nonlocal key
         rets, diags = [], []
+        _ph_codes = []   # PHASE-ENTROPY mechcheck: SimNorm argmax-codes of visited states
+        _zs, _rtgs = [], []   # VALUE-SUFFICIENCY SIEVE: raw latents + return-to-go for linear value-decode R²
+        _G, _V = 8, latent_dim // 8
+        _disc = 0.99
         for _ in range(n_eps):
             key, rk2 = jax.random.split(key)
             state = single_env_reset(rk2)
             obs   = jnp.asarray(state.obs[0])
             er = 0.0
-            ep_rew = []
+            ep_succ = 0.0
+            ep_rew = []; _ep_z = []
             for _ in range(episode_length):
                 z   = enc_apply(params, obs)
+                _zn = np.asarray(z).reshape(-1)
+                _ph_codes.append(_zn.reshape(_G, _V).argmax(-1)); _ep_z.append(_zn)
                 act = pi_apply(params, z)
                 state = single_env_step(state, act)
                 r = float(state.reward[0])
                 er += r
+                if _is_ogbench:
+                    ep_succ = max(ep_succ, float(np.asarray(state.info.get("success", 0.0)).reshape(-1)[0]))
                 ep_rew.append(r)
                 if bool(state.done[0] > 0.5):
                     break
                 obs = jnp.asarray(state.obs[0])
             rets.append(er)
-            diags.append(_episode_diag(ep_rew))
+            _d = _episode_diag(ep_rew)
+            if _is_ogbench:
+                _d["success"] = ep_succ
+            diags.append(_d)
+            # return-to-go per step (discounted), aligned with _ep_z
+            _g = 0.0; _rtg = [0.0] * len(ep_rew)
+            for _t in range(len(ep_rew) - 1, -1, -1):
+                _g = ep_rew[_t] + _disc * _g; _rtg[_t] = _g
+            n = min(len(_ep_z), len(_rtg)); _zs.extend(_ep_z[:n]); _rtgs.extend(_rtg[:n])
         # mean across episodes
         agg = {k: float(np.mean([d[k] for d in diags])) for k in diags[0]}
+        # PHASE-ENTROPY: mean over the 8 SimNorm groups of the entropy of visited argmax-codes.
+        _C = np.array(_ph_codes)
+        _ents = []
+        for _gi in range(_G):
+            _, _cnt = np.unique(_C[:, _gi], return_counts=True); _p = _cnt / _cnt.sum()
+            _ents.append(float(-(_p * np.log(_p)).sum()))
+        agg["phase_entropy"] = float(np.mean(_ents))
+        # VALUE-SUFFICIENCY SIEVE: R² of a LINEAR probe latent -> return-to-go (does the latent linearly
+        # encode value?). The redundancy criterion's core metric — track it over training and across tasks.
+        # HELD-OUT test R² of a RIDGE linear probe latent -> return-to-go (does the latent
+        # linearly encode value?). Ridge + per-dim standardization is essential: a plain lstsq
+        # on the 512-d, highly-collinear SimNorm latent is ill-conditioned and gives wild/negative
+        # held-out R² (the weights blow up). This is the redundancy criterion's core metric.
+        try:
+            _Z = np.asarray(_zs, np.float64); _y = np.asarray(_rtgs, np.float64)
+            _n = len(_Z)
+            if _n >= 100:
+                _rng = np.random.default_rng(0)
+                _idx = _rng.permutation(_n); _cut = int(_n * 0.8)
+                _tr, _te = _idx[:_cut], _idx[_cut:]
+                _Xtr, _Xte = _Z[_tr], _Z[_te]
+                _ytr, _yte = _y[_tr], _y[_te]
+                # standardize features on train
+                _mu = _Xtr.mean(0); _sd = _Xtr.std(0) + 1e-6
+                _Xtr = (_Xtr - _mu) / _sd; _Xte = (_Xte - _mu) / _sd
+                _ym = _ytr.mean()
+                _d = _Xtr.shape[1]
+                _lam = 10.0  # ridge; stabilizes the collinear-latent solve
+                _A = _Xtr.T @ _Xtr + _lam * np.eye(_d)
+                _b = _Xtr.T @ (_ytr - _ym)
+                _w = np.linalg.solve(_A, _b)
+                _pred = _Xte @ _w + _ym
+                _sr = float(((_yte - _pred) ** 2).sum()); _st = float(((_yte - _yte.mean()) ** 2).sum())
+                agg["value_r2"] = float(1.0 - _sr / _st) if _st > 1e-8 else float("nan")
+            else:
+                agg["value_r2"] = float("nan")
+        except Exception:
+            agg["value_r2"] = float("nan")
         return float(np.mean(rets)), agg
 
     def eval_mppi(n_eps: int = 3):
@@ -1196,6 +1287,7 @@ def train_tdmpc2(
             er = 0.0
             ep_rew = []
             t0_mppi = jnp.bool_(True)
+            ep_succ = 0.0
             key, pk2 = jax.random.split(key)
             for _ in range(episode_length):
                 act, mu, std = plan(params, obs, mu, std, pk2, t0_mppi)
@@ -1204,12 +1296,17 @@ def train_tdmpc2(
                 state = single_env_step(state, act)
                 r = float(state.reward[0])
                 er += r
+                if _is_ogbench:
+                    ep_succ = max(ep_succ, float(np.asarray(state.info.get("success", 0.0)).reshape(-1)[0]))
                 ep_rew.append(r)
                 if bool(state.done[0] > 0.5):
                     break
                 obs = jnp.asarray(state.obs[0])
             rets.append(er)
-            diags.append(_episode_diag(ep_rew))
+            _d = _episode_diag(ep_rew)
+            if _is_ogbench:
+                _d["success"] = ep_succ
+            diags.append(_d)
         agg = {k: float(np.mean([d[k] for d in diags])) for k in diags[0]}
         return float(np.mean(rets)), agg
 
@@ -1742,9 +1839,10 @@ def train_tdmpc2(
                       f"  loss={float(loss_val):.4f}  scale={float(scale):.2f}{_mpc_log}{_jmp_log}", flush=True)
 
             if env_steps >= next_eval:
-                ret, pi_diag = eval_pi(n_eps=5)
+                _eval_neps = int(os.environ.get("EVAL_NEPS", "0"))  # 0 = defaults; raise to cut eval variance
+                ret, pi_diag = eval_pi(n_eps=_eval_neps or 5)
                 _t_mppi = time.time()
-                mppi_ret, mppi_diag = eval_mppi(n_eps=8 if use_glass else 3)
+                mppi_ret, mppi_diag = eval_mppi(n_eps=_eval_neps or (8 if use_glass else 3))
                 _t_mppi = time.time() - _t_mppi
                 jumpy_ret = None
                 if _jumpy_plan:
@@ -1826,6 +1924,16 @@ def train_tdmpc2(
                                 S=np.asarray(gd["S"]),
                             )
                 write_csv(fh, env_id, seed, env_steps, ret)
+                if _is_ogbench:
+                    _pi_succ = float(pi_diag.get("success", float("nan")))
+                    _mppi_succ = float(mppi_diag.get("success", float("nan")))
+                    print(f"    [ogbench] success pi={_pi_succ:.3f} mppi={_mppi_succ:.3f}", flush=True)
+                    _sc = csv_path.with_name(csv_path.name.replace(".csv", "_success.csv"))
+                    if not _sc.exists():
+                        with open(_sc, "w") as sf:
+                            sf.write("step,seed,pi_return,mppi_return,pi_success,mppi_success\n")
+                    with open(_sc, "a") as sf:
+                        sf.write(f"{env_steps},{seed},{ret:.1f},{mppi_ret:.1f},{_pi_succ:.4f},{_mppi_succ:.4f}\n")
                 if eval_type_csv is not None:
                     with open(eval_type_csv, "a") as cf:
                         cf.write(f"{env_steps},{ret:.1f},pi,{seed}\n")
@@ -1836,6 +1944,13 @@ def train_tdmpc2(
                             cf.write(f"{env_steps},{proto_ret:.1f},protomppi,{seed}\n")
                         if arb_ret is not None:
                             cf.write(f"{env_steps},{arb_ret:.1f},arb,{seed}\n")
+                    # PHASE-ENTROPY mechcheck: log visited-state phase-entropy vs return over training.
+                    _phc = eval_type_csv.with_name(eval_type_csv.name.replace(".csv", "_phase.csv"))
+                    if not _phc.exists():
+                        with open(_phc, "w") as pf:
+                            pf.write("step,seed,pi_return,mppi_return,phase_entropy,value_r2\n")
+                    with open(_phc, "a") as pf:
+                        pf.write(f"{env_steps},{seed},{ret:.1f},{mppi_ret:.1f},{pi_diag.get('phase_entropy', float('nan')):.4f},{pi_diag.get('value_r2', float('nan')):.4f}\n")
                     # §7.1 diagnostics CSV — sibling file, doesn't affect main eval CSV.
                     _diag_csv = eval_type_csv.with_name(eval_type_csv.name.replace(".csv", "_diag.csv"))
                     if not _diag_csv.exists():

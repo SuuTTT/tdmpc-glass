@@ -1,0 +1,140 @@
+{
+  "ckpt": "demo_ckpts/jumk8_seed0_best_mppi.pkl",
+  "mode": "jumpy",
+  "tag": "jumk8seed0",
+  "planner": {
+    "jumpy_k": 8,
+    "jumpy_n_macro": 3,
+    "mppi_H": 16
+  },
+  "n_episodes": 10,
+  "success_rate": 0.0,
+  "n_success": 0,
+  "n_reached_box": 1,
+  "return_mean": 406.183,
+  "return_max": 566.63,
+  "box_lift_cm_mean": 3.682,
+  "box_lift_cm_max": 5.97,
+  "episodes": [
+    {
+      "episode": 0,
+      "return": 398.72,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0412,
+      "box_lift_cm": 4.12,
+      "target_z": 0.2655
+    },
+    {
+      "episode": 1,
+      "return": 84.68,
+      "steps": 32,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0299,
+      "box_lift_cm": 2.99,
+      "target_z": 0.2646
+    },
+    {
+      "episode": 2,
+      "return": 430.81,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0597,
+      "box_lift_cm": 5.97,
+      "target_z": 0.3441
+    },
+    {
+      "episode": 3,
+      "return": 566.63,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.1914,
+      "reached_box": true,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0383,
+      "box_lift_cm": 3.83,
+      "target_z": 0.2421
+    },
+    {
+      "episode": 4,
+      "return": 379.25,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0325,
+      "box_lift_cm": 3.25,
+      "target_z": 0.3176
+    },
+    {
+      "episode": 5,
+      "return": 476.93,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0299,
+      "box_lift_cm": 2.99,
+      "target_z": 0.4223
+    },
+    {
+      "episode": 6,
+      "return": 410.88,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0319,
+      "box_lift_cm": 3.19,
+      "target_z": 0.3538
+    },
+    {
+      "episode": 7,
+      "return": 463.6,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0307,
+      "box_lift_cm": 3.07,
+      "target_z": 0.301
+    },
+    {
+      "episode": 8,
+      "return": 424.86,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0439,
+      "box_lift_cm": 4.39,
+      "target_z": 0.2653
+    },
+    {
+      "episode": 9,
+      "return": 425.47,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0302,
+      "box_lift_cm": 3.02,
+      "target_z": 0.2363
+    }
+  ]
+}

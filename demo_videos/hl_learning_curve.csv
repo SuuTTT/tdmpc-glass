@@ -1,0 +1,9 @@
+iter,version,return_1000step,success_rate,reached_rate,key_config_note
+1,v1,4402.76,0.0,0.8906,baseline phase machine; position-only IK; no aik; xy_tol .01 hold12
+3,v3,4231.01,0.0,0.8906,split LIFT/TRANSPORT/PLACE phases
+4,v4,4487.73,0.0,0.8438,faster IK + earlier transport (gain1.0 iters12 cart .06)
+7,v7,4548.71,0.0,0.8438,DEAD-END iterative 6DOF orient lock (reverted; up_bias .04)
+8,v8,3069.47,0.0156,0.8125,ANALYTIC level-IK from GRASP (aik_from2) - cracked 0% wall; hold8
+9,v9,2879.91,0.0625,0.8125,longer grasp-hold 18 + tighter xy_tol .005 (prev BEST)
+10,v9_rhold,3405.81,0.0625,0.8281,BEST: grasp_hold 50 + grasp_max 55 + xy_tol .006 (current controller.py)
+11,v11_xyservo,3521.93,0.0312,0.9688,"Job2: xy re-center (descend tracks live box, grasp_xy_gate .008) - BROKE reached cap 0.78->0.97 but success-neutral"

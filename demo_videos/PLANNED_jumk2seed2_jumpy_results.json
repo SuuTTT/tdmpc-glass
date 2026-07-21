@@ -1,0 +1,140 @@
+{
+  "ckpt": "demo_ckpts/jumk2_seed2_best_mppi.pkl",
+  "mode": "jumpy",
+  "tag": "jumk2seed2",
+  "planner": {
+    "jumpy_k": 2,
+    "jumpy_n_macro": 12,
+    "mppi_H": 4
+  },
+  "n_episodes": 10,
+  "success_rate": 0.0,
+  "n_success": 0,
+  "n_reached_box": 0,
+  "return_mean": 409.84400000000005,
+  "return_max": 469.82,
+  "box_lift_cm_mean": 4.259,
+  "box_lift_cm_max": 6.64,
+  "episodes": [
+    {
+      "episode": 0,
+      "return": 451.78,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.041,
+      "box_lift_cm": 4.1,
+      "target_z": 0.2655
+    },
+    {
+      "episode": 1,
+      "return": 379.5,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0299,
+      "box_lift_cm": 2.99,
+      "target_z": 0.2646
+    },
+    {
+      "episode": 2,
+      "return": 469.82,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0326,
+      "box_lift_cm": 3.26,
+      "target_z": 0.4255
+    },
+    {
+      "episode": 3,
+      "return": 438.87,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.043,
+      "box_lift_cm": 4.3,
+      "target_z": 0.3646
+    },
+    {
+      "episode": 4,
+      "return": 417.73,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0457,
+      "box_lift_cm": 4.57,
+      "target_z": 0.2649
+    },
+    {
+      "episode": 5,
+      "return": 223.96,
+      "steps": 81,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0517,
+      "box_lift_cm": 5.17,
+      "target_z": 0.4136
+    },
+    {
+      "episode": 6,
+      "return": 448.32,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0337,
+      "box_lift_cm": 3.37,
+      "target_z": 0.3129
+    },
+    {
+      "episode": 7,
+      "return": 453.24,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0463,
+      "box_lift_cm": 4.63,
+      "target_z": 0.3689
+    },
+    {
+      "episode": 8,
+      "return": 384.75,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0664,
+      "box_lift_cm": 6.64,
+      "target_z": 0.3738
+    },
+    {
+      "episode": 9,
+      "return": 430.47,
+      "steps": 150,
+      "success": false,
+      "max_box_target": 0.0,
+      "reached_box": false,
+      "box_init_z": 0.0,
+      "box_max_z": 0.0356,
+      "box_lift_cm": 3.56,
+      "target_z": 0.3653
+    }
+  ]
+}

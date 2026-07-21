@@ -1,0 +1,16 @@
+{
+  "ckpt": "/root/helios-rl/exp/tdmpc_glass/baselines_ppo_sac/logs/PandaPickCube-20260621-055701-to100m/checkpoints/000108134400",
+  "episodes": 512,
+  "det_frac": 0.5,
+  "ep_success_frac": 0.75,
+  "rows_total": 77312,
+  "usable_transitions": 76800,
+  "obs_dim": 66,
+  "act_dim": 8,
+  "schema": "OGBench raw layout: observations(s0..sT per traj), actions(a0..a_{T-1}+dummy), terminals(1 on sT), rewards(stock), successes(box_target>=0.9 flag). InFOM ogbench.load_dataset derives next_observations/valids and GCDataset relabels goal rewards.",
+  "action_range": [
+    -0.9998407363891602,
+    0.999828040599823
+  ],
+  "reward_stock": true
+}

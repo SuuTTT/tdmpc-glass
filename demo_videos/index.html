@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><title>PandaPickCube TD-MPC2 demo rollouts</title>
+<style>body{font-family:sans-serif;max-width:1100px;margin:20px auto;padding:0 12px}
+video{width:480px;max-width:100%;border:1px solid #ccc;margin:6px}
+.grid{display:flex;flex-wrap:wrap}h2{margin-top:28px}</style></head>
+<body>
+<h1>PandaPickCube — trained jumpy-k2 TD-MPC2, BARE deterministic policy a=tanh(mu)</h1>
+<p><b>VERDICT: policy does NOT pick the cube.</b> Across all 6 PandaPickCube checkpoints
+(jumk2 seed0/1/2, jumk8 seed0/1/2), the gripper hovers near the cube but the grasp flag
+(<code>reached_box</code>, gripper&lt;1.2cm) never fires, the cube never lifts off the table,
+and <code>box_target</code> stays 0. The high training "return" (2000-3000 over 1000 steps)
+is dense shaping reward (gripper proximity + no-floor-collision + arm-home), i.e. reward-hacking,
+not task success. Success rate = 0/N on every seed. Do NOT build an offline dataset from this policy.</p>
+<h2>jumk2 seed2 (highest pi_reward ~3116), 200-step episodes</h2>
+<div class="grid">
+<video src="PandaPickCube_jumk2seed2_ep0_fail.mp4" controls loop></video>
+<video src="PandaPickCube_jumk2seed2_ep1_fail.mp4" controls loop></video>
+<video src="PandaPickCube_jumk2seed2_ep2_fail.mp4" controls loop></video>
+</div>
+<h2>seed0 (best_mppi, prompt's checkpoint), 150-step episodes</h2>
+<div class="grid">
+<video src="PandaPickCube_seed0_ep0_fail.mp4" controls loop></video>
+<video src="PandaPickCube_seed0_ep1_fail.mp4" controls loop></video>
+<video src="PandaPickCube_seed0_ep2_fail.mp4" controls loop></video>
+<video src="PandaPickCube_seed0_ep3_fail.mp4" controls loop></video>
+<video src="PandaPickCube_seed0_ep4_fail.mp4" controls loop></video>
+<video src="PandaPickCube_seed0_ep5_fail.mp4" controls loop></video>
+</div>
+</body></html>

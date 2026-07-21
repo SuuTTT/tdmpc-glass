@@ -1,0 +1,812 @@
+{
+  "CheetahRun": {
+    "tdmpc2": {
+      "sample_eff_500k": {
+        "step": 500224,
+        "mean": 439.76,
+        "min": 0.5,
+        "max": 614.4,
+        "n_seeds": 5,
+        "per_seed": [
+          614.4,
+          539.3,
+          512.4,
+          532.2,
+          0.5
+        ]
+      },
+      "sample_eff_source": "d2_5seed",
+      "final_1M_peak": [
+        1000192,
+        639.1
+      ],
+      "final_1M_last": [
+        1000192,
+        639.1
+      ],
+      "sps_steadystate": 324,
+      "wall_total_s": 3695,
+      "done": true,
+      "step_to_thr": 400128,
+      "wall_to_thr_s": 1235.0,
+      "n_eval_fresh": 20,
+      "fresh_curve": [
+        [
+          50176,
+          109.5
+        ],
+        [
+          100096,
+          239.1
+        ],
+        [
+          150016,
+          277.2
+        ],
+        [
+          200192,
+          47.1
+        ],
+        [
+          250112,
+          436.4
+        ],
+        [
+          300032,
+          437.9
+        ],
+        [
+          350208,
+          148.0
+        ],
+        [
+          400128,
+          533.9
+        ],
+        [
+          450048,
+          541.5
+        ],
+        [
+          500224,
+          215.3
+        ],
+        [
+          550144,
+          0.4
+        ],
+        [
+          600064,
+          3.9
+        ],
+        [
+          650240,
+          581.9
+        ],
+        [
+          700160,
+          547.9
+        ],
+        [
+          750080,
+          603.2
+        ],
+        [
+          800000,
+          564.7
+        ],
+        [
+          850176,
+          3.1
+        ],
+        [
+          900096,
+          602.1
+        ],
+        [
+          950016,
+          624.6
+        ],
+        [
+          1000192,
+          639.1
+        ]
+      ]
+    },
+    "ppo": {
+      "ret_at_500k": [
+        0,
+        3.37
+      ],
+      "peak": [
+        186777600,
+        928.321
+      ],
+      "last": [
+        285081600,
+        2.867
+      ],
+      "wall_train_s": 1949.855738305021,
+      "wall_total_s": 2074,
+      "done": true,
+      "num_timesteps_cfg": 60000000,
+      "total_reported_steps": 285081600,
+      "step_to_thr": 19660800,
+      "wall_to_thr_s": 134.5,
+      "n_eval": 30,
+      "curve": [
+        [
+          0,
+          3.37
+        ],
+        [
+          9830400,
+          302.844
+        ],
+        [
+          19660800,
+          559.404
+        ],
+        [
+          29491200,
+          714.449
+        ],
+        [
+          39321600,
+          820.543
+        ],
+        [
+          49152000,
+          882.157
+        ],
+        [
+          58982400,
+          911.151
+        ],
+        [
+          68812800,
+          899.995
+        ],
+        [
+          78643200,
+          921.117
+        ],
+        [
+          88473600,
+          923.976
+        ],
+        [
+          98304000,
+          914.601
+        ],
+        [
+          108134400,
+          924.612
+        ],
+        [
+          117964800,
+          923.835
+        ],
+        [
+          127795200,
+          913.292
+        ],
+        [
+          137625600,
+          925.047
+        ],
+        [
+          147456000,
+          918.535
+        ],
+        [
+          157286400,
+          908.724
+        ],
+        [
+          167116800,
+          919.897
+        ],
+        [
+          176947200,
+          925.916
+        ],
+        [
+          186777600,
+          928.321
+        ],
+        [
+          196608000,
+          844.24
+        ],
+        [
+          206438400,
+          917.694
+        ],
+        [
+          216268800,
+          925.086
+        ],
+        [
+          226099200,
+          923.853
+        ],
+        [
+          235929600,
+          914.662
+        ],
+        [
+          245760000,
+          924.1
+        ],
+        [
+          255590400,
+          26.4
+        ],
+        [
+          265420800,
+          5.049
+        ],
+        [
+          275251200,
+          3.52
+        ],
+        [
+          285081600,
+          2.867
+        ]
+      ]
+    },
+    "threshold": 511.28,
+    "threshold_basis": "0.8 * min(TDMPC2 fresh-1M peak, PPO peak) -- weaker-algo peak, so both reach it",
+    "notes": [
+      "TD-MPC2 deployable return per step = max(pi,mppi).",
+      "Sample-efficiency @500k: Cheetah/Hopper = 5-seed d2 mean+-range; hard tasks = fresh 1-seed.",
+      "Final = fresh same-box 1M run (peak, robust to terminal collapse; literal last also recorded).",
+      "PPO x-axis = raw brax-reported env-steps (incl eval-reset overhead).",
+      "Representative final return = PEAK over curve (PPO sometimes collapses terminally)."
+    ]
+  },
+  "HopperHop": {
+    "tdmpc2": {
+      "sample_eff_500k": {
+        "step": 500224,
+        "mean": 117.58,
+        "min": 56.4,
+        "max": 226.8,
+        "n_seeds": 5,
+        "per_seed": [
+          226.8,
+          145.8,
+          76.5,
+          82.4,
+          56.4
+        ]
+      },
+      "sample_eff_source": "d2_5seed",
+      "final_1M_peak": [
+        1000192,
+        366.8
+      ],
+      "final_1M_last": [
+        1000192,
+        366.8
+      ],
+      "sps_steadystate": 392,
+      "wall_total_s": 2866,
+      "done": true,
+      "step_to_thr": 750080,
+      "wall_to_thr_s": 1913.5,
+      "n_eval_fresh": 4,
+      "fresh_curve": [
+        [
+          250112,
+          0.0
+        ],
+        [
+          500224,
+          14.4
+        ],
+        [
+          750080,
+          355.6
+        ],
+        [
+          1000192,
+          366.8
+        ]
+      ]
+    },
+    "ppo": {
+      "ret_at_500k": [
+        0,
+        0.256
+      ],
+      "peak": [
+        265420800,
+        33.455
+      ],
+      "last": [
+        285081600,
+        5.21
+      ],
+      "wall_train_s": 2891.3359989329474,
+      "wall_total_s": 2987,
+      "done": true,
+      "num_timesteps_cfg": 60000000,
+      "total_reported_steps": 285081600,
+      "step_to_thr": 255590400,
+      "wall_to_thr_s": 2592.2,
+      "n_eval": 30,
+      "curve": [
+        [
+          0,
+          0.256
+        ],
+        [
+          9830400,
+          1.0
+        ],
+        [
+          19660800,
+          0.922
+        ],
+        [
+          29491200,
+          1.002
+        ],
+        [
+          39321600,
+          1.65
+        ],
+        [
+          49152000,
+          1.326
+        ],
+        [
+          58982400,
+          1.655
+        ],
+        [
+          68812800,
+          2.375
+        ],
+        [
+          78643200,
+          1.954
+        ],
+        [
+          88473600,
+          2.241
+        ],
+        [
+          98304000,
+          2.363
+        ],
+        [
+          108134400,
+          2.032
+        ],
+        [
+          117964800,
+          1.861
+        ],
+        [
+          127795200,
+          2.841
+        ],
+        [
+          137625600,
+          2.786
+        ],
+        [
+          147456000,
+          3.17
+        ],
+        [
+          157286400,
+          5.022
+        ],
+        [
+          167116800,
+          6.016
+        ],
+        [
+          176947200,
+          6.548
+        ],
+        [
+          186777600,
+          6.17
+        ],
+        [
+          196608000,
+          18.385
+        ],
+        [
+          206438400,
+          19.528
+        ],
+        [
+          216268800,
+          17.537
+        ],
+        [
+          226099200,
+          13.616
+        ],
+        [
+          235929600,
+          21.001
+        ],
+        [
+          245760000,
+          24.522
+        ],
+        [
+          255590400,
+          33.217
+        ],
+        [
+          265420800,
+          33.455
+        ],
+        [
+          275251200,
+          16.979
+        ],
+        [
+          285081600,
+          5.21
+        ]
+      ]
+    },
+    "threshold": 26.76,
+    "threshold_basis": "0.8 * min(TDMPC2 fresh-1M peak, PPO peak) -- weaker-algo peak, so both reach it",
+    "notes": [
+      "TD-MPC2 deployable return per step = max(pi,mppi).",
+      "Sample-efficiency @500k: Cheetah/Hopper = 5-seed d2 mean+-range; hard tasks = fresh 1-seed.",
+      "Final = fresh same-box 1M run (peak, robust to terminal collapse; literal last also recorded).",
+      "PPO x-axis = raw brax-reported env-steps (incl eval-reset overhead).",
+      "Representative final return = PEAK over curve (PPO sometimes collapses terminally)."
+    ]
+  },
+  "AcrobotSwingup": {
+    "tdmpc2": {
+      "sample_eff_500k": {
+        "step": 500224,
+        "mean": 378.8,
+        "min": 378.8,
+        "max": 378.8,
+        "n_seeds": 1,
+        "per_seed": [
+          378.8
+        ]
+      },
+      "sample_eff_source": "fresh_1seed",
+      "final_1M_peak": [
+        950016,
+        473.1
+      ],
+      "final_1M_last": [
+        1000192,
+        396.2
+      ],
+      "sps_steadystate": 372,
+      "wall_total_s": 3314,
+      "done": true,
+      "step_to_thr": 450048,
+      "wall_to_thr_s": 1209.8,
+      "n_eval_fresh": 20,
+      "fresh_curve": [
+        [
+          50176,
+          24.4
+        ],
+        [
+          100096,
+          81.8
+        ],
+        [
+          150016,
+          134.2
+        ],
+        [
+          200192,
+          235.1
+        ],
+        [
+          250112,
+          190.2
+        ],
+        [
+          300032,
+          205.7
+        ],
+        [
+          350208,
+          197.3
+        ],
+        [
+          400128,
+          338.1
+        ],
+        [
+          450048,
+          389.3
+        ],
+        [
+          500224,
+          378.8
+        ],
+        [
+          550144,
+          388.4
+        ],
+        [
+          600064,
+          414.6
+        ],
+        [
+          650240,
+          286.4
+        ],
+        [
+          700160,
+          310.3
+        ],
+        [
+          750080,
+          368.8
+        ],
+        [
+          800000,
+          388.4
+        ],
+        [
+          850176,
+          191.0
+        ],
+        [
+          900096,
+          365.7
+        ],
+        [
+          950016,
+          473.1
+        ],
+        [
+          1000192,
+          396.2
+        ]
+      ]
+    },
+    "ppo": {
+      "ret_at_500k": null,
+      "peak": null,
+      "last": null,
+      "wall_train_s": null,
+      "wall_total_s": null,
+      "done": false,
+      "num_timesteps_cfg": null,
+      "total_reported_steps": null,
+      "step_to_thr": null,
+      "wall_to_thr_s": null,
+      "n_eval": 0,
+      "curve": []
+    },
+    "threshold": 378.48,
+    "threshold_basis": "0.8 * min(TDMPC2 fresh-1M peak, PPO peak) -- weaker-algo peak, so both reach it",
+    "notes": [
+      "TD-MPC2 deployable return per step = max(pi,mppi).",
+      "Sample-efficiency @500k: Cheetah/Hopper = 5-seed d2 mean+-range; hard tasks = fresh 1-seed.",
+      "Final = fresh same-box 1M run (peak, robust to terminal collapse; literal last also recorded).",
+      "PPO x-axis = raw brax-reported env-steps (incl eval-reset overhead).",
+      "Representative final return = PEAK over curve (PPO sometimes collapses terminally)."
+    ]
+  },
+  "CartpoleSwingupSparse": {
+    "tdmpc2": {
+      "sample_eff_500k": {
+        "step": 500224,
+        "mean": 91.2,
+        "min": 91.2,
+        "max": 91.2,
+        "n_seeds": 1,
+        "per_seed": [
+          91.2
+        ]
+      },
+      "sample_eff_source": "fresh_1seed",
+      "final_1M_peak": [
+        900096,
+        113.7
+      ],
+      "final_1M_last": [
+        1000192,
+        72.0
+      ],
+      "sps_steadystate": 371,
+      "wall_total_s": 3332,
+      "done": true,
+      "step_to_thr": 450048,
+      "wall_to_thr_s": 1213.1,
+      "n_eval_fresh": 20,
+      "fresh_curve": [
+        [
+          50176,
+          0.0
+        ],
+        [
+          100096,
+          0.7
+        ],
+        [
+          150016,
+          0.0
+        ],
+        [
+          200192,
+          7.6
+        ],
+        [
+          250112,
+          66.7
+        ],
+        [
+          300032,
+          55.7
+        ],
+        [
+          350208,
+          86.7
+        ],
+        [
+          400128,
+          42.4
+        ],
+        [
+          450048,
+          112.3
+        ],
+        [
+          500224,
+          91.2
+        ],
+        [
+          550144,
+          60.2
+        ],
+        [
+          600064,
+          61.0
+        ],
+        [
+          650240,
+          57.3
+        ],
+        [
+          700160,
+          57.7
+        ],
+        [
+          750080,
+          64.3
+        ],
+        [
+          800000,
+          71.6
+        ],
+        [
+          850176,
+          74.6
+        ],
+        [
+          900096,
+          113.7
+        ],
+        [
+          950016,
+          109.4
+        ],
+        [
+          1000192,
+          72.0
+        ]
+      ]
+    },
+    "ppo": {
+      "ret_at_500k": null,
+      "peak": null,
+      "last": null,
+      "wall_train_s": null,
+      "wall_total_s": null,
+      "done": false,
+      "num_timesteps_cfg": 60000000,
+      "total_reported_steps": null,
+      "step_to_thr": null,
+      "wall_to_thr_s": null,
+      "n_eval": 0,
+      "curve": []
+    },
+    "threshold": 90.96,
+    "threshold_basis": "0.8 * min(TDMPC2 fresh-1M peak, PPO peak) -- weaker-algo peak, so both reach it",
+    "notes": [
+      "TD-MPC2 deployable return per step = max(pi,mppi).",
+      "Sample-efficiency @500k: Cheetah/Hopper = 5-seed d2 mean+-range; hard tasks = fresh 1-seed.",
+      "Final = fresh same-box 1M run (peak, robust to terminal collapse; literal last also recorded).",
+      "PPO x-axis = raw brax-reported env-steps (incl eval-reset overhead).",
+      "Representative final return = PEAK over curve (PPO sometimes collapses terminally)."
+    ]
+  },
+  "HumanoidRun": {
+    "tdmpc2": {
+      "sample_eff_500k": {
+        "step": 200192,
+        "mean": 3.5,
+        "min": 3.5,
+        "max": 3.5,
+        "n_seeds": 1,
+        "per_seed": [
+          3.5
+        ]
+      },
+      "sample_eff_source": "fresh_1seed",
+      "final_1M_peak": [
+        100096,
+        12.6
+      ],
+      "final_1M_last": [
+        200192,
+        3.5
+      ],
+      "sps_steadystate": 339,
+      "wall_total_s": 3128,
+      "done": true,
+      "step_to_thr": 100096,
+      "wall_to_thr_s": 295.3,
+      "n_eval_fresh": 4,
+      "fresh_curve": [
+        [
+          50176,
+          2.7
+        ],
+        [
+          100096,
+          12.6
+        ],
+        [
+          150016,
+          4.5
+        ],
+        [
+          200192,
+          3.5
+        ]
+      ]
+    },
+    "ppo": {
+      "ret_at_500k": null,
+      "peak": null,
+      "last": null,
+      "wall_train_s": null,
+      "wall_total_s": null,
+      "done": false,
+      "num_timesteps_cfg": null,
+      "total_reported_steps": null,
+      "step_to_thr": null,
+      "wall_to_thr_s": null,
+      "n_eval": 0,
+      "curve": []
+    },
+    "threshold": 10.08,
+    "threshold_basis": "0.8 * min(TDMPC2 fresh-1M peak, PPO peak) -- weaker-algo peak, so both reach it",
+    "notes": [
+      "TD-MPC2 deployable return per step = max(pi,mppi).",
+      "Sample-efficiency @500k: Cheetah/Hopper = 5-seed d2 mean+-range; hard tasks = fresh 1-seed.",
+      "Final = fresh same-box 1M run (peak, robust to terminal collapse; literal last also recorded).",
+      "PPO x-axis = raw brax-reported env-steps (incl eval-reset overhead).",
+      "Representative final return = PEAK over curve (PPO sometimes collapses terminally)."
+    ]
+  }
+}

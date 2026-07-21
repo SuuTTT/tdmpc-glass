@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="300">
+<title>TD-MPC-Glass - DMC Benchmark (live)</title>
+<style>
+ body{font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+   margin:0;background:#0f1115;color:#e6e6e6}
+ .wrap{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+ h1{font-size:22px;margin:0 0 4px}
+ h2{font-size:17px;margin:34px 0 10px;border-bottom:1px solid #2a2f3a;padding-bottom:6px}
+ .meta{color:#9aa4b2;font-size:12.5px;margin-bottom:8px}
+ table{border-collapse:collapse;width:100%;font-size:13px}
+ th,td{border:1px solid #2a2f3a;padding:7px 9px;text-align:center}
+ thead th{background:#1a1f2b;position:sticky;top:0}
+ th.task{text-align:left;background:#161b25;font-weight:600;white-space:nowrap}
+ td.na{color:#5a6473}
+ .sub{display:block;color:#8b97a7;font-size:10.5px;margin-top:2px}
+ .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+ figure{margin:0;background:#161b25;border:1px solid #2a2f3a;border-radius:6px;padding:6px}
+ figure img{width:100%;display:block;border-radius:4px}
+ .note{color:#9aa4b2;font-size:12px;background:#161b25;border:1px solid #2a2f3a;
+   border-radius:6px;padding:10px 12px;margin:10px 0}
+ code{background:#222834;padding:1px 5px;border-radius:4px}
+ a{color:#6db3ff}
+</style></head><body><div class="wrap">
+<h1>TD-MPC-Glass - DMC Benchmark (live)</h1>
+<div class="meta">Last updated <b>2026-07-01 07:22:54</b> &middot; auto-refresh 5 min &middot;
+ source <code>/root/helios-rl/exp/benchmark/*.csv</code></div>
+<div class="meta">Live coverage: tdmpc-glass 0/16 tasks, TD-MPC2 0/16 tasks.
+ Seeds-per-task (glass): [0]. For mean&plusmn;CI you need &ge;3 seeds.</div>
+
+<h2>A. Main results table</h2>
+<div class="note">World-model cells = mean &plusmn; std of <b>final-checkpoint</b> return
+ across available seeds (95% CI = 1.96&middot;std/&radic;n; n shown). Each TD-MPC2 /
+ tdmpc-glass number is read live from a real CSV. <b>Missing = &mdash; (never fabricated).</b><br>
+ <b>PPO</b>: partial &mdash; only ~5 DMC tasks were run, at 50&ndash;285M env steps;
+ shown value is PEAK return (robust to PPO terminal collapse), budget labelled.<br>
+ <b>abstraction</b> (analytic controller + learned residual): only PendulumSwingup
+ verified (Part 45, 3 seeds); Acrobot abstraction not run &rarr; &mdash;.<br>
+ <b>TAMP</b>: N/A for DMC &mdash; it is an OpenCabinet manipulation controller (Part 43),
+ not a DMC method.</div>
+<table><thead><tr><th class="task">Task</th><th>PPO</th><th>TD-MPC2</th><th>tdmpc-glass</th><th>abstraction</th><th>TAMP</th></tr></thead>
+<tbody><tr><th class="task">AcrobotSwingup</th><td>268.4<span class="sub">peak @ 285M</span></td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">BallInCup</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">CartpoleBalance</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">CartpoleSwingup</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">CheetahRun</th><td>928.3<span class="sub">peak @ 285M</span></td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">FingerSpin</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">FingerTurnEasy</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">FingerTurnHard</th><td>967.9<span class="sub">peak @ 285M</span></td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">HopperHop</th><td>33.5<span class="sub">peak @ 285M</span></td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">HopperStand</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">PendulumSwingup</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td>835.0 &plusmn; 14.0<span class="sub">95% CI &plusmn;15.8, n=3</span></td><td class="na">&mdash;</td></tr><tr><th class="task">ReacherEasy</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">ReacherHard</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">WalkerRun</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">WalkerStand</th><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr><tr><th class="task">WalkerWalk</th><td>970.1<span class="sub">peak @ 79M</span></td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td><td class="na">&mdash;</td></tr></tbody></table>
+
+<h2>B. Learning curves</h2>
+<div class="note">Mean across seeds with 95% CI shaded band, one line per world-model
+ method. x = env steps (M), y = return. Regenerated each update.</div>
+<div class="grid"><figure><img src="curves/AcrobotSwingup.png" alt="AcrobotSwingup" loading="lazy"></figure><figure><img src="curves/BallInCup.png" alt="BallInCup" loading="lazy"></figure><figure><img src="curves/CartpoleBalance.png" alt="CartpoleBalance" loading="lazy"></figure><figure><img src="curves/CartpoleSwingup.png" alt="CartpoleSwingup" loading="lazy"></figure><figure><img src="curves/CheetahRun.png" alt="CheetahRun" loading="lazy"></figure><figure><img src="curves/FingerSpin.png" alt="FingerSpin" loading="lazy"></figure><figure><img src="curves/FingerTurnEasy.png" alt="FingerTurnEasy" loading="lazy"></figure><figure><img src="curves/FingerTurnHard.png" alt="FingerTurnHard" loading="lazy"></figure><figure><img src="curves/HopperHop.png" alt="HopperHop" loading="lazy"></figure><figure><img src="curves/HopperStand.png" alt="HopperStand" loading="lazy"></figure><figure><img src="curves/PendulumSwingup.png" alt="PendulumSwingup" loading="lazy"></figure><figure><img src="curves/ReacherEasy.png" alt="ReacherEasy" loading="lazy"></figure><figure><img src="curves/ReacherHard.png" alt="ReacherHard" loading="lazy"></figure><figure><img src="curves/WalkerRun.png" alt="WalkerRun" loading="lazy"></figure><figure><img src="curves/WalkerStand.png" alt="WalkerStand" loading="lazy"></figure><figure><img src="curves/WalkerWalk.png" alt="WalkerWalk" loading="lazy"></figure></div>
+
+<h2>C. Rollout GIFs</h2>
+<div class="note">Pending &mdash; rendered eval rollouts will be embedded here as they
+ are produced (lowest-priority visual; table &amp; curves are not blocked on it).</div>
+
+</div></body></html>

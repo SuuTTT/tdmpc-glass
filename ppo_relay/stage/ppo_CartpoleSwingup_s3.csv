@@ -1,0 +1,13 @@
+task,seed,step,reward
+CartpoleSwingup,3,4177920,0.2489
+CartpoleSwingup,3,8355840,24.6791
+CartpoleSwingup,3,12533760,156.3739
+CartpoleSwingup,3,16711680,137.0155
+CartpoleSwingup,3,20889600,105.4881
+CartpoleSwingup,3,25067520,118.0625
+CartpoleSwingup,3,29245440,181.5820
+CartpoleSwingup,3,33423360,193.7934
+CartpoleSwingup,3,37601280,180.9831
+CartpoleSwingup,3,41779200,156.4986
+CartpoleSwingup,3,45957120,179.1452
+CartpoleSwingup,3,50135040,192.2544

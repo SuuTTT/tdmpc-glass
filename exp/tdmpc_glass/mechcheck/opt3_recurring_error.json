@@ -1,0 +1,170 @@
+{
+  "Pick": [
+    {
+      "file": "ks_Pick_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "rho_recurring": 0.099,
+      "rho_shuffle_ci": [
+        -0.229,
+        0.002,
+        0.224
+      ],
+      "rho_displacement": 0.493,
+      "rho_beyond_disp": 0.194,
+      "beyond_ci": [
+        -0.308,
+        0.252,
+        0.524
+      ]
+    },
+    {
+      "file": "ks_Pick_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "rho_recurring": -0.323,
+      "rho_shuffle_ci": [
+        -0.363,
+        -0.031,
+        0.365
+      ],
+      "rho_displacement": -0.174,
+      "rho_beyond_disp": -0.276,
+      "beyond_ci": [
+        -0.571,
+        -0.247,
+        0.093
+      ]
+    },
+    {
+      "file": "ks_Pick_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaPickCube",
+      "k": 8,
+      "rho_recurring": 0.772,
+      "rho_shuffle_ci": [
+        -0.765,
+        0.125,
+        0.75
+      ],
+      "rho_displacement": 0.36,
+      "rho_beyond_disp": 0.744,
+      "beyond_ci": [
+        0.403,
+        0.696,
+        0.852
+      ]
+    }
+  ],
+  "Ori": [
+    {
+      "file": "ks_Ori_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "rho_recurring": 0.515,
+      "rho_shuffle_ci": [
+        -0.76,
+        0.068,
+        0.739
+      ],
+      "rho_displacement": 0.443,
+      "rho_beyond_disp": 0.521,
+      "beyond_ci": [
+        -0.117,
+        0.509,
+        0.814
+      ]
+    },
+    {
+      "file": "ks_Ori_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "rho_recurring": -0.444,
+      "rho_shuffle_ci": [
+        -0.633,
+        0.414,
+        0.633
+      ],
+      "rho_displacement": 0.512,
+      "rho_beyond_disp": -0.466,
+      "beyond_ci": [
+        -0.795,
+        -0.441,
+        0.184
+      ]
+    },
+    {
+      "file": "ks_Ori_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaPickCubeOrientation",
+      "k": 8,
+      "rho_recurring": -0.585,
+      "rho_shuffle_ci": [
+        -0.688,
+        0.548,
+        0.688
+      ],
+      "rho_displacement": 0.412,
+      "rho_beyond_disp": -0.628,
+      "beyond_ci": [
+        -0.768,
+        -0.581,
+        -0.154
+      ]
+    }
+  ],
+  "Cab": [
+    {
+      "file": "ks_Cab_k8_s0_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "rho_recurring": 0.834,
+      "rho_shuffle_ci": [
+        -0.592,
+        0.044,
+        0.679
+      ],
+      "rho_displacement": 0.661,
+      "rho_beyond_disp": 0.695,
+      "beyond_ci": [
+        0.308,
+        0.699,
+        0.81
+      ]
+    },
+    {
+      "file": "ks_Cab_k8_s1_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "rho_recurring": 0.885,
+      "rho_shuffle_ci": [
+        -0.853,
+        -0.128,
+        0.85
+      ],
+      "rho_displacement": -0.774,
+      "rho_beyond_disp": 0.696,
+      "beyond_ci": [
+        0.486,
+        0.686,
+        0.878
+      ]
+    },
+    {
+      "file": "ks_Cab_k8_s2_seed1_k8_mech.npz",
+      "env": "PandaOpenCabinet",
+      "k": 8,
+      "rho_recurring": 0.934,
+      "rho_shuffle_ci": [
+        -0.918,
+        0.252,
+        0.919
+      ],
+      "rho_displacement": 0.146,
+      "rho_beyond_disp": 0.933,
+      "beyond_ci": [
+        0.697,
+        0.897,
+        0.935
+      ]
+    }
+  ]
+}

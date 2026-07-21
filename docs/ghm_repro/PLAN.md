@@ -66,6 +66,56 @@ honesty note. NOTE: InFOM `-ft-` finetuning datasets are NOT on the OGBench serv
   GHM checkpoint to get planner success rates; plug a real goal-conditioned base-policy library
   (currently only the GHM's own actor is used as the single base policy).
 
+## 2026-06-19 — antmaze STAGE RUN on b3060 (GPUs 2,3 only; staged plan)
+Goal: reproduce CompPlan's base-vs-base+CompPlan lift on antmaze-medium-navigate task1.
+
+- **STAGE 1 (base policy) — DONE.** Trained OGBench **GC-BC** on `antmaze-medium-navigate-v0`
+  (full GC dataset, auto-download), 1M steps, b3060:2, `WANDB_MODE=disabled`, `MUJOCO_GL=egl`.
+  Code = `ghm_repro/ogbench/impls` rsynced to `/root/ghm/ogbench_impls`; deps already in
+  `/root/ghm/.venv` (distrax present). Additive fix: `main.py setup_wandb(... mode=os.environ
+  .get('WANDB_MODE','online'))` (the impls forced `mode='online'`, ignoring `WANDB_MODE`) — mirrored
+  on EC2. Checkpoint: `/root/ghm/gcrl_exp/dummy/Debug/sd000_20260619_142731/params_1000000.pkl`.
+  Eval = `eval.csv` (per-task + overall_success over the 5 navigate goals; overall ≈ the paper's
+  "GC-BC antmaze-medium" base). NUMBER: see report / eval.csv.
+- **STAGE 2 (antmaze GHM) — DONE (pre-existing).** Found a completed antmaze GHM at
+  `/root/ghm/exp/ghm_amz_t1/sd000_20260619_095353/params_1500000.pkl` (1M pretrain + 0.5M finetune,
+  `agents/ghm.py`, gamma_min 0.95 / gamma_max 0.999 → horizon-conditioning ON, critic_latent_type
+  'prior', horizon_fourier_dim 0). Its own InFOM-style agent eval `episode.success` = 0.16 @1.0M
+  → 0.08 @1.5M on task1 (finetuning_eval.csv). **GAP vs paper:** policy-conditioning hook
+  (`policy_embeds`) is UNUSED in this ckpt — the GHM is conditioned on its OWN actor, not the GC-BC
+  base. **QUALITY ISSUE (verified by occupancy probe):** from a real start state xy≈(0.5,0.5) with
+  gamma_h=0.999, 256 GHM occupancy samples stay at xy≈(0.44,0.55) (frac past x>5 = 0.0) — the
+  discounted-occupancy model COLLAPSES locally and does NOT spread across the maze toward the goal.
+  So GHM-derived subgoals are near-current-state; CompPlan subgoal-steering can't reach far goals.
+- **STAGE 3 (planner→eval) — IMPLEMENTED.** New `infom/planning/eval_compplan.py`: loads GC-BC
+  (Stage 1) + GHM (Stage 2) in one process (isolates the colliding `utils`/`agents` packages via
+  module-cache clearing), runs (a) BASE-ALONE (GC-BC → final goal) and (b) BASE+COMPPLAN (GHM beam
+  search picks a subgoal by xy-distance-to-goal, feeds it to GC-BC, replan every N steps) over N
+  episodes on the singletask env, reads `info['success']`. Instantiates plan-over-policies as
+  plan-over-subgoals for the single GC base policy (documented reduction).
+- **STAGE 3 result (MEASURED, 20 eps, deterministic, GPU 3):** base-alone GC-BC = **0.30**;
+  base+CompPlan = **0.10** (per-ep successes [..1..1..], 2/20). jit'ing the GHM jump + GC actor cut
+  the planner from 585 s/ep → ~5 s/ep. Results JSON: `/root/ghm/logs/STAGE_RESULTS.json`,
+  `compplan_eval_task1_cp.json`.
+- **STAGE 4 VERDICT — measured, not the paper lift.**
+
+  | system on antmaze-medium-navigate task1 | base | base+CompPlan |
+  |---|---|---|
+  | OURS (measured, 20 eps) | **0.30** | **0.10** |
+  | paper CompPlan (GC-BC, antmaze-medium) | 0.49 | 0.85 |
+
+  CompPlan HURTS here (0.30 → 0.10), the OPPOSITE of the paper's 0.49 → 0.85. Cause is verified, not
+  speculative: the Stage-2 GHM's discounted-occupancy samples COLLAPSE to the local neighborhood
+  (occupancy probe: stay within ~0.1 of start xy at gamma_h=0.999), so GHM-derived subgoals sit next
+  to the current state and steering the GC policy toward them pulls it off the direct route to the
+  far goal. Base GC-BC itself (0.30 / overall 0.36 @1M, single seed) is also below the paper's 0.49
+  (OGBench GCBC antmaze-medium is high-variance across goals/seeds). **What's missing to reproduce
+  the lift:** (1) a GHM whose occupancy actually spreads to FAR subgoals across the maze (much
+  longer/better GHM training, or a different sampler/horizon schedule); (2) genuine policy-
+  conditioning so the GHM models the GC base policy's occupancy (the `policy_embeds` hook is unused);
+  (3) a real multi-policy library (we used plan-over-subgoals for one GC policy). Pipeline is fully
+  wired and fast — the bottleneck is now GHM quality, which is a multi-day training problem.
+
 ## Honesty note
 Full reproduction of CompPlan numbers is a multi-day effort (no code, 3M-step flow model, base-policy
 pretraining, two benchmarks). In an 8h unattended window the realistic deliverable is: scaffolds
