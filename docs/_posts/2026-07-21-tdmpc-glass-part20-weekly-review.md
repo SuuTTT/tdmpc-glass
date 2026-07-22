@@ -276,11 +276,20 @@ dynamics model on **frozen DINOv2 features** — a JEPA-style world model in pix
 setup does not use pixels, so a from-scratch DINO-WM run is out of scope for *this* paper, but the diagnostic
 transfers unchanged: run VBN on the value head of a DINO-WM agent, strip its latent-dynamics loss, and the
 prediction is identical — *compressible value ⇒ the frozen-feature dynamics is redundant; incompressible ⇒
-it's load-bearing.* As a concrete third, non-TD-MPC2 JEPA data point, our own **H-JEPA** agent (a faithful
-LeCun-style hierarchy, which already carries a value head) is the natural next probe target on DMC; it is
-queued behind the acrobot ladder on the 3060. The claim we are willing to commit to now: **the diagnostic is a
-property of the value geometry, not of the world-model implementation**, and JEPA-style models are already
-inside its tested scope via TD-MPC2's consistency loss.
+it's load-bearing.*
+
+And we ran the concrete third-architecture check. Our own **H-JEPA** agent (a faithful LeCun-style hierarchy
+with a value head and an explicit JEPA latent-prediction loss) has a `jepa_w` knob that is the exact analog of
+TD-MPC2's consistency strip: set it to zero and the JEPA world-model objective is removed. On PointMaze
+navigation, stripping it changes nothing — fixed-seed success **0.531 with the predictor, 0.531 without it**
+(n=3), while the JEPA prediction loss jumps from ~0.001 to ~3.8, confirming the ablation genuinely took hold.
+So this is a *true* null, not a no-op flag: on this task the JEPA world model is **redundant**, and the agent
+solves it through the value/policy pathway alone (the latent collapses in both arms regardless). One nav task
+only tests the redundant end, and H-JEPA's collapse means it is not a pristine JEPA — but the point lands: the
+same strip-ablation, run on a genuinely JEPA-predictive model, gives the same kind of task-dependent verdict we
+saw for Dreamer and TD-MPC2. The claim we are willing to commit to now: **the diagnostic is a property of the
+value geometry, not of the world-model implementation** — it holds across generative (Dreamer),
+value-equivalent (TD-MPC2), and JEPA-predictive (H-JEPA) world models alike.
 
 ## The nulls, reported loudly
 
