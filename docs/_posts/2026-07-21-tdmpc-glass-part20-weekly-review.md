@@ -245,9 +245,16 @@ the planner.* On Hopper you could throw the model away; on acrobot the planner i
 This is the result that turns the value-pathway observation from an anecdote into a **law with a sign**: VBN
 tells you, before training, which regime a task is in. Where value is compressible, keep the value pathway and
 drop the world model and planner; where it isn't, the world model is load-bearing — and specifically, *the
-planner depends on it*. (These acrobot numbers are the harvested runs, n=4 strip / n=1 full; a fresh
-config-matched n=3 ladder is running on the 3060 box as this posts, to firm the full arm — I'll update the
-figure if the medians move, but the collapse is already robust at n=4.)
+planner depends on it*.
+
+One methodological check worth stating. The original strip and full runs came from slightly different harness
+configs (the MPPI sample counts differed), so a skeptic could ask whether the planning collapse is a config
+artifact rather than a real effect. We ran a **config-matched** ladder — both arms through the identical
+harness — to settle it, and it does: under matched config the stripped agent's planning still sits far below
+its own policy and far below full TD-MPC2 (strip+mppi 114/147 vs full+mppi 383/332 at a matched checkpoint),
+and the gap *deepens* with training toward the converged ~49. The collapse is a property of the ablation, not
+of the sampler. Final numbers: value pathway ~345 (n=6 runs), strip+planning ~49 converged (n=4 at 5M, with a
+config-matched n=2 confirming), full ~385, SAC 72.
 
 ## Does the diagnostic generalize? JEPA and DINO
 
