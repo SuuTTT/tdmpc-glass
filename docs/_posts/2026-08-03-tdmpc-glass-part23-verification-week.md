@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 23: The Verification Week — What Survived, What Didn't, and Two Config Lines Worth 1.9×"
 date: 2026-08-03
-description: "We rebuilt the diagnostic on the OFFICIAL TD-MPC2 instead of our own re-implementation, and the headline number moved: the AAAI paper's ~9.2× cheetah gap is 1.04× under ordinary on-policy training and 3.55× under its matched-data control. So the claim is real but scoped to a regime, not a task. Three separate n=1 findings died under replication. Prunability turned out to be unpredictable from importance — the strongest form of the thesis. And the efficiency work found two config lines worth 1.9× wall-clock at equal-or-better return, while faster GPUs, batched physics and run-packing were all measured and found inert. Includes terminology, every parameter explained, all tables, three figures, and two corrections to our own earlier posts."
+description: "We rebuilt the diagnostic on the OFFICIAL TD-MPC2 instead of our own re-implementation, and the headline number moved: the AAAI paper's ~9.2× cheetah gap is 1.04× under ordinary on-policy training and 3.55× under its matched-data control. So the claim is real but scoped to a regime, not a task. Three separate n=1 findings died under replication. Prunability turned out to be unpredictable from importance — the strongest form of the thesis. And the efficiency work found two config lines worth 1.9× wall-clock at equal-or-better return, while faster GPUs, batched physics and run-packing were all measured and found inert. Includes terminology, every parameter explained, all tables, three figures, two corrections to our own earlier posts, a vectorised planner (3.5x, bit-identical at N=1), and a proposal for an efficiency paper built on measure-then-prune."
 ---
 
 > Two weeks ago the plan was to build an ICLR paper on top of the AAAI diagnostic. Before doing
@@ -187,6 +187,63 @@ Depth 1 (729.1) falls inside the default range, so the useful window is 2–3, n
 possible." And `k=4` (one update per four steps at 4× batch) fails on both axes — return collapses to
 604 and it is not even faster.
 
+
+### Vectorising the planner: built, gated, and 3.5× — not the 10-30× we estimated
+
+The obvious remaining lever was that **official TD-MPC2 runs one environment at a time**. Batch N
+environments through the planner and the sequential MPPI chain is paid once for all of them instead
+of N times.
+
+We built it as an **addition** — `plan_vec()` / `act_vec()` are new methods; `_plan()` and `act()`
+are untouched. That shape is deliberate. Our earlier JAX re-implementation of TD-MPC2 diverged from
+the official code and cost a week of confusion; keeping the original path intact makes it the
+reference rather than a memory.
+
+**Correctness gate, run before any speed claim:**
+
+| check | result |
+|---|---|
+| N=1 equivalence with `_plan` under the same RNG | `max|diff| = 0.00e+00` — bit-identical |
+| N=16: finite, in [-1,1], non-degenerate spread | PASS |
+
+It surfaced a real bug in the official code on the way: `_estimate_value` hardcodes
+`termination = torch.zeros(cfg.num_samples, 1)`, i.e. it assumes the batch **is** `num_samples`.
+True for one environment, false for N. Generalised to `z.shape[0]`, which is exactly equivalent in
+the original path.
+
+| envs | actions/s | speedup |
+|---|---|---|
+| 1 | 17.4 | 1.0× |
+| 4 | 49.1 | 2.8× |
+| 16 | 58.0 | 3.3× |
+| 64 | 61.1 | **3.5×** |
+
+**It saturates at 3.5×, and most of it is there by 4 envs.** We predicted 10-30×. That was wrong,
+and the reason matters: the MPPI planner is **already batched at `num_samples=512`**, so it was
+never in the tiny-batch latency-bound regime the *update* path lives in. At 64 envs its batch is
+32,768 latent states — firmly compute-bound. We took "batch is nearly free," measured on the update,
+and over-generalised it to the whole system.
+
+End to end this is worth roughly **+20-25% on top of the measured 1.9×**, not another order of
+magnitude.
+
+### Why this does not close the gap to Brax PPO
+
+For context we measured MJX on the same GPU: 512 parallel environments give **10M physics steps in
+8.9 minutes**, reproducing the figure people quote for MuJoCo Playground. Stepping 1 → 4096
+environments costs only 4.6× more time while doing 4096× the work.
+
+But that also revealed something we had backwards: **at one environment MJX is 119× *slower* than
+CPU dm_control** (105 steps/s vs 12,474), because GPU launch overhead has nothing to amortise over.
+The crossover is around 350 environments. So "use MJX" is not a speedup for a single-env agent — it
+is a speedup for an agent that was already vectorised.
+
+The residual distance to PPO is dominated by the **update ratio**: TD-MPC2 does one gradient update
+per environment step, Brax PPO does roughly one per 10³-10⁴. That ratio *is* TD-MPC2's sample
+efficiency, and our own k-sweep bounds how far it can be cut — k=2 free, k=4 costs 604 against 862.
+PPO needs 10-100× more environment steps to solve the same task. These are two points on a frontier,
+not a fast method and a slow one.
+
 ### Correcting our own Part 20
 
 June's [Part 20](https://suuttt.github.io/tdmpc-glass/2026/06/22/tdmpc-glass-part20-how-fast-can-tdmpc2-go/)
@@ -235,7 +292,80 @@ A second strip seed is running.
 
 ---
 
-## 5. What this makes the ICLR paper
+## 5. Proposal: an efficiency paper built on measure-then-prune
+
+The results above suggest a paper we did not set out to write, and we think it is the strongest use
+of what we now have.
+
+### The claim
+
+> World-model agents are configured for the hardest case they might meet. Measured per task, most of
+> that configuration is unnecessary — and *which* part is unnecessary cannot be predicted, only
+> measured. An agent that measures and then prunes runs several times faster at equal return.
+
+Two halves, and each supports the other:
+
+1. **The diagnostic** (the AAAI work, rebuilt on official code): when is the world model actually
+   load-bearing? We now have this across tasks and two model families, plus the finding that
+   prunability is not predictable from importance.
+2. **The lean agent**: a configuration whose components — world-model objective, planner depth,
+   update ratio, ensemble size — are individually toggleable, chosen per task by the diagnostic
+   rather than fixed at their defaults.
+
+### One structural argument against writing a new algorithm
+
+The instinct is to write a "naive fast world-model algorithm" from scratch. **We think that is the
+wrong move, for a reason this very week demonstrated:** a fresh implementation cannot be validated
+against anything. Our JAX TD-MPC2 diverged from the official code — different update ratio, planner
+in a different place — and every number built on it had to be re-checked. That cost a week and
+invalidated a published table.
+
+So the proposal is deliberately *not* a new codebase. **The lean agent is a configuration of the
+official implementation**, plus the vectorised planner we already added and gated:
+
+| component | default | lean setting | evidence |
+|---|---|---|---|
+| planner depth (`iterations`) | 6 | 2-3 | 1.4×, and *higher* return (rank test p=0.0014) |
+| update ratio | 1 per env step | 1 per 2 at 2× batch | 1.35×, return unchanged |
+| world-model objective | on | **per-task, from the diagnostic** | free on reacher, costly on acrobot |
+| planner batching | 1 env | N envs | 3.5×, bit-identical at N=1 |
+| Q-ensemble (`num_q`) | 5 | 5 — do not touch | −35% params bought **zero** speed |
+
+Every row is a measured claim against the official baseline, and every one is falsifiable by rerunning
+the default. That is the property a from-scratch implementation would lose.
+
+### What would make it a paper rather than a config table
+
+1. **A gate that decides, cheaply.** The diagnostic currently costs a full training run per task,
+   which is absurd as a preprocessing step. It needs to be a short probe — a few tens of thousands
+   of steps — that predicts whether the world-model objective pays on this task. **We do not know
+   that this is possible**, and our own held-out negative is evidence against the easy version.
+   This is the crux and the main risk.
+2. **A frontier, not a point.** Report wall-clock against sample efficiency across the sweep, with
+   PPO and the default agent as the endpoints. The honest claim is a better frontier, not "faster
+   than PPO" — PPO wins on wall-clock and loses by 10-100× on samples.
+3. **Breadth.** The efficiency numbers are cheetah-heavy. Reacher already shows the speedup
+   generalising but the *return* gain not. That distinction has to be in the paper, not smoothed over.
+
+### What would falsify it
+
+- If the cheap gate cannot beat "always keep the world model" on held-out tasks, the adaptive part
+  collapses and what remains is a config-tuning note, not a method.
+- If the lean settings stop being free on harder tasks — humanoid, dog, manipulation — the claim
+  narrows to easy DMC and is not worth a paper.
+- If the per-task gains are smaller than seed noise once n is adequate. Given that three separate
+  n=1 findings died this week, this is a live risk and the reason every cell needs seeds first.
+
+### Cost
+
+The measurements are mostly done. What is missing is the cheap gate, breadth onto harder tasks, and
+the frontier plot. On the current two-box fleet that is days, not weeks — which is itself an argument
+for the paper, since the method is what made the experiments affordable.
+
+
+---
+
+## 6. What this makes the ICLR paper
 
 The AAAI draft was never submitted, so nothing is locked. Our view is that this is now a
 **different and stronger paper**, not a patched one:
@@ -256,7 +386,7 @@ the realistic near-term version is a state-based JEPA ablation reusing our exist
 
 ---
 
-## 6. What is running now
+## 7. What is running now
 
 - **Breadth**: four new DMC tasks (finger-spin, hopper-hop, pendulum-swingup, cartpole-swingup-sparse)
   across *both* frameworks, taking the prunability claim from 3 tasks to 7. The TD-MPC2 breadth runs

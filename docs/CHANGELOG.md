@@ -19,6 +19,15 @@ and three separate n=1 findings that died under replication, with a measured cau
   `mpc=false` moves throughput 43.3 -> 66.6 steps/s, so planning is **~35%**.
 - DreamerV3 numbers here are **state-based** (`dmc_proprio`, `env.dmc.image False`), not pixel.
 
+UPDATED same day: post now also carries the vectorised-planner result (plan_vec/act_vec added to
+official TD-MPC2 as an ADDITION, bit-identical to _plan at N=1, 3.5x speedup saturating by ~4 envs —
+correcting our own 10-30x estimate, because the MPPI planner was already batched at 512 samples and
+never latency-bound), the MJX scaling measurement (512 envs = 10M steps in 8.9 min; but MJX is 119x
+SLOWER than CPU at 1 env, crossover ~350 envs), and a **proposal for an efficiency paper** built on
+measure-then-prune. The proposal deliberately does NOT write a new algorithm: the lean agent is a
+CONFIGURATION of the official implementation, because a from-scratch codebase cannot be validated
+against a reference — which is exactly what went wrong with the JAX re-implementation.
+
 Fleet: box1 (4x3060) TD-MPC2 breadth at default config; mwm (4x3060) DreamerV3 breadth on 4 new DMC
 tasks. Both queues job-file driven with per-run step targets.
 
