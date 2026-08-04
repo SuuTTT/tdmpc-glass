@@ -1,3 +1,13 @@
+## 2026-08-05 — Part 24 updated: walker-run gate resolved (reverses a provisional note)
+
+The walker gate section said a mid-flight seed was tracking below both extremes and that a badly
+timed gate "may be worse than not gating at all". The second seed reached 811.2 against
+planning-throughout's 809.9, i.e. FULL return, for 12.8% less wall-clock; the 562.2 seed was the
+separate failure mode seen elsewhere in this campaign. Cost model now closes on three
+configurations (13.0/13.0, 12.6/12.8, 4.2/4.2). Also records that this falsifies our guess that
+gates work where the un-gated arm is useless - the gate recovers 100% on walker and 56% on hopper,
+the opposite ordering.
+
 ## 2026-08-05 — Part 24 posted: does the planner earn its keep? (self-contained)
 
 Blog `docs/_posts/2026-08-05-tdmpc-glass-part24-does-the-planner-earn-its-keep.md` + 3 SVG figures

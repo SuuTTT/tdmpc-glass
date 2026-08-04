@@ -190,13 +190,30 @@ when a further seed was added, which the original figure had not.*
 hopper-hop is bimodal in that way — a fraction of runs simply never get off the ground. It is
 included in the mean because dropping it would need a rule stated in advance, and we did not have one.
 
-**Provisional, and the reason we are not recommending fixed thresholds:** on walker-run the same
-150k gate is tracking *below both* extremes (555.7 at 350k, against 690.6 for never-planning and
-809.9 for planning throughout). If that holds, a badly timed gate is worse than not gating at all —
-switching the acting policy mid-run leaves the critic and replay buffer mismatched with the new
-behaviour. Walker is the task where planning leads from 50k onward, so the natural hypothesis is
-that the threshold must track *when the planner starts paying on that task*. A 50k-gate comparison
-is running.
+**Update — the walker-run gate finished, and it reversed the provisional note in this section.**
+While the runs were mid-flight, one walker gate seed was tracking below both extremes and we wrote
+here that "a badly timed gate may be worse than not gating at all". The second seed says otherwise.
+Final walker-run numbers, all on one machine:
+
+| walker-run arm | return at 400k | wall-clock | saving | predicted saving |
+|---|---|---|---|---|
+| planning throughout | 809.9 (n=3) | 188.1 min | — | — |
+| **gate at 150k** | **811.2** | **163.9 min** | **12.8%** | 12.6% |
+| gate at 50k | 811.6 | 180.1 min | 4.2% | 4.2% |
+| never planning | 690.6 (n=3) | 125.0 min | 33.6% | — |
+
+On walker-run the gate reaches **full planning-throughout return** — 811.2 against 809.9 — for
+12.8% less wall-clock. The two seeds of the 150k gate were 562.2 and 811.2; the low one is the same
+separate failure mode seen elsewhere in this campaign, not a property of the gate.
+
+The cost model now closes on three independent configurations: hopper 13.0% predicted / 13.0%
+observed, walker-at-150k 12.6% / 12.8%, walker-at-50k 4.2% / 4.2%.
+
+**This also falsifies a guess we had made.** The intuition was that a gate should work where the
+un-gated arm is near-useless (hopper, where never-planning scores ~70) and struggle where it is
+already competent (walker, ~691). The opposite happened: the gate recovers **100%** of the gap on
+walker and only **56%** on hopper. Whatever governs when a gate can recover the planner's benefit,
+it is not "how bad the un-gated arm is", and we do not currently have a mechanism for it.
 
 ---
 
