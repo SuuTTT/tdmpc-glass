@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 24: Does the Planner Earn Its Keep? A Self-Contained Account"
 date: 2026-08-05
-description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (394 to 70), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers 56% of the gap for 13% less wall-clock, a Pareto point rather than a free lunch. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
+description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (394 to 70), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers 100% of the gap on walker-run and 56% on hopper-hop, both for ~13% less wall-clock, and its cost is predictable to within 0.2 points on three configurations. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
 ---
 
 > **This post is meant to be read on its own.** It assumes you know what reinforcement learning is
