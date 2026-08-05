@@ -1,3 +1,29 @@
+## 2026-08-05 — Part 25 posted: nine-month audit + the ICLR hypothesis
+
+Blog `docs/_posts/2026-08-05-tdmpc-glass-part25-what-nine-months-of-experiments-actually-taught-us.md`.
+
+Written after supervisor feedback that the findings were descriptive and that we had run too many
+experiments without stepping back. Three parts:
+
+(1) A precise account of how a world model is used, read from TD-MPC2 source rather than memory.
+THREE uses, not two: data collection, decision-time search, and policy training on imagined latents.
+TD-MPC2 uses all three - its policy is trained by a DDPG-style loss at latents the model IMAGINED
+(open-loop along replay actions), and 24 of the planner's 512 candidates are seeded by that policy.
+This CORRECTS Part 24's 'two substitutable routes'. It also means mpc=false does not make TD-MPC2
+model-free - policy training on imagined latents survives it.
+
+(2) An audit of every direction the campaign ran - SE for MSA, SE-JEPA, hierarchy/options, jumpy,
+H-JEPA, entity graphs, calibration, shrink-Pareto, the AAAI consistency ablation, the planner work.
+Common thread: every component paid off in proportion to what the policy could not already do. Four
+separate nulls become four confirmations that we kept testing machinery on tasks that did not need
+any.
+
+(3) The hypothesis: planning's value is set by REWARD CONJUNCTIVITY. hopper-hop is the only
+multiplicative reward in dm_control with a hard binary factor, and the only task with a large
+planning gain (3.53x vs ~1.0x). Because it is the only one, the claim cannot be tested by selecting
+tasks - so the proposed experiment MANIPULATES the reward in both directions, with a
+difficulty-matched control.
+
 ## 2026-08-05 — Part 24 updated: walker-run gate resolved (reverses a provisional note)
 
 The walker gate section said a mid-flight seed was tracking below both extremes and that a badly
