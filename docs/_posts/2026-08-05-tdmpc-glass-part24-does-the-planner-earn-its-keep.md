@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 24: Does the Planner Earn Its Keep? A Self-Contained Account"
 date: 2026-08-05
-description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (394 to 70), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers 100% of the gap on walker-run and 56% on hopper-hop, both for ~13% less wall-clock, and its cost is predictable to within 0.2 points on three configurations. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
+description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (394 to 70), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers most of the gap on hopper-hop and nothing on walker-run, for ~13% less wall-clock; its cost is predictable to within 0.2 points on three configurations, but its benefit is not predictable at all - this section was published wrong twice in opposite directions before n=3/n=6 settled it, which is itself the most instructive result here. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
 ---
 
 > **This post is meant to be read on its own.** It assumes you know what reinforcement learning is
@@ -190,30 +190,47 @@ when a further seed was added, which the original figure had not.*
 hopper-hop is bimodal in that way — a fraction of runs simply never get off the ground. It is
 included in the mean because dropping it would need a rule stated in advance, and we did not have one.
 
-**Update — the walker-run gate finished, and it reversed the provisional note in this section.**
-While the runs were mid-flight, one walker gate seed was tracking below both extremes and we wrote
-here that "a badly timed gate may be worse than not gating at all". The second seed says otherwise.
-Final walker-run numbers, all on one machine:
+**Update 2 — this section has now been wrong twice, in opposite directions. Read this part, not
+the earlier versions.**
 
-| walker-run arm | return at 400k | wall-clock | saving | predicted saving |
+The honest history, because it is the most instructive thing here:
+
+1. Mid-flight, one walker gate seed tracked below both extremes. We wrote that a badly timed gate
+   "may be worse than not gating at all".
+2. The second walker seed came in at 811.2 and we corrected the section to say the gate recovers
+   **100%** of the gap on walker and 56% on hopper — and drew a conclusion from that ordering.
+3. The third walker seed (687.8) and the sixth hopper seed (541.9) arrived. **The ordering
+   reversed again.**
+
+Final figures at n=3 (walker) and n=6 (hopper):
+
+| task | never plan | plan throughout | gate at 150k | gate recovers |
 |---|---|---|---|---|
-| planning throughout | 809.9 (n=3) | 188.1 min | — | — |
-| **gate at 150k** | **811.2** | **163.9 min** | **12.8%** | 12.6% |
-| gate at 50k | 811.6 | 180.1 min | 4.2% | 4.2% |
-| never planning | 690.6 (n=3) | 125.0 min | 33.6% | — |
+| walker-run | 690.6 (n=3) | 809.9 (n=3) | **687.1** (n=3: 562.2, 687.8, 811.2) | **~0%** |
+| hopper-hop | 69.5 (n=3) | 394.1 (n=3) | **299.0** (n=6: 69.1, 230.0, 304.1, 310.5, 338.6, 541.9) | **71% (mean), 86% (median)** |
 
-On walker-run the gate reaches **full planning-throughout return** — 811.2 against 809.9 — for
-12.8% less wall-clock. The two seeds of the 150k gate were 562.2 and 811.2; the low one is the same
-separate failure mode seen elsewhere in this campaign, not a property of the gate.
+On walker the gate lands **on top of the never-planning arm** (687.1 vs 690.6) — the 811.2 seed we
+built the "100%" claim on is the top of a very wide distribution spanning 562–811, not a
+representative value. On hopper the gate recovers most of the gap, and one of its six seeds (541.9)
+exceeds every planning-throughout seed.
 
-The cost model now closes on three independent configurations: hopper 13.0% predicted / 13.0%
-observed, walker-at-150k 12.6% / 12.8%, walker-at-50k 4.2% / 4.2%.
+**What survives.** The gate is worth something on hopper-hop and nothing on walker-run. The wall-clock
+saving still matches prediction in every configuration measured (13.0/13.0, 12.6/12.8, 4.2/4.2) —
+that part was a timing measurement and has never moved. What is *not* established is any rule for
+when a gate recovers, and both mechanisms we proposed for it are now dead: "gates work where the
+un-gated arm is useless" was contradicted at n=2, and its replacement "recovery tracks pre-gate
+policy quality" is contradicted at n=3/6.
 
-**This also falsifies a guess we had made.** The intuition was that a gate should work where the
-un-gated arm is near-useless (hopper, where never-planning scores ~70) and struggle where it is
-already competent (walker, ~691). The opposite happened: the gate recovers **100%** of the gap on
-walker and only **56%** on hopper. Whatever governs when a gate can recover the planner's benefit,
-it is not "how bad the un-gated arm is", and we do not currently have a mechanism for it.
+**What this cost, and the actual lesson.** Nothing was spent but compute, because every version was
+published with its seed count attached. But the sequence — n=1 wrong, n=2 wrong in the opposite
+direction, n=3/6 different again — is the clearest evidence in this whole campaign that **these gate
+cells are too noisy to compare at the sample sizes we were reporting at.** The walker gate spans
+562–811 across three seeds of one configuration. Our stated rule was "n≥3 before any cross-arm
+comparison", and the 100% claim broke it at n=2 within hours of the rule being written down.
+
+The correct treatment for a cell like this is a failure-rate plus a conditional distribution, not a
+mean, and not a headline. We are reporting it here rather than quietly fixing the number because
+the error pattern is more useful to a reader than the result.
 
 ---
 
