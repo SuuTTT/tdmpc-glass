@@ -388,6 +388,60 @@ intrinsic to switching mid-run rather than a matter of timing.
 
 ---
 
+## 8b. Two questions this answers about our own earlier work
+
+### Does the AAAI paper still stand?
+
+That paper ablated the **consistency loss** (`consistency_coef` 20 → 0) and described the result as
+"TD-MPC2 versus TD-MPC2 without the world model". Three things we now know bear on it.
+
+**The ablation is weaker than its description.** With `consistency_coef=0` the world model is still
+trained — reward and value prediction roll the latent forward regardless — and **the planner still
+plans through it**. Nothing about the model's *use* changes. Consistent with that, the ablation costs
+no wall-clock at all (31.45 vs 31.54 steps/s): you are not removing a component, you are removing one
+training signal from a component that keeps running. "Without the world model" overstates what was
+tested.
+
+**The headline magnitude was a re-implementation artifact.** The paper's ~9.2× cheetah gap came from
+our own JAX port. On official TD-MPC2 the same comparison is **1.04×** under ordinary training and
+**3.55×** under the paper's own matched-data control. The direction is real; the number is not.
+
+**The conclusion survives, and this work supports it.** The paper's actual claim — world-model
+benefit is real, strongly task-dependent, and *not* cheaply predictable in advance — is exactly what
+the planner experiments found independently, with a different ablation and larger effects. If
+anything it is now better supported than when it was written.
+
+So: **not wrong, but mis-scoped in its central experiment.** The honest revision is to describe
+`consistency_coef=0` as removing a *training signal*, keep the task-dependence claim, drop the 9.2×,
+and note that the stronger ablation — removing the planner — was run afterwards and gives cleaner
+separation (hopper-hop 364.2 vs 103.3, p=0.004).
+
+### Why did TD-MPC2 beat PPO by a huge margin *only* on hopper-hop — and why did that survive the consistency ablation?
+
+This was an open puzzle from earlier in the campaign. Both halves now have the same answer.
+
+| task | planning | no planning | planning's contribution |
+|---|---|---|---|
+| **hopper-hop** | 364.2 | 103.3 | **+260.9 (3.53×)** |
+| walker-run | 809.9 | 690.6 | +119.3 (1.17×) |
+| acrobot-swingup | 417.2 | 305.0 | +112.2 (1.37×) |
+| cup-catch | 982.8 | 981.5 | +1.3 (1.00×) |
+| finger-spin | 985.0 | 984.7 | +0.3 (1.00×) |
+| cheetah-run | 855.9 | 882.0 | −26.1 (0.97×) |
+
+**Planning contributes 3.5× on hopper-hop and essentially nothing anywhere else.** PPO has no
+planner. So TD-MPC2's margin over PPO should be largest precisely where planning contributes most —
+and hopper-hop is that task by a wide margin. The "TD-MPC2 only really beats PPO on hopper-hop"
+observation is the planning-contribution column, read through a different comparison.
+
+And the second half falls out immediately: **the consistency ablation left the planner running.**
+Turning off `consistency_coef` does not touch the component responsible for the advantage, so the
+advantage survives. That was not a puzzling result; it was the ablation missing its target.
+
+This makes a testable prediction we have not run: **TD-MPC2 with `mpc=false` should lose most of its
+advantage over PPO on hopper-hop specifically**, and lose little of it elsewhere. If that fails, this
+explanation is wrong.
+
 ## 9. What this is for
 
 Two threads come out of it.
