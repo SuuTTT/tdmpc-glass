@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 24: Does the Planner Earn Its Keep? A Self-Contained Account"
 date: 2026-08-05
-description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (364 to 103 at n=5, every planning seed above every never-planning seed, p=0.004), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers most of the gap on hopper-hop and nothing on walker-run, for ~13% less wall-clock; its cost is predictable to within 0.2 points on three configurations, but its benefit is not predictable at all - this section was published wrong twice in opposite directions before n=3/n=6 settled it, which is itself the most instructive result here. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
+description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (364 to 103 at n=5, every planning seed above every never-planning seed, p=0.004), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way - but removing ITS world model does (209.0 to 64.3, p=0.029), so the unifying claim is that the model must be exploited somehow, by whatever route. A gate that switches planning on at 150k recovers most of the gap on hopper-hop and nothing on walker-run, for ~13% less wall-clock; its cost is predictable to within 0.2 points on three configurations, but its benefit is not predictable at all - this section was published wrong twice in opposite directions before n=3/n=6 settled it, which is itself the most instructive result here. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
 ---
 
 > **This post is meant to be read on its own.** It assumes you know what reinforcement learning is
@@ -100,7 +100,7 @@ distinction that has bitten this project before. State observations (not pixels)
 | finger-spin | 985.0 (n=1) | 984.7 (n=1) | −0.3 | tie, **uninformative** |
 | cheetah-run | 855.9 ±120.2 (n=5) | 882.0 ±49.0 (n=4) | +26.1 | not separable |
 | **walker-run** | **809.9 ±11.7 (n=3)** | **690.6 ±64.2 (n=3)** | **−119.3** | planning wins |
-| **acrobot-swingup** | 504.9 (n=1) | 409.2 (n=1) | −95.7 | planning wins |
+| **acrobot-swingup** | **417.2 (n=3)** | **305.0 (n=3)** | **−112.2** | planning wins |
 | **hopper-hop** | **364.2 ±76.6 (n=5)** | **103.3 ±55.7 (n=5)** | **−261.0** | planning wins, **p=0.004** |
 
 Per-seed values, because means hide everything that matters here:
@@ -110,6 +110,7 @@ Per-seed values, because means hide everything that matters here:
 | cheetah-run | 640.9, 903.6, 908.4, 910.9, 915.6 | 808.7, 901.2, 907.7, 910.4 |
 | walker-run | 799.1, 808.4, 822.3 | 622.5, 699.2, 750.2 |
 | hopper-hop | 319.1, 319.6, 333.4, 349.6, 499.4 | 42.8, 45.6, 120.0, 153.0, 154.9 |
+| acrobot-swingup | 192.1, 504.9, 554.6 | 24.3, 409.2, 481.5 |
 
 **walker-run is the statistically cleanest cell.** Every planning seed beats every never-planning
 seed. Under exchangeability that arrangement has probability 1/C(6,3) = **0.05** exactly — an exact
@@ -251,12 +252,12 @@ hard control" were true, Dreamer should fail on hopper-hop.
 
 | agent | hopper-hop | env steps |
 |---|---|---|
-| DreamerV3 (**no planner**) | 206.3 (n=2: 224.9, 187.6) | ~500k |
+| DreamerV3 (**no planner**) | 209.0 (n=3: 187.6, 214.6, 224.9) | ~500k |
 | TD-MPC2, planning throughout | 394.1 (n=3) | 400k |
 | TD-MPC2, gate at 150k | 250.4 (n=5) | 400k |
 | TD-MPC2, never planning | 69.5 (n=3) | 400k |
 
-A planner-free agent reaches ~206 where TD-MPC2-without-its-planner reaches ~70 — on *more*
+A planner-free agent reaches ~209 where TD-MPC2-without-its-planner reaches ~103 — on *more*
 environment steps, so if anything the comparison flatters TD-MPC2.
 
 **So the correct claim is narrower than "planning is necessary":**
@@ -268,9 +269,39 @@ environment steps, so if anything the comparison flatters TD-MPC2.
 
 That is a better research question than the one we started with: *what does DreamerV3's prior have
 that TD-MPC2's lacks?* Candidates — a much higher replay ratio, a different actor objective, a
-generative rather than value-equivalent model — are all testable. A probe is running now: Dreamer
-with its dynamics loss removed. If that still beats TD-MPC2's never-planning arm, the advantage
-lives in the actor-critic, not the model.
+generative rather than value-equivalent model — are all testable.
+
+**The probe came back, and it answers the question.** Removing DreamerV3's dynamics loss
+(`dyn=0`, so the world model is no longer trained) collapses it:
+
+| DreamerV3, hopper-hop | seeds | mean |
+|---|---|---|
+| `dyn=1.0` — model trained | 187.6, 214.6, 224.9 | **209.0** (n=3) |
+| `dyn=0.0` — model not trained | 0.0, 65.5, 81.5, 110.1 | **64.3** (n=4) |
+
+Complete separation — every model-trained seed beats every model-untrained seed — exact rank test
+p = 1/C(7,3) = **0.029**.
+
+Line the four configurations up on the same task:
+
+| configuration | hopper-hop |
+|---|---|
+| TD-MPC2, planning | 364.2 (n=5) |
+| DreamerV3, model trained | 209.0 (n=3) |
+| TD-MPC2, **no planner** | 103.3 (n=5) |
+| DreamerV3, **model not trained** | 64.3 (n=4) |
+
+**Both agents fall into the same 60–105 band once the world model stops being exploited**, by
+whichever route that agent uses — TD-MPC2 by planning at decision time, DreamerV3 by training its
+policy inside imagined rollouts. Dreamer's advantage is therefore not a better actor-critic.
+
+That points at a more unifying statement than "planning is load-bearing": **what matters is whether
+the world model is exploited at all, not the particular mechanism by which it is exploited.** It is
+also the only cell in this campaign where adding seeds did not move the verdict — n=2 and n=4 agree.
+
+Limits: the two ablations are not exact analogues (`dyn=0` removes the model's *training signal*,
+`mpc=false` removes its *use at decision time*), the agents differ in many other ways, and the
+budgets differ (500k vs 400k). This is the strongest lead for the next paper, not a settled result.
 
 *Correction: we earlier reported Dreamer at 125.3 and said it "lands with the never-plan arm". That
 was one run read at 256k steps and compared against 400k results. Trained to ~500k it reaches 206.3
@@ -289,7 +320,7 @@ This is the part we would most like feedback on.
 | removing the planner is free, 1.87× faster | cheetah-run only, n=1–2 | fails on 3 of 4 informative tasks | **falsified** |
 | never-planning is 33× more reliable on cheetah | sd 157.2 vs 4.7 (n=3 each) | 2.5× (n=5/4) | **withdrawn** |
 | the gate recovers the full benefit | 310.5, 338.5 (n=2) | 56% of the gap (n=5) | **corrected** |
-| DreamerV3 corroborates "planner-free fails" | 125.3 at 256k (n=1) | 206.3 at 500k (n=2) | **reversed** |
+| DreamerV3 corroborates "planner-free fails" | 125.3 at 256k (n=1) | 209.0 at 500k (n=3) | **reversed** |
 
 All four have the same shape: **a claim formed from the runs that finished first, and the runs that
 finish first are not a random sample.** Three distinct mechanisms produced that, and the second is
