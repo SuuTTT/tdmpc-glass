@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 24: Does the Planner Earn Its Keep? A Self-Contained Account"
 date: 2026-08-05
-description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (394 to 70), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers most of the gap on hopper-hop and nothing on walker-run, for ~13% less wall-clock; its cost is predictable to within 0.2 points on three configurations, but its benefit is not predictable at all - this section was published wrong twice in opposite directions before n=3/n=6 settled it, which is itself the most instructive result here. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
+description: "A complete, self-contained write-up of the planner experiments: what a world model is, what MPPI planning is, what a gate is, and what happens when you switch planning off. Removing the planner is free on cup-catch, finger-spin and cheetah-run and fatal on hopper-hop (364 to 103 at n=5, every planning seed above every never-planning seed, p=0.004), walker-run and acrobot. DreamerV3, which has no planner at all, does not collapse the same way, which narrows the claim to TD-MPC2's own policy prior. A gate that switches planning on at 150k recovers most of the gap on hopper-hop and nothing on walker-run, for ~13% less wall-clock; its cost is predictable to within 0.2 points on three configurations, but its benefit is not predictable at all - this section was published wrong twice in opposite directions before n=3/n=6 settled it, which is itself the most instructive result here. Includes every table, three figures, per-seed values, and a section answering the objections we expect."
 ---
 
 > **This post is meant to be read on its own.** It assumes you know what reinforcement learning is
@@ -101,7 +101,7 @@ distinction that has bitten this project before. State observations (not pixels)
 | cheetah-run | 855.9 ±120.2 (n=5) | 882.0 ±49.0 (n=4) | +26.1 | not separable |
 | **walker-run** | **809.9 ±11.7 (n=3)** | **690.6 ±64.2 (n=3)** | **−119.3** | planning wins |
 | **acrobot-swingup** | 504.9 (n=1) | 409.2 (n=1) | −95.7 | planning wins |
-| **hopper-hop** | **394.1 ±91.5 (n=3)** | **69.5 ±43.8 (n=3)** | **−324.7** | planning wins decisively |
+| **hopper-hop** | **364.2 ±76.6 (n=5)** | **103.3 ±55.7 (n=5)** | **−261.0** | planning wins, **p=0.004** |
 
 Per-seed values, because means hide everything that matters here:
 
@@ -109,15 +109,22 @@ Per-seed values, because means hide everything that matters here:
 |---|---|---|
 | cheetah-run | 640.9, 903.6, 908.4, 910.9, 915.6 | 808.7, 901.2, 907.7, 910.4 |
 | walker-run | 799.1, 808.4, 822.3 | 622.5, 699.2, 750.2 |
-| hopper-hop | 333.4, 349.6, 499.4 | 42.8, 45.6, 120.0 |
+| hopper-hop | 319.1, 319.6, 333.4, 349.6, 499.4 | 42.8, 45.6, 120.0, 153.0, 154.9 |
 
 **walker-run is the statistically cleanest cell.** Every planning seed beats every never-planning
 seed. Under exchangeability that arrangement has probability 1/C(6,3) = **0.05** exactly — an exact
 rank test, not a t-test, because at n=3 per arm a t-test assumes more than we know.
 
-**hopper-hop is the largest effect, and it is not a degradation.** 69.5 against 394.1 means the
-agent essentially never learns to hop. Removing the planner there does not cost some performance;
-it costs the task.
+**hopper-hop is the largest effect, and it is not a degradation.** 103.3 against 364.2 means the
+agent barely learns to hop at all. Removing the planner there does not cost some performance; it
+costs most of the task. At n=5 per arm **every planning seed beats every never-planning seed**
+(319.1 is the worst planning run, 154.9 the best never-planning run), which is an exact rank test
+at p = 1/C(10,5) = **0.004**.
+
+*This cell was first reported at n=3 as 394.1 vs 69.5, a 5.7× ratio. At n=5 it is 364.2 vs 103.3,
+a 3.5× ratio. The direction did not move and the evidence got stronger — but the magnitude fell by
+a third when two seeds per arm were added, which is the honest measure of how well an effect size
+is pinned down at n=3 on this benchmark.*
 
 **Two of the six tasks were wasted compute.** cup-catch and finger-spin both sit at ~982–985 against
 a ceiling near 1000. When both arms are at the ceiling the comparison cannot distinguish "the
