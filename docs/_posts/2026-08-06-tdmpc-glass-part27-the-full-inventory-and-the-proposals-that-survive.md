@@ -162,11 +162,29 @@ surviving result file found.
 
 ## 6. The corrected proposal list
 
-**Ready, cheap, and closes an open leg (~3 GPU-hours):**
-1. **Hopper additive to n≥4.** This week's run was inconclusive (one seed collapsed in each arm).
-   Note that Part 14 already has the PPO version of this result — the new part is TD-MPC2's *planning
-   gain* under a broken conjunction, scored on the stock reward.
-2. **Walker conjunctive cell to n=5.** Currently n=3 at p=0.100 — suggestive, not significant.
+**UPDATE (later the same day): the hopper leg is now RESOLVED, and the two tasks disagree.**
+
+Hopper additive reached n=4, scored on the stock reward:
+
+| hopper condition | plan | never | gain | perm p |
+|---|---|---|---|---|
+| stock (conjunctive) | 364.2 (n=5) | 103.3 (n=5) | 3.53× | **0.008** |
+| additive (conjunction BROKEN) | 149.3 | 38.5 | **3.87× mean / 2.30× median** | 0.343 |
+| stock, bar lowered (still conjunctive) | 522.2 (n=4) | 432.1 (n=4) | **1.21×** | 0.657 |
+
+Removing the AND left the gain intact; making the conjunction *easier to satisfy* destroyed it. So on
+**hopper the operative variable is difficulty, not conjunctivity** — while on **walker it is
+conjunctivity, not difficulty** (1.14× → 1.76× when made conjunctive; 1.14× → 1.07× when merely made
+harder, n=4). Both manipulations were run on both tasks, the same way.
+
+**No single-variable account fits both columns.** That is now the honest headline: the tasks disagree,
+and any claim that "conjunctivity sets the value of search" — or that difficulty does — requires
+ignoring one of them. Caveats: the additive cell is p=0.343 with several collapsed seeds
+(plan 1.1 → 441.7), and additive-trained agents scored on the stock reward are off-distribution, so
+only the within-cell ratio is meaningful.
+
+**Still open (~2 GPU-hours):**
+1. **Walker conjunctive cell to n=5** — running now; currently n=3 at p=0.100.
 
 **The strongest paper-shaped result we have:**
 3. **Search is a training effect.** Deployment-time planning recovers 24% on hopper and is
