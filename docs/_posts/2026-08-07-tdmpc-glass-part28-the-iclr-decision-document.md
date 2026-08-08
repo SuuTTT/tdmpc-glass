@@ -147,16 +147,20 @@ tasks whose plain policy already succeeded, which is precisely where #1 predicts
 
 ---
 
-### #5 — The world model's contribution is front-loaded within a run — on walker · **Grade C, pending n=5**
+### #5 — The world model's contribution is front-loaded within a run — on walker · **Grade A (confirmed n=5)**
 
 Added after this document's first version, and it reverses what §3 said about H4.
 
-| ablation point | walker (n=3) | p | hopper (n=5) | p |
+| ablation point | walker (n=5) | p | hopper (n=5) | p |
 |---|---|---|---|---|
-| off @ 50k | **−25.7** | 0.100 | −56.9 | 0.468 |
-| off @ 150k | **−17.8** | 0.100 | +46.5 | 0.722 |
-| off @ 250k | −10.2 | 0.400 | +38.0 | 0.722 |
-| per-cell sd | **0.8 – 10.4** | | 96 – 131 | |
+| off @ 50k | **−18.4** | **0.008** | −56.9 | 0.468 |
+| off @ 150k | **−12.8** | **0.016** | +46.5 | 0.722 |
+| off @ 250k | −7.2 | 0.230 | +38.0 | 0.722 |
+| per-cell sd | **3.6 – 8.9** | | 96 – 131 | |
+
+**This is the first pattern in the campaign to survive the n=3 → n=5 jump.** It went
+−25.7/−17.8/−10.2 → −18.4/−12.8/−7.2: tighter, still monotone, two cells significant. The previous
+seven all collapsed at n=5.
 
 Removing the world-model loss costs 25.7 points at 50k, 17.8 at 150k, 10.2 at 250k — a **monotone
 decay**, exactly the shape H4 predicted, on the task H4 did not name.
@@ -170,8 +174,10 @@ primary task because its planning gain is the largest in the suite (3.53×) — 
 nothing is measurable at achievable n. Most of the seven retracted n=3 patterns are hopper results.
 **Selecting the biggest effect selected the worst signal-to-noise.**
 
-Walker seeds 4–5 are running; p=0.100 is the second-smallest value attainable at n=3, so n=5 makes
-p<0.05 reachable. Not quotable until they land.
+**Why it strengthens #1.** Candidate #1 says the model's value is in training rather than decisions.
+This says that value is concentrated **early** in training. Two independent instruments — a
+frozen-checkpoint planner toggle and a training-time loss ablation — on two different tasks,
+reaching the same conclusion. Promote both together.
 
 ---
 
