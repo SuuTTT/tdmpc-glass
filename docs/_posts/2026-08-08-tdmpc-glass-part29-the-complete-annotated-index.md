@@ -20,49 +20,53 @@ in what it computes at decision time — and that value is concentrated **early*
 
 ## Every proposal on the table, ranked
 
-Ranked by **impact × chance of landing at ICLR**. "Odds" are my rough judgement of acceptance
-*conditional on the work being finished and written well* — they are calibration aids for choosing,
-not predictions. Rows 1–8 have evidence; rows 9–12 are proposals generated *from* that evidence and
-have none yet.
+**Type matters more than rank.** A *finding* says what is true; a *theory* says why; a *method* says
+what to do differently. A paper that lands is usually **finding + theory + method** — the phenomenon,
+its mechanism, and the thing a reader can use. Rows are typed accordingly.
 
-| # | proposal | the claim | evidence | impact | ICLR odds | to finish |
+"Odds" are rough judgements of acceptance *if the work is finished and written well* — aids for
+choosing between rows, not predictions.
+
+| # | proposal | **type** | in one sentence | evidence | ICLR odds | to finish |
 |---|---|---|---|---|---|---|
-| **1** | **Search is a training effect** *(+ front-loading, as one paper)* | The world model earns its keep by changing what the agent collects and learns, not by computing better decisions — and that value is concentrated early, so the loss can be dropped late **for free, saving 7–17% wall-clock** | **A** — frozen-checkpoint toggle (24% recovery), walker ablation n=5 (p=0.008), DreamerV3 replication with no search at all | **high** — overturns a default assumption, and ships a usable recipe | **~55–65%** | writing only |
-| **2** | **Anneal the update ratio on the same schedule** | TD-MPC2's wall-clock bottleneck is the **64 gradient updates per env step** (Part 20), not the planner. If the model's contribution is front-loaded, the update ratio should be too — anneal it and keep the return | **none yet** — but sits on two Grade-A results | **high** — a bigger compute lever than #1's 7–17%, and a pure method paper | **~50%** *if it works*, ~0 if not | ~2 days |
-| **3** | **Gate planning during training, not deployment** | Planning on ~10% of steps captures ~53% of search's value (held out, n=6); the gate belongs where the value is — in training | **B/A** — ceiling measured; nine signals across three families all Spearman ≈ 0 | **high** if positive; a clean, well-posed negative if not | **~45%** | ~1 week |
-| **4** | **The 5× shrink** | TD-MPC2 runs at 0.72M params (from 3.6M), ~1.6× faster, keeping 83–100% of return across 16 DMC tasks | **A** — full-suite sweep, unexploited since June | medium-high — immediately usable, no mechanism claim | **~40%** alone; **strong appendix** for #1 | writing only |
-| **5** | **Reward structure sets the value of search** | Making walker's reward conjunctive nearly doubles what planning buys at matched difficulty (1.84×/1.91× med, p=0.008); merely making it harder does nothing (1.07×) | **A on walker**, **D as a law** — hopper says the opposite | medium — a real dissociation, not a general law | **~30%** alone; **good section** in #1 | 1 more task to generalise |
-| **6** | **Programmatic policies as a solvability oracle** | A coding agent took PandaPickCube 0% → ~9% in hours where gradient RL reward-hacked to 0; its value is diagnosing solvability and reward-hacking, not the score | **A** (it happened), but the method is Weng's | medium — strong practitioner value, weak novelty | **~25%** as research; **high** as a workshop/blog contribution | done |
-| **7** | **How claims decay** | Eight n=3 patterns, seven died at n=5; arrival-order bias, in-sample selection, instrument bugs — with timestamps and pre-registrations | **A** (documented) | medium — the field needs it, rewards it thinly | **~50% at a workshop**, ~15% main track | writing only |
-| **8** | **Entity-graph compositional OOD** | Graph latents' value-decodability generalises to held-out object counts — but does **not** reach the controller | **B** — first GO of the campaign, then gated honestly | medium — a genuine orphan positive | **~25%** as-is | needs a control-reaching result |
-| **9** | *(new)* **Data-centric abstraction** — **downgraded, see caveat** | Our 16 representation nulls applied the prior *uniformly through training*; apply it to **what gets collected** instead | **the closest prior test FAILED**: SE-community subgoal discovery (Thread E → A3, 2026-07-02) went Acrobot 460→382, **CartpoleSwingupSparse 316→7**, FingerTurn ~tie | was "high"; now **low-medium** — the obvious instantiation is already refuted | **~15%** | needs a mechanism that is not community-based |
-| **10** | *(new)* **Model-loss schedule as a general recipe** | Establish the drop-point curve across ≥4 tasks and publish it as a tuning rule: "ablate the consistency loss after X% of training" | none beyond walker | medium-high — very citable, low risk | **~40%** | ~3 days |
-| **11** | *(new)* **Aleatoric vs epistemic dissociation** | Planning should help where the policy is weak from *credit assignment* and not where it is weak from *noise*. Same headroom, opposite predictions — this is the experiment that breaks the ceiling confound properly | none | high — it is the clean version of the question this campaign kept circling | **~40%** | ~1 week |
-| **12** | *(new)* **Buffer-composition probe** | If value is in what gets collected, measure the *buffer* directly: does planner-collected data differ in coverage/success-rate, and does replaying it into a planner-free run recover the gap? | none | **highest of the untested** — it would make #1 mechanistic rather than behavioural | **~50%** | ~4 days |
+| **1** | Search is a training effect | **finding** (+ small method) | You cannot bolt a planner on at the end — it has to be there while the agent learns, because what it really does is change what the agent sees | **A** — 364 with planner during training vs 87 when added later; DreamerV3 shows the same with no planner at all | ~55–65% | writing only |
+| **12** | Buffer-composition probe | **theory** *(the mechanism for #1)* | Prove it is the data: show planner-collected experience is measurably different, then feed that data to a planner-free agent and see if the gap closes | none yet | ~50% | ~4 days |
+| **10** | Model-loss schedule | **method** *(the recipe from #1)* | Turn the world-model loss off partway through training: you lose nothing and save wall-clock. Establish where the cut-off is, across tasks | walker n=5: dropping at 250k costs 7.2 return (n.s.) and saves 7.2% time; at 50k saves 16.8% | ~40% | ~3 days |
+| **2** | Anneal the update ratio | **method** | TD-MPC2 spends its time on 64 gradient updates per env step, not on planning. If the model matters early and not late, that budget probably can be annealed too — a much bigger saving | none yet; rests on two Grade-A results | ~50% *if it works* | ~2 days |
+| **3** | Gate planning during training | **method** | Plan only where planning pays. A perfect gate on 10% of steps captures ~half the benefit — but the nine obvious signals for *where* all fail | **B/A** — ceiling measured (n=6); nine signals, three families, all Spearman ≈ 0 | ~45% | ~1 week |
+| **11** | Aleatoric vs epistemic | **theory** | Planning should help when the policy is stuck for a fixable reason (credit assignment) and not when it is stuck on noise. Same headroom, opposite predictions — the clean way to kill the "you just had more room" objection | none yet | ~40% | ~1 week |
+| **4** | The 5× shrink | **finding** (practical) | TD-MPC2 runs 5× smaller and 1.6× faster while keeping 83–100% of its score across 16 tasks — the default is heavily over-provisioned | **A** — full-suite sweep | ~40% alone; strong appendix | writing only |
+| **5** | Reward structure sets search's value | **finding** | Make walker's reward a strict AND and planning becomes twice as valuable; just making the task harder does nothing | **A on walker**, **D as a law** — hopper says the opposite | ~30% alone; good section | 1 more task |
+| **7** | How claims decay | **methodology** | Eight patterns looked real at 3 seeds; seven vanished at 5. Here is the anatomy, with timestamps and pre-registrations | **A** (it happened) | ~50% workshop | writing only |
+| **6** | Programmatic policy as an oracle | **method** (borrowed) | Before spending 33M steps, have a coding agent write a controller: it tells you whether the task is solvable and whether your reward is hackable | **A** (it happened); method is Weng's | ~25% research, high as a workshop piece | done |
+| **8** | Entity-graph compositional OOD | **finding** (orphan) | Graph latents generalise to object counts they never saw — but the advantage never reaches the controller | **B** — the campaign's first GO, honestly gated | ~25% as-is | needs a control-reaching result |
+| **9** | Data-centric abstraction — **downgraded** | **method** | Apply the abstraction to what the agent *collects* rather than to its latent | **the closest test already failed**: SE-community subgoals gave Acrobot 460→382, **Cartpole-Sparse 316→7** | ~15% | needs a non-community mechanism |
 
-### How I would actually bet
+### The paper you want: finding + theory + method
 
-**Write #1 now** — it is finished, Grade A, and the only candidate with a mechanism plus a
-cross-agent replication. Fold #4 in as an appendix and #5 as a section.
+Your preference — method backed by theory, derived from a finding — is available and mostly built:
 
-**Run #12 in parallel.** #1 currently shows *that* the value is in training; #12 would show *how* —
-by measuring the buffer itself. That is the difference between a strong analysis paper and one with a
-mechanism, and it is four days.
+| role | row | status |
+|---|---|---|
+| **finding** — the phenomenon | **#1** the planner's value is in training, not decisions | **done, Grade A** |
+| **theory** — why it is true | **#12** because it changes the buffer; show the data differs and that replaying it closes the gap | **4 days** |
+| **method** — what to do about it | **#10** drop the world-model loss after X% of training: free return, 7–17% less wall-clock — and **#2** the same schedule applied to the update ratio, where the real compute goes | **3 days / 2 days** |
 
-**Then #2.** If update-ratio annealing works it is the largest practical result the campaign could
-produce, and it rests on two Grade-A findings rather than a hunch.
+That is one coherent paper: *the world model earns its keep by shaping what the agent collects, early;
+here is the measurement, here is the mechanism, and here is the schedule you should therefore use.*
+Roughly **nine days of compute**, with #1 already finished.
 
-**Do not** revive #5 as a law, or spend further compute on hopper: one hopper cell spans 289–573,
-which is wider than any effect we have ever claimed on it.
+Everything else is supporting material: #4 as an appendix, #5 as a section, #7 to a workshop.
+
+**Do not** revive #5 as a law, and stop spending compute on hopper — a single hopper cell spans
+289–573, wider than any effect we have ever claimed on it.
 
 **Correction to #9, made the same day it was written.** I justified it by saying our abstraction
-attempts all targeted the wrong channel. They did not. **Thread E's reframing — "SE belongs on the
-graph of states, not inside the latent vector" — was aimed squarely at data collection, was tested as
-Thread A's A3, and failed harder than the regulariser versions** (CartpoleSwingupSparse 316→7, on the
-sparse-exploration task it was designed for). So "apply the abstraction to collection instead of
-representation" is not an untried idea; it is a refuted one in its most natural form. #9 survives only
-if someone proposes a mechanism that is *not* community/bottleneck-based, and it drops down the
-ranking accordingly.
+attempts all targeted the wrong channel. They did not. Thread E's reframing — "SE belongs on the
+graph of states, not inside the latent vector" — aimed squarely at data collection, was tested as
+Thread A's A3, and failed harder than the regulariser versions (Cartpole-Sparse 316→7, on the
+sparse-exploration task it was built for). "Apply the abstraction to collection instead of
+representation" is not untried; it is refuted in its most natural form.
 
 ### Where that leaves abstraction learning and SE
 
