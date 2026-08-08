@@ -76,6 +76,49 @@ table {
   font-size: 0.92em;
   margin: 1.2rem 0;
 }
+
+/* Wide tables break out of the 48rem prose measure.
+   Prose stays narrow because that is what is comfortable to read; a 7-column table is
+   not prose and was being squeezed into the same width, which crushed the sentence
+   column to a few characters per line. Wrap such a table in:
+       <div class="wide-table" markdown="1"> ... </div>
+   On narrow screens the breakout collapses back to the normal width and scrolls. */
+.wide-table {
+  margin: 1.4rem 0;
+}
+@media (min-width: 64rem) {
+  .wide-table {
+    width: 92vw;
+    max-width: 92vw;
+    margin-left: calc(50% - 46vw);
+  }
+}
+.wide-table table {
+  display: table;          /* let the browser size columns instead of clipping them */
+  table-layout: auto;
+  width: 100%;
+  font-size: 0.88em;
+}
+.wide-table td, .wide-table th {
+  vertical-align: top;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+/* Column hints are table-specific: the generic .wide-table only does the breakout, so it
+   can be applied to any table without imposing widths meant for a different one. */
+.wide-table--proposals td:first-child,
+.wide-table--proposals th:first-child { width: 3rem; }
+.wide-table--proposals td:nth-child(3), .wide-table--proposals th:nth-child(3) { width: 7rem; }
+.wide-table--proposals td:nth-child(6), .wide-table--proposals th:nth-child(6) { width: 6rem; }
+.wide-table--proposals td:nth-child(7), .wide-table--proposals th:nth-child(7) { width: 7rem; }
+/* phase tables: keep the post column narrow, let hypothesis/result breathe */
+.wide-table--phase td:first-child, .wide-table--phase th:first-child { width: 8rem; }
+/* on small screens fall back to the scrollable block layout */
+@media (max-width: 64rem) {
+  .wide-table table { display: block; overflow-x: auto; }
+  .wide-table table { min-width: 52rem; }
+}
 th, td {
   border: 1px solid #e0e3e7;
   padding: 0.45rem 0.7rem;

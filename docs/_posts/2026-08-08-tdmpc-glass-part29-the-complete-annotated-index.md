@@ -27,6 +27,8 @@ its mechanism, and the thing a reader can use. Rows are typed accordingly.
 "Odds" are rough judgements of acceptance *if the work is finished and written well* — aids for
 choosing between rows, not predictions.
 
+<div class="wide-table wide-table--proposals" markdown="1">
+
 | # | proposal | **type** | in one sentence | evidence | ICLR odds | to finish |
 |---|---|---|---|---|---|---|
 | **1** | Search is a training effect | **finding** (+ small method) | You cannot bolt a planner on at the end — it has to be there while the agent learns, because what it really does is change what the agent sees | **A** — 364 with planner during training vs 87 when added later; DreamerV3 shows the same with no planner at all | ~55–65% | writing only |
@@ -41,6 +43,9 @@ choosing between rows, not predictions.
 | **6** | Programmatic policy as an oracle | **method** (borrowed) | Before spending 33M steps, have a coding agent write a controller: it tells you whether the task is solvable and whether your reward is hackable | **A** (it happened); method is Weng's | ~25% research, high as a workshop piece | done |
 | **8** | Entity-graph compositional OOD | **finding** (orphan) | Graph latents generalise to object counts they never saw — but the advantage never reaches the controller | **B** — the campaign's first GO, honestly gated | ~25% as-is | needs a control-reaching result |
 | **9** | Data-centric abstraction — **downgraded** | **method** | Apply the abstraction to what the agent *collects* rather than to its latent | **the closest test already failed**: SE-community subgoals gave Acrobot 460→382, **Cartpole-Sparse 316→7** | ~15% | needs a non-community mechanism |
+
+</div>
+
 
 ### The paper you want: finding + theory + method
 
@@ -92,11 +97,15 @@ useful abstraction was cheaper to write than to learn.*
 
 ## Phase 1 — Building Glass, and the basin lottery (May 13 – Jun 9)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 1 / 1b (05-13) | **structural entropy in the latent will improve TD-MPC2's world model** | JAX/Flax reimpl ~50× faster; Glass-JAX integrated; HopperHop | Phase 1/1b/2 run; cluster-basin failure analysed | a fast reimplementation enabled everything after |
 | Iter 2–7 (05-20) | more phases / better clustering will beat vanilla | μ/S/c internals, 25 phases, video rollouts | 25 phases failed | K_UPDATE=64 named as the ignored root cause |
 | Iter 8–9 (05-27) | **apply Glass early, then hand off** | MPPI-vs-policy diagnostics; stability regularisers | Glass off-at-1M beat our internal TD-MPC2 mean | — |
+
+</div>
 
 ### Reviewed now
 
@@ -115,6 +124,8 @@ It was never followed up because the framing was "does Glass help", not "when do
 
 ## Phase 2 — Sixteen nulls and the redundancy criterion (Jun 9 – Jun 17)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 2 (06-09) | **some explicit abstraction beats vanilla under a fair protocol** | every abstraction idea, strict protocol | **8 apparent wins → null**; the one real win was prior art | a mechanism-check saved a campaign |
@@ -128,6 +139,8 @@ It was never followed up because the framing was "does Glass help", not "when do
 | Part 10 (06-14) | **entity-factored latents generalise compositionally** | graph vs monolithic, held-out object counts | **first GO** | ~18 nulls before one positive |
 | Part 11 (06-14) | the GO reaches control | random-shooting MPC on the learned models | **no** | decodability is not control |
 | Part 13 (06-17) | the R² story explains the nulls | reviewer-style challenge | **criterion falsified** | you cannot probe your way to "redundant" |
+
+</div>
 
 ### Reviewed now
 
@@ -151,12 +164,16 @@ collection is the bottleneck.
 
 ## Phase 3 — Jumpy world models and reproduction (Jun 18 – Jun 20)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 14 (06-18) | build the background to reproduce the jumpy line | primer: γ-models, TD-Flow, CompPlan | — | — |
 | Part 15 (06-19) | **CompPlan reproduces on OGBench** | reproduce via the InFOM scaffold | **InFOM reproduces; CompPlan does not** | reproduce the scaffold before the claim |
 | Part 16 (06-20) | our skip-TD-MPC2 vs CompPlan/GHM | two roads to a jumpy model | compared | — |
 | **Part 17 (06-20)** | **the +60% jumpy win on PickCube is real** | **video-evaluate it** | **reward-hacking: 0% real pick success**; hover banked 89% of return | **watch the video** |
+
+</div>
 
 ### Reviewed now
 
@@ -173,9 +190,13 @@ one apparent success was an artifact of the metric.
 
 ## Phase 4 — The coding-agent loop (Jun 20 – Jun 21)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | **HL loop (06-21)** | **a coding agent can solve an RL task without gradients** | Weng's *Learning Beyond Gradients*: iteratively refine a programmatic controller from telemetry, per-phase rates and video | PandaPickCube **0% → ~9% real success in hours**, where gradient RL scored 0 | a solvability oracle and reward-hacking detector |
+
+</div>
 
 ### Reviewed now
 
@@ -197,6 +218,8 @@ It was missed entirely by the Part 25 audit because it was filed under "HL loop"
 
 ## Phase 5 — What TD-MPC2 actually is (Jun 22 – Jun 23)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 18 (06-22) | **TD-MPC2 beats PPO — on which axis?** | vs brax PPO, 6 DMC tasks | PPO does up to 285× more steps in *less* wall-clock | sample-efficiency ≠ wall-clock |
@@ -204,6 +227,8 @@ It was missed entirely by the Part 25 audit because it was filed under "HL loop"
 | Part 20 (06-22) | the bottleneck is MPPI | profile it | **it is the 64 gradient updates per step** | our own intuition was wrong |
 | Part 21 (06-22) | it wins on its home turf | hard-exploration + high-dim | wins hard-exploration; default fails Humanoid | — |
 | Part 23 (06-23) | the shrink holds suite-wide | 16 tasks | it holds | the most reusable practical result here |
+
+</div>
 
 ### Reviewed now
 
@@ -223,6 +248,8 @@ mechanism claim.
 
 ## Phase 6 — The beat-PPO arc on Panda, and its retraction (Jun 23 – Jun 29)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 24 (06-23) | **a value-aware abstraction in the loop beats a predictive one** | skill-options inside the HL loop | first positive abstraction result, 0.24 | — |
@@ -234,6 +261,8 @@ mechanism claim.
 | Parts 33–34 (06-24) | parametrising the prior closes the gap | orientation-aware prior | 0.33 → 0.67, still short | — |
 | Parts 39–43 (06-25/26) | a learned/TAMP abstraction beats PPO on OpenCabinet | ladder from hand-coded to learned | **TAMP 0.827 with zero training** vs PPO peak 0.832 | a scripted controller can match a trained policy |
 | **Part 49 (06-29)** | **audit: was the PPO baseline fair?** | matched-budget control | **no — the arc was vs an under-budgeted PPO** | read the baseline's budget off disk |
+
+</div>
 
 ### Reviewed now
 
@@ -255,6 +284,8 @@ algorithmic. Recognising a physical ceiling stopped a month of optimisation.
 
 ## Phase 7 — JEPA, five bets, and the positive chase (Jun 30 – Jul 8)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Parts 50–52 (06-30) | **H-JEPA can solve a robot task** | from 0%, diagnose, climb | 0 → 0.367 → **0.72** with a learned residual | the contact wall is learnable; matched PPO still wins the asymptote |
@@ -263,6 +294,8 @@ algorithmic. Recognising a physical ceiling stopped a month of optimisation.
 | Thread C (07-01) | SE reduces seed variance | variance analysis | **null** | — |
 | Thread D (07-01) | **anti-collapse is a JEPA property, test it on a JEPA** | pure self-predictive JEPA on DMC | **reversal** — it does not collapse; anti-collapse is neutral-to-harmful | test the property on the architecture that has it |
 | Parts 6–9 (07-02→04) | five bets to finally beat PPO | run, then re-run harder | mostly null; every headline rewritten by its own control | — |
+
+</div>
 
 ### Reviewed now
 
@@ -280,6 +313,8 @@ testing it on the architecture that actually has the property showed it was not 
 
 ## Phase 8 — The hopper dissection and the audits (Jul 8 – Jul 23)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 12 (07-08) | **hopper's win comes from the world model** | ablate the consistency loss there | **no** — it is the off-policy TD pathway; the loss is removable (n=8) | — |
@@ -287,6 +322,8 @@ testing it on the architecture that actually has the property showed it was not 
 | **Part 16 (07-10)** | **our reimplementation is faithful** | line-by-line audit vs Hansen's release | **it deviates** | the whole program ran on an unvalidated base |
 | **Part 21 (07-22)** | the AAAI headline is sound | audit six days before the deadline | **retracted our own headline** | audit before submission |
 | Part 22 (07-23) | make the vocabulary legible | explain cells, bimodality, permutation p | — | — |
+
+</div>
 
 ### Reviewed now
 
@@ -309,6 +346,8 @@ preceded them by a few days.**
 
 ## Phase 9 — Verification and the planner (Aug 3 – Aug 8)
 
+<div class="wide-table wide-table--phase" markdown="1">
+
 | post | hypothesis / goal | experiment | result | lesson |
 |---|---|---|---|---|
 | Part 23 (08-03) | the AAAI result survives on the **official** TD-MPC2 | rebuild the diagnostic | the ~9.2× cheetah gap is **1.04×** ordinary, **3.55×** matched-data | two config lines were worth 1.9× |
@@ -317,6 +356,8 @@ preceded them by a few days.**
 | Part 26 (08-06) | conjunctivity survives its own control | difficulty control (bar 0.60→0.35) | **3.53× → 1.21×** — killed as a law | the headroom objection must be answered |
 | [Part 27](../2026-08-06-tdmpc-glass-part27-the-full-inventory-and-the-proposals-that-survive/) | rebuild the inventory from primary sources | re-read all 87 posts | found the HL loop and the July precedent | — |
 | [Part 28](../2026-08-07-tdmpc-glass-part28-the-iclr-decision-document/) | which candidate is the ICLR paper? | evidence-grade every candidate | #1 + #5 together | **read this for the meeting** |
+
+</div>
 
 ### Reviewed now
 
