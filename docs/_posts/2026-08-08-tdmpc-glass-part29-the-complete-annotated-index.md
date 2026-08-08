@@ -35,7 +35,7 @@ have none yet.
 | **6** | **Programmatic policies as a solvability oracle** | A coding agent took PandaPickCube 0% → ~9% in hours where gradient RL reward-hacked to 0; its value is diagnosing solvability and reward-hacking, not the score | **A** (it happened), but the method is Weng's | medium — strong practitioner value, weak novelty | **~25%** as research; **high** as a workshop/blog contribution | done |
 | **7** | **How claims decay** | Eight n=3 patterns, seven died at n=5; arrival-order bias, in-sample selection, instrument bugs — with timestamps and pre-registrations | **A** (documented) | medium — the field needs it, rewards it thinly | **~50% at a workshop**, ~15% main track | writing only |
 | **8** | **Entity-graph compositional OOD** | Graph latents' value-decodability generalises to held-out object counts — but does **not** reach the controller | **B** — first GO of the campaign, then gated honestly | medium — a genuine orphan positive | **~25%** as-is | needs a control-reaching result |
-| **9** | *(new)* **Data-centric abstraction** | Every one of our 16 representation nulls applied the prior *uniformly through training*. Apply it to **what gets collected** instead — the channel the evidence says matters | none | high if it works — it would rescue the campaign's whole first half | **~35%** | ~1 week |
+| **9** | *(new)* **Data-centric abstraction** — **downgraded, see caveat** | Our 16 representation nulls applied the prior *uniformly through training*; apply it to **what gets collected** instead | **the closest prior test FAILED**: SE-community subgoal discovery (Thread E → A3, 2026-07-02) went Acrobot 460→382, **CartpoleSwingupSparse 316→7**, FingerTurn ~tie | was "high"; now **low-medium** — the obvious instantiation is already refuted | **~15%** | needs a mechanism that is not community-based |
 | **10** | *(new)* **Model-loss schedule as a general recipe** | Establish the drop-point curve across ≥4 tasks and publish it as a tuning rule: "ablate the consistency loss after X% of training" | none beyond walker | medium-high — very citable, low risk | **~40%** | ~3 days |
 | **11** | *(new)* **Aleatoric vs epistemic dissociation** | Planning should help where the policy is weak from *credit assignment* and not where it is weak from *noise*. Same headroom, opposite predictions — this is the experiment that breaks the ceiling confound properly | none | high — it is the clean version of the question this campaign kept circling | **~40%** | ~1 week |
 | **12** | *(new)* **Buffer-composition probe** | If value is in what gets collected, measure the *buffer* directly: does planner-collected data differ in coverage/success-rate, and does replaying it into a planner-free run recover the gap? | none | **highest of the untested** — it would make #1 mechanistic rather than behavioural | **~50%** | ~4 days |
@@ -54,6 +54,35 @@ produce, and it rests on two Grade-A findings rather than a hunch.
 
 **Do not** revive #5 as a law, or spend further compute on hopper: one hopper cell spans 289–573,
 which is wider than any effect we have ever claimed on it.
+
+**Correction to #9, made the same day it was written.** I justified it by saying our abstraction
+attempts all targeted the wrong channel. They did not. **Thread E's reframing — "SE belongs on the
+graph of states, not inside the latent vector" — was aimed squarely at data collection, was tested as
+Thread A's A3, and failed harder than the regulariser versions** (CartpoleSwingupSparse 316→7, on the
+sparse-exploration task it was designed for). So "apply the abstraction to collection instead of
+representation" is not an untried idea; it is a refuted one in its most natural form. #9 survives only
+if someone proposes a mechanism that is *not* community/bottleneck-based, and it drops down the
+ranking accordingly.
+
+### Where that leaves abstraction learning and SE
+
+Both doors are closed, and the campaign tried both properly:
+
+| use of SE / learned abstraction | verdict | why, read from here |
+|---|---|---|
+| **latent regulariser** (Glass, 13–16 levers, SE-JEPA on Panda, Thread C variance) | **null / redundant** | applied uniformly through training; changes neither what is collected nor the early schedule — the two channels that carry the value |
+| **structure discovery** (SE communities → bottleneck subgoals → exploration; Thread E/A3) | **null, and harmful where targeted** | it *did* aim at data collection, so the account does not excuse it. Continuous control lives on smooth manifolds; latent-graph communities are not the subgoals it needs |
+| **hierarchy / options / H-JEPA** | null on tasks whose flat policy already worked | nothing to buy where the policy is not the bottleneck |
+| **entity-graph latents** | first GO — generalises compositionally, **does not reach the controller** | a representation property, unconverted; the campaign's genuine orphan |
+| **abstraction *in the loop*** (analytic controller + learned residual, TAMP) | **the one thing that worked** — TAMP 0.827 with zero training; but never beats a budget-matched PPO asymptotically | it changes what the agent *does first*, i.e. collection — and it works by **encoding** the solution, not learning an abstraction |
+
+**The honest summary:** nine months of learned abstraction produced no method that beats a
+budget-matched baseline. The one abstraction that ever earned its keep was **hand-written** — an
+analytic controller with a residual on top — and its benefit was sample-efficiency where the prior
+fit the task's control structure, never a higher ceiling.
+
+That is a real finding and worth stating in the paper rather than omitting: *for these tasks, the
+useful abstraction was cheaper to write than to learn.*
 
 ---
 
