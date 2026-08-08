@@ -134,7 +134,7 @@ Seven times an n=3 pattern died at n=5. The causes are documented with timestamp
 
 | direction | verdict | grade |
 |---|---|---|
-| **H4: the world model has a shelf life within a run** | ablating the consistency loss at 50k/150k/250k vs never: +46.5 / +38.0 at n=5, p ≥ 0.72. The n=3 "+165.9" was the control drawing three low seeds | **D** |
+| **H4 on hopper** | ablating the consistency loss at 50k/150k/250k vs never: +46.5 / +38.0 at n=5, p ≥ 0.72. The n=3 "+165.9" was the control drawing three low seeds | **D** |
 | Conjunctivity as a general law | tasks disagree; hopper says difficulty | **D** |
 | "Train cheap, plan at deployment" | 24% recovery, negative on walker | **D** |
 | Structural entropy as a latent regulariser | 13–16 levers, all null | **D** |
@@ -144,6 +144,34 @@ Seven times an n=3 pattern died at n=5. The causes are documented with timestamp
 
 The last row has a re-reading worth one sentence in the paper: every one of those was tested on
 tasks whose plain policy already succeeded, which is precisely where #1 predicts nothing to gain.
+
+---
+
+### #5 — The world model's contribution is front-loaded within a run — on walker · **Grade C, pending n=5**
+
+Added after this document's first version, and it reverses what §3 said about H4.
+
+| ablation point | walker (n=3) | p | hopper (n=5) | p |
+|---|---|---|---|---|
+| off @ 50k | **−25.7** | 0.100 | −56.9 | 0.468 |
+| off @ 150k | **−17.8** | 0.100 | +46.5 | 0.722 |
+| off @ 250k | −10.2 | 0.400 | +38.0 | 0.722 |
+| per-cell sd | **0.8 – 10.4** | | 96 – 131 | |
+
+Removing the world-model loss costs 25.7 points at 50k, 17.8 at 150k, 10.2 at 250k — a **monotone
+decay**, exactly the shape H4 predicted, on the task H4 did not name.
+
+**Why hopper shows nothing is a fact about hopper.** All 12 walker runs span 39.5 points (4.9%); a
+single hopper cell spans 289–573. The instrument resolves a 10-point effect on walker and cannot
+resolve a 200-point one on hopper.
+
+**This is worth a paragraph in the paper regardless of how #5 resolves.** We chose hopper as the
+primary task because its planning gain is the largest in the suite (3.53×) — and it is the task where
+nothing is measurable at achievable n. Most of the seven retracted n=3 patterns are hopper results.
+**Selecting the biggest effect selected the worst signal-to-noise.**
+
+Walker seeds 4–5 are running; p=0.100 is the second-smallest value attainable at n=3, so n=5 makes
+p<0.05 reachable. Not quotable until they land.
 
 ---
 
