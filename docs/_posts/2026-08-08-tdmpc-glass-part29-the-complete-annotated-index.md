@@ -18,6 +18,45 @@ in what it computes at decision time — and that value is concentrated **early*
 
 ---
 
+## Every proposal on the table, ranked
+
+Ranked by **impact × chance of landing at ICLR**. "Odds" are my rough judgement of acceptance
+*conditional on the work being finished and written well* — they are calibration aids for choosing,
+not predictions. Rows 1–8 have evidence; rows 9–12 are proposals generated *from* that evidence and
+have none yet.
+
+| # | proposal | the claim | evidence | impact | ICLR odds | to finish |
+|---|---|---|---|---|---|---|
+| **1** | **Search is a training effect** *(+ front-loading, as one paper)* | The world model earns its keep by changing what the agent collects and learns, not by computing better decisions — and that value is concentrated early, so the loss can be dropped late **for free, saving 7–17% wall-clock** | **A** — frozen-checkpoint toggle (24% recovery), walker ablation n=5 (p=0.008), DreamerV3 replication with no search at all | **high** — overturns a default assumption, and ships a usable recipe | **~55–65%** | writing only |
+| **2** | **Anneal the update ratio on the same schedule** | TD-MPC2's wall-clock bottleneck is the **64 gradient updates per env step** (Part 20), not the planner. If the model's contribution is front-loaded, the update ratio should be too — anneal it and keep the return | **none yet** — but sits on two Grade-A results | **high** — a bigger compute lever than #1's 7–17%, and a pure method paper | **~50%** *if it works*, ~0 if not | ~2 days |
+| **3** | **Gate planning during training, not deployment** | Planning on ~10% of steps captures ~53% of search's value (held out, n=6); the gate belongs where the value is — in training | **B/A** — ceiling measured; nine signals across three families all Spearman ≈ 0 | **high** if positive; a clean, well-posed negative if not | **~45%** | ~1 week |
+| **4** | **The 5× shrink** | TD-MPC2 runs at 0.72M params (from 3.6M), ~1.6× faster, keeping 83–100% of return across 16 DMC tasks | **A** — full-suite sweep, unexploited since June | medium-high — immediately usable, no mechanism claim | **~40%** alone; **strong appendix** for #1 | writing only |
+| **5** | **Reward structure sets the value of search** | Making walker's reward conjunctive nearly doubles what planning buys at matched difficulty (1.84×/1.91× med, p=0.008); merely making it harder does nothing (1.07×) | **A on walker**, **D as a law** — hopper says the opposite | medium — a real dissociation, not a general law | **~30%** alone; **good section** in #1 | 1 more task to generalise |
+| **6** | **Programmatic policies as a solvability oracle** | A coding agent took PandaPickCube 0% → ~9% in hours where gradient RL reward-hacked to 0; its value is diagnosing solvability and reward-hacking, not the score | **A** (it happened), but the method is Weng's | medium — strong practitioner value, weak novelty | **~25%** as research; **high** as a workshop/blog contribution | done |
+| **7** | **How claims decay** | Eight n=3 patterns, seven died at n=5; arrival-order bias, in-sample selection, instrument bugs — with timestamps and pre-registrations | **A** (documented) | medium — the field needs it, rewards it thinly | **~50% at a workshop**, ~15% main track | writing only |
+| **8** | **Entity-graph compositional OOD** | Graph latents' value-decodability generalises to held-out object counts — but does **not** reach the controller | **B** — first GO of the campaign, then gated honestly | medium — a genuine orphan positive | **~25%** as-is | needs a control-reaching result |
+| **9** | *(new)* **Data-centric abstraction** | Every one of our 16 representation nulls applied the prior *uniformly through training*. Apply it to **what gets collected** instead — the channel the evidence says matters | none | high if it works — it would rescue the campaign's whole first half | **~35%** | ~1 week |
+| **10** | *(new)* **Model-loss schedule as a general recipe** | Establish the drop-point curve across ≥4 tasks and publish it as a tuning rule: "ablate the consistency loss after X% of training" | none beyond walker | medium-high — very citable, low risk | **~40%** | ~3 days |
+| **11** | *(new)* **Aleatoric vs epistemic dissociation** | Planning should help where the policy is weak from *credit assignment* and not where it is weak from *noise*. Same headroom, opposite predictions — this is the experiment that breaks the ceiling confound properly | none | high — it is the clean version of the question this campaign kept circling | **~40%** | ~1 week |
+| **12** | *(new)* **Buffer-composition probe** | If value is in what gets collected, measure the *buffer* directly: does planner-collected data differ in coverage/success-rate, and does replaying it into a planner-free run recover the gap? | none | **highest of the untested** — it would make #1 mechanistic rather than behavioural | **~50%** | ~4 days |
+
+### How I would actually bet
+
+**Write #1 now** — it is finished, Grade A, and the only candidate with a mechanism plus a
+cross-agent replication. Fold #4 in as an appendix and #5 as a section.
+
+**Run #12 in parallel.** #1 currently shows *that* the value is in training; #12 would show *how* —
+by measuring the buffer itself. That is the difference between a strong analysis paper and one with a
+mechanism, and it is four days.
+
+**Then #2.** If update-ratio annealing works it is the largest practical result the campaign could
+produce, and it rests on two Grade-A findings rather than a hunch.
+
+**Do not** revive #5 as a law, or spend further compute on hopper: one hopper cell spans 289–573,
+which is wider than any effect we have ever claimed on it.
+
+---
+
 ## Phase 1 — Building Glass, and the basin lottery (May 13 – Jun 9)
 
 | post | hypothesis / goal | experiment | result | lesson |
