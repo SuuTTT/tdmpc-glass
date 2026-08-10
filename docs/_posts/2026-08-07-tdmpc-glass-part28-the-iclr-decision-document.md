@@ -217,6 +217,162 @@ mean ignoring one of them.
 
 ---
 
+# Added 2026-08-10 — two gaps, one scoping correction, and the proposals they generate
+
+Everything above was written as though "does planning help?" were a question about planners. Two
+objections raised on 2026-08-09 show it is not, and both were correct. They change what §5
+recommends, so they are recorded here rather than folded silently into the text.
+
+## 6.1 The JEPA objection — our flagship claim is narrower than §2 states
+
+**The objection.** A JEPA/DINO-WM agent is a next-state predictor plus a planner: *no policy, no RL,
+and it works.* If planning can carry a task with no policy anywhere in the system, then "planning's
+value is that it shapes what the policy collects" cannot be a claim about planning in general.
+
+**This is right, and candidate #1 must be scoped.** What reconciles it is a variable we never
+isolated — **what the model was trained on**:
+
+| | TD-MPC2 | JEPA / DINO-WM |
+|---|---|---|
+| model trained on | its own self-collected stream | broad, diverse, off-policy data |
+| objective | value-equivalent | pure prediction |
+| accurate where | the current policy already goes | over a wide region |
+| can you search it cold? | **no** (24% recovery) | **yes** — that is the whole method |
+
+So the honest form of #1 is: **in online model-based RL where the model is trained on
+self-collected data**, the planner must be present throughout, because it is what keeps the model's
+training distribution good enough to search. The deployment toggle did not fail because planning is
+intrinsically a training-time phenomenon — it failed because that agent's model was only ever
+trained on data from a bad policy.
+
+This is a better framing than the one we had, because it makes a **prediction**: give TD-MPC2 a
+model trained on broad off-policy data and the deployment toggle should start working.
+
+## 6.2 The behaviour-cloning gap — the baseline we never ran
+
+**The objection.** In practical game AI, supervised behaviour cloning routinely beats both RL and
+planning, and we never considered it.
+
+**Also right.** BC appears in this campaign exactly once as a real arm — Part 25, distilling the
+analytic controller *out* into a policy, where "BC / warm-start / DAPG all failed". That failure is
+specific: the controller is **non-Markov**, so cloning it into a Markov policy is ill-posed. It says
+nothing about BC as a demonstration-based baseline, which we never ran.
+
+We even had the demonstrations and used them for something else: the HL-loop programmatic controller
+(§4) produced working PandaPickCube trajectories, and we spent them seeding TD-MPC2 rather than
+establishing a baseline. Without that baseline, "planning helps" is measured against a weak
+alternative, and a reviewer will say so.
+
+## 6.3 A retracted framing: "MBRL has a circular dependency"
+
+I first pitched §6.5 below as breaking a circular dependency — *the planner needs an accurate model,
+the model is only accurate where the planner has been.* **Withdrawn on two counts.** MPPI has no
+parameters, so nothing about the planner is learned and no loop closes through it. And the residual
+loop — model → behaviour → data → model — is **not specific to MBRL**; model-free RL has exactly the
+same thing. That framing dresses up ordinary on-policy distribution shift as a discovery.
+
+The real asymmetry is a **train/query mismatch**, and it *is* specific to planning:
+
+- a policy is queried where it is trained — at visited states;
+- **a planner is not.** MPPI evaluates 512 action sequences over horizon 3, sampled with noise around
+  the policy's actions, so by construction it queries the model at latents that were never visited.
+  Asking "what if I did something other than what I do" *is* an off-distribution query.
+
+Nothing in the training objective targets the query measure. Model-free RL has no analogue, because
+the critic is queried where it is trained.
+
+## 6.4 The candidates these generate, ranked
+
+### S1 — World models in MBRL are representation learners, not simulators · **RUNNING**
+
+**Claim.** The world-model loss earns its keep by *shaping the encoder*, not by producing a
+simulator worth rolling out.
+
+**Why the existing evidence points here.** On cheetah, planning is worth ~1.00× — search through the
+model buys nothing — yet removing the model loss costs **58–127 points** (n=5). Something is bought
+that is not simulation. DreamerV3 reproduces the task pattern with no search anywhere. And sixteen
+explicit-abstraction levers nulled precisely because the model loss was *already* doing the
+representation work they duplicated.
+
+**The decisive ablation.** Stock TD-MPC2 cannot separate the two, because its consistency loss
+
+> `L_c = Σ_t ρ^t ‖ dyn(z_t, a_t) − sg(enc(s_{t+1})) ‖²`,  `z_0 = enc(s_0)`
+
+sends gradient to **both** the dynamics head (through `dyn`) and the encoder (through `z_0`); the
+target is already under `no_grad`, so `z_0` is the encoder's only path. Run a second latent rollout
+for the consistency term starting from `z_0.detach()` and the two are separated:
+
+| arm | dynamics head | encoder shaped | cheetah, n=5 |
+|---|---|---|---|
+| **A** stock | trained | **yes** | 900.6 (sd 16.6) |
+| **B** `WMP_CC_SG=1` | trained | **no** | *running* |
+| **C** loss off at 50k | — | — | 842.8 |
+
+**Because `.detach()` changes no values, the consistency loss is numerically identical in A and B.**
+Verified on a fixed batch before spending the compute — same loss to the last digit
+(`0.016058076173067093`), same dynamics gradient (`0.043782633957885744`), encoder gradient
+`0.00626 → exactly 0.0`:
+
+```
+== STOCK ==  {"consistency_loss": 0.016058076173067093,
+              "encoder_grad_norm": 0.006258090169236204,
+              "dynamics_grad_norm": 0.043782633957885744}
+== SG ==     {"consistency_loss": 0.016058076173067093,
+              "encoder_grad_norm": 0.0,
+              "dynamics_grad_norm": 0.043782633957885744}
+```
+
+**Reading.** B ≈ A → the loss buys a simulator, S1 is wrong. B ≈ C → the loss is an auxiliary
+representation objective and the "world model" is not modelling the world in any way the agent uses.
+
+**Why ICLR takes it:** a falsifiable, counterintuitive claim about a whole class of methods, decided
+by an ablation anyone can rerun — and it retro-explains a pile of published nulls, including ours.
+**Both outcomes publish.**
+
+*(Tooling: `repro/cc_stopgrad.patch.py`, `repro/verify_stopgrad.py`. The verification harness itself
+failed twice first — it read `.grad` after the optimizer had zeroed it, then recorded the second
+`clip_grad_norm_` call, which fires after `optim.zero_grad()` in `update_pi`. Both read as a dead
+patch. The rule that caught it: verify the **mechanism**, never the log line.)*
+
+### S2 — Train the model on the query measure, not the visitation measure · **method**
+
+From §6.3. **Measure first, the gap nobody reports:** log the model's k-step error separately on
+(a) visited transitions and (b) the latents MPPI actually queried during search. If (b) ≫ (a), the
+planner has been searching a model that is wrong exactly where it looks, and the size of that gap
+should predict how much planning is worth across tasks.
+
+**Then the method follows:** draw the model-loss batch from MPPI's rollout latents rather than from
+the buffer alone — a change to *which states get gradient*, with an argument that is not
+"circularity". **Kills it:** error on queried latents is no worse than on visited ones.
+
+### S3 — Coverage decides whether a frozen model is searchable · **theory + method**
+
+From §6.1. Train the same model three ways — self-collected, broad exploratory, demonstrations —
+then run the identical deployment toggle on each, with off-distribution model error as the mediating
+variable. Supplies the missing piece of the pretrained-world-model agenda: **the condition under
+which a frozen world model can be planned through.** Highest fashion, highest null risk.
+
+### S4 — The demonstration crossover · **finding + method**
+
+From §6.2. Sweep N demonstrations upward, comparing BC / BC+planner / RL+planner / RL. There is a
+crossover; **locating it is the contribution** — "how many demonstrations make your planner
+pointless." Partly defensive: it supplies the denominator #1 currently lacks.
+
+## 6.5 What this does to the §5 recommendation
+
+§5 stands — #1 is still the paper — with two amendments:
+
+1. **State the scope.** #1 is a claim about online MBRL with self-collected data, and §6.1 belongs in
+   the paper as the boundary condition plus a prediction, not as a caveat buried in limitations.
+2. **S1 outranks #12 as the next experiment.** Both are mechanism work for #1, but S1 costs a day
+   against #12's four, its supporting evidence is already collected, and it publishes either way.
+
+**Betting order: S1 → S2 → S4 → S3.** S1 because a cheap ablation can flip a widely held belief; S2
+because it is the better method paper if the mismatch is real; S4 because the baseline has to exist
+before review; S3 last because it is the most likely to end in a null.
+
+---
+
 *Every number here is read from logged JSON/CSV in `SuuTTT/world-model-paper` under
-`data/`, with per-seed values. The corrections — including two of mine from this week — are in git
-history rather than edited away.*
+`data/`, with per-seed values. The corrections — including two of mine from this week, and the
+retracted "circular dependency" framing in §6.3 — are in git history rather than edited away.*

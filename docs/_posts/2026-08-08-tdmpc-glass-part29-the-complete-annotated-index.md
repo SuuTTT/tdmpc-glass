@@ -16,6 +16,14 @@ description: "Every post in this campaign with the hypothesis it was testing, th
 *the world model's value lies in what it makes the agent collect and learn during **training**, not
 in what it computes at decision time — and that value is concentrated **early** in training.*
 
+> **Scoped 2026-08-10.** That account holds for **online MBRL where the model is trained on
+> self-collected data**. It is not a claim about planning in general: a JEPA/DINO-WM agent is a
+> predictor plus a planner with *no policy and no RL*, and it works. The reconciling variable is what
+> the model was trained on — broad data makes a model searchable cold; a self-collected stream does
+> not. Two proposals below (**S1**, **S3**) come out of that correction, and one (**S4**) out of a
+> second gap: **behaviour cloning was never run here as a baseline.** See
+> [Part 28 §6](../2026-08-07-tdmpc-glass-part28-the-iclr-decision-document/#added-2026-08-10--two-gaps-one-scoping-correction-and-the-proposals-they-generate).
+
 ---
 
 ## Every proposal on the table, ranked
@@ -32,6 +40,10 @@ choosing between rows, not predictions.
 | # | proposal | **type** | in one sentence | evidence | ICLR odds | to finish |
 |---|---|---|---|---|---|---|
 | **1** | Search is a training effect | **finding** (+ small method) | You cannot bolt a planner on at the end — it has to be there while the agent learns, because what it really does is change what the agent sees | **A, now on three legs** — 364 with planner during training vs 87 when added later; DreamerV3 shows the same with no planner at all; **cheetah dissociates the channels outright: planning buys ~1.00× there, yet removing the world-model loss costs 58–127 points (p≤0.063, n=5)** | **~60–70%** | writing only |
+| **S1** | World models are representation learners, not simulators | **theory + method** *(added 2026-08-10, **running**)* | The world-model loss pays by shaping the encoder, not by giving you a simulator worth rolling out. Keep the loss, block its gradient into the encoder, and see whether the benefit survives | cheetah **dissociates already**: planning ~1.00× yet the loss is worth 58–127 pts; ablation verified on a fixed batch (loss bit-identical, encoder grad → exactly 0.0) | **~55–65%** — *both outcomes publish* | ~1 day |
+| **S2** | Train the model on the **query** measure | **method** *(added 2026-08-10)* | A policy is queried where it is trained; a planner is not — MPPI evaluates latents that were never visited. Train the model on the states search actually looks at | none yet; replaces a withdrawn "circular dependency" framing (MPPI has no parameters, so no loop closes through it) | ~50% | ~2 weeks |
+| **S4** | The demonstration crossover | **finding + method** *(added 2026-08-10)* | Sweep the number of demos: BC vs BC+planner vs RL+planner vs RL. Somewhere there is a crossover, and *finding it* is the result — "how many demos make your planner pointless" | none — **BC was never run as a baseline here**; the one BC arm (Part 25) failed because the controller was non-Markov, which says nothing about this | ~40%; partly defensive | ~4 days |
+| **S3** | Coverage decides searchability | **theory + method** *(added 2026-08-10)* | Whether you can plan through a learned model depends on the coverage of its training data, not on whether a policy exists. This is why JEPA/DINO-WM can plan with no policy and we cannot | none yet; the natural synthesis of #1 with the JEPA objection | ~35%; highest null risk | ~2 weeks |
 | **12** | Buffer-composition probe | **theory** *(the mechanism for #1)* | Prove it is the data: show planner-collected experience is measurably different, then feed that data to a planner-free agent and see if the gap closes | none yet | ~50% | ~4 days |
 | **10** | Model-loss schedule | **method** *(the recipe from #1)* | Turn the world-model loss off partway through training: you lose nothing and save wall-clock. Establish where the cut-off is, across tasks | walker n=5: dropping at 250k costs 7.2 return (n.s.) and saves 7.2% time; at 50k saves 16.8% | ~40% | ~3 days |
 | **2** | Anneal the update ratio | **method** | TD-MPC2 spends its time on 64 gradient updates per env step, not on planning. If the model matters early and not late, that budget probably can be annealed too — a much bigger saving | none yet; rests on two Grade-A results | ~50% *if it works* | ~2 days |
