@@ -302,11 +302,12 @@ sends gradient to **both** the dynamics head (through `dyn`) and the encoder (th
 target is already under `no_grad`, so `z_0` is the encoder's only path. Run a second latent rollout
 for the consistency term starting from `z_0.detach()` and the two are separated:
 
-| arm | dynamics head | encoder shaped | cheetah, n=5 |
-|---|---|---|---|
-| **A** stock | trained | **yes** | 900.6 (sd 16.6) |
-| **B** `WMP_CC_SG=1` | trained | **no** | *running* |
-| **C** loss off at 50k | — | — | 842.8 |
+| arm | dynamics head | encoder shaped | cheetah return | n |
+|---|---|---|---|---|
+| **A** stock | consistency + value/reward | **yes** | **900.6** (sd 17.0) | 5 |
+| **B** `WMP_CC_SG=1` | consistency + value/reward | **no** | **817.9** (sd 102.1) | 5 |
+| **C** `consistency_coef=0` | value/reward only | no | **656.4** (sd 98.1) | 3 |
+| *(off at 50k, for reference)* | | | *842.8* (sd 66.2) | *5* |
 
 **Because `.detach()` changes no values, the consistency loss is numerically identical in A and B.**
 Verified on a fixed batch before spending the compute — same loss to the last digit
@@ -325,9 +326,46 @@ Verified on a fixed batch before spending the compute — same loss to the last 
 **Reading.** B ≈ A → the loss buys a simulator, S1 is wrong. B ≈ C → the loss is an auxiliary
 representation objective and the "world model" is not modelling the world in any way the agent uses.
 
-**Why ICLR takes it:** a falsifiable, counterintuitive claim about a whole class of methods, decided
-by an ablation anyone can rerun — and it retro-explains a pile of published nulls, including ours.
-**Both outcomes publish.**
+#### RESULT (2026-08-10): S1's strong claim is REFUTED. B sits between A and C.
+
+| contrast | what it isolates | Δ | perm p |
+|---|---|---|---|
+| **A − B** | the consistency loss **shaping the encoder** | **82.8** | 0.056 |
+| **B − C** | the consistency loss **training the dynamics head** | **161.4** | 0.054 |
+| **A − C** | the whole consistency loss | **244.2** | **0.018** |
+
+**Roughly one third representation shaping, two thirds dynamics-head training** — and the split runs
+*against* S1. On cheetah the loss's larger job is making the dynamics head predict well, even though
+search through that head buys ~1.00×. The dynamics head still feeds the reward and value losses over
+horizon 3, so "useless for planning" does not mean "useless as a model".
+
+The arms are also monotone in how much consistency loss the run received, which is the internal
+check this design gets for free:
+
+> **656.4** (never) < **842.8** (off at 50k) < **900.6** (stock)
+
+That ordering independently supports the front-loading result (#5): a loss you drop at 50k costs 58
+points, one you never have costs 244.
+
+**What survives.** Not "world models are representation learners". Instead a **decomposition** that
+nobody has published: the consistency loss has two separable jobs, they can be measured
+independently, and on this task neither dominates. Encoder shaping being worth 83 points on a task
+where planning is worth ~0 is still the interesting half — that value cannot be flowing through
+search.
+
+**Honest limits.** C is **n=3**; the 34/66 split rests on it and could move materially. A−B is
+p=0.056 — the effect held its direction and magnitude from n=4 to n=5 (−99.1 → −82.8), which seven
+of eight patterns in this campaign failed to do, but it is **not significant** and I am not calling
+it so. Arm B's spread is 6× the control's (sd 102 vs 17).
+
+**A correction, made the same day.** At n=4 I reported B as "landing at the level of deleting the
+loss outright". That was wrong: the comparator I used (`ccoff@50k`, 842.8) is not deleting the loss
+outright, it is deleting it at 50k. The real delete-outright arm is 656.4, and B is well above it.
+The within-batch control is what caught this — which is why it was run.
+
+**Why ICLR still takes it:** a falsifiable, counterintuitive claim about a whole class of methods,
+decided by an ablation anyone can rerun — and the ablation worked. **Both outcomes publish, and this
+is the second one.**
 
 *(Tooling: `repro/cc_stopgrad.patch.py`, `repro/verify_stopgrad.py`. The verification harness itself
 failed twice first — it read `.grad` after the optimizer had zeroed it, then recorded the second
