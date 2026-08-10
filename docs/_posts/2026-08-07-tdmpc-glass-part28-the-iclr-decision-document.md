@@ -326,7 +326,43 @@ Verified on a fixed batch before spending the compute — same loss to the last 
 **Reading.** B ≈ A → the loss buys a simulator, S1 is wrong. B ≈ C → the loss is an auxiliary
 representation objective and the "world model" is not modelling the world in any way the agent uses.
 
-#### RESULT (2026-08-10): S1's strong claim is REFUTED. B sits between A and C.
+#### FINAL (2026-08-10, both tasks n=5): S1 is REFUTED, and walker settles it
+
+| | A stock | B stop-grad | C no loss | **encoder shaping** (A−B) | **dynamics training** (B−C) | whole loss (A−C) |
+|---|---|---|---|---|---|---|
+| **walker** | 809.4 (sd **6.5**) | 806.1 (sd **5.4**) | 736.7 (sd 39.9) | **3.3** — p=0.43, **4%** | **69.4** — **p=0.008**, 96% | 72.7, p=0.008 |
+| **cheetah** | 900.6 (sd 17.0) | 817.9 (sd 102.1) | 722.7 (sd 114.5) | 82.8 — p=0.056, 47% | 95.2 — p=0.18, 53% | 178.0, p=0.008 |
+
+**Walker is the instrument that can answer this** — its arms have sd 5–7, so it resolves a 10-point
+effect. It says the encoder-shaping channel is worth **3.3 points, 4% of the loss's value, p=0.43**.
+Essentially zero.
+
+**The consistency loss earns its keep by training the dynamics head, not by shaping the
+representation.** Encoder shaping is significant on *neither* task (p=0.056, p=0.43); dynamics-head
+training is significant on walker (p=0.008) and is the larger share on both.
+
+**Two corrections to what this document said earlier today, both from adding seeds:**
+
+1. Cheetah's arm C moved **656.4 (n=3) → 722.7 (n=5)** once seeds 4 and 5 came in at 809 and 835.
+   The quoted split moved with it, **34/66 → 47/53**. The n=3 figure was exactly as unreliable as
+   the campaign's base rate predicts, which is why it was flagged rather than quoted.
+2. I called encoder shaping "the still-interesting half — 83 points on a task where planning is
+   worth ~0". **That does not survive.** It is p=0.056 on the noisy task and 3.3 points on the
+   precise one.
+
+**What this leaves is sharper than what S1 proposed.** Combine it with the campaign's other two
+results and a specific mechanism falls out:
+
+> planning's value is in **training**, not decisions (#1) · the model loss's value is in the
+> **dynamics head**, not the representation (here) · yet on cheetah **planning is worth ~1.00×**
+
+So an accurate dynamics head matters *without being searched*. The remaining channel it can act
+through is the **reward and value losses, which are computed over the latent rollout at horizon 3**.
+That makes the world model a **multi-step credit-assignment device** — not a search substrate, and
+not a representation regulariser. That claim is specific, falsifiable, and directly testable by
+varying the horizon of the value/reward losses independently of the planner's horizon.
+
+#### The n=4 reading (superseded, kept for the record)
 
 | contrast | what it isolates | Δ | perm p |
 |---|---|---|---|
