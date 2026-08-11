@@ -417,11 +417,35 @@ That subsumes candidate #1 rather than competing with it, and it explains the ca
 pattern of nulls: every abstraction lever was tested on tasks whose plain policy already worked,
 i.e. exactly where this mechanism predicts nothing to gain.
 
-**What I will not claim.** p=0.0439 is not overwhelming. The planner-off cells are noisy (sd 64 and
-50 against the planner-on cells' 6.5), which is expected — removing the planner removes the thing
-that was stabilising those runs — but it means the interaction rests on a clean design rather than
-a large margin. **This is walker only**; cheetah's arms span 617–891 and cannot resolve it. And an
-elimination plus an interaction is still weaker than a direct demonstration.
+#### REPLICATED on cheetah, and more strongly (2026-08-11)
+
+| cheetah, n=5/cell | loss ON | loss OFF | value of the loss | p |
+|---|---|---|---|---|
+| **planner on** | 900.6 (sd 17.0) | 722.7 (sd 114.5) | **+178.0** | **0.0079** |
+| **planner off** | 904.5 (sd **8.7**) | 888.9 (sd 23.3) | **+15.6** | 0.18 |
+
+> **INTERACTION = 162.3, exact permutation p = 0.0187**
+
+Two tasks, same direction, both significant: **walker 90.1 (p=0.044), cheetah 162.3 (p=0.019).**
+The world-model loss is worth 178 points with a planner and nothing without one.
+
+Cheetah was chosen because it makes the *sharpest* version of the claim. Its deployment-time
+planning gain is ~1.00× — search buys nothing when acting — and indeed the planner-off arm here
+scores **higher** than the planner-on arm (904.5 vs 900.6). Yet the model loss's value still
+collapses without the planner. **The planner earns its keep through what it makes the agent learn,
+even on a task where it is worthless for acting.**
+
+**An aside that deserves its own line.** On cheetah, full TD-MPC2 (900.6) versus an agent with **no
+planner and no world-model loss at all** (888.9) is **+11.8, p=0.40**. Where the planner does not
+help, the entire world-model apparatus is dispensable. On walker the same apparatus is worth ~100
+points, so this is a fact about cheetah, not a general claim — but it is the cleanest statement yet
+of how task-dependent this machinery is.
+
+**What I will not claim.** Walker's p=0.0439 is not overwhelming and its planner-off cells are noisy
+(sd 64 and 50 against 6.5). On cheetah the **planner-ON pair is cross-batch** (Aug 8–10) while the
+planner-OFF pair was interleaved; same box, same config, same code path, but not the same batch —
+and a cross-batch stand-in already produced one wrong reading this week. Elimination plus
+interaction is still weaker than a direct demonstration. Two tasks is two, not many.
 
 ---
 
