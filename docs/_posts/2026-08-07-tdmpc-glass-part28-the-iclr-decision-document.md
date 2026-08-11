@@ -392,7 +392,40 @@ fails. This says what the model loss buys is the planner's *quality during train
 > **search is a training effect, and the world model exists to make search worth doing while the
 > agent learns.**
 
-**The decisive test is running now:** turn the planner off and ablate the loss there
+#### CONFIRMED (2026-08-11): the world model and the planner are ONE mechanism
+
+The 2×2, walker, 400k, n=5 per cell, arms interleaved within every batch:
+
+| | consistency loss ON | loss OFF | value of the loss | p |
+|---|---|---|---|---|
+| **planner on** | 809.4 (sd 6.5) | 736.7 (sd 39.9) | **+72.7** | **0.0079** |
+| **planner off** | 698.0 (sd 63.9) | 715.4 (sd 49.8) | **−17.4** | 0.79 |
+
+> **INTERACTION = 90.1 points, exact permutation p = 0.0439** (all 63,504 label permutations)
+
+**The world-model loss is worth 72.7 points when a planner is present and nothing at all when it
+is absent.** Internal check for free: the planner-off cells (698.0, 715.4) bracket walker's
+independently measured never-plan return of 705.4.
+
+With the two alternative channels already eliminated on the same task — encoder shaping 3.3
+(p=0.43), multi-step credit assignment 9.9 (p=0.26) — the account closes:
+
+> **The world model exists to make search worth doing while the agent learns, and search's value is
+> what it makes the agent learn. They are one mechanism, not two.**
+
+That subsumes candidate #1 rather than competing with it, and it explains the campaign's whole
+pattern of nulls: every abstraction lever was tested on tasks whose plain policy already worked,
+i.e. exactly where this mechanism predicts nothing to gain.
+
+**What I will not claim.** p=0.0439 is not overwhelming. The planner-off cells are noisy (sd 64 and
+50 against the planner-on cells' 6.5), which is expected — removing the planner removes the thing
+that was stabilising those runs — but it means the interaction rests on a clean design rather than
+a large margin. **This is walker only**; cheetah's arms span 617–891 and cannot resolve it. And an
+elimination plus an interaction is still weaker than a direct demonstration.
+
+---
+
+**The superseded plan, kept for the record:** turn the planner off and ablate the loss there
 (`mpc=false`, `consistency_coef` 20 vs 0, walker, n=5 each, arms interleaved within every batch).
 If the channel is the planner, the 72.7 largely disappears. If the loss is still worth ~72 with no
 planner anywhere, the elimination argument is wrong and all three channels are eliminated — which
