@@ -362,6 +362,42 @@ That makes the world model a **multi-step credit-assignment device** — not a s
 not a representation regulariser. That claim is specific, falsifiable, and directly testable by
 varying the horizon of the value/reward losses independently of the planner's horizon.
 
+#### The credit-assignment mechanism I proposed above is ALSO refuted (2026-08-11)
+
+Proposed last night, tested overnight, dead by morning. `WMP_LOSS_H=K` computes the reward and
+value losses over only the first K rollout steps. At K=1 they use `zs[0] = enc(obs[0])` alone, so
+the dynamics head is removed from credit assignment entirely — while the consistency loss keeps
+training it exactly as before. Verified before spending: dynamics gradient `0.00025 → exactly 0.0`,
+encoder still learning at `0.0113`.
+
+| walker arm | n | mean | sd | cost vs stock | p |
+|---|---|---|---|---|---|
+| A stock (loss horizon 3) | 5 | 809.4 | 6.5 | — | — |
+| loss horizon **2** | 3 | 804.7 | 4.0 | 4.7 | 0.32 |
+| loss horizon **1** | 5 | 799.5 | 14.8 | **9.9** | **0.26** |
+| B stop-grad encoder | 5 | 806.1 | 5.4 | 3.3 | 0.43 |
+| C no consistency loss | 5 | 736.7 | 39.9 | **72.7** | **0.008** |
+
+Cutting credit assignment to a single step costs **9.9 points**. Deleting the loss costs **72.7**.
+Loss-horizon-1 keeps 86% of the benefit and stands 62.7 above no-loss (p=0.016). **Not the channel.**
+
+**But the elimination is now almost complete.** The consistency loss's value survives removing
+encoder shaping *and* removing multi-step credit assignment, yet disappears when the loss is
+deleted. The remaining channel is **the planner**: the loss buys a dynamics head accurate enough
+for MPPI to search usefully *while the agent is learning*.
+
+That does not contradict candidate #1 — it completes it. #1 says bolting a planner on afterwards
+fails. This says what the model loss buys is the planner's *quality during training*. One claim:
+
+> **search is a training effect, and the world model exists to make search worth doing while the
+> agent learns.**
+
+**The decisive test is running now:** turn the planner off and ablate the loss there
+(`mpc=false`, `consistency_coef` 20 vs 0, walker, n=5 each, arms interleaved within every batch).
+If the channel is the planner, the 72.7 largely disappears. If the loss is still worth ~72 with no
+planner anywhere, the elimination argument is wrong and all three channels are eliminated — which
+would be a genuinely puzzling and reportable result in its own right.
+
 #### The n=4 reading (superseded, kept for the record)
 
 | contrast | what it isolates | Δ | perm p |
