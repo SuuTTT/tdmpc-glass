@@ -1,3 +1,37 @@
+## 2026-08-12 — Part 30 posted: the SE-JEPA proposal is NO-GO, measured in one afternoon
+
+Blog `docs/_posts/2026-08-12-tdmpc-glass-part30-we-could-not-reproduce-the-collapse.md`, rewritten
+with a plain-terms primer so it reads without prior knowledge of JEPA or structural entropy.
+Work lives in the new repo `SE-JEPA` (local `/home/ubuntu/SE-JEPA`; GitHub side not yet created).
+
+Supervisor proposed regularizing a JEPA world model with the structural information of its latent
+transition graph, `L = L_pred - lambda*SI(G_Z)`. Rather than build it we ran the two prior questions.
+
+- **Phase 2 (H3 - does SI predict anything?): NO.** 96 checkpoints with logged returns, no training.
+  Raw within-task correlations were confounded by training step; controlling for it (across runs
+  within step buckets) gives SI **+0.000** on cheetah and +0.379 on hopper against effective rank's
+  +0.657. SI never wins where the confound can be removed.
+- **Phase 1 (does collapse occur?): NO.** Pure JEPA on a two-room task, {offline, closed-loop} x
+  {0, 16 nuisance dims} x {none, uniformity, vicreg}. Zero anti-collapse is best or tied-best in all
+  four cells. Control measured by CEM planning through the predictor, no policy.
+- **Phase 1b (is that a lambda artifact?): NO.** Swept 0.001/0.01/0.1 at n=5 on the one cell with
+  headroom; no strength of any arm rescues control, and harm is monotone in lambda.
+- **The inversion:** uniformity raises effective rank 2.43 -> 11.44 while planning success falls
+  1.000 -> 0.011. It maximises the field's health metric and destroys the task.
+
+Also verified the proposal's citations: LeWorldModel, R2-Dreamer and Delta-JEPA are real;
+**"PhyLatent" resolves to nothing** and must be replaced before it reaches a related-work section.
+
+What survives: H1 (marginal non-collapse != preserved structure) is SUPPORTED by our own
+strong-VICReg result, which had been misfiled as a null; and regularizing the TRANSITION relation
+rather than the marginal is genuinely untested - it just should not be motivated by collapse.
+
+Three self-corrections inside twelve hours are recorded in the post: (1) "we already ran this" was
+too strong (kNN graph on a value-anchored latent, not a transition graph on a pure JEPA);
+(2) the "anti-collapse is downstream-dependent" paper I pitched was already qualified as
+nav-specific by Thread D; (3) a reported significant sign flip was a training-step artifact on two
+runs. Cost of the whole branch: ~$1.60. No new box - box1 only.
+
 ## 2026-08-05 — Part 25 posted: nine-month audit + the ICLR hypothesis
 
 Blog `docs/_posts/2026-08-05-tdmpc-glass-part25-what-nine-months-of-experiments-actually-taught-us.md`.

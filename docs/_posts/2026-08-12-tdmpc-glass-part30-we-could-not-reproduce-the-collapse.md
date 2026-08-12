@@ -2,7 +2,7 @@
 layout: post
 title: "TD-MPC-Glass, Part 30: We Could Not Reproduce the Collapse That JEPA World Models Are Built to Prevent"
 date: 2026-08-12
-description: "A proposal landed to regularize JEPA world models with the structural information of the latent transition graph. Before building it we asked two prior questions: does the quantity predict anything, and does the problem it fixes exist? Neither survived. Structural information does not predict downstream return where a training-step confound is removed (+0.000 on cheetah). And on the proposal's own first benchmark, a pure JEPA with zero anti-collapse is the best arm in every cell — while anti-collapse terms raise effective rank and destroy control, monotonically in their own strength. Includes three corrections I had to make to my own analysis inside twelve hours."
+description: "Written to be readable without knowing what JEPA or structural entropy are — there is a plain-terms primer up front. A proposal landed to regularize JEPA world models with the structural information of the latent transition graph. Before building it we asked two prior questions: does the quantity predict anything, and does the problem it fixes exist? Neither survived. Structural information does not predict downstream return where a training-step confound is removed (+0.000 on cheetah). And on the proposal's own first benchmark, a pure JEPA with zero anti-collapse is the best arm in every cell — while anti-collapse terms raise effective rank and destroy control, monotonically in their own strength. Includes three corrections I had to make to my own analysis inside twelve hours."
 ---
 
 > **TL;DR.** We were asked to evaluate a proposal: regularize a JEPA world model with the
@@ -17,6 +17,61 @@ description: "A proposal landed to regularize JEPA world models with the structu
 > rescues control. The clean finding is an **inversion**: uniformity raises effective rank 2.43 →
 > 11.44 while planning success falls 1.000 → 0.011. It maximises the health metric and destroys the
 > task. Total cost: about **$1.60** and one afternoon.
+
+---
+
+## First, the idea in plain terms
+
+*Skip this section if you already know what JEPA and structural entropy are.*
+
+**A world model is an agent's imagination.** Before acting, it asks "if I do this, what happens
+next?" If it can answer accurately, it can try things out in its head instead of in the world.
+
+**Predicting pixels is wasteful**, though. To imagine a robot arm moving, you do not need to render
+every shadow and reflection. So a **JEPA** — a joint-embedding predictive architecture — predicts a
+*summary* instead of a picture. Two pieces:
+
+- an **encoder** that turns an observation into a short summary (a vector of numbers, the "latent");
+- a **predictor** that, given the current summary and an action, guesses the *next* summary.
+
+Train the predictor to match the encoder's summary of what actually happened next, and in principle
+you get a compact imagination that ignores irrelevant detail.
+
+**Now the catch, and it is the reason this whole literature exists.** The encoder is being trained
+too, so it can cheat. If it summarises *every* observation as the same number — say, 7 — then the
+predictor's job becomes trivial: always answer 7. Prediction error goes to zero. The model is
+perfect and completely useless. It has stopped describing the world at all.
+
+That degenerate cheat is called **representation collapse**, and it is exactly what a student does
+when they discover the exam is graded on self-consistency rather than correctness: answer "42" to
+everything and score full marks.
+
+**Anti-collapse terms are rules that forbid the constant answer.** Extra penalties added to
+training, each phrased slightly differently:
+
+| the rule, in words | its technical name |
+|---|---|
+| "your summaries must stay spread apart from each other" | uniformity |
+| "your summaries must vary, and their dimensions must not duplicate each other" | VICReg, Barlow Twins, R2-Dreamer |
+| "your summaries must be shaped like a bell curve" | Gaussian regularization, LeWorldModel's SIGReg |
+| "I must be able to tell which action you took from how the summary changed" | Delta-JEPA |
+
+**Effective rank** is the field's usual health check — roughly, *how many genuinely different
+directions do the summaries use?* One direction means everything got squashed onto a line: collapsed.
+Many directions means spread out: healthy. Remember that word "roughly"; it does a lot of work later.
+
+**Structural entropy** is the newcomer, borrowed from network science. Draw a graph. Ask: does it
+split into meaningful communities, or is it formless? **Structural information** `SI` measures how
+much of the graph's messiness is explained by organising its nodes into groups. Formless graph, low
+`SI`; clearly clustered graph, high `SI`.
+
+The proposal's move is to build that graph out of the agent's own experience — **nodes are latent
+states, edges are transitions the agent actually observed** — and then reward the model for that
+graph having clear structure. The pitch is that this is more general than the rules above: instead of
+constraining what individual summaries look like, it constrains **how summaries are related to each
+other through the dynamics**. Relations, not marginals.
+
+That is a genuinely good instinct, and it is why this was worth a couple of days.
 
 ---
 
@@ -41,7 +96,8 @@ different order than proposed.
 ## The order that matters
 
 Our own history dictated it. We have spent a campaign on structural entropy as a *loss* and never
-once asked whether it is a good *instrument*. So:
+once asked whether it is a good *instrument*. Put the two prior questions the way a doctor would:
+**before prescribing the medicine, check that it does something — and check the patient is sick.**
 
 1. **Does `SI` predict downstream usefulness?** (the proposal's H3) — if not, the regularizer has no
    basis.
@@ -86,6 +142,13 @@ Correlating **across runs within each step bucket** removes it entirely. That is
 **H3 is not supported.** Where the confound can be removed, `SI` never beats effective rank: it
 predicts nothing at all on cheetah and is clearly weaker than rank on hopper.
 
+*In plain terms:* if structural information really measured "how useful this world model is", then
+models with more of it should score better. Across 96 trained models whose scores we already knew,
+it didn't. On one task the relationship was **exactly zero** — knowing a model's `SI` tells you
+nothing at all about how well it performs. And the apparent relationship we first saw came from
+something much more boring: **both numbers drift upward as training proceeds**, so they look linked
+until you compare models *at the same point in training*.
+
 **Two readings of my own that did not survive, recorded so they are not repeated.** The raw
 within-task correlations (`SI` +0.255 / +0.474 / −0.618) are step-confounded and should not be
 quoted. And the apparent **significant sign flip** on walker (−0.618, p=0.011) rests on **two runs**
@@ -124,6 +187,16 @@ regime this lab has ever seen collapse in.
 **Zero anti-collapse is best or tied-best in every cell.** All eight arm-vs-`none` comparisons on
 control are negative. The premise did not reproduce.
 
+*In plain terms:* we removed every safeguard against the cheat — and the model did not cheat. It
+learned a good imagination on its own and planned with it successfully. Then we added the safeguards
+back, one at a time, and every one of them made the agent **worse** at the actual task. The medicine
+had side effects and the patient was never ill.
+
+Why doesn't it cheat? The likely answer is architectural rather than a loss term: the target summary
+comes from a slowly-updating copy of the encoder (the "EMA target"), so the encoder is always chasing
+a moving goalpost it cannot instantly match. That asymmetry appears to be what makes the constant
+answer unreachable — and it is already present in essentially every JEPA and in TD-MPC2.
+
 ### The inversion
 
 | nuisance 0, offline | effective rank | readout R² | planning success |
@@ -132,6 +205,11 @@ control are negative. The premise did not reproduce.
 | uniformity | **11.44** | 0.999 | **0.011** |
 
 Uniformity **quadruples the metric the field optimises and destroys 99% of the task.**
+
+*In plain terms:* the health check said the representation got dramatically healthier, while the
+agent went from succeeding every single time to succeeding once in ninety. It is a fitness tracker
+reporting perfect vitals on a patient who can no longer walk. If you had been watching effective
+rank — as this literature largely does — you would have concluded the change was a success.
 
 A second detail worth pausing on: `none`'s effective rank of **2.43** looks collapsed until you
 remember the underlying state is two-dimensional — so 2.43 is *correct*. Low rank meant an efficient
@@ -159,6 +237,11 @@ at n=5.
 **No strength of any arm rescues control**, and the harm is **monotone in λ**: more anti-collapse,
 more effective rank, worse control. A dose-response relationship in the wrong direction is much
 harder to explain away than a single bad hyperparameter.
+
+*In plain terms:* the obvious objection to the previous section is "you used too much of the drug."
+So we tried a thousandth of the dose, a hundredth, and the original. At every dose the patient did
+worse than with no drug at all, and the more we gave, the worse it got. That pattern — a steady
+dose-response — is what separates "this treatment is harmful" from "you mis-set one dial."
 
 *(Note on Phase 1's statistics: at n=3 vs n=3 there are only 20 permutations, so the minimum
 two-sided p is 0.10 — every "p = 0.100" in the Phase 1 table is the floor, not a result. Phase 1b at
