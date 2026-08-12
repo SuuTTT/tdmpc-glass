@@ -10,9 +10,10 @@ description: "An audit of our own audit. Part 25 claimed to review every directi
 > is the corrected inventory, and it pairs every direction with **the hypothesis it was actually
 > testing** — so a reader can see what we believed going in and what came back, side by side.
 >
-> **The inventory itself is §1**, immediately below. Everything after it is provenance: how the list
-> was rebuilt, what the earlier audit lost, where the data still lives, and the proposal list that
-> survives.
+> **The inventory itself is §1**, immediately below — every direction links to the post that ran it.
+> Everything after is provenance: how the list was rebuilt, what the earlier audit lost, where the
+> data still lives, and the proposal list that survives. **§7 ranks what is left by its odds of
+> acceptance if we spend the remaining time on it.**
 
 ---
 
@@ -28,39 +29,39 @@ only in a blog paragraph — is in §5.
 
 | # | direction | the proposal — what we believed going in | what happened |
 |---|---|---|---|
-| 1 | **HL loop / coding-agent programmatic policy** (Parts 17, 21, 24) | A coding agent writing an *explicit program* can solve a task gradient RL cannot, because it can state structure RL would have to discover — and it tells you whether the task is solvable at all | PickCube **0% → ~9% real success in hours**, on a task where gradient RL reward-hacked to literally 0. The only thing in nine months that solved a task RL could not |
-| 2 | **TAMP controller, PandaOpenCabinet** (Part 43) | With the right task-and-motion abstraction, a *planner needs no training at all* to match RL on manipulation | **0.827 success with zero training** vs PPO's 0.832 peak; reach rate 0.05 → 0.841 |
-| 3 | **Shrink-Pareto** (Parts 19, 23) | TD-MPC2's default capacity is heavily over-provisioned and most of it can be removed for free | **5× smaller** (3.6M → 0.72M params), ~1.6× faster, **83–100% of return across 16 DMC tasks** |
-| 4 | **Throughput profiling** (Part 20) | MPPI's ~9k rollouts per step dominate wall-clock, so cheaper planning is the way to speed up | **Wrong, and usefully so:** the bottleneck is the **64 gradient updates per env step**. Our own intuition was inverted |
-| 5 | **Abstraction-as-curriculum** (Parts 41–42) | Bootstrap with a structured skill then *release* it: keep the sample-efficiency without inheriting the prior's ceiling | Matched PPO on OpenCabinet at ~2.5× sample-efficiency — **but see Part 49**: that PPO baseline was under-budgeted |
-| 6 | **Entity-graph compositional OOD** (Parts 10–11) | A graph-structured latent factorises entities, so it should generalise to object counts it never saw | **First GO of the campaign**: value-decodability does generalise to held-out object counts — but the advantage **never reaches the controller** |
-| 7 | **InFOM reproduction** (Parts 15, 36) | Intention-conditioned flow occupancy models reproduce as published and transfer to new domains | Reproduces on cube-single (2/3 seeds, 0.96/0.98); **CompPlan does not reproduce**; AntMaze is outside its benchmark |
-| 8 | **Search is a training effect** (Part 26) | Planning's value lies in what it makes the agent *collect and learn during training*, not in what it computes at decision time | Frozen-checkpoint toggle: deployment-time planning recovers only **24%** on hopper and is **net-negative** on walker (0.960× over 8 checkpoints) |
-| 9 | **Conjunctive reward ⇒ PPO wall** (Part 14) | Hopper is hard for PPO because its reward is a *product* (standing × hopping) — a gate paying nothing until both terms are satisfied | Additive **135** vs product **0**; lowering the hop threshold does not rescue it. The conjunction, not the difficulty, is the wall |
-| 10 | **Walker conjunctivity dissociation** | *Conjunctivity*, not difficulty, sets how much planning is worth | At matched baseline: harder-without-conjunctivity **1.07×** vs conjunctive **1.76×**. Holds on walker — and hopper says the opposite |
+| 1 | **[HL loop / coding-agent programmatic policy](https://suuttt.github.io/tdmpc-glass/2026/06/21/heuristic-learning-loop-for-rl.html)** (Parts 17, 21, 24) | A coding agent writing an *explicit program* can solve a task gradient RL cannot, because it can state structure RL would have to discover — and it tells you whether the task is solvable at all | PickCube **0% → ~9% real success in hours**, on a task where gradient RL reward-hacked to literally 0. The only thing in nine months that solved a task RL could not |
+| 2 | **[TAMP controller, PandaOpenCabinet](https://suuttt.github.io/tdmpc-glass/2026/06/26/tdmpc-glass-part43-residual-on-tamp-beats-ppo.html)** (Part 43) | With the right task-and-motion abstraction, a *planner needs no training at all* to match RL on manipulation | **0.827 success with zero training** vs PPO's 0.832 peak; reach rate 0.05 → 0.841 |
+| 3 | **[Shrink-Pareto](https://suuttt.github.io/tdmpc-glass/2026/06/23/tdmpc-glass-part23-shrink-pareto-full-suite.html)** (Parts 19, 23) | TD-MPC2's default capacity is heavily over-provisioned and most of it can be removed for free | **5× smaller** (3.6M → 0.72M params), ~1.6× faster, **83–100% of return across 16 DMC tasks** |
+| 4 | **[Throughput profiling](https://suuttt.github.io/tdmpc-glass/2026/06/22/tdmpc-glass-part20-how-fast-can-tdmpc2-go.html)** (Part 20) | MPPI's ~9k rollouts per step dominate wall-clock, so cheaper planning is the way to speed up | **Wrong, and usefully so:** the bottleneck is the **64 gradient updates per env step**. Our own intuition was inverted |
+| 5 | **[Abstraction-as-curriculum](https://suuttt.github.io/tdmpc-glass/2026/06/25/tdmpc-glass-part41-abstraction-as-curriculum.html)** (Parts 41–42) | Bootstrap with a structured skill then *release* it: keep the sample-efficiency without inheriting the prior's ceiling | Matched PPO on OpenCabinet at ~2.5× sample-efficiency — **but see Part 49**: that PPO baseline was under-budgeted |
+| 6 | **[Entity-graph compositional OOD](https://suuttt.github.io/tdmpc-glass/2026/06/14/tdmpc-glass-part10-first-go.html)** (Parts 10–11) | A graph-structured latent factorises entities, so it should generalise to object counts it never saw | **First GO of the campaign**: value-decodability does generalise to held-out object counts — but the advantage **never reaches the controller** |
+| 7 | **[InFOM reproduction](https://suuttt.github.io/tdmpc-glass/2026/06/25/tdmpc-glass-part36-infom-reproduction.html)** (Parts 15, 36) | Intention-conditioned flow occupancy models reproduce as published and transfer to new domains | Reproduces on cube-single (2/3 seeds, 0.96/0.98); **CompPlan does not reproduce**; AntMaze is outside its benchmark |
+| 8 | **[Search is a training effect](https://suuttt.github.io/tdmpc-glass/2026/08/06/tdmpc-glass-part26-the-hypothesis-died-and-what-replaced-it.html)** (Part 26) | Planning's value lies in what it makes the agent *collect and learn during training*, not in what it computes at decision time | Frozen-checkpoint toggle: deployment-time planning recovers only **24%** on hopper and is **net-negative** on walker (0.960× over 8 checkpoints) |
+| 9 | **[Conjunctive reward ⇒ PPO wall](https://suuttt.github.io/tdmpc-glass/2026/07/09/tdmpc-glass-part14-hopper-uniqueness.html)** (Part 14) | Hopper is hard for PPO because its reward is a *product* (standing × hopping) — a gate paying nothing until both terms are satisfied | Additive **135** vs product **0**; lowering the hop threshold does not rescue it. The conjunction, not the difficulty, is the wall |
+| 10 | **[Walker conjunctivity dissociation](https://suuttt.github.io/tdmpc-glass/2026/08/07/tdmpc-glass-part28-the-iclr-decision-document.html)** | *Conjunctivity*, not difficulty, sets how much planning is worth | At matched baseline: harder-without-conjunctivity **1.07×** vs conjunctive **1.76×**. Holds on walker — and hopper says the opposite |
 
 ### Directions that closed null — and are informative
 
 | # | direction | the proposal — what we believed going in | what happened |
 |---|---|---|---|
-| 11 | **Structural entropy / Glass as latent regulariser** (Parts 1–3, Thread E) | Imposing minimal-structural-entropy community structure on the latent yields a better world model — the founding bet of this campaign | **13–16 levers, all null.** SE is redundant wherever the latent is already value-sufficient. Repositioned toward structure *discovery*; never fully tested |
-| 12 | **Jumpy / temporal abstraction** (Parts 12, 16, 17) | A k-step "jumpy" world model beats a 1-step one on long-horizon manipulation | The flagship "+60% on PickCube" was **reward-hacking** — 0% real success. Actively harmful on high-DoF |
-| 13 | **Planning-as-exploration** (Thread A, Parts 6–7) | Planning helps because it *explores* better than the policy alone | **Does not survive** a controlled plan-vs-policy-only test, three separate ways |
-| 14 | **Abstraction as variance reduction** (Thread C) | Abstraction earns its keep by reducing variance in returns and gradients | NULL |
-| 15 | **JEPA anti-collapse** (Thread D, Parts 50–52) | A pure self-predictive JEPA collapses without an explicit anti-collapse term, so that term is load-bearing | **Reversal.** A pure JEPA does *not* collapse on DMC (state or pixels); anti-collapse ranges neutral to harmful; the **BYOL predictor+EMA asymmetry** is what actually carries it |
-| 16 | **H-JEPA on Panda** (Parts 50–52) | A hierarchical JEPA planning in a learned latent can solve PandaPickCube | 0 → 0.289 → **0.367** via a better grasp; a learned residual breaks the contact wall to **0.72** — but matched-budget PPO still wins the asymptote (0.81) |
-| 17 | **Calibration-shaped world models** (Parts 8–9) | Shaping the world model for *calibration* improves downstream control | Our own control caught the headline: the fine-tuning flip **died under a fair from-scratch test** |
-| 18 | **R² / value-sufficiency redundancy criterion** (Part 13) | You can decide whether an abstraction is redundant by probing how well the latent decodes value | **Falsified** — you cannot probe your way to "redundant" |
-| 19 | **Analytic prior + residual, systematically** | An analytic prior plus a learned residual beats PPO's asymptote | Never beats budget-matched PPO on asymptote **anywhere tested**. The value is sample-efficiency, and only where the prior fits (actuated DOF == goal DOF) |
-| 20 | **Analytic prior on AcrobotSwingup** (Part 47) | The analytic-prior recipe generalises to swing-up | **Backfires** |
+| 11 | **[Structural entropy / Glass as latent regulariser](https://suuttt.github.io/tdmpc-glass/2026/06/10/tdmpc-glass-part3-the-latent-was-already-the-abstraction.html)** (Parts 1–3, Thread E) | Imposing minimal-structural-entropy community structure on the latent yields a better world model — the founding bet of this campaign | **13–16 levers, all null.** SE is redundant wherever the latent is already value-sufficient. Repositioned toward structure *discovery*; never fully tested |
+| 12 | **[Jumpy / temporal abstraction](https://suuttt.github.io/tdmpc-glass/2026/06/20/tdmpc-glass-part17-reward-hacking-pickcube.html)** (Parts 12, 16, 17) | A k-step "jumpy" world model beats a 1-step one on long-horizon manipulation | The flagship "+60% on PickCube" was **reward-hacking** — 0% real success. Actively harmful on high-DoF |
+| 13 | **[Planning-as-exploration](https://suuttt.github.io/tdmpc-glass/2026/07/01/tdmpc-glass-thread-a-planning-exploration.html)** (Thread A, Parts 6–7) | Planning helps because it *explores* better than the policy alone | **Does not survive** a controlled plan-vs-policy-only test, three separate ways |
+| 14 | **[Abstraction as variance reduction](https://suuttt.github.io/tdmpc-glass/2026/07/01/tdmpc-glass-thread-c-abstraction-variance-reduction.html)** (Thread C) | Abstraction earns its keep by reducing variance in returns and gradients | NULL |
+| 15 | **[JEPA anti-collapse](https://suuttt.github.io/tdmpc-glass/2026/07/01/tdmpc-glass-thread-d-jepa-anticollapse-done-right.html)** (Thread D, Parts 50–52) | A pure self-predictive JEPA collapses without an explicit anti-collapse term, so that term is load-bearing | **Reversal.** A pure JEPA does *not* collapse on DMC (state or pixels); anti-collapse ranges neutral to harmful; the **BYOL predictor+EMA asymmetry** is what actually carries it |
+| 16 | **[H-JEPA on Panda](https://suuttt.github.io/tdmpc-glass/2026/06/30/tdmpc-glass-part50-making-hjepa-work-on-panda.html)** (Parts 50–52) | A hierarchical JEPA planning in a learned latent can solve PandaPickCube | 0 → 0.289 → **0.367** via a better grasp; a learned residual breaks the contact wall to **0.72** — but matched-budget PPO still wins the asymptote (0.81) |
+| 17 | **[Calibration-shaped world models](https://suuttt.github.io/tdmpc-glass/2026/06/13/tdmpc-glass-part9-calibration-closed.html)** (Parts 8–9) | Shaping the world model for *calibration* improves downstream control | Our own control caught the headline: the fine-tuning flip **died under a fair from-scratch test** |
+| 18 | **[R² / value-sufficiency redundancy criterion](https://suuttt.github.io/tdmpc-glass/2026/06/17/tdmpc-glass-part13-r2-criterion-fails.html)** (Part 13) | You can decide whether an abstraction is redundant by probing how well the latent decodes value | **Falsified** — you cannot probe your way to "redundant" |
+| 19 | **[Analytic prior + residual, systematically](https://suuttt.github.io/tdmpc-glass/2026/06/24/tdmpc-glass-part34-the-analytic-prior-ceiling.html)** | An analytic prior plus a learned residual beats PPO's asymptote | Never beats budget-matched PPO on asymptote **anywhere tested**. The value is sample-efficiency, and only where the prior fits (actuated DOF == goal DOF) |
+| 20 | **[Analytic prior on AcrobotSwingup](https://suuttt.github.io/tdmpc-glass/2026/06/25/tdmpc-glass-part47-acrobot-prior-backfires.html)** (Part 47) | The analytic-prior recipe generalises to swing-up | **Backfires** |
 
 ### Integrity events (keep these visible)
 
 | # | event | what we believed | what was actually true |
 |---|---|---|---|
-| 21 | **Part 49** | Our abstraction pipeline beats PPO — the whole Parts 42–48 arc | The PPO baseline was **under-budgeted**. The arc was retracted |
-| 22 | **Part 21** | "World models can hurt" on hopper — our headline finding | Our JAX TD-MPC2 had **deviated from the official release**. Headline retracted |
-| 23 | **Part 23** | The AAAI paper's ~**9.2×** cheetah gap | **1.04×** under ordinary training; 3.55× only under its matched-data control |
+| 21 | **[Part 49](https://suuttt.github.io/tdmpc-glass/2026/06/29/tdmpc-glass-part49-matched-control-correction.html)** | Our abstraction pipeline beats PPO — the whole Parts 42–48 arc | The PPO baseline was **under-budgeted**. The arc was retracted |
+| 22 | **[Part 21](https://suuttt.github.io/tdmpc-glass/2026/07/22/tdmpc-glass-part21-audit-and-retraction.html)** | "World models can hurt" on hopper — our headline finding | Our JAX TD-MPC2 had **deviated from the official release**. Headline retracted |
+| 23 | **[Part 23](https://suuttt.github.io/tdmpc-glass/2026/08/03/tdmpc-glass-part23-verification-week.html)** | The AAAI paper's ~**9.2×** cheetah gap | **1.04×** under ordinary training; 3.55× only under its matched-data control |
 | 24 | **The budget guard** | The $40 cap had been enforcing itself all campaign | It announced "STOPPING both boxes" and **stopped nothing** — cron's PATH lacked `vastai` and the errors were swallowed |
 
 </div>
@@ -216,7 +217,41 @@ only the within-cell ratio is meaningful.
 
 ---
 
-## 7. The lesson about inventories
+## 7. Ranked by odds of acceptance, if we spend the remaining time on it
+
+**Added 2026-08-12**, six days after this post, once the mechanism work closed. Everything above is
+what we *ran*; this is what is worth *finishing*. The odds are judgements about acceptance
+**conditional on the work being completed and written well** — aids for choosing between rows, not
+predictions. No venue deadline has been set yet, which is the single input that would move these
+most.
+
+<div class="wide-table wide-table--inventory" markdown="1">
+
+| rank | proposal | what is actually left | odds | why that number |
+|---|---|---|---|---|
+| **1** | **The world model and the planner are one mechanism** — search earns its keep in training, and the model loss exists to make search worth doing while the agent learns | **writing only** | **~65%** | Grade A on three legs: the frozen-checkpoint toggle, a cross-agent replication in DreamerV3 (which has no search at all), and a 2×2 interaction significant on two tasks (walker 90.1, p=0.044; cheetah 129.5, p=0.011). Two rival mechanisms were eliminated with gradient-level verification. No confound left for a reviewer to attach to |
+| **2** | **Adaptive planning: a real ceiling that no obvious signal can reach** | complete as a negative; ~1 week to attempt a positive | **~45%** | Converts "someone should gate the planner" into a measured statement — the opportunity is worth ~53% of search's value at 10% of states, and nine signals across three families are provably blind to it. Strongest as the second half of #1 rather than alone |
+| **3** | **Anti-collapse in JEPA world models: a reproduction study** ([Part 30](https://suuttt.github.io/tdmpc-glass/2026/08/12/tdmpc-glass-part30-we-could-not-reproduce-the-collapse.html)) | ~2 weeks to add scale | **~40%** | Adversarial to a live literature and cheap to state: collapse did not appear in five settings, anti-collapse is neutral-to-harmful, and effective rank moves *opposite* to control. The weakness is scale — our JEPA is small, LeWorldModel trains 15M params from pixels — so a pixel-scale arm is what buys the last 15% |
+| **4** | **The 5× shrink** | **writing only** | ~35% alone | Grade A across 16 tasks and genuinely useful, but "the default is over-provisioned" reads as engineering rather than insight. Much stronger as an appendix to #1 than as a paper |
+| **5** | **How claims decay** — the methodology paper | writing only | ~50% *as a workshop paper*, ~15% main track | Eight patterns looked real at 3 seeds; seven died at 5. We have the anatomy with timestamps, pre-registrations and four silent-instrument bugs. Real, and better suited to a workshop than a main track |
+| **6** | **The coding-agent loop as a first-class method** | ~1 week | ~25% research, high as a workshop piece | The only thing in nine months that solved a task gradient RL could not, and its diagnostic value is independent of its ceiling. But the method is Weng's, not ours — we contribute evidence, not invention |
+| **7** | **Entity-graph compositional OOD** | needs a control-reaching result | ~25% | The campaign's first honest GO, but the advantage stops at value-decodability and never reaches the controller. Without closing that gap it is a probe result |
+| **8** | **Conjunctivity sets the value of search** | 1 more task | ~20% | **Demoted.** Holds on walker, and hopper says the opposite at n≥4 on every cell. Publish as a dissociation inside another paper, never as a law |
+
+</div>
+
+**The honest read of that table:** one paper is ready to write and everything else is either supporting
+material for it or a workshop submission. The recommendation has not changed since
+[Part 28](https://suuttt.github.io/tdmpc-glass/2026/08/07/tdmpc-glass-part28-the-iclr-decision-document.html) —
+write #1, fold #2 in as its second half, #4 as an appendix, send #5 to a workshop.
+
+**Two things that would move these odds more than any experiment:** a decided venue and deadline,
+and a behaviour-cloning baseline. Right now "planning helps" has no demonstration-based denominator,
+which is the first thing a reviewer will ask for and among the cheapest to supply.
+
+---
+
+## 8. The lesson about inventories
 
 Part 25 was wrong not because any single number in it was wrong, but because it was assembled from
 notes about the work instead of the work. An audit built that way inherits every gap in the notes —
