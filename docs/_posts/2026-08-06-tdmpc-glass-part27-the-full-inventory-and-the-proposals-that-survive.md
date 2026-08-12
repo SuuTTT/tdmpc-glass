@@ -9,99 +9,17 @@ description: "An audit of our own audit. Part 25 claimed to review every directi
 > misses were caught by our supervisor, not by us, and re-reading all 87 posts found more. This post
 > is the corrected inventory — with a column the previous list never had: **does the data still
 > exist?**
+>
+> **The inventory itself is §1**, immediately below. Everything after it is provenance: how the list
+> was rebuilt, what the earlier audit lost, and the proposal list that survives.
 
 ---
 
-## 1. Why this post exists
+## 1. Full inventory, with data availability
 
-Part 25's proposal list was assembled from memory notes and recent reports rather than from the blog
-corpus. That is how it lost an entire research line. Two specific failures:
-
-**Miss 1 — the coding-agent / HL-loop line.** The campaign ran Jiayi Weng's *Learning Beyond
-Gradients* method on Panda in June: a coding agent iteratively writing a programmatic policy from
-telemetry and video, no gradients. It produced one of the campaign's most striking results. It
-appears nowhere in Part 25's list of directions. The work was filed under "HL loop", so a search for
-"programmatic policy" found nothing.
-
-**Miss 2 — the conjunctive-reward experiment already existed.** Part 25 nominated "reward
-conjunctivity sets the value of search" as the ICLR bet and described it as new. **Part 14, published
-2026-07-09, had already identified hopper's conjunctive reward as the cause of the PPO wall and run a
-controlled experiment on it** — including building the exact env-gated additive-reward knob we
-rebuilt from scratch this week, and naming the margin confound we then "discovered" independently.
-
-Both misses share a cause: **the inventory was built from summaries instead of from primary
-sources.** That is the same failure mode as reading a monitor's log line instead of checking whether
-the action happened.
-
----
-
-## 2. The thing Part 25 missed most: the coding agent solved a task gradient RL could not
-
-**PandaPickCube.** Gradient RL *reward-hacked it to zero.* Video evaluation showed vanilla and jumpy
-TD-MPC2 both achieving **0% real pick success** while scoring well — they hovered the gripper beside
-the cube to bank a dense proximity term. `box_target_max` was exactly `0.0000`; vanilla plateaued at
-~2,500 against a ~12,550 ceiling, abandoning ~10,000 of return **by never picking**. The reward was
-well-*ordered* (real success 965 vs hover 315 per 150-step episode, 3.1×) but badly *shaped*, and
-89% of the hover's return came from the proximity term.
-
-A coding agent looping on a programmatic phase machine (reach → descend → grasp → lift → place),
-improved from telemetry, per-phase pass rates and rendered video, took the same task from
-**0% → ~6% → ~9% video-verified real success** (99% grasp, lift 0.69, 256 envs × multiple seeds) in
-**hours**, against PPO's 33M-step grind. The binding constraint was **cube orientation** — `rot_err`
-capping `box_target` even on good grasps — cracked with analytic level-gripper IK.
-
-**Why this matters more than the 9%:** it answered *does anything solve this task?* when gradient
-RL's answer was an opaque zero. It is a **solvability oracle and a reward-hacking detector**, and
-then a scaffold — the controller generated the demonstration data that unblocked warm-starting,
-which had been impossible because nothing could produce a successful trajectory.
-
-**Its ceiling is real and large.** ~9% open-loop against a properly-budgeted PPO's ~66–83%
-closed-loop. A hand-written controller cannot sense and correct the grasp dynamics it fails on.
-
-The reusable protocol is in the 2026-06-21 post; its four memory artifacts (`KNOWLEDGE.md`,
-`LOG.jsonl`, versioned snapshots + `BEST`, `regression.py`) are the part that made it compound.
-This line has now been written into `competition-playbook/techniques/programmatic-policy-agents.md`
-with our numbers.
-
----
-
-## 3. The conjunctivity precedent we re-derived
-
-Part 14 (2026-07-09), tuned PPO on HopperHop, seed 50, 20M steps, with env-gated reward knobs
-(byte-identical when unset):
-
-| PPO variant | reward structure | final return |
-|---|---|---|
-| default (control) | product `standing × hopping` | **0** — the wall |
-| **additive** | `0.5·standing + 0.5·hopping` | **135** — climbs off zero |
-| product, `HOP_SPEED=1.0` | product, *easier* hop threshold | **1** — wall persists |
-| tdmpc2 additive (control) | additive | 467 |
-
-Its conclusion: **the barrier is the conjunction itself**, not the hop-speed magnitude, not early
-termination (there is none), not a fundamental PPO limit. And a footnote flagged that `HOP_SPEED=1.0`
-also halves the tolerance margin, so *"a margin-controlled variant would be the cleaner isolation for
-the paper version."*
-
-This week we independently built that margin-controlled variant (`WMP_HOPPER_MARGIN`), an additive
-variant (`WMP_HOPPER_ADDITIVE`), and a threshold control (`WMP_HOPPER_STAND`) — without knowing the
-July work existed.
-
-**The two are complementary, not redundant, and together they say more than either alone:**
-
-| | July (Part 14) | August (Parts 24–26) |
-|---|---|---|
-| agent | tuned PPO | TD-MPC2, and DreamerV3 |
-| measured | can it learn at all | how much *planning* adds |
-| knob | hop-speed threshold (the *smooth* factor) | standing threshold (the *binary gate*) |
-| result | conjunction blocks on-policy learning; easier hop threshold does **not** help | easier standing gate collapses the planning gain 3.53× → 1.21× |
-
-So: the conjunction is what blocks a gradient learner (July), while how hard the *gate* is to clear
-modulates how much search is worth (August). July's additive result (0 → 135) is also the clean
-version of the additive test that came out inconclusive at n=2 this week.
-
----
-
-## 4. Full inventory, with data availability
+This is the core of the post. Every direction the campaign has run, its result, and — the
+column the previous audit never had — **whether the underlying data still exists.** The
+sections after it explain how this list was rebuilt and what it changes.
 
 Legend — **L** local on the control box · **S** on a stopped vast.ai box (disk kept, restartable) ·
 **O** old server, currently unreachable (needs `ssh -A` agent forwarding) · **B** blog only, no
@@ -145,6 +63,95 @@ surviving result file found.
 | 22 | **Part 21** — reimplementation audit: our JAX TD-MPC2 deviated from the official release; the hopper "world models can hurt" headline was retracted | **L** |
 | 23 | **Part 23** — rebuilt on the **official** TD-MPC2: the AAAI paper's ~9.2× cheetah gap is 1.04× under ordinary training, 3.55× under its matched-data control | **L** `aaai27-wm-diagnostic/` (377 MB) |
 | 24 | **This week** — the $40 budget guard announced "STOPPING both boxes" and stopped nothing for the whole campaign (cron PATH lacked `vastai`, errors swallowed) | **L** |
+
+---
+
+## 2. Why this post exists
+
+Part 25's proposal list was assembled from memory notes and recent reports rather than from the blog
+corpus. That is how it lost an entire research line. Two specific failures:
+
+**Miss 1 — the coding-agent / HL-loop line.** The campaign ran Jiayi Weng's *Learning Beyond
+Gradients* method on Panda in June: a coding agent iteratively writing a programmatic policy from
+telemetry and video, no gradients. It produced one of the campaign's most striking results. It
+appears nowhere in Part 25's list of directions. The work was filed under "HL loop", so a search for
+"programmatic policy" found nothing.
+
+**Miss 2 — the conjunctive-reward experiment already existed.** Part 25 nominated "reward
+conjunctivity sets the value of search" as the ICLR bet and described it as new. **Part 14, published
+2026-07-09, had already identified hopper's conjunctive reward as the cause of the PPO wall and run a
+controlled experiment on it** — including building the exact env-gated additive-reward knob we
+rebuilt from scratch this week, and naming the margin confound we then "discovered" independently.
+
+Both misses share a cause: **the inventory was built from summaries instead of from primary
+sources.** That is the same failure mode as reading a monitor's log line instead of checking whether
+the action happened.
+
+---
+
+## 3. The thing Part 25 missed most: the coding agent solved a task gradient RL could not
+
+**PandaPickCube.** Gradient RL *reward-hacked it to zero.* Video evaluation showed vanilla and jumpy
+TD-MPC2 both achieving **0% real pick success** while scoring well — they hovered the gripper beside
+the cube to bank a dense proximity term. `box_target_max` was exactly `0.0000`; vanilla plateaued at
+~2,500 against a ~12,550 ceiling, abandoning ~10,000 of return **by never picking**. The reward was
+well-*ordered* (real success 965 vs hover 315 per 150-step episode, 3.1×) but badly *shaped*, and
+89% of the hover's return came from the proximity term.
+
+A coding agent looping on a programmatic phase machine (reach → descend → grasp → lift → place),
+improved from telemetry, per-phase pass rates and rendered video, took the same task from
+**0% → ~6% → ~9% video-verified real success** (99% grasp, lift 0.69, 256 envs × multiple seeds) in
+**hours**, against PPO's 33M-step grind. The binding constraint was **cube orientation** — `rot_err`
+capping `box_target` even on good grasps — cracked with analytic level-gripper IK.
+
+**Why this matters more than the 9%:** it answered *does anything solve this task?* when gradient
+RL's answer was an opaque zero. It is a **solvability oracle and a reward-hacking detector**, and
+then a scaffold — the controller generated the demonstration data that unblocked warm-starting,
+which had been impossible because nothing could produce a successful trajectory.
+
+**Its ceiling is real and large.** ~9% open-loop against a properly-budgeted PPO's ~66–83%
+closed-loop. A hand-written controller cannot sense and correct the grasp dynamics it fails on.
+
+The reusable protocol is in the 2026-06-21 post; its four memory artifacts (`KNOWLEDGE.md`,
+`LOG.jsonl`, versioned snapshots + `BEST`, `regression.py`) are the part that made it compound.
+This line has now been written into `competition-playbook/techniques/programmatic-policy-agents.md`
+with our numbers.
+
+---
+
+## 4. The conjunctivity precedent we re-derived
+
+Part 14 (2026-07-09), tuned PPO on HopperHop, seed 50, 20M steps, with env-gated reward knobs
+(byte-identical when unset):
+
+| PPO variant | reward structure | final return |
+|---|---|---|
+| default (control) | product `standing × hopping` | **0** — the wall |
+| **additive** | `0.5·standing + 0.5·hopping` | **135** — climbs off zero |
+| product, `HOP_SPEED=1.0` | product, *easier* hop threshold | **1** — wall persists |
+| tdmpc2 additive (control) | additive | 467 |
+
+Its conclusion: **the barrier is the conjunction itself**, not the hop-speed magnitude, not early
+termination (there is none), not a fundamental PPO limit. And a footnote flagged that `HOP_SPEED=1.0`
+also halves the tolerance margin, so *"a margin-controlled variant would be the cleaner isolation for
+the paper version."*
+
+This week we independently built that margin-controlled variant (`WMP_HOPPER_MARGIN`), an additive
+variant (`WMP_HOPPER_ADDITIVE`), and a threshold control (`WMP_HOPPER_STAND`) — without knowing the
+July work existed.
+
+**The two are complementary, not redundant, and together they say more than either alone:**
+
+| | July (Part 14) | August (Parts 24–26) |
+|---|---|---|
+| agent | tuned PPO | TD-MPC2, and DreamerV3 |
+| measured | can it learn at all | how much *planning* adds |
+| knob | hop-speed threshold (the *smooth* factor) | standing threshold (the *binary gate*) |
+| result | conjunction blocks on-policy learning; easier hop threshold does **not** help | easier standing gate collapses the planning gain 3.53× → 1.21× |
+
+So: the conjunction is what blocks a gradient learner (July), while how hard the *gate* is to clear
+modulates how much search is worth (August). July's additive result (0 → 135) is also the clean
+version of the additive test that came out inconclusive at n=2 this week.
 
 ---
 
@@ -219,3 +226,4 @@ and gaps are exactly what an audit is for.
 The rule going forward: **an inventory is only valid if it was built from primary sources**, and it
 must carry a data-availability column, because a result whose file no longer exists is a claim, not
 a measurement.
+
