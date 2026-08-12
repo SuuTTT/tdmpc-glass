@@ -2,69 +2,68 @@
 layout: post
 title: "TD-MPC-Glass, Part 27: The Full Inventory — Every Experiment, Whether Its Data Still Exists, and the Proposal List That Survives"
 date: 2026-08-06
-description: "An audit of our own audit. Part 25 claimed to review every direction the campaign has run; a re-read of all 87 posts found it had missed several, two of them serious — the coding-agent/HL-loop programmatic-policy line that solved a task gradient RL reward-hacked to zero, and a July conjunctive-reward experiment that pre-dated (and partly pre-empted) this month's flagship hypothesis. This post inventories every experiment with its result and, for each, whether the underlying data still exists on disk, on a stopped box, or only in a blog paragraph. Ends with the corrected proposal list."
+description: "An audit of our own audit. Part 25 claimed to review every direction the campaign has run; a re-read of all 87 posts found it had missed several, two of them serious — the coding-agent/HL-loop programmatic-policy line that solved a task gradient RL reward-hacked to zero, and a July conjunctive-reward experiment that pre-dated (and partly pre-empted) this month's flagship hypothesis. The post opens with the full inventory: every experiment, the hypothesis it was testing, and what came back. Data availability -- which results still exist on disk versus only in a blog paragraph -- follows, along with the corrected proposal list."
 ---
 
 > Part 25 was billed as "a full audit of every direction this campaign has run." It wasn't. Two
 > misses were caught by our supervisor, not by us, and re-reading all 87 posts found more. This post
-> is the corrected inventory — with a column the previous list never had: **does the data still
-> exist?**
+> is the corrected inventory, and it pairs every direction with **the hypothesis it was actually
+> testing** — so a reader can see what we believed going in and what came back, side by side.
 >
 > **The inventory itself is §1**, immediately below. Everything after it is provenance: how the list
-> was rebuilt, what the earlier audit lost, and the proposal list that survives.
+> was rebuilt, what the earlier audit lost, where the data still lives, and the proposal list that
+> survives.
 
 ---
 
-## 1. Full inventory, with data availability
+## 1. Full inventory: every direction, what it proposed, and what happened
 
-This is the core of the post. Every direction the campaign has run, its result, and — the
-column the previous audit never had — **whether the underlying data still exists.** The
-sections after it explain how this list was rebuilt and what it changes.
+This is the core of the post. Each row is a direction the campaign ran, **the hypothesis it was
+actually testing**, and what came back. Data availability — which results still exist on disk versus
+only in a blog paragraph — is in §5.
 
-Legend — **L** local on the control box · **S** on a stopped vast.ai box (disk kept, restartable) ·
-**O** old server, currently unreachable (needs `ssh -A` agent forwarding) · **B** blog only, no
-surviving result file found.
+<div class="wide-table wide-table--proposals" markdown="1">
 
 ### Directions with positive results
 
-| # | direction | result | data |
+| # | direction | the proposal — what we believed going in | what happened |
 |---|---|---|---|
-| 1 | **HL loop / coding-agent programmatic policy** (Parts 17, 21, 24; 06-21 protocol post) | PickCube 0% → ~9% real success in hours where gradient RL reward-hacked to 0 | **L** `tdmpc-glass/hl_pickcube/`, `demo_videos/KNOWLEDGE.md`, `LOG.jsonl` |
-| 2 | **TAMP controller, PandaOpenCabinet** (Part 43) | 0.827 success, **zero training**, vs PPO peak 0.832; reach rate 0.05 → 0.841 | **L** `exp/tdmpc_glass/` (PandaOpenCabinet dirs) |
-| 3 | **Shrink-Pareto** (Parts 19, 23) | TD-MPC2 5× smaller (3.6M → 0.72M params), ~1.6× faster, 83–100% of return across 16 DMC tasks | **L** `exp/tdmpc_glass/` |
-| 4 | **Throughput profiling** (Part 20) | the wall-clock bottleneck is the **64 gradient updates per env step**, not MPPI's ~9k rollouts — the common intuition (ours included) was wrong | **B/L** |
-| 5 | **Abstraction-as-curriculum** (Parts 41–42) | bootstrap a structured skill then release it: matched PPO on OpenCabinet at ~2.5× sample-efficiency — **but see Part 49 retraction** | **L/S** |
-| 6 | **Entity-graph compositional OOD** (Parts 10–11) | first GO: graph latent's value-decodability generalises to held-out object counts — but **does not reach the controller** | **L** `exp/.../coods_graph_s0.json`, `coods_mono_s0.json` |
-| 7 | **InFOM reproduction** (Parts 15, 36) | reproduces on cube-single (2/3 seeds 0.96/0.98); **CompPlan does not reproduce**; AntMaze is outside InFOM's benchmark | **S/O** |
-| 8 | **Search is a training effect** (Part 26, this week) | frozen-checkpoint toggle: deployment-time planning recovers **24%** on hopper, is **net-negative** on walker (0.960× over 8 checkpoints) | **L** `world-model-paper/data/deploy_sweep.jsonl` |
-| 9 | **Conjunctive reward ⇒ PPO wall** (Part 14) | additive 135 vs product 0; easier hop threshold doesn't help | **B** — scripts survive (`mechcheck/b0_ppo.py`), no results JSON found |
-| 10 | **Walker conjunctivity dissociation** (this week) | harder-without-conjunctivity 1.07× vs conjunctive 1.76× at matched baseline (n=4/n=3) | **L** `world-model-paper/data/` |
+| 1 | **HL loop / coding-agent programmatic policy** (Parts 17, 21, 24) | A coding agent writing an *explicit program* can solve a task gradient RL cannot, because it can state structure RL would have to discover — and it tells you whether the task is solvable at all | PickCube **0% → ~9% real success in hours**, on a task where gradient RL reward-hacked to literally 0. The only thing in nine months that solved a task RL could not |
+| 2 | **TAMP controller, PandaOpenCabinet** (Part 43) | With the right task-and-motion abstraction, a *planner needs no training at all* to match RL on manipulation | **0.827 success with zero training** vs PPO's 0.832 peak; reach rate 0.05 → 0.841 |
+| 3 | **Shrink-Pareto** (Parts 19, 23) | TD-MPC2's default capacity is heavily over-provisioned and most of it can be removed for free | **5× smaller** (3.6M → 0.72M params), ~1.6× faster, **83–100% of return across 16 DMC tasks** |
+| 4 | **Throughput profiling** (Part 20) | MPPI's ~9k rollouts per step dominate wall-clock, so cheaper planning is the way to speed up | **Wrong, and usefully so:** the bottleneck is the **64 gradient updates per env step**. Our own intuition was inverted |
+| 5 | **Abstraction-as-curriculum** (Parts 41–42) | Bootstrap with a structured skill then *release* it: keep the sample-efficiency without inheriting the prior's ceiling | Matched PPO on OpenCabinet at ~2.5× sample-efficiency — **but see Part 49**: that PPO baseline was under-budgeted |
+| 6 | **Entity-graph compositional OOD** (Parts 10–11) | A graph-structured latent factorises entities, so it should generalise to object counts it never saw | **First GO of the campaign**: value-decodability does generalise to held-out object counts — but the advantage **never reaches the controller** |
+| 7 | **InFOM reproduction** (Parts 15, 36) | Intention-conditioned flow occupancy models reproduce as published and transfer to new domains | Reproduces on cube-single (2/3 seeds, 0.96/0.98); **CompPlan does not reproduce**; AntMaze is outside its benchmark |
+| 8 | **Search is a training effect** (Part 26) | Planning's value lies in what it makes the agent *collect and learn during training*, not in what it computes at decision time | Frozen-checkpoint toggle: deployment-time planning recovers only **24%** on hopper and is **net-negative** on walker (0.960× over 8 checkpoints) |
+| 9 | **Conjunctive reward ⇒ PPO wall** (Part 14) | Hopper is hard for PPO because its reward is a *product* (standing × hopping) — a gate paying nothing until both terms are satisfied | Additive **135** vs product **0**; lowering the hop threshold does not rescue it. The conjunction, not the difficulty, is the wall |
+| 10 | **Walker conjunctivity dissociation** | *Conjunctivity*, not difficulty, sets how much planning is worth | At matched baseline: harder-without-conjunctivity **1.07×** vs conjunctive **1.76×**. Holds on walker — and hopper says the opposite |
 
 ### Directions that closed null — and are informative
 
-| # | direction | result | data |
+| # | direction | the proposal — what we believed going in | what happened |
 |---|---|---|---|
-| 11 | **Structural entropy / Glass as latent regulariser** (Parts 1–3, Thread E) | 13–16 levers, all null; SE is redundant where the latent is already value-sufficient. Repositioned toward structure *discovery* (options), never fully tested | **L/O** |
-| 12 | **Jumpy / temporal abstraction** (Parts 12, 16, 17) | the flagship "+60% on PickCube" was **reward-hacking** (0% real success). Actively harmful on high-DoF | **L** |
-| 13 | **Planning-as-exploration** (Thread A, Parts 6–7) | flagship bet **does not survive** a controlled plan-vs-policy-only test, three ways | **L/O** |
-| 14 | **Abstraction as variance reduction** (Thread C) | NULL | **L/O** |
-| 15 | **JEPA anti-collapse** (Thread D, Parts 50–52) | **reversal**: a pure self-predictive JEPA does *not* collapse on DMC; anti-collapse ranges neutral to harmful | **L/O** |
-| 16 | **H-JEPA on Panda** (Parts 50–52) | 0 → 0.289 → 0.367 via better grasp; learned residual breaks the contact wall to 0.72 — but matched-budget PPO still wins the asymptote | **L/O** |
-| 17 | **Calibration-shaped world models** (Parts 8–9) | the control caught a headline: fine-tuning flip died under a fair from-scratch test | **L** `calib_control_comparison.json`, `calib_m1_verdict.json` |
-| 18 | **R² / value-sufficiency redundancy criterion** (Part 13) | **falsified** — you cannot probe your way to "redundant" | **L** |
-| 19 | **Analytic prior + residual, systematically** | never beats budget-matched PPO on asymptote **anywhere tested**; value is sample-efficiency, and only where the prior fits (actuated DOF == goal DOF) | **L/O** |
-| 20 | **Analytic prior on AcrobotSwingup** (Part 47) | **backfires** | **L** |
+| 11 | **Structural entropy / Glass as latent regulariser** (Parts 1–3, Thread E) | Imposing minimal-structural-entropy community structure on the latent yields a better world model — the founding bet of this campaign | **13–16 levers, all null.** SE is redundant wherever the latent is already value-sufficient. Repositioned toward structure *discovery*; never fully tested |
+| 12 | **Jumpy / temporal abstraction** (Parts 12, 16, 17) | A k-step "jumpy" world model beats a 1-step one on long-horizon manipulation | The flagship "+60% on PickCube" was **reward-hacking** — 0% real success. Actively harmful on high-DoF |
+| 13 | **Planning-as-exploration** (Thread A, Parts 6–7) | Planning helps because it *explores* better than the policy alone | **Does not survive** a controlled plan-vs-policy-only test, three separate ways |
+| 14 | **Abstraction as variance reduction** (Thread C) | Abstraction earns its keep by reducing variance in returns and gradients | NULL |
+| 15 | **JEPA anti-collapse** (Thread D, Parts 50–52) | A pure self-predictive JEPA collapses without an explicit anti-collapse term, so that term is load-bearing | **Reversal.** A pure JEPA does *not* collapse on DMC (state or pixels); anti-collapse ranges neutral to harmful; the **BYOL predictor+EMA asymmetry** is what actually carries it |
+| 16 | **H-JEPA on Panda** (Parts 50–52) | A hierarchical JEPA planning in a learned latent can solve PandaPickCube | 0 → 0.289 → **0.367** via a better grasp; a learned residual breaks the contact wall to **0.72** — but matched-budget PPO still wins the asymptote (0.81) |
+| 17 | **Calibration-shaped world models** (Parts 8–9) | Shaping the world model for *calibration* improves downstream control | Our own control caught the headline: the fine-tuning flip **died under a fair from-scratch test** |
+| 18 | **R² / value-sufficiency redundancy criterion** (Part 13) | You can decide whether an abstraction is redundant by probing how well the latent decodes value | **Falsified** — you cannot probe your way to "redundant" |
+| 19 | **Analytic prior + residual, systematically** | An analytic prior plus a learned residual beats PPO's asymptote | Never beats budget-matched PPO on asymptote **anywhere tested**. The value is sample-efficiency, and only where the prior fits (actuated DOF == goal DOF) |
+| 20 | **Analytic prior on AcrobotSwingup** (Part 47) | The analytic-prior recipe generalises to swing-up | **Backfires** |
 
 ### Integrity events (keep these visible)
 
-| # | event | data |
-|---|---|---|
-| 21 | **Part 49** — the "beats PPO" arc (Parts 42–48) was measured against an **under-budgeted PPO**; retracted | **L** |
-| 22 | **Part 21** — reimplementation audit: our JAX TD-MPC2 deviated from the official release; the hopper "world models can hurt" headline was retracted | **L** |
-| 23 | **Part 23** — rebuilt on the **official** TD-MPC2: the AAAI paper's ~9.2× cheetah gap is 1.04× under ordinary training, 3.55× under its matched-data control | **L** `aaai27-wm-diagnostic/` (377 MB) |
-| 24 | **This week** — the $40 budget guard announced "STOPPING both boxes" and stopped nothing for the whole campaign (cron PATH lacked `vastai`, errors swallowed) | **L** |
+| # | event | what we believed | what was actually true |
+|---|---|---|---|
+| 21 | **Part 49** | Our abstraction pipeline beats PPO — the whole Parts 42–48 arc | The PPO baseline was **under-budgeted**. The arc was retracted |
+| 22 | **Part 21** | "World models can hurt" on hopper — our headline finding | Our JAX TD-MPC2 had **deviated from the official release**. Headline retracted |
+| 23 | **Part 23** | The AAAI paper's ~**9.2×** cheetah gap | **1.04×** under ordinary training; 3.55× only under its matched-data control |
+| 24 | **The budget guard** | The $40 cap had been enforcing itself all campaign | It announced "STOPPING both boxes" and **stopped nothing** — cron's PATH lacked `vastai` and the errors were swallowed |
 
----
+</div>
 
 ## 2. Why this post exists
 
