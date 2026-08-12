@@ -138,6 +138,57 @@ If SI is flat on the nuisance axis and monotone on the noise axis where variance
 that is a measurement contribution to a named open problem — and a far better home for structural
 entropy than the loss term we spent a campaign on.
 
+## UPDATE, same day: the measurement benchmark ran, on two environments
+
+Proposal v3 said the field cannot measure information content and graph-structural measures are a
+candidate. That is now tested on three axes with ground truth known by construction, on **two
+environments with opposite dynamics** — TwoRooms (translational, lattice-like transition graph) and
+an Oscillator (rotational, cyclic).
+
+**Axis 3 is the strong one:** the state is snapped to a *g*×*g* lattice, so the true information is
+exactly **2·log₂(g) bits** — 4, 6, 8, 12 — and an estimator can be scored on whether it tracks
+*actual bits* rather than merely moving the right way.
+
+| estimator | r with true bits — TwoRooms | r with true bits — Oscillator |
+|---|---:|---:|
+| **`Var(Z)`** | **−0.983** | **−0.932** |
+| **effective rank** | **−0.944** | **−0.959** |
+| SI | +0.900 | +0.859 |
+| SI − random-partition | +0.858 | +0.860 |
+| InfoNCE | +0.831 | +0.821 |
+
+> **Variance and effective rank are anti-correlated with information content.** Not weak proxies —
+> they move the *wrong way*, on both environments, against exact ground truth.
+
+On the nuisance axis (where information is unchanged by construction) effective rank inflates
+**10.8×** and **8.8×** respectively, on zero added information. That is LeCun's *"we only have upper
+bounds"* objection, measured.
+
+### What this does and does not buy structural entropy
+
+SI tracks bits on both environments (+0.900 / +0.859), beating InfoNCE (+0.831 / +0.821) with no
+learned critic, no negatives and no batch-size ceiling. That is real.
+
+But **no SI variant is honest on every criterion, and the two variants fail on opposite ones:**
+
+| | nuisance-invariance | bits-tracking |
+|---|---|---|
+| raw SI | **fails** (0.53 / 0.70) | **robust** — +0.747…+0.994 across 5 quantisation settings |
+| SI − random-partition | 1.15 on TwoRooms but **0.69 on the Oscillator** | **fragile** — collapses to ≈0 at M=50 |
+| **InfoNCE** | **0.98 / 0.97** | +0.82 |
+
+The variant that looked like a measure on one environment is fooled on the next, and the variant
+that tracks bits robustly is fooled by nuisance. **InfoNCE is the better-behaved estimator overall.**
+Anyone claiming SI *is* the missing measure — us included — is over-reaching.
+
+### The honest position
+
+1. **Robust negative:** what this literature optimises is anti-correlated with information content.
+   Two environments, three axes, exact ground truth on one. Needs no method to work.
+2. **Supporting positive:** a graph-structural quantity tracks information content somewhat better
+   than a learned-critic bound, without a critic.
+3. **Limit:** SI is not a drop-in measure, and we have the counterexample ourselves.
+
 ## Limits
 
 - **n = 3 per cell**, and the ladder's EMA rows were still running when this was written. The
