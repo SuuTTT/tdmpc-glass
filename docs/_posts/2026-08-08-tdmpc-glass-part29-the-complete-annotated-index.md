@@ -28,6 +28,16 @@ in what it computes at decision time — and that value is concentrated **early*
 
 ## Every proposal on the table, ranked
 
+> **⚠️ SUPERSEDED 2026-08-12 — this table is a snapshot of 8 August and several rows are now wrong.**
+> The current ranking, with what is actually left to do for each, is
+> **[Part 27 §2](../2026/08/06/tdmpc-glass-part27-the-full-inventory-and-the-proposals-that-survive.html)**.
+> Most importantly **S1 is REFUTED** — the consistency loss's value is not representation shaping;
+> the 2×2 in [Part 28 §6](../2026/08/07/tdmpc-glass-part28-the-iclr-decision-document.html) shows
+> the world model and the planner are one mechanism (walker interaction 90.1, p=0.044; cheetah
+> 129.5, p=0.011), and S2/S3/S4 have moved too. The table is kept below unedited as the record of
+> what we believed on 8 August; **do not plan from it.**
+
+
 **Type matters more than rank.** A *finding* says what is true; a *theory* says why; a *method* says
 what to do differently. A paper that lands is usually **finding + theory + method** — the phenomenon,
 its mechanism, and the thing a reader can use. Rows are typed accordingly.
