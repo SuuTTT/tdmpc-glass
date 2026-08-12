@@ -5,6 +5,17 @@ date: 2026-08-12
 description: "Written to be readable without knowing what JEPA or structural entropy are — there is a plain-terms primer up front. A proposal landed to regularize JEPA world models with the structural information of the latent transition graph. Before building it we asked two prior questions: does the quantity predict anything, and does the problem it fixes exist? Neither survived. Structural information does not predict downstream return where a training-step confound is removed (+0.000 on cheetah). And on the proposal's own first benchmark, a pure JEPA with zero anti-collapse is the best arm in every cell — while anti-collapse terms raise effective rank and destroy control, monotonically in their own strength. Includes three corrections I had to make to my own analysis inside twelve hours."
 ---
 
+> ### ⚠️ CORRECTED THE SAME DAY — read [Part 31](../../../2026/08/12/tdmpc-glass-part31-we-did-reproduce-the-collapse.html) with this
+>
+> This post's headline is **wrong**. Every arm below kept the EMA target, which *contains* the
+> stop-gradient — so it asked "does collapse happen when the fix is already installed?", with no
+> positive control. Remove the stop-gradient and the latent collapses immediately (std 0.00075 vs a
+> healthy 0.177, 3/3 seeds). **Collapse is real, reproducible, and architectural.** A uniformity loss
+> genuinely rescues it. What survives from this post is narrower and still holds: *once the
+> architecture is right*, anti-collapse losses are neutral-to-harmful, and the metrics they optimise
+> do not measure information content. Part 30 is left unedited below as the record of what it
+> measured.
+
 > **TL;DR.** We were asked to evaluate a proposal: regularize a JEPA world model with the
 > **structural information** of its latent transition graph, `L = L_pred − λ·SI(G_Z)`, as a general
 > anti-collapse principle. Rather than build it, we asked the two questions that come first.
