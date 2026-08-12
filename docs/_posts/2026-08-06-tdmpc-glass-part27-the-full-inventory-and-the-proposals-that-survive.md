@@ -22,7 +22,7 @@ This is the core of the post. Each row is a direction the campaign ran, **the hy
 actually testing**, and what came back. Data availability — which results still exist on disk versus
 only in a blog paragraph — is in §5.
 
-<div class="wide-table wide-table--proposals" markdown="1">
+<div class="wide-table wide-table--inventory" markdown="1">
 
 ### Directions with positive results
 

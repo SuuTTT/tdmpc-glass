@@ -112,6 +112,13 @@ table {
 .wide-table--proposals td:nth-child(3), .wide-table--proposals th:nth-child(3) { width: 7rem; }
 .wide-table--proposals td:nth-child(6), .wide-table--proposals th:nth-child(6) { width: 6rem; }
 .wide-table--proposals td:nth-child(7), .wide-table--proposals th:nth-child(7) { width: 7rem; }
+/* inventory tables (Part 27): #, direction, hypothesis, result. Columns 3 and 4 carry the
+   substance and must NOT inherit --proposals' 7rem cap, which was sized for a short type tag. */
+.wide-table--inventory td:first-child,
+.wide-table--inventory th:first-child { width: 2.5rem; }
+.wide-table--inventory td:nth-child(2), .wide-table--inventory th:nth-child(2) { width: 13rem; }
+.wide-table--inventory td:nth-child(3), .wide-table--inventory th:nth-child(3) { width: 32%; }
+.wide-table--inventory td:nth-child(4), .wide-table--inventory th:nth-child(4) { width: 32%; }
 /* phase tables: keep the post column narrow, let hypothesis/result breathe */
 .wide-table--phase td:first-child, .wide-table--phase th:first-child { width: 8rem; }
 /* on small screens fall back to the scrollable block layout */
