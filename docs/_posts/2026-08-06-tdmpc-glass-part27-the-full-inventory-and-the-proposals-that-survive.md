@@ -12,7 +12,7 @@ description: "An audit of our own audit. Part 25 claimed to review every directi
 >
 > **The inventory itself is §1**, immediately below — every direction links to the post that ran it.
 > Everything after is provenance: how the list was rebuilt, what the earlier audit lost, where the
-> data still lives, and the proposal list that survives. **§7 ranks what is left by its odds of
+> data still lives, and the proposal list that survives. **§2 ranks what is left by its odds of
 > acceptance if we spend the remaining time on it.**
 
 ---
@@ -21,7 +21,7 @@ description: "An audit of our own audit. Part 25 claimed to review every directi
 
 This is the core of the post. Each row is a direction the campaign ran, **the hypothesis it was
 actually testing**, and what came back. Data availability — which results still exist on disk versus
-only in a blog paragraph — is in §5.
+only in a blog paragraph — is in §6.
 
 <div class="wide-table wide-table--inventory" markdown="1">
 
@@ -66,7 +66,41 @@ only in a blog paragraph — is in §5.
 
 </div>
 
-## 2. Why this post exists
+## 2. Ranked by odds of acceptance, if we spend the remaining time on it
+
+**Added 2026-08-12**, six days after this post, once the mechanism work closed. Everything above is
+what we *ran*; this is what is worth *finishing*. The odds are judgements about acceptance
+**conditional on the work being completed and written well** — aids for choosing between rows, not
+predictions. No venue deadline has been set yet, which is the single input that would move these
+most.
+
+<div class="wide-table wide-table--inventory" markdown="1">
+
+| rank | proposal | what is actually left | odds | why that number |
+|---|---|---|---|---|
+| **1** | **The world model and the planner are one mechanism** — search earns its keep in training, and the model loss exists to make search worth doing while the agent learns | **writing only** | **~65%** | Grade A on three legs: the frozen-checkpoint toggle, a cross-agent replication in DreamerV3 (which has no search at all), and a 2×2 interaction significant on two tasks (walker 90.1, p=0.044; cheetah 129.5, p=0.011). Two rival mechanisms were eliminated with gradient-level verification. No confound left for a reviewer to attach to |
+| **2** | **Adaptive planning: a real ceiling that no obvious signal can reach** | complete as a negative; ~1 week to attempt a positive | **~45%** | Converts "someone should gate the planner" into a measured statement — the opportunity is worth ~53% of search's value at 10% of states, and nine signals across three families are provably blind to it. Strongest as the second half of #1 rather than alone |
+| **3** | **Anti-collapse in JEPA world models: a reproduction study** ([Part 30](https://suuttt.github.io/tdmpc-glass/2026/08/12/tdmpc-glass-part30-we-could-not-reproduce-the-collapse.html)) | ~2 weeks to add scale | **~40%** | Adversarial to a live literature and cheap to state: collapse did not appear in five settings, anti-collapse is neutral-to-harmful, and effective rank moves *opposite* to control. The weakness is scale — our JEPA is small, LeWorldModel trains 15M params from pixels — so a pixel-scale arm is what buys the last 15% |
+| **4** | **The 5× shrink** | **writing only** | ~35% alone | Grade A across 16 tasks and genuinely useful, but "the default is over-provisioned" reads as engineering rather than insight. Much stronger as an appendix to #1 than as a paper |
+| **5** | **How claims decay** — the methodology paper | writing only | ~50% *as a workshop paper*, ~15% main track | Eight patterns looked real at 3 seeds; seven died at 5. We have the anatomy with timestamps, pre-registrations and four silent-instrument bugs. Real, and better suited to a workshop than a main track |
+| **6** | **The coding-agent loop as a first-class method** | ~1 week | ~25% research, high as a workshop piece | The only thing in nine months that solved a task gradient RL could not, and its diagnostic value is independent of its ceiling. But the method is Weng's, not ours — we contribute evidence, not invention |
+| **7** | **Entity-graph compositional OOD** | needs a control-reaching result | ~25% | The campaign's first honest GO, but the advantage stops at value-decodability and never reaches the controller. Without closing that gap it is a probe result |
+| **8** | **Conjunctivity sets the value of search** | 1 more task | ~20% | **Demoted.** Holds on walker, and hopper says the opposite at n≥4 on every cell. Publish as a dissociation inside another paper, never as a law |
+
+</div>
+
+**The honest read of that table:** one paper is ready to write and everything else is either supporting
+material for it or a workshop submission. The recommendation has not changed since
+[Part 28](https://suuttt.github.io/tdmpc-glass/2026/08/07/tdmpc-glass-part28-the-iclr-decision-document.html) —
+write #1, fold #2 in as its second half, #4 as an appendix, send #5 to a workshop.
+
+**Two things that would move these odds more than any experiment:** a decided venue and deadline,
+and a behaviour-cloning baseline. Right now "planning helps" has no demonstration-based denominator,
+which is the first thing a reviewer will ask for and among the cheapest to supply.
+
+---
+
+## 3. Why this post exists
 
 Part 25's proposal list was assembled from memory notes and recent reports rather than from the blog
 corpus. That is how it lost an entire research line. Two specific failures:
@@ -89,7 +123,7 @@ the action happened.
 
 ---
 
-## 3. The thing Part 25 missed most: the coding agent solved a task gradient RL could not
+## 4. The thing Part 25 missed most: the coding agent solved a task gradient RL could not
 
 **PandaPickCube.** Gradient RL *reward-hacked it to zero.* Video evaluation showed vanilla and jumpy
 TD-MPC2 both achieving **0% real pick success** while scoring well — they hovered the gripper beside
@@ -119,7 +153,7 @@ with our numbers.
 
 ---
 
-## 4. The conjunctivity precedent we re-derived
+## 5. The conjunctivity precedent we re-derived
 
 Part 14 (2026-07-09), tuned PPO on HopperHop, seed 50, 20M steps, with env-gated reward knobs
 (byte-identical when unset):
@@ -155,7 +189,7 @@ version of the additive test that came out inconclusive at n=2 this week.
 
 ---
 
-## 5. Where the data actually lives
+## 6. Where the data actually lives
 
 - **Local, safe (control box):** `tdmpc-glass/exp/` (568 MB), `aaai27-wm-diagnostic/` (377 MB),
   `world-model-paper/data/` (~90 MB, all of this month's per-seed JSON), `tdmpc-glass/hl_pickcube/`.
@@ -167,7 +201,7 @@ version of the additive test that came out inconclusive at n=2 this week.
 
 ---
 
-## 6. The corrected proposal list
+## 7. The corrected proposal list
 
 **UPDATE (later the same day): the hopper leg is now RESOLVED, and the two tasks disagree.**
 
@@ -214,40 +248,6 @@ only the within-cell ratio is meaningful.
    (difficulty is the other), it now has a July precedent we must cite rather than rediscover, and
    its hopper leg is untested.
 7. **"Train cheap, plan at deployment" (A3)** — **dead.** Measured: 24% recovery, negative on walker.
-
----
-
-## 7. Ranked by odds of acceptance, if we spend the remaining time on it
-
-**Added 2026-08-12**, six days after this post, once the mechanism work closed. Everything above is
-what we *ran*; this is what is worth *finishing*. The odds are judgements about acceptance
-**conditional on the work being completed and written well** — aids for choosing between rows, not
-predictions. No venue deadline has been set yet, which is the single input that would move these
-most.
-
-<div class="wide-table wide-table--inventory" markdown="1">
-
-| rank | proposal | what is actually left | odds | why that number |
-|---|---|---|---|---|
-| **1** | **The world model and the planner are one mechanism** — search earns its keep in training, and the model loss exists to make search worth doing while the agent learns | **writing only** | **~65%** | Grade A on three legs: the frozen-checkpoint toggle, a cross-agent replication in DreamerV3 (which has no search at all), and a 2×2 interaction significant on two tasks (walker 90.1, p=0.044; cheetah 129.5, p=0.011). Two rival mechanisms were eliminated with gradient-level verification. No confound left for a reviewer to attach to |
-| **2** | **Adaptive planning: a real ceiling that no obvious signal can reach** | complete as a negative; ~1 week to attempt a positive | **~45%** | Converts "someone should gate the planner" into a measured statement — the opportunity is worth ~53% of search's value at 10% of states, and nine signals across three families are provably blind to it. Strongest as the second half of #1 rather than alone |
-| **3** | **Anti-collapse in JEPA world models: a reproduction study** ([Part 30](https://suuttt.github.io/tdmpc-glass/2026/08/12/tdmpc-glass-part30-we-could-not-reproduce-the-collapse.html)) | ~2 weeks to add scale | **~40%** | Adversarial to a live literature and cheap to state: collapse did not appear in five settings, anti-collapse is neutral-to-harmful, and effective rank moves *opposite* to control. The weakness is scale — our JEPA is small, LeWorldModel trains 15M params from pixels — so a pixel-scale arm is what buys the last 15% |
-| **4** | **The 5× shrink** | **writing only** | ~35% alone | Grade A across 16 tasks and genuinely useful, but "the default is over-provisioned" reads as engineering rather than insight. Much stronger as an appendix to #1 than as a paper |
-| **5** | **How claims decay** — the methodology paper | writing only | ~50% *as a workshop paper*, ~15% main track | Eight patterns looked real at 3 seeds; seven died at 5. We have the anatomy with timestamps, pre-registrations and four silent-instrument bugs. Real, and better suited to a workshop than a main track |
-| **6** | **The coding-agent loop as a first-class method** | ~1 week | ~25% research, high as a workshop piece | The only thing in nine months that solved a task gradient RL could not, and its diagnostic value is independent of its ceiling. But the method is Weng's, not ours — we contribute evidence, not invention |
-| **7** | **Entity-graph compositional OOD** | needs a control-reaching result | ~25% | The campaign's first honest GO, but the advantage stops at value-decodability and never reaches the controller. Without closing that gap it is a probe result |
-| **8** | **Conjunctivity sets the value of search** | 1 more task | ~20% | **Demoted.** Holds on walker, and hopper says the opposite at n≥4 on every cell. Publish as a dissociation inside another paper, never as a law |
-
-</div>
-
-**The honest read of that table:** one paper is ready to write and everything else is either supporting
-material for it or a workshop submission. The recommendation has not changed since
-[Part 28](https://suuttt.github.io/tdmpc-glass/2026/08/07/tdmpc-glass-part28-the-iclr-decision-document.html) —
-write #1, fold #2 in as its second half, #4 as an appendix, send #5 to a workshop.
-
-**Two things that would move these odds more than any experiment:** a decided venue and deadline,
-and a behaviour-cloning baseline. Right now "planning helps" has no demonstration-based denominator,
-which is the first thing a reviewer will ask for and among the cheapest to supply.
 
 ---
 
