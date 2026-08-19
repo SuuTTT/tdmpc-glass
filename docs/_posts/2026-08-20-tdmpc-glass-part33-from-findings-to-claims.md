@@ -14,6 +14,35 @@ description: "Our supervisor's critique of Part 32 was that we had produced find
 > and discovering that SI fails it is not a result worth a paper. **Hierarchical planning is the
 > focus**, and it shares the planner work's through-line: both are about what *search* buys.
 
+
+> ### ⚠️ Correction, same day
+>
+> **The within-task prediction below is refuted by our own data, and we found out by testing it.**
+> Every `eval.csv` already contains the full budget curve, so the claim was checkable without new
+> runs. Planner advantage (full − none) across training:
+>
+> | task | 50k | 100k | 200k | 300k | 400k | policy alone, 50k → 400k |
+> |---|---:|---:|---:|---:|---:|---|
+> | walker-run | 227 | 160 | 115 | 71 | **71** | 523 → 735 |
+> | acrobot-swingup | 189 | 202 | 210 | 199 | **170** | 58 → 327 |
+> | cheetah-run | 50 | 4 | −20 | 44 | **66** | 450 → 851 |
+> | **hopper-hop** | **2** | 18 | 100 | 149 | **175** | 14 → 152 |
+>
+> The post claims "within any task, the planner's value should decay monotonically with training
+> budget". It decays on walker, is flat on acrobot, and **grows 80-fold on hopper**. The prediction is
+> false as stated.
+>
+> **What the data supports instead is a two-factor account.** As training proceeds the *model* gets
+> better, so the planner has something better to search through — pushing its advantage **up**. The
+> *policy* also gets better, so the planner is needed less — pushing it **down**. Whichever moves
+> faster sets the direction. Hopper's policy stays far from ceiling throughout (14 → 152 of ~1000), so
+> the model effect dominates and the advantage grows. Walker's policy closes most of its gap
+> (523 → 735), so the policy effect dominates and the advantage halves.
+>
+> The **cross-task ordering below still holds** (rho = −1.000, n=4) — but it is now evidence for the
+> *policy* half of a two-factor account, not for the single-factor scaffold story. Section 1 should be
+> read with that substitution.
+
 ## The critique
 
 Three points, paraphrased:
