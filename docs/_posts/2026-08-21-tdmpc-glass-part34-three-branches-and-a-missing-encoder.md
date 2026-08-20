@@ -81,6 +81,49 @@ A single-episode smoke test at `latent_dim=4` gives prior 164, MPC 340, planning
 one episode and means nothing yet; it is here to show the harness loads a 4-dimensional latent
 without silently falling back to the default.
 
+### The result: flat, so the hypothesis is dead
+
+The sweep finished. Fifteen checkpoints, five capacities, three seeds each, planner toggled at
+deployment on identical weights:
+
+| `latent_dim` | n | prior return | MPC return | planning value |
+|---:|---:|---:|---:|---:|
+| 4 | 3 | 163.4 ± 25 | 342.4 ± 1 | **179.0 ± 27** |
+| 8 | 3 | 204.4 ± 10 | 357.0 ± 23 | **152.7 ± 23** |
+| 16 | 3 | 171.2 ± 4 | 343.8 ± 6 | **172.6 ± 2** |
+| 64 | 3 | 203.7 ± 82 | 412.3 ± 118 | **208.6 ± 38** |
+| 512 | 3 | 168.0 ± 38 | 321.6 ± 15 | **153.6 ± 34** |
+
+Rank correlation against `log2(latent_dim)`, permutation-tested at n=20000 because n=15 makes the
+asymptotic p meaningless:
+
+- planning value: rho = **+0.064**, p = 0.82
+- prior return: rho = −0.061, p = 0.83
+- MPC return: rho = −0.425, p = 0.12
+
+Across a **128x range in representational capacity**, planning value moves from 153 to 209 — a
+1.37x spread with no ordering, less than the seed-to-seed spread inside several of the cells. This
+is the second bullet of the preregistration, verbatim: **capacity is not the binding constraint,
+the hypothesis is dead, and we report it dead.**
+
+We want to be precise about what died. The claim was *representational capacity is what search
+consumes*. It is refuted on this task: a 4-dimensional latent buys exactly as much from search as a
+512-dimensional one. That makes four for four — every representation measure this project has
+tested has come back uncorrelated with planning.
+
+There is a second reading of the same table that is arguably the more useful finding. Not just
+planning value but **every** column is flat: the policy prior alone doesn't improve with capacity
+either (rho = −0.06), and the full MPC agent, if anything, trends the wrong way. TD-MPC2's default
+`latent_dim` is 512. On hopper-hop, 4 does the same job, and neither the policy nor the planner
+notices the difference. The binding constraint on this task is somewhere other than how much the
+latent can carry.
+
+The honest caveat: hopper-hop is one task, and these agents are mediocre in absolute terms
+(~340 with MPC, against a 1000 ceiling). A bottleneck elsewhere is exactly the condition under
+which capacity *cannot* show its effect, so this refutes the hypothesis on this task rather than in
+general. It does not rescue the hypothesis — a theory that only shows up in agents we can't
+train isn't one we can build on — but it does bound the claim.
+
 ## Branch 3: the gate answered, and it moves the goalposts
 
 The proposal promised a deliberately small first step on HWM: pull the repo, confirm the latents
@@ -139,7 +182,7 @@ along. The dataset download is running so we can run their model forward and bui
 | branch | state | cost |
 |---|---|---|
 | 1 — planner economics | decomposition done, from data already on disk | $0 |
-| 2 — capacity vs planning value | 15 checkpoints sweeping, ~2h | ~$0.40 |
-| 3 — hierarchical WM | gate answered, dataset downloading | ~$0.20 |
+| 2 — capacity vs planning value | **done — flat across 128x, hypothesis dead** | ~$0.40 |
+| 3 — hierarchical WM | gate answered; dataset rendering, 101k frames | ~$1.20 |
 
 One 3090 Ti at $0.205/h is carrying all three. No new box was rented.
